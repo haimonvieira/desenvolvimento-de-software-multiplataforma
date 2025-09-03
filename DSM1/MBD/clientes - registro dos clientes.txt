@@ -1,0 +1,17 @@
+entidade:atributo
+clientes: id, endereço, nome, telefone 
+bicicletas: id, id_cliente, marca, modelo, tipo, ano_fabricação
+atendimento: id, data_entrada, data_saida, status, observação, id_servico
+serviços: id, tipo_servico, id_produto, quantidade, valor, id_atendimento
+produtos: id, quantidade, valor_unitario
+personalização: id, id_produto, valor
+vendas: id, id_cliente, data, id_servico
+
+Comentarios:
+tabela clientes para registrar os clientes;
+bicicletas para o registro da bicicleta do cliente;
+atendimento para registrar os séricos, pode ter mais de um;
+serviços registra os serviços feitos na bicicleta;
+produtos armazena a quantidade que cada produto tem;
+personalização verifica qual produto foi utilizado;
+vendas calcula o valor final para o cliente;

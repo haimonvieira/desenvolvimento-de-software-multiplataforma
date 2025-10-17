@@ -1,0 +1,120 @@
+body {
+  height: 100vh;
+  overflow: hidden;
+  background-image: url("../images/samplemap.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  background-color: #000;
+  position: relative;
+}
+
+.tree-1 {
+  height: 100px;
+  width: 100px;
+  background-image: url("../images/tree.png");
+  background-repeat: no-repeat;
+  background-size: contain;
+  position: absolute;
+  bottom: 40vh; /* 265px convertido para vh */
+  left: 40vw; /* 600px convertido para vw */
+}
+
+.tree-2 {
+  height: 100px;
+  width: 100px;
+  background-image: url("../images/tree.png");
+  background-repeat: no-repeat;
+  background-size: contain;
+  position: absolute;
+  bottom: 46vh; /* 340px convertido para vh */
+  left: 48vw; /* 725px convertido para vw */
+  /* bottom: 0;
+    margin-left: 725px;
+    margin-bottom: 340px;
+    */
+}
+
+.personagem {
+  height: 38px;
+  width: 30px;
+  background-repeat: no-repeat;
+  position: absolute;
+  bottom: 48vh; /* 350px convertido para vh */
+  left: 24vw; /* 400px convertido para vw */
+  background: url("../images/character.png");
+  /* 1. Animação dos frames do andar */
+  animation: andarSprite 1s steps(4) infinite, mover 5s linear infinite;
+  /* 2. Movimento lateral */
+}
+
+/* .subir {
+    background-position-y: -58px;
+} */
+
+/* .descer{
+    background-position-y: -8px;
+}
+
+.direita{
+    background-position-y: -158px;
+}
+
+.esquerda{
+    background-position-y: -105px;
+} */
+
+/* Anima os quadros do sprite (4 frames) */
+@keyframes andarSprite {
+  from {
+    background-position-x: 0;
+  }
+
+  to {
+    background-position-x: -130px;
+  }
+
+  /* 30px * 4 frames */
+}
+
+/* Anima o personagem andando da esquerda pra direita */
+@keyframes mover {
+  /* Direita */
+  0% {
+    transform: translate(0, 0);
+    background-position-y: -158px;
+  }
+
+  /* Direita */
+  25% {
+    transform: translate(26vw, 0);
+    background-position-y: -158px;
+  }
+
+  25.1% {
+    background-position-y: -58px;
+  }
+
+  50% {
+    transform: translate(26vw, -10vh);
+    background-position-y: -58px;
+  }
+
+  50.1% {
+    background-position-y: -8px;
+  }
+
+  75% {
+    transform: translate(26vw, 0px);
+    background-position-y: -8px;
+  }
+
+  75.1% {
+    background-position-y: -105px;
+  }
+
+  100% {
+    transform: translate(0, 0);
+    background-position-y: -105px;
+  }
+}

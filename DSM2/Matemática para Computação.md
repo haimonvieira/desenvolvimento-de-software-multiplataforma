@@ -25,6 +25,15 @@ São exemplos de conectivos:
 > - OR (ou)
 > - XOR (condicional exclusivo)
 
+## Exemplos de tabela verdade
 
+## NOT
+
+Teste   | Exemplo
+------- | ------
+Teste 1 | Exemplo 1
+Teste 2 | Exemplo 2
+Teste 3 | Exemplo 3
+Teste 4 | Exemplo 4
 
   

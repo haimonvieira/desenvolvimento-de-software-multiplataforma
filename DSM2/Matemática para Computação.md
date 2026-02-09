@@ -2,7 +2,7 @@
 
 É utilizada como uma ferramenta para analisar se uma proposição é "VERDADEIRA" ou "FALSA".
 
-Uma proposição é uma afirmação (frase) que utiliza palavras e símbolos (conceitos). Normalmente representada por letras minúsculas, tais como: p, q, r, etc.
+Uma proposição é uma afirmação (frase) que utiliza palavras e símbolos (conceitos). Normalmente representada por letras minúsculas, tais como: _p, q, r_, etc.
 Exemplos:
 
 1. O 2DSM entrega as tarefas de matemática.
@@ -11,18 +11,19 @@ Exemplos:
 
 As proposições podem ser simples ou complexas.
 
-- SIMPLES (única ideia):
+- **SIMPLES (única ideia)**:
   - O céu é azul;
-  - A primavera é uyma estação do ano.
+  - A primavera é uma estação do ano.
 
-- COMPLEXA (mais de uma idéia):
-  -A linguagem C é fortemente tipada e a linguagem Java é Orieantada a Objetos.
+- **COMPLEXA (mais de uma idéia)**:
+  - A linguagem C é fortemente tipada e a linguagem Java é Orieantada a Objetos.
   > Para criar as proprosições complexas, nós devemos utilizar o conceito de conectivos.
+  
 São exemplos de conectivos:
->NOT (não)
->AND (e)
->OR (ou)
->XOR (condicional exclusivo)
+> - NOT (não)
+> - AND (e)
+> - OR (ou)
+> - XOR (condicional exclusivo)
 
 
 

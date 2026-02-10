@@ -28,6 +28,49 @@ São exemplos de conectivos:
 ## Exemplos de tabela verdade
 
 ### NOT
+| p | ¬p |
+| - | -- |
+| V | F  |
+| F | V  |
 
+### AND
+| p | q | p ∧ q |
+| - | - | ----- |
+| V | V | V     |
+| V | F | F     |
+| F | V | F     |
+| F | F | F     |
+
+### OR
+| p | q | p ∨ q |
+| - | - | ----- |
+| V | V | V     |
+| V | F | V     |
+| F | V | V     |
+| F | F | F     |
+
+### XOR
+| p | q | p ⊕ q |
+| - | - | ----- |
+| V | V | F     |
+| V | F | V     |
+| F | V | V     |
+| F | F | F     |
+
+### Condicional
+| p | q | p → q |
+| - | - | ----- |
+| V | V | V     |
+| V | F | F     |
+| F | V | V     |
+| F | F | V     |
+
+### Bicondicional
+| p | q | p ↔ q |
+| - | - | ----- |
+| V | V | V     |
+| V | F | F     |
+| F | V | F     |
+| F | F | V     |
 
   

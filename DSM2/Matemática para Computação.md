@@ -71,6 +71,7 @@ Apenas **VERDADEIRO** quando valores diferentes
 
 ### Bicondicional
 - Iguais retorna **VERDADEIRO**
+
 | p | q | p ↔ q |
 | - | - | :------: |
 | V | V | V     |

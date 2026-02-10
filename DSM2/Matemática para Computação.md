@@ -3,7 +3,7 @@
 É utilizada como uma ferramenta para analisar se uma proposição é "VERDADEIRA" ou "FALSA".
 
 Uma proposição é uma afirmação (frase) que utiliza palavras e símbolos (conceitos). Normalmente representada por letras minúsculas, tais como: _p, q, r_, etc.
-Exemplos:
+## Exemplos:
 
 1. O 2DSM entrega as tarefas de matemática.
 2. A Fatec de Registro está localizada no centro da cidade.

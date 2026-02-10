@@ -1,9 +1,9 @@
 # Lógica Matemática
-# Data: 09/02/2026
+### Data: 09/02/2026
 
 É utilizada como uma ferramenta para analisar se uma proposição é "VERDADEIRA" ou "FALSA".
 
-Uma proposição é uma afirmação (frase) que utiliza palavras e símbolos (conceitos). Normalmente representada por letras minúsculas, tais como: _p, q, r_, etc.
+Uma proposição é uma afirmação (frase) que utiliza palavras e símbolos (conceitos). Normalmente representada por letras minúsculas, tais como: *p, q, r*, etc.
 ## Exemplos:
 
 1. O 2DSM entrega as tarefas de matemática.
@@ -80,4 +80,14 @@ Apenas **VERDADEIRO** quando valores diferentes
 | F | V | F     |
 | F | F | V     |
 
-  
+## Ordem de precedência
+- Parênteses;
+- Negação;
+- Conjunção e disjunção na sequência (E e OU);
+- Condicionais;
+- Bicondicionais.
+
+> ### Tautologia
+> Independente dos valores de entrada (*p, q*) a resposta é sempre **VERDADE**
+> ### Contradição
+> Independente dos valores de entrada (*p, q*) a resposta é sempre **FALSA**

@@ -50,14 +50,17 @@ São exemplos de conectivos:
 | F | F | F     |
 
 ### XOR (ou exclusivo)
-Apenas verdadeiro quando valores diferentes
+Apenas **VERDADEIRO** quando valores diferentes
 | p | q | p ⊕ q |
 | - | - | :------: |
 | V | V | F     |
 | V | F | V     |
 | F | V | V     |
 | F | F | F     |
+
 ### Condicional
+- Iguais retorna **VERDADEIRO**
+- _q_ estiver **VERDADEIRO** retorna **VERDADE**
 | p | q | p → q |
 | - | - | :------: |
 | V | V | V     |

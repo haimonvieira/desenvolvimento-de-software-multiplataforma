@@ -61,6 +61,7 @@ Apenas **VERDADEIRO** quando valores diferentes
 ### Condicional
 - Iguais retorna **VERDADEIRO**
 - _q_ estiver **VERDADEIRO** retorna **VERDADE**
+  
 | p | q | p → q |
 | - | - | :------: |
 | V | V | V     |
@@ -69,6 +70,7 @@ Apenas **VERDADEIRO** quando valores diferentes
 | F | F | V     |
 
 ### Bicondicional
+- Iguais retorna **VERDADEIRO**
 | p | q | p ↔ q |
 | - | - | :------: |
 | V | V | V     |

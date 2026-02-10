@@ -1,4 +1,5 @@
 # Lógica Matemática
+# Data: 09/02/2026
 
 É utilizada como uma ferramenta para analisar se uma proposição é "VERDADEIRA" ou "FALSA".
 

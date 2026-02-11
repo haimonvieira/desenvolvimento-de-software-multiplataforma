@@ -31,6 +31,3 @@ Comentarios:
 *personalização verifica qual produto foi utilizado;*
 
 *vendas calcula o valor final para o cliente;*
-
-
-

@@ -1,126 +1,164 @@
-# Lógica Matemática
+# 📘 Lógica Matemática
 
-## Data: 09/02/2026
+## 📅 Data: 09/02/2026
 
-É utilizada como uma ferramenta para analisar se uma proposição é "VERDADEIRA" ou "FALSA".
+A lógica matemática é usada para analisar se uma proposição é **VERDADEIRA (V)** ou **FALSA (F)**.
 
-Uma proposição é uma afirmação (frase) que utiliza palavras e símbolos (conceitos). Normalmente representada por letras minúsculas, tais como: *p, q, r*, etc.
+---
 
-## Exemplos
+## 📌 Proposição
+
+Uma **proposição** é uma frase declarativa que pode assumir apenas dois valores lógicos:
+- Verdadeiro (V)
+- Falso (F)
+
+Normalmente representamos proposições por letras minúsculas:
+*p, q, r, s...*
+
+---
+
+## 🧠 Exemplos de Proposições
 
 1. O 2DSM entrega as tarefas de matemática.
 2. A Fatec de Registro está localizada no centro da cidade.
-3. O resultado da operação 2+1 é igual a 1
+3. O resultado da operação 2 + 1 é igual a 1.
 
-As proposições podem ser simples ou complexas.
+---
 
-- **SIMPLES (única ideia)**:
-  - O céu é azul;
-  - A primavera é uma estação do ano.
+## 🔹 Tipos de Proposição
 
-- **COMPLEXA (mais de uma idéia)**:
-  - A linguagem C é fortemente tipada e a linguagem Java é Orieantada a Objetos.
-  > Para criar as proprosições complexas, nós devemos utilizar o conceito de conectivos.
-  
-São exemplos de conectivos:
+### ✔ Simples (uma única ideia)
+- O céu é azul.
+- A primavera é uma estação do ano.
 
-> - NOT (não)
-> - AND (e)
-> - OR (ou)
-> - XOR (condicional ou bicondicional)
+### ✔ Complexa (duas ou mais ideias ligadas por conectivos)
+- A linguagem C é fortemente tipada **e** Java é orientada a objetos.
 
-## Exemplos de tabela verdade
+> Proposições complexas utilizam **conectivos lógicos**.
 
-### NOT
+---
+
+## 🔗 Conectivos Lógicos
+
+- ¬  → Negação (NOT)
+- ∧  → Conjunção (AND)
+- ∨  → Disjunção (OR)
+- ⊕  → Ou exclusivo (XOR)
+- →  → Condicional
+- ↔  → Bicondicional
+
+---
+
+# 📊 Tabelas-Verdade
+
+## 🔹 Negação (¬p)
 
 | p | ¬p |
-| - | -- |
+|---|----|
 | V | F  |
 | F | V  |
 
-### AND
+---
+
+## 🔹 Conjunção (p ∧ q)
+
+Verdadeiro apenas quando ambos são V.
 
 | p | q | p ∧ q |
-| - | - | :------: |
+|---|---|:-----:|
 | V | V | V     |
 | V | F | F     |
 | F | V | F     |
 | F | F | F     |
 
-### OR
+---
+
+## 🔹 Disjunção (p ∨ q)
+
+Verdadeiro quando pelo menos um é V.
 
 | p | q | p ∨ q |
-| - | - | :------: |
+|---|---|:-----:|
 | V | V | V     |
 | V | F | V     |
 | F | V | V     |
 | F | F | F     |
 
-### XOR (ou exclusivo)
+---
 
-Apenas **VERDADEIRO** quando valores diferentes
+## 🔹 Ou Exclusivo (p ⊕ q)
+
+Verdadeiro quando os valores são diferentes.
+
 | p | q | p ⊕ q |
-| - | - | :------: |
+|---|---|:-----:|
 | V | V | F     |
 | V | F | V     |
 | F | V | V     |
 | F | F | F     |
 
-### Condicional
+---
 
-- Iguais retorna **VERDADEIRO**
-- _q_ estiver **VERDADEIRO** retorna **VERDADE**
-  
+## 🔹 Condicional (p → q)
+
+Falso apenas quando:
+- p = V
+- q = F
+
 | p | q | p → q |
-| - | - | :------: |
+|---|---|:-----:|
 | V | V | V     |
 | V | F | F     |
 | F | V | V     |
 | F | F | V     |
 
-### Bicondicional
+---
 
-- Iguais retorna **VERDADEIRO**
+## 🔹 Bicondicional (p ↔ q)
+
+Verdadeiro quando p e q possuem o mesmo valor lógico.
 
 | p | q | p ↔ q |
-| - | - | :------: |
+|---|---|:-----:|
 | V | V | V     |
 | V | F | F     |
 | F | V | F     |
 | F | F | V     |
 
-## Ordem de precedência
+---
 
-- Parênteses;
-- Negação;
-- Conjunção e disjunção na sequência (E e OU);
-- Condicionais;
-- Bicondicionais.
-
-### Tautologia
-
-> Independente dos valores de entrada (*p, q*) a resposta é sempre **VERDADE**
-
-### Contradição
-
-> Independente dos valores de entrada (*p, q*) a resposta é sempre **FALSA**
-
-## Tabela Resumo
-
-| Estrutura Lógica          | Verdadeiro Quando            | Falso Quando         |
-| ------------------------- | ---------------------------- | -------------------- |
-| **p ∧ q** (AND)           | Ambos são V                  | Pelo menos um é F    |
-| **p ∨ q** (OR)            | Pelo menos um é V            | Ambos são F          |
-| **p ⊕ q** (XOR)           | p e q são diferentes         | p e q são iguais     |
-| **p → q** (Condicional)   | Em todos os casos, exceto um | Quando p = V e q = F |
-| **p ↔ q** (Bicondicional) | p e q são iguais             | p e q são diferentes |
-
-## Resumo – Estruturas Lógicas
-
-### Ordem de Precedência
+# 📌 Ordem de Precedência
 
 1. Parênteses  
 2. Negação (¬)  
-3. Conjunção (AND ∧) e Disjunção (OR ∨)  
+3. Conjunção (∧) e Disjunção (∨)  
 4. Condicional (→)  
-5. Bicondicional (↔)
+5. Bicondicional (↔)  
+
+---
+
+# 📖 Conceitos Importantes
+
+## ✔ Tautologia
+
+Uma proposição que é **sempre VERDADEIRA**, independentemente dos valores de entrada.
+
+## ✔ Contradição
+
+Uma proposição que é **sempre FALSA**, independentemente dos valores de entrada.
+
+## ✔ Contingência
+
+Uma proposição que às vezes é verdadeira e às vezes é falsa.
+
+---
+
+# 📊 Tabela Resumo
+
+| Estrutura | Verdadeiro Quando | Falso Quando |
+|-----------|------------------|--------------|
+| p ∧ q     | Ambos são V      | Pelo menos um é F |
+| p ∨ q     | Pelo menos um é V| Ambos são F |
+| p ⊕ q     | São diferentes   | São iguais |
+| p → q     | Todos os casos, exceto um | p = V e q = F |
+| p ↔ q     | São iguais       | São diferentes |

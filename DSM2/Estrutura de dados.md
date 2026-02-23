@@ -9,7 +9,7 @@
 - Escolher 1 música como trilha sonora
 - Cada equipe possui um algoritmo de ordenação
 - Produzir um vídeo de 3 a 5 minutos utilizando os conceitos da dança para explicar o funcionamento do algoritmo
-- Criar um relatório no formato da norma ABNT contendo os seguintes tópicos: 
+- Criar um relatório no formato da norma ABNT contendo os seguintes tópicos:
   - Introdução;
   - Funcionamento do algoritmo;
   - Implementação em C e;

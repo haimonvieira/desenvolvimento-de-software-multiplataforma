@@ -1,14 +1,16 @@
 # Lógica Matemática
-### Data: 09/02/2026
+
+## Data: 09/02/2026
 
 É utilizada como uma ferramenta para analisar se uma proposição é "VERDADEIRA" ou "FALSA".
 
 Uma proposição é uma afirmação (frase) que utiliza palavras e símbolos (conceitos). Normalmente representada por letras minúsculas, tais como: *p, q, r*, etc.
-## Exemplos:
+
+## Exemplos
 
 1. O 2DSM entrega as tarefas de matemática.
 2. A Fatec de Registro está localizada no centro da cidade.
-3. O resultado da operação 2+1 é igual a 3
+3. O resultado da operação 2+1 é igual a 1
 
 As proposições podem ser simples ou complexas.
 
@@ -21,6 +23,7 @@ As proposições podem ser simples ou complexas.
   > Para criar as proprosições complexas, nós devemos utilizar o conceito de conectivos.
   
 São exemplos de conectivos:
+
 > - NOT (não)
 > - AND (e)
 > - OR (ou)
@@ -29,12 +32,14 @@ São exemplos de conectivos:
 ## Exemplos de tabela verdade
 
 ### NOT
+
 | p | ¬p |
 | - | -- |
 | V | F  |
 | F | V  |
 
 ### AND
+
 | p | q | p ∧ q |
 | - | - | :------: |
 | V | V | V     |
@@ -43,6 +48,7 @@ São exemplos de conectivos:
 | F | F | F     |
 
 ### OR
+
 | p | q | p ∨ q |
 | - | - | :------: |
 | V | V | V     |
@@ -51,6 +57,7 @@ São exemplos de conectivos:
 | F | F | F     |
 
 ### XOR (ou exclusivo)
+
 Apenas **VERDADEIRO** quando valores diferentes
 | p | q | p ⊕ q |
 | - | - | :------: |
@@ -60,6 +67,7 @@ Apenas **VERDADEIRO** quando valores diferentes
 | F | F | F     |
 
 ### Condicional
+
 - Iguais retorna **VERDADEIRO**
 - _q_ estiver **VERDADEIRO** retorna **VERDADE**
   
@@ -71,6 +79,7 @@ Apenas **VERDADEIRO** quando valores diferentes
 | F | F | V     |
 
 ### Bicondicional
+
 - Iguais retorna **VERDADEIRO**
 
 | p | q | p ↔ q |
@@ -81,13 +90,17 @@ Apenas **VERDADEIRO** quando valores diferentes
 | F | F | V     |
 
 ## Ordem de precedência
+
 - Parênteses;
 - Negação;
 - Conjunção e disjunção na sequência (E e OU);
 - Condicionais;
 - Bicondicionais.
 
-> ### Tautologia
+### Tautologia
+
 > Independente dos valores de entrada (*p, q*) a resposta é sempre **VERDADE**
-> ### Contradição
+
+### Contradição
+
 > Independente dos valores de entrada (*p, q*) a resposta é sempre **FALSA**

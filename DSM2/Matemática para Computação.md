@@ -104,3 +104,23 @@ Apenas **VERDADEIRO** quando valores diferentes
 ### Contradição
 
 > Independente dos valores de entrada (*p, q*) a resposta é sempre **FALSA**
+
+## Tabela Resumo
+
+| Estrutura Lógica          | Verdadeiro Quando            | Falso Quando         |
+| ------------------------- | ---------------------------- | -------------------- |
+| **p ∧ q** (AND)           | Ambos são V                  | Pelo menos um é F    |
+| **p ∨ q** (OR)            | Pelo menos um é V            | Ambos são F          |
+| **p ⊕ q** (XOR)           | p e q são diferentes         | p e q são iguais     |
+| **p → q** (Condicional)   | Em todos os casos, exceto um | Quando p = V e q = F |
+| **p ↔ q** (Bicondicional) | p e q são iguais             | p e q são diferentes |
+
+## Resumo – Estruturas Lógicas
+
+### Ordem de Precedência
+
+1. Parênteses  
+2. Negação (¬)  
+3. Conjunção (AND ∧) e Disjunção (OR ∨)  
+4. Condicional (→)  
+5. Bicondicional (↔)

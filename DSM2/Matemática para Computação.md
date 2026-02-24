@@ -104,6 +104,7 @@ Verdadeiro quando os valores são diferentes.
 Falso apenas quando:
 - p = V
 - q = F
+- Ou seja, quando iguais verdadeiro, diferentes, o que vem depois da seta prevalece como verdade
 
 | p | q | p → q |
 |---|---|:-----:|
@@ -162,3 +163,22 @@ Uma proposição que às vezes é verdadeira e às vezes é falsa.
 | p ⊕ q     | São diferentes   | São iguais |
 | p → q     | Todos os casos, exceto um | p = V e q = F |
 | p ↔ q     | São iguais       | São diferentes |
+
+## Silogismo
+
+Um argumento é válido quando sua conclusão é consequencia obrigatória de suas premissas.
+Não leva em conta a realidade dos fatos.
+
+- P1: Todos os homens são peixes
+- P2: Nenhum peixe é animal
+- C: Nenhum homem é animal
+
+Obs.: Nem sempre a conclusão leva em consideração a realidade dos fatos
+
+## Falácia
+
+Um argumento é inválido quando a verdade das premissas não é suficiente para garantir a verdade da conclusão
+
+- P1: Toda criança gosta de doce.
+- P2: Fulano não é criança.
+- C: Portanto, Fulano não gosta de doce.

@@ -1,40 +1,75 @@
-# Desenvolvimento de Software Multiplataforma
+# 📚 Desenvolvimento de Software Multiplataforma
 
-Este repositório contém materiais, exercícios, projetos e anotações das disciplinas do curso de Desenvolvimento de Software Multiplataforma da Fatec.
+Este repositório contém materiais, exercícios, projetos e anotações do curso de **Desenvolvimento de Software Multiplataforma (DSM)**.
 
-## Estrutura do Repositório
-
-- **DSM1/**  
-  Pasta principal das disciplinas do primeiro semestre:
-  - **ALP/**: Algoritmos e Lógica de Programação
-  - **DD/**: Design Digital
-  - **DW1/**: Desenvolvimento Web I
-    - Exercícios, jogos em HTML, imagens e um site exemplo
-  - **ES1/**: Engenharia de Software I
-  - **MBD/**: Modelagem de Banco de Dados
-    - Modelos de entidades, registros de clientes, etc.
-  - **SORC1/**: Sistemas Operacionais e Redes de Computadores I
-  - **PI/**: Projeto Integrador
-  - **BD/**: Banco de Dados (material complementar)
-- **README.md**  
-  Este arquivo de documentação.
-
-## Exemplos de Conteúdo
-
-- Exercícios e listas de cada disciplina
-- Projetos em HTML (ex: jogo da memória, caça-palavras)
-- Slides, planos de ensino e programas de aula
-- Modelos de banco de dados e registros de clientes
-
-## Como navegar
-
-1. Escolha a disciplina na pasta `DSM1/`.
-2. Dentro de cada disciplina, acesse os materiais, exercícios ou projetos conforme necessário.
-3. Para exemplos de sites, veja a pasta `DSM1/DW1/website/`.
-
-## Contato
-
-Para dúvidas ou sugestões, entre em contato pelo e-mail institucional.
+O conteúdo está organizado por semestre e disciplina, facilitando a navegação e o estudo progressivo.
 
 ---
-Material acadêmico para fins de estudo.
+
+# 📁 Estrutura do Repositório
+📁 DSM1/ → Conteúdos do 1º semestre
+📁 DSM2/ → Conteúdos do 2º semestre
+
+
+# 🎓 DSM1 – 1º Semestre
+
+Disciplinas e conteúdos estudados:
+
+- **ALP/** → Algoritmos e Lógica de Programação  
+- **DD/** → Design Digital  
+- **DW1/** → Desenvolvimento Web I  
+- **ES1/** → Engenharia de Software I  
+- **MBD/** → Modelagem de Banco de Dados  
+- **SORC1/** → Sistemas Operacionais e Redes  
+- **PI/** → Projeto Integrador  
+- **BD/** → Banco de Dados (complementar)  
+
+---
+
+# 🎓 DSM2 – 2º Semestre
+
+Conteúdos voltados para backend, JavaScript avançado e Node.js.
+
+## 📂 Node.js + Express
+
+📁 Pasta principal:  
+https://github.com/haimonvieira/desenvolvimento-de-software-multiplataforma/tree/main/DSM2
+
+📁 Projeto Node.js com Express:  
+https://github.com/haimonvieira/desenvolvimento-de-software-multiplataforma/tree/main/DSM2/dw2-nodejs-express
+
+---
+
+## 📘 Aula 01 – Tipos de Funções em JavaScript
+
+📁 Localização:  
+https://github.com/haimonvieira/desenvolvimento-de-software-multiplataforma/tree/main/DSM2/dw2-nodejs-express/js-aula01-tipos-de-funcoes
+
+Conteúdos abordados:
+
+- Funções tradicionais
+- Function Expression
+- Arrow Functions
+- Diferenças de escopo
+- Boas práticas
+
+---
+
+# 🚀 Tecnologias Utilizadas
+
+- HTML5
+- CSS3
+- JavaScript
+- Node.js
+- Express
+- Banco de Dados (modelagem e prática)
+
+---
+
+# ▶️ Como executar projetos Node.js
+
+Se houver um `package.json` na pasta:
+
+```bash
+npm install
+npm start

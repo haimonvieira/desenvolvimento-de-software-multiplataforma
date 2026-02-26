@@ -28,30 +28,98 @@ Disciplinas e conteúdos estudados:
 
 # 🎓 DSM2 – 2º Semestre
 
-Conteúdos voltados para backend, JavaScript avançado e Node.js.
+Disciplinas e conteúdos estudados:
 
-## 📂 Node.js + Express
-
-📁 Pasta principal:  
-https://github.com/haimonvieira/desenvolvimento-de-software-multiplataforma/tree/main/DSM2
-
-📁 Projeto Node.js com Express:  
-https://github.com/haimonvieira/desenvolvimento-de-software-multiplataforma/tree/main/DSM2/dw2-nodejs-express
+- **BD2/** → Banco de Dados II (Scripts SQL, modelagem avançada)
+- **DW2/** → Desenvolvimento Web II (Node.js, Express, JavaScript avançado)
+- **ED1/** → Estrutura de Dados (Vetores, algoritmos de ordenação)
+- **MPC/** → Matemática para Computação (Lógica matemática, proposições)
+- **TPI/** → Técnica de Programação I (Programação Orientada a Objetos)
 
 ---
 
-## 📘 Aula 01 – Tipos de Funções em JavaScript
+## 📂 Desenvolvimento Web II (DW2)
+
+Conteúdos voltados para backend, JavaScript avançado e Node.js.
+
+### 📘 Aula 01 – Tipos de Funções em JavaScript
 
 📁 Localização:  
-https://github.com/haimonvieira/desenvolvimento-de-software-multiplataforma/tree/main/DSM2/dw2-nodejs-express/js-aula01-tipos-de-funcoes
+[js-aula01-tipos-de-funcoes](DSM2/DW2/dw2-nodejs-express/js-aula01-tipos-de-funcoes)
 
 Conteúdos abordados:
 
+- Variáveis (`var`, `let`, `const`)
 - Funções tradicionais
 - Function Expression
 - Arrow Functions
 - Diferenças de escopo
 - Boas práticas
+
+### 🔧 Tecnologias
+
+- **Node.js** - Interpretador de JavaScript server-side
+- **Express** - Framework web para Node.js
+- **JavaScript (ECMA Script)** - Linguagem de programação principal
+
+---
+
+## 📚 Estrutura de Dados (ED1)
+
+Estudo de estruturas de dados homogêneas e algoritmos de ordenação.
+
+### Projeto: Dança dos Algoritmos de Ordenação
+
+- **Entrega:** 23/03
+- **Formato:** Vídeo (3-5 minutos) + Relatório ABNT
+- Explicar algoritmos de ordenação através de analogias de dança
+- Implementação em C
+
+**Estruturas abordadas:**
+- Vetores (arrays)
+- Algoritmos de ordenação
+
+---
+
+## 🧮 Matemática para Computação (MPC)
+
+### Lógica Matemática
+
+Conceitos fundamentais:
+
+- **Proposição** - Frase declarativa que pode ser verdadeira (V) ou falsa (F)
+- **Proposições Simples** - Uma única ideia
+- **Proposições Complexas** - Duas ou mais ideias ligadas por conectivos
+- **Conectivos Lógicos:**
+  - ¬ → Negação (NOT)
+  - ∧ → Conjunção (AND)
+  - ∨ → Disjunção (OR)
+  - ⊕ → Ou exclusivo (XOR)
+  - → → Condicional
+  - ↔ → Bicondicional
+
+---
+
+## 💻 Técnica de Programação I (TPI)
+
+### Programação Orientada a Objetos (OO)
+
+Conceitos fundamentais:
+
+- **Objetos** - Entidades com atributos e métodos
+- **Atributos** - Características do objeto
+- **Métodos** - Ações que o objeto pode realizar
+
+#### Assinatura do Método
+
+Composta por:
+- Nome do método
+- Argumentos (parâmetros)
+- Tipo de resposta (retorno)
+
+Exemplo: `public String calcularSalario(int valor)`
+
+**Getters e Setters** - Cada atributo deve possuir seus acessadores
 
 ---
 

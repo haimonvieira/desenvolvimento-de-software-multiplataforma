@@ -10,7 +10,7 @@ void main() {
 	
 	for(int i = 0; i < 5; i++){
 		
-		printf("Insira na posicao [%d] do vetor 1\n", i);
+		printf("Insira um valor na posicao [%d] do vetor 1\n", i);
 		printf("> ");
 		scanf("%d", &vetor1[i]);
 		
@@ -35,8 +35,5 @@ void main() {
 	}
 	
 	printf("Soma dos vetores eh igual a: %d", soma);
-	
-	
-	
 	
 }

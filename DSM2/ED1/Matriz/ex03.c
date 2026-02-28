@@ -14,7 +14,9 @@ void main(){
 		
 		for(int j = 0; j < 5; j++){
 			
-			matriz[i][j] = rand() % 100;
+			printf("Insira o numero inteiro na posicao [%d][%d]", i, j);
+			printf("> ");
+			scanf("%d", &matriz[i][j]);
 			
 		}
 		
@@ -22,7 +24,8 @@ void main(){
 	
 	
 	int maior = matriz[0][0];
-	int posMaior[2];
+	int posMaiorLinha;
+	int posMaiorColuna;
 	int menor = matriz[0][0];
 	
 	for(int i = 0; i < 7; i++){
@@ -32,8 +35,8 @@ void main(){
 			if(matriz[i][j] >= maior){
 				
 				maior = matriz[i][j];
-				posMaior[0] = i;
-				posMaior[1] = j;
+				posMaiorLinha = i;
+				posMaiorColuna = j;
 				
 			}
 
@@ -42,7 +45,7 @@ void main(){
 	}
 	
 	printf("Maior numero: %d\n", maior);
-	printf("posicao: [%d][%d]\n", posMaior[0], posMaior[1]);
+	printf("posicao: [%d][%d]\n", posMaiorLinha, posMaiorColuna);
 	
 	for(int i = 0; i < 7; i++){
 		

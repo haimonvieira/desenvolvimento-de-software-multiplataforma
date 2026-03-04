@@ -182,3 +182,7 @@ Um argumento é inválido quando a verdade das premissas não é suficiente para
 - P1: Toda criança gosta de doce.
 - P2: Fulano não é criança.
 - C: Portanto, Fulano não gosta de doce.
+
+## 📅 Data: 09/02/2026
+
+Resolução exercicio Pratique 03.

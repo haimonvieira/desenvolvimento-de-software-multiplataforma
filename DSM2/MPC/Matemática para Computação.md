@@ -186,3 +186,108 @@ Um argumento é inválido quando a verdade das premissas não é suficiente para
 ## 📅 Data: 09/02/2026
 
 Resolução exercicio Pratique 03.
+
+## Data: 09/03/2026
+
+## NOTAÇÃO
+
+### Teoria dos conjuntos
+
+Um conjunto é um grupo de elementos que possuem características em comum.
+É normalmente representado por letras maiúsculas do alfabeto.
+
+**Exemplos:**
+
+A={0, 2, 4, 6, 8} -> São os numeros pares menores que 10
+B={a, e, i, o, u} -> Grupo das vogais
+C={...-1, 0, 1, 2} -> São os valores inteiros positivos e negativos
+
+### Formas de representação
+
+**A. Diagrama de Jemm**
+
+Utiliza formas geométricas (círculos) para representar o conteúdo de um
+conjunto.
+
+**Exemplo:**
+
+A={1, 2, 3, 4, 5}
+B={3, 4, 5, 6, 7}
+AB={3, 4}
+
+**B. Descrição das características**
+
+Descreve o que há de comum entre os elementos que fazem parte de um conjunto.
+
+**Exemplos:**
+
+- Y é o conjunto de estações do ano.
+- A é o conjunto dos números primos de 1 a 100.
+  
+**C. Representação por enumeração**
+
+Os elementos de um conjunto são representados em uma lista.
+
+**Exemplos:**
+
+- Y={primavera, verão, outono e inverno}
+- B={100, 102, 104, 106, 108}
+
+### Operação em conjuntos
+
+**A. Relação de pertinência**
+
+Símbolos utilizados:
+
+- ∈ -> "pertence"
+- ∉ -> "não pertence"
+Y={0, 2, 4, 6, 8}
+
+
+**B. Igualdade de conjuntos**
+
+Dois conjuntos são iguais se possuírem os mesmos elementos mesmo que em ordem diferente.
+
+A={3, 7, 9, 11}
+B={7, 9, 3, 11}
+
+A e B são iguais.
+
+**C. Relação de inclusão**
+
+Símobolos utilizados:
+⊃ -> contém
+⊂ -> está contido
+⊅ -> não contém
+⊄ -> não está contido
+
+A={1 ,2 ,3}
+B={1, 2, 3, 4, 5, 6}
+
+**D. União**
+
+É o conjunto formado por todos os elementos dos conjuntos analisados
+
+A={1, 2, 3}
+B={3, 4, 8}
+
+A ∪ B = {1, 2, 3, 4, 8}
+
+**E. Intersecção**
+
+É o conjunto formado apenas pelos elementos que estão em todos os conjuntos simultaneamente
+
+A={1, 2, 3}
+B={3, 4, 8}
+
+A ∩ B = {3}
+
+**F. Diferença**
+
+Conjunto formado apenas por elementos "exclusivos" do conjunto analisado.
+
+A={1, 2, 3}
+B={3, 4, 8}
+
+A - B = {1, 2}
+B - A = {4, 8}

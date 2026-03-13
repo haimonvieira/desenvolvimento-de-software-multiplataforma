@@ -76,24 +76,22 @@ public class Loja {
         System.out.println("Insira quantidade de itens comprados");
         setQuantidadeDeItensComprado(scanner.nextInt());
         
+        System.out.println("Insira razao social");
+        setRazaoSocial(scanner.nextLine());
         
     }
     
     public String mostrarDadosLoja(){
         
-        return  "==========DADOS DA LOJA=========" +
-                "\nRazao social: " + getRazaoSocial() + 
-                "\nCPF: " + getCpfCliente() +
-                "\nValor da compra: " + getValorCompra() +
-                "\nQuantidade de itens: " + getQuantidadeDeItensComprado() +
-                "\nValor total: " + getValorTotalCompra()
-                ;
+        return "Razao social: " + getRazaoSocial() + 
+                "\nCPF: " + getCpfCliente();
         
     }
     
     public double calcularCompraLoja(){
         
-        return getValorCompra() * getQuantidadeDeItensComprado();
+        setValorTotalCompra(getValorCompra() * getQuantidadeDeItensComprado());
+        return getValorTotalCompra();
         
     }
     

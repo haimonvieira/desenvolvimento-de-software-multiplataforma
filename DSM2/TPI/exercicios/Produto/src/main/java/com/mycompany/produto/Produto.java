@@ -1,47 +1,68 @@
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-
 package com.mycompany.produto;
 
-import java.util.Scanner;
+import javax.swing.JOptionPane;
 
 /**
  *
  * @author fatec-dsm2
  */
 public class Produto {
+    
+    private String nome;
+    private int quantidade;
+    private double valor;
+    private double total;
 
-    public static void main(String[] args) {
+    public String getNome() {
+        return nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+    public int getQuantidade() {
+        return quantidade;
+    }
+
+    public void setQuantidade(int quantidade) {
+        this.quantidade = quantidade;
+    }
+
+    public double getValor() {
+        return valor;
+    }
+
+    public void setValor(double valor) {
+        this.valor = valor;
+    }
+
+    public double getTotal() {
+        return total;
+    }
+
+    public void setTotal(double total) {
+        this.total = total;
+    }
+    
+    public void cadastrarProduto(int quantidade){
         
-        Scanner scanner = new Scanner(System.in);
-        String descricao;
-        int quantidadeComprada;
-        double precoUnitario;
-        
-        System.out.println("Descricao");
-        System.out.print("> ");
-        descricao = scanner.nextLine();
-        System.out.println("");
-        
-        System.out.println("Quantidade comprada");
-        System.out.print("> ");
-        quantidadeComprada = scanner.nextInt();
-        System.out.println("");
-        
-        System.out.println("Valor");
-        System.out.print("> ");
-        precoUnitario = scanner.nextDouble();
-        System.out.println("");
-        
-        double total;
-        
-        total = quantidadeComprada * precoUnitario;
-        
-        System.out.println("Produto: " + descricao);
-        System.out.println("Total a pagar: R$ " + total);
-              
-        
+        setNome(JOptionPane.showInputDialog( "Insira o nome"));
+        setQuantidade(quantidade);
+        setValor(Double.parseDouble(JOptionPane.showInputDialog("Insira o valor")));
         
     }
+    
+    public double calcularTotal(){
+        
+        setTotal(getValor()* getQuantidade());
+        return getTotal();
+        
+    }
+    
+    
 }

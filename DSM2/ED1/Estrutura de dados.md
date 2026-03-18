@@ -98,3 +98,106 @@ c. Inserção com laço de repetição
 
   }
 ```
+
+
+17/03/2026
+
+## Algoritmos de Orenação
+
+A ordenação é uma operação que organiza um conjunto de elementos em uma determinada ordem (criterio).
+
+Gastar a menor quantidade de recurso para realizar a tarefa e sendo rapido
+
+### Exemplos da utilização no dia a dia:
+
+- Agenda de contato (ordem alfabetica)
+- Classificacao de um atleta em uma corrida (ordem numerica)
+
+A ordenacao pode ser realizada de forma crescente ou decrescente. Além disso pode ser utilizada em vetores, matriz ou estruturas dinamicas.
+Na escolha de um algoritmo de ordenacao devem ser levados em consideracao principalmente o tempo gasto no processamento e o uso economico dos recursos.
+  
+Os algorimtos de ordenacao são classificados em: 
+
+- Recursivos
+  - Quebrar em tarefas pequenas
+- Não recursivos
+
+### Algoritmo de ordenacao nao recursivo
+
+Os 3 principais sao o BubbleSort, IntertionSort e SelectionSort
+
+## BubbleSort
+
+  - É conhecido como metodo das trocas sucessivas, ou seja, os vizinhos são comparados e quando atendem o criterio da ordenacao os valores mudam de posicao.
+Esse processo desejado para a ultima posicao do vetor e o processo se repete ate que todo vetor esteja totalmente ordenado
+
+**Exemplo: Ordenacao crescente**
+
+### 1a Interacao
+
+| Passo | Vetor                          | Ação                    |
+|------|--------------------------------|-------------------------|
+| Inicial | [7, 4, 5, 9, 8]               | -                       |
+| 1    | [4, 7, 5, 9, 8]                | Compara 7 com 4 → troca |
+| 2    | [4, 5, 7, 9, 8]                | Compara 7 com 5 → troca |
+| 3    | [4, 5, 7, 9, 8]                | Compara 7 com 9 → não troca |
+| 4    | [4, 5, 7, 9, 8]                | Compara 9 com 8         |
+| 5    | [4, 5, 7, 8, 9]                | Troca 9 com 8           |
+| Final| [4, 5, 7, 8, 9]                | Ordenado                |
+
+### 2a Interacao
+
+| Iteração | Passo | Vetor                          | Ação                          |
+|----------|------|--------------------------------|--------------------------------|
+| 2ª       | 1    | [4, 5, 7, 8, 9]                | Compara 4 com 5               |
+| 2ª       | 2    | [4, 5, 7, 8, 9]                | Compara 5 com 7               |
+| 2ª       | 3    | [4, 5, 7, 8, 9]                | Compara 7 com 8               |
+| 2ª       | 4    | [4, 5, 7, 8, 9]                | Elemento 8 já está correto    |
+
+### 3a Interacao
+
+| Iteração | Passo | Vetor                          | Ação                          |
+| 3ª       | 1    | [4, 5, 7, 8, 9]                | Compara 4 com 5               |
+| 3ª       | 2    | [4, 5, 7, 8, 9]                | Compara 5 com 7               |
+| 3ª       | 3    | [4, 5, 7, 8, 9]                | Elemento 7 já está correto    |
+
+### 4a Interacao
+
+| Iteração | Passo | Vetor                          | Ação                          |
+|----------|------|--------------------------------|--------------------------------|
+| 4ª       | 1    | [4, 5, 7, 8, 9]                | Compara 4 com 5               |
+| 4ª       | 2    | [4, 5, 7, 8, 9]                | Elemento 5 já está correto    |
+
+### 5a Interacao
+
+| Iteração | Passo | Vetor                          | Ação                          |
+|----------|------|--------------------------------|--------------------------------|
+| 5ª       | 1    | [4, 5, 7, 8, 9]                | Elemento 4 já está correto    |
+
+**Observacao: É um algoritmo muito lento devido a quantidade de comparacoes e mesmo o vetor ja esteja ordenaod, ele ira realizar todas as interacoes. Porém, é um algoritmo simples de implementar e entender.**
+
+## InsertionSort
+
+É conhecido como metodo da insercao. Cadaelemento ao ser inserido exige que seja feita uma busca pelo local (posicao) correta.
+Assim todos os elementos que estao apos o local sao movidos uma posicao  para frente liberando a posicao para que o elemento seja inserido.
+
+**Exemplo: Ordenacao crescente**
+
+| Passo | Vetor                          | Ação                                                                 |
+|------|--------------------------------|----------------------------------------------------------------------|
+| 1    | [5, 3, 2, 1, 90, 6]            | Inserir 3 → posição 0 (todos deslocam para direita)                 |
+| 2    | [3, 5, 2, 1, 90, 6]            | Inserir 2 → posição 0 (todos deslocam para direita)                 |
+| 3    | [2, 3, 5, 1, 90, 6]            | Inserir 1 → posição 0 (todos deslocam para direita)                 |
+
+
+| Passo | Vetor                          | Ação                                                                 |
+|------|--------------------------------|----------------------------------------------------------------------|
+| 1    | [1, 2, 3, 5, 90, 6]            | Inserir 90 → posição 0 (todos deslocam para direita)                |
+| 2    | [1, 2, 3, 5, 90, 6]            | Inserir 90 → posição 4 (sem deslocamento)                           |
+| 3    | [1, 2, 3, 5, 6, 90]            | Inserir 6 → posição 4 (90 desloca para direita)                     |
+
+
+O insertionSort tende a gastar uma quantidade de operacao menor que o BubbleSort
+
+- Melhor caso: Vetor ordenado
+- Pior caso: vetor em ordem contraria

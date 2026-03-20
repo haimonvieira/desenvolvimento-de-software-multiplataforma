@@ -201,3 +201,38 @@ O insertionSort tende a gastar uma quantidade de operacao menor que o BubbleSort
 
 - Melhor caso: Vetor ordenado
 - Pior caso: vetor em ordem contraria
+
+## Selection Sort
+
+É baseado no processo da seleção natural. A cada iteração é selecionado o melhor elemento e colocado na primeira posição disponível.
+O elemento que estava naquela posição é trocado para a posição do melhor elemento.
+
+**Exemplo: Ordem crescente**
+
+[7, 4, 5, 9, 8, 2, 1]
+
+1a Iteracao: Busca irá econtrar o menor elemento (1) e ele devera ser alocado na posição 0 e o elemento 7 vai para a posição 6.
+
+[1, 4, 5, 9, 8, 2, 7]
+
+2a iteração: Agora a busca é realizada da posição 1 a 6. O menor elemento é o 2 e ele trocará de lugar com o 4.
+
+[1, 2, 5, 9, 8, 4, 7]
+
+3a iteração: A busca é realizada da posição 2 a 6. O menor elemento é o 4 e ele trocara de lugar com o 5
+
+[1, 2, 4, 9, 8, 5, 7]
+
+4a iteracao: A busca é realizada da posicao 3 a 6. O menor elemento é o 5 e ele trocara de lugar com o 9.
+
+[1, 2, 4, 5, 8, 9, 7]
+
+5a iteracao: A busca é realizada da posicao 4 a 6. O menor elemento é o 7 e ele trocara de lugar com o 8.
+
+[1, 2, 4, 5, 7, 9, 8]
+
+6a iteracao: A busca é realizada da posicao 5 a 6. O menor elemento é o 8 e ele trocara de lugar com o 9.
+
+[1, 2, 4, 5, 7, 8, 9]
+
+O elemento 9 esta no lugar correto e a ordenacao sera encerrada

@@ -291,3 +291,47 @@ B={3, 4, 8}
 
 A - B = {1, 2}
 B - A = {4, 8}
+
+## Relações
+
+Uma relação é representada pela ligação entre elementos de conjuntos. Pode ser utilizada para representar:
+
+### 1 - Determinar quais cidades possuem uma estrada entre si:
+A = {Registro, Cajati, Sete Barras, Jacupiranga}
+B = {Registro, Cajati, Sete Barras, Jacupiranga}
+
+Registro conecta com Registro, Cajati, Sete Barras e Jacupiranga
+
+### Definição
+
+1. Par ordenado: é uma lista de objetos "a" e "b" em uma ordem estabelecida, com "a" aparecendo primeiro e "b" em segundo
+
+Ex: 
+(a1, b1)
+(a2, b2)
+
+Observação: Dois pares ordenados são iguais se a1 = a2 e b1 = b2
+
+2. Produto Cartesiano: Se A e B são dois conjuntos não-vazios, define-se o produto cartesiano AxB como o conjunto de todos os pares ordenados (a, b).
+
+Ex.: 
+A = {1, 2, 3}
+B = {r, s} o produto cartesiano AxB será representado por { (1,r), (1, s), (2,r), (2, s), (3,r), (3, s) }
+
+### Exercicios 01
+
+Considere os conjuntos 5 = {masculino, feminino} e E = {ginasio, faculdade, medio, pos-graduacao}. Represente o produto cartesiano S x E.
+
+
+### Exercicios 02
+
+Considere os conjuntos A = B: {1, 2, 3, 4, 5} e a relação binária R = { (a, b), se a < 6> }. Represente o conjunto gerado pela relacao binaria R
+
+### Exercicios 03
+
+Sejam os conjuntos A e B, uma relação binaria de A em B sera sempre um subconjunto de A x B
+
+Ex.: 
+A = {1, 2, 3} e B = {r, s}
+A x B = { (1, r), (2, s), (3, r) }
+aRb = { (1, r), (2, s), (3, r) }

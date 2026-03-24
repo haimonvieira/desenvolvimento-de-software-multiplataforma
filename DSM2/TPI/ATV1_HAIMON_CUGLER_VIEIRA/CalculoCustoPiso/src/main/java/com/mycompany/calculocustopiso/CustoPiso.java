@@ -73,7 +73,7 @@ public class CustoPiso {
 
     public void mostrarValores() {
 
-        JOptionPane.showConfirmDialog(null,
+        JOptionPane.showInputDialog(null,
                 "Comprimento: " + getComprimentoComodo()
                 + "\nLargura: " + getLarguraComodo()
                 + "\nPreco por area: R$ " + getPrecoPorArea()

@@ -76,8 +76,6 @@ public class Loja {
         System.out.println("Insira quantidade de itens comprados");
         setQuantidadeDeItensComprado(scanner.nextInt());
         
-        System.out.println("Insira razao social");
-        setRazaoSocial(scanner.nextLine());
         
     }
     

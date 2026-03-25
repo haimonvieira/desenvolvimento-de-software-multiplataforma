@@ -1,0 +1,99 @@
+// O arquivo index.js é o arquivo principal do projeto
+
+// Importando o MÓDULOS do Express
+const express = require("express");
+
+// Criando uma instância do Express
+const app = express();
+
+// Configurando o EJS
+app.set('view engine','ejs')
+
+//Definindo a pasta 'public' como diretorio para os arquivos estaticos
+app.use(express.static('public'));
+
+// Criando a rota principal do site ("/")
+app.get("/",(req,res)=>{
+    // res.send("<h1>Bem-Vindo ao meu primeiro site em Node.js e Express.js!</h1>")
+    res.render("index")
+});
+
+// Criando a rota de perfil do usuário
+app.get("/perfil", (req,res)=>{
+    // res.send("<h2>Bem-Vindo ao seu perfil!</h2>")
+    res.render("perfil")
+})
+
+app.get("/clientes",(req,res) =>{
+  const listaClientes = ['Maria','João','Kevin','Haimon','Jociele'];
+  res.render("clientes",{
+    listaClientes : listaClientes,
+  });
+});
+
+app.get("/clientes/:lista", (req,res)=>{
+    const lista = req.params.lista;
+    res.render("detalhesclientes",{
+      lista: lista,
+    });
+});
+
+// Rota de Produtos
+app.get("/produtos",(req,res)=>{
+  const listaProdutos = ['Computador','Celular','Tablet','Notebook'];
+  res.render("produtos",{
+    // Enviando variáveis para a página HTML
+    listaProdutos : listaProdutos
+  })
+})
+
+// Rota de Produtos - Com Parâmetro
+app.get("/produtos/:produto",(req,res)=>{
+        const produto = req.params.produto;
+        res.render("detalhesProduto",{
+          produto: produto,
+        });
+})
+
+app.get("/servicos",(req,res)=>{
+
+  const servicos = [
+
+    {
+      servico: "Desenvolvimento de Websites",
+      descricao: "Criação de sites com Node.js e integração a banco de dados",
+      preco: 1499.90
+    },
+    {
+      servico: "Auditoria de UX e UI",
+      descricao: "Avaliação da usabilidade de sistemas com sugestoes de melhoria",
+      preco: 1699.90
+    },
+    {
+      servico: "Infraestrutura em Nuvem",
+      descricao: "Configuração de servidores e hospedagem de aplicativos",
+      preco: 2900
+    },
+    {
+      servico: "Chatbot com IA",
+      descricao: "Desenvolvimento de chatbot para tendimento automáticpo",
+      preco: 3000
+    }
+
+  ];
+
+    res.render("servicos", {
+      //Enviando o array de objetos para a pagina
+      servicos: servicos
+    })
+})
+
+// Iniciando o servidor na porta 8080
+const port = 8080;
+app.listen(port, (error) => {
+  if (error) {
+    console.log("Ocorreu um erro!"+error);
+  } else {
+    console.log(`Servidor inciado com sucesso no endereço: http://localhost:${port}`);
+  }
+});  

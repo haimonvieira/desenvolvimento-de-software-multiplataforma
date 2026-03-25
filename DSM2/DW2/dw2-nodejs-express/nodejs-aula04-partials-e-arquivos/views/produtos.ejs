@@ -1,0 +1,19 @@
+<%- include('partials/header.ejs')%>
+        <%- include('partials/navbar.ejs')%>
+
+    <h1>Bem-Vindo a tela produtos</h1>
+    <hr>
+    <!-- Exibindo uma variável JavaScript dentro do HTML-->
+
+    <!-- Comentário no EJS <%# %> -->
+    
+
+    <!-- Percorrendo o vetor atrevés do forEach -->
+    <% listaProdutos.forEach(function(produto){%>
+        <p> 
+            <a class="btn btn-outline-secondary" href="./produtos/<%= produto %>"><%= produto %></a>
+            </p>
+    <%})%>
+
+    <p><a class="btn btn-primary" href="/">Voltar para a página incial</a></p>
+<%- include('partials/footer.ejs')%>

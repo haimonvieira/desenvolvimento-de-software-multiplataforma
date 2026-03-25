@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tela clientes</title>
+</head>
+<body>
+    <h1>Bem-Vindo a tela de clientes</h1>
+    <hr>
+    <% listaClientes.forEach(function(lista){%>
+        <p><a href="./clientes/<%=lista%>"><%= lista%></a></p>
+    <%})%>
+    <p><a href="/">Voltar para a página incial</a></p>
+</body>
+</html>

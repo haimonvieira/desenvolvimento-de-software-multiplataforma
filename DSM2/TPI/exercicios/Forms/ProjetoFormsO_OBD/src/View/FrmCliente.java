@@ -240,8 +240,8 @@ public class FrmCliente extends javax.swing.JFrame {
         //PASSE AQUI OS VALORES DAS CAIXAS DE TEXTO PARA A CLASSE
         
         cliente.setCodigo(Integer.parseInt(txtCodigo.getText()));
-        cliente.setEmail(txtEmail.getText());
         cliente.setNome(txtNome.getText());
+        cliente.setEmail(txtEmail.getText());
         cliente.setTelefone(txtTelefone.getText());
         
         //Chamar o metodo cadastrar
@@ -257,8 +257,8 @@ public class FrmCliente extends javax.swing.JFrame {
         
         try {
             do {
-                modelo.addRow(new String[]{tabela.getString(1), tabela.getString(2),
-                    tabela.getString(3), tabela.getString(4), tabela.getString(5)});
+                modelo.addRow(new String[]{tabela.getString(2), tabela.getString(3),
+                    tabela.getString(4), tabela.getString(5)});
             } while (tabela.next());
         } catch (SQLException erro) {
             JOptionPane.showMessageDialog(null, "Erro ao preencher tabela" + erro);

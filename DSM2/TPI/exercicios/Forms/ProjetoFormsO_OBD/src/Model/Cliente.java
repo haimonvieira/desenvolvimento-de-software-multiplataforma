@@ -62,6 +62,8 @@ public class Cliente {
         + getTelefone() + "', '" 
         + getEmail() + "')";
         
+        System.out.println(sql);
+        
         conncliente.executeSQL(sql);
         JOptionPane.showMessageDialog(null, 
                 "Cadastrado com sucesso!");

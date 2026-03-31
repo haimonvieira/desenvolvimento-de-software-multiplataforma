@@ -9,3 +9,5 @@ create table clientes
     telefone varchar(20),
     email varchar(150)
 );
+
+select * from clientes;

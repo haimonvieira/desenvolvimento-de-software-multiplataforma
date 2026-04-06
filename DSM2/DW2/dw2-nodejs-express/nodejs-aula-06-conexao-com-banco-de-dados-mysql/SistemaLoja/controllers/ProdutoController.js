@@ -7,6 +7,9 @@ import express from "express";
 //Método do Express usado para criar rotas da aplicação
 const router = express.Router();
 
+//Importando Produto
+import Produto from "../models/Produto.js";
+
 // ROTA PRODUTOS
 router.get("/produtos",function(req,res){
     const produtos = [

@@ -38,7 +38,7 @@ public class FrmUsuario extends javax.swing.JFrame {
         modelo.setNumRows(0);
 
         try {
-            while (tabela.next()) {
+            while(tabela.next()) {
                 modelo.addRow(new String[]{tabela.getString(2),
                     tabela.getString(3), tabela.getString(4),
                     tabela.getString(5)});

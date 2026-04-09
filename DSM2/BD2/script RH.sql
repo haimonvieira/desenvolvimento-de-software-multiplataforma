@@ -127,5 +127,11 @@ begin
 end$$
 delimiter ;
 
+#Usando a funcao
+select 
+	concat(nome, ' ', sobrenome) as 'funcionario',
+    format(salario, 2) as 'salario',
+    format(fn_calcular_bonus(salario), 2) as 'bonus'
+from funcionarios where ativo;
 
 

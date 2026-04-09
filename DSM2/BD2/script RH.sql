@@ -52,8 +52,80 @@ insert into funcionarios (nome,sobrenome,email,cargo,salario,id_depto,data_admis
 ("Larissa", "Ferreira", 'larissa.ferreira@emp.com', "Dev Backend", 8200.00,1,"2022-02-14");
 
 #Exemplo de função de texto
+
+#Exemplo 1 - Nome completo em maisuculas e email em minusculas
 select upper(concat(nome, " ", sobrenome)) as "nome completo", lower(email) as 'email padronizado'
 from funcionarios;
+
+#Exemplo 2 - Extrair usuario e dominio do email
+select email, left(email, locate('@', email)-1) as 'usuario', substring(email, locate('@', email)+1) as dominio
+from funcionarios;
+
+#Exemplo 3 - Mascarar parte do email por privacidade
+select nome, 
+concat(
+	left(email, 3), 
+	rpad('*', length(left(email, locate('@', email)-1))-3, '*'),
+	substring(email, locate('@', email))
+) as 'email mascarado' 
+from funcionarios;
+
+#Criando uma function de text
+#Vamos criar uma função que retorna nome formatado como 'Sobrenome, Nome':
+
+delimiter $$
+create function fn_nome_formal(p_nome varchar(50), p_sobrenome varchar(50))
+returns varchar(110)
+deterministic
+begin
+	return concat(upper(p_sobrenome), ', ', p_nome);
+end$$
+delimiter ;
+
+#Usando a função criada
+select fn_nome_formal(nome, sobrenome) as 'nome formal', cargo from funcionarios;
+
+#Exemplos práticos com salários
+
+#Exemplo 1 - Calcular salário com bonus de 15% e INSS de 11%, arredondado:
+select
+	concat(nome, ' ', sobrenome) as 'funcionario',
+    format(salario, 2) as 'salario bruto',
+    format(round(salario * 1.15, 2), 2) as 'salario com bonus 15%',
+    format(round(salario * 0.11, 2), 2) as 'desconto 11% INSS',
+    format(round(salario * 1.15 - salario * 0.11, 2), 2) as 'salario liquido'
+from funcionarios where ativo
+order by salario desc;
+
+#Exemplo 2 - Classificar salário em faixas usando MOD e divisão:
+select
+	nome, salario,
+    floor(salario / 1000) as 'faixa mil',
+    mod(salario, 1000) as 'faixa centena',
+    ceil(salario / 1000) * 1000 as 'proximo a milhar'
+from funcionarios where ativo
+order by salario desc;
+
+#Criando uma function numérica
+#calcula o bonus progressivo baseado na faixa salarial:
+
+delimiter $$
+create function fn_calcular_bonus(p_salario decimal(10, 2))
+returns decimal(10, 2)
+deterministic
+begin
+	declare valor_percentual decimal(5, 2);
+    
+    if p_salario <= 5000 then
+		set valor_percentual = 0.20; # 20% de bonus para salario ate 5000
+	elseif p_salario <= 8000 then
+		set valor_percentual = 0.15; # 15% de bonus para salario de 5000 ate 8000
+	else
+		set valor_percentual = 0.10; # 10% de bonus para salario acima de 8000
+	end if;
+    return round(p_salario * valor_percentual, 2);
+end$$
+delimiter ;
 
 
 

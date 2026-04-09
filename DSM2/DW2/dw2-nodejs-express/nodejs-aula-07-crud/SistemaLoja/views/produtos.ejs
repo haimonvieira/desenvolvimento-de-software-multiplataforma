@@ -44,6 +44,7 @@
                             <th>Nome:</th>
                             <th>Preço:</th>
                             <th>Categoria:</th>
+                            <th colspan="2" style="text-align: center;">Ações</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -53,6 +54,11 @@
                             <td><%= produto.nome %></td>
                             <td><%= produto.preco.toLocaleString('pt-br', {style: 'currency', currency: 'BRL'}) %></td>
                             <td><%= produto.categoria %></td>
+                            <td>
+                                <a href="/produtos/excluir/<%= produto.id%>">
+                                    <button onclick="return confirm('Tem certeza que deseja excluir o produto <%= produto.nome%>?')" class="btn btn-danger">Excluir</button>
+                                </a>
+                            </td>
                         </tr>
                         <% }) %>
                     </tbody>

@@ -51,5 +51,20 @@ router.post('/produtos/cadastrar', (req, res) => {
 
 });
 
+router.get('/produtos/excluir/:id', (req, res) => {
+
+    const id = req.params.id;
+    Produto.destroy({
+        where: {
+            id: id
+        }
+    }).then(() =>{
+        res.redirect('/produtos');
+    }).catch(error => {
+        console.log('Erro ao excluir produto: ' + error);
+    });
+
+});
+
 
 export default router;

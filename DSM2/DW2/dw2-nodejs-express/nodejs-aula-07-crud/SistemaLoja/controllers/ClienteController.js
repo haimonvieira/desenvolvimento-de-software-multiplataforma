@@ -71,6 +71,30 @@ router.post('/clientes/cadastrar', (req, res) => {
         console.log("Erro ao cadastrar o cliente: " + error);
     });
 
-})
+});
 
+//Rota de exclusão de cliente
+router.get('/clientes/excluir/:id', (req, res) => {
+    //Capturando parametro da rota
+    const id = req.params.id;
+    //Enviando o id do cliente para apagar no banco de dados
+    Cliente.destroy({
+
+        where: {
+            //banco: parametro
+            id: id
+        }
+
+    }).then(() => {
+
+        res.redirect('/clientes');
+
+    }).catch(error => {
+
+        console.log("Erro ao deletar cliente: " + error);
+
+    })
+});
+
+//Exportando modulo para usar em outro arquivo
 export default router;

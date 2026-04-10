@@ -12,12 +12,12 @@ import javax.swing.JOptionPane;
  *
  * @author fatec-dsm2
  */
-public class Produto {
+public class Prefeitura {
     
     Conexao conexao = new Conexao();
     private int codigo;
-    private String nomeProduto;
-    private String descricao;
+    private String nomePrefeitura;
+    private String cidade;
 
     public int getCodigo() {
         return codigo;
@@ -27,55 +27,56 @@ public class Produto {
         this.codigo = codigo;
     }
 
-    public String getNomeProduto() {
-        return nomeProduto;
+    public String getNomePrefeitura() {
+        return nomePrefeitura;
     }
 
-    public void setNomeProduto(String nomeProduto) {
-        this.nomeProduto = nomeProduto;
+    public void setNomePrefeitura(String nomePrefeitura) {
+        this.nomePrefeitura = nomePrefeitura;
     }
 
-    public String getDescricao() {
-        return descricao;
+    public String getCidade() {
+        return cidade;
     }
 
-    public void setDescricao(String descricao) {
-        this.descricao = descricao;
+    public void setCidade(String cidade) {
+        this.cidade = cidade;
     }
     
-    public void cadastrarProduto() {
+    public void cadastrarPrefeitura() {
         String sql;
-        sql = "insert into produtos(codigo, nome, descricao)values" + "( "
-                + "" + getCodigo() + " ,'" + getNomeProduto()+ "' ,'" + getDescricao()
+        sql = "insert into prefeituras(codigo, nome, cidade)values" + "( "
+                + "" + getCodigo() + " ,'" + getNomePrefeitura()+ "' ,'" + getCidade()
                 + "')";
         conexao.executeSQL(sql);
+        System.out.println(sql);
         JOptionPane.showMessageDialog(null, "Gravado com Sucesso...");
     }
 
-    public void excluirProduto() {
+    public void excluirPrefeitura() {
         String sql;
-        sql = "Delete FROM produtos WHERE codigo=" + getCodigo() + "";
+        sql = "delete FROM prefeituras WHERE codigo=" + getCodigo() + "";
         conexao.executeSQL(sql);
         JOptionPane.showMessageDialog(null,
                 "Registro Excluido com sucesso...");
 
     }
 
-    public void alterarProduto() {
+    public void alterarPrefeitura() {
         String sql;
-        sql = "UPDATE produtos set nome='" + getNomeProduto()+ "' , descricao= '" 
-                + getDescricao()+ "'" + " WHERE codigo='" + this.getCodigo() + "' ";
+        sql = "update prefeituras set nome='" + getNomePrefeitura()+ "' , cidade= '" 
+                + getCidade() + "'" + " WHERE codigo='" + this.getCodigo() + "' ";
 
         conexao.executeSQL(sql);
         JOptionPane.showMessageDialog(null,
-                "Registro Alterado com sucesso...");
+                "Registro Alterado com sucesso!");
     }
 
-    public ResultSet consultarProdutos() {
+    public ResultSet listarPrefeituras() {
         ResultSet tabela;
         tabela = null;
 
-        String sql = "Select * from produtos";
+        String sql = "select * from prefeituras";
         tabela = conexao.RetornarResultset(sql);
         return tabela;
     }

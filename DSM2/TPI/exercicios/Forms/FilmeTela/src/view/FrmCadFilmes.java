@@ -8,23 +8,23 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
-import model.Produto;
+import model.Filme;
 
 /**
  *
  * @author fatec-dsm2
  */
-public class FrmProduto extends javax.swing.JFrame {
+public class FrmCadFilmes extends javax.swing.JFrame {
 
     /**
      * Creates new form FrmProduto
      */
-    public FrmProduto() {
+    public FrmCadFilmes() {
         initComponents();
         consultar();
     }
 
-    Produto produto = new Produto();
+    Filme filme = new Filme();
 
     public void consultar() {
 
@@ -32,9 +32,9 @@ public class FrmProduto extends javax.swing.JFrame {
         tabela = null;
 
         //CHAMAR O MÉTODO CONSULTAR
-        tabela = produto.consultarProdutos();
+        tabela = filme.listarFilmes();
 
-        DefaultTableModel modelo = (DefaultTableModel) jtbTabelaProduto.getModel();
+        DefaultTableModel modelo = (DefaultTableModel) jtbTabelaFilme.getModel();
         modelo.setNumRows(0);
 
         try {
@@ -42,7 +42,9 @@ public class FrmProduto extends javax.swing.JFrame {
                 modelo.addRow(new String[]{
                     tabela.getString(1),
                     tabela.getString(2),
-                    tabela.getString(3)
+                    tabela.getString(3),
+                    tabela.getString(4),
+                    tabela.getString(5)
                 }
                 );
             }
@@ -65,13 +67,16 @@ public class FrmProduto extends javax.swing.JFrame {
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         txtCodigo = new javax.swing.JTextField();
-        txtNomeProduto = new javax.swing.JTextField();
+        txtTitulo = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        txtaDescricao = new javax.swing.JTextArea();
+        txtGenero = new javax.swing.JTextField();
+        jLabel4 = new javax.swing.JLabel();
+        txtProdutora = new javax.swing.JTextField();
+        jLabel5 = new javax.swing.JLabel();
+        txtDataCompra = new javax.swing.JTextField();
         jScrollPane2 = new javax.swing.JScrollPane();
-        jtbTabelaProduto = new javax.swing.JTable();
+        jtbTabelaFilme = new javax.swing.JTable();
         btnSalvar = new javax.swing.JButton();
         btnLimpar = new javax.swing.JButton();
         btnSair = new javax.swing.JButton();
@@ -92,23 +97,45 @@ public class FrmProduto extends javax.swing.JFrame {
             }
         });
 
-        txtNomeProduto.addActionListener(new java.awt.event.ActionListener() {
+        txtTitulo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtNomeProdutoActionPerformed(evt);
+                txtTituloActionPerformed(evt);
             }
         });
 
         jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel2.setForeground(new java.awt.Color(0, 0, 0));
-        jLabel2.setText("Nome do produto");
+        jLabel2.setText("Título");
 
         jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel3.setForeground(new java.awt.Color(0, 0, 0));
-        jLabel3.setText("Descrição");
+        jLabel3.setText("Genero");
 
-        txtaDescricao.setColumns(20);
-        txtaDescricao.setRows(5);
-        jScrollPane1.setViewportView(txtaDescricao);
+        txtGenero.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtGeneroActionPerformed(evt);
+            }
+        });
+
+        jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        jLabel4.setForeground(new java.awt.Color(0, 0, 0));
+        jLabel4.setText("Produtora");
+
+        txtProdutora.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtProdutoraActionPerformed(evt);
+            }
+        });
+
+        jLabel5.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        jLabel5.setForeground(new java.awt.Color(0, 0, 0));
+        jLabel5.setText("Data da compra");
+
+        txtDataCompra.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtDataCompraActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -116,62 +143,71 @@ public class FrmProduto extends javax.swing.JFrame {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel2)
-                .addGap(18, 18, 18)
-                .addComponent(txtNomeProduto, javax.swing.GroupLayout.PREFERRED_SIZE, 159, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel2)
+                    .addComponent(jLabel3)
+                    .addComponent(jLabel4)
+                    .addComponent(jLabel5))
+                .addGap(39, 39, 39)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(txtCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, 159, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtTitulo, javax.swing.GroupLayout.PREFERRED_SIZE, 159, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtGenero, javax.swing.GroupLayout.PREFERRED_SIZE, 159, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtProdutora, javax.swing.GroupLayout.PREFERRED_SIZE, 159, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtDataCompra, javax.swing.GroupLayout.PREFERRED_SIZE, 159, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(596, Short.MAX_VALUE))
             .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(jPanel1Layout.createSequentialGroup()
                     .addContainerGap()
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(jPanel1Layout.createSequentialGroup()
-                            .addComponent(jLabel1)
-                            .addGap(79, 79, 79)
-                            .addComponent(txtCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, 159, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGroup(jPanel1Layout.createSequentialGroup()
-                            .addComponent(jLabel3)
-                            .addGap(63, 63, 63)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addContainerGap(520, Short.MAX_VALUE)))
+                    .addComponent(jLabel1)
+                    .addContainerGap(838, Short.MAX_VALUE)))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(63, 63, 63)
+                .addContainerGap()
+                .addComponent(txtCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(35, 35, 35)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
-                    .addComponent(txtNomeProduto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(192, Short.MAX_VALUE))
+                    .addComponent(txtTitulo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(28, 28, 28)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtGenero, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel3))
+                .addGap(28, 28, 28)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtProdutora, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel4))
+                .addGap(28, 28, 28)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtDataCompra, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel5))
+                .addContainerGap(134, Short.MAX_VALUE))
             .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(jPanel1Layout.createSequentialGroup()
                     .addContainerGap()
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jLabel1)
-                        .addComponent(txtCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGap(87, 87, 87)
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(jLabel3)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addContainerGap(72, Short.MAX_VALUE)))
+                    .addComponent(jLabel1)
+                    .addContainerGap(347, Short.MAX_VALUE)))
         );
 
-        jtbTabelaProduto.setModel(new javax.swing.table.DefaultTableModel(
+        jtbTabelaFilme.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null},
-                {null, null, null},
-                {null, null, null},
-                {null, null, null}
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null}
             },
             new String [] {
-                "Código", "Nome produto", "Descrição"
+                "Código", "Título", "Genero", "Produtora", "Data da compra"
             }
         ));
-        jtbTabelaProduto.addMouseListener(new java.awt.event.MouseAdapter() {
+        jtbTabelaFilme.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jtbTabelaProdutoMouseClicked(evt);
+                jtbTabelaFilmeMouseClicked(evt);
             }
         });
-        jScrollPane2.setViewportView(jtbTabelaProduto);
+        jScrollPane2.setViewportView(jtbTabelaFilme);
 
         btnSalvar.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         btnSalvar.setText("Salvar");
@@ -221,12 +257,10 @@ public class FrmProduto extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jScrollPane2))
+                .addComponent(jScrollPane2)
                 .addContainerGap())
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap(219, Short.MAX_VALUE)
+                .addContainerGap(231, Short.MAX_VALUE)
                 .addComponent(btnSalvar)
                 .addGap(35, 35, 35)
                 .addComponent(btnAlterar)
@@ -237,27 +271,28 @@ public class FrmProduto extends javax.swing.JFrame {
                 .addGap(113, 113, 113)
                 .addComponent(btnSair, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(19, 19, 19))
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(36, 36, 36)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 275, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(43, 43, 43)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(btnSalvar, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(btnAlterar, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(btnExcluir, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(btnLimpar, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 47, Short.MAX_VALUE)
-                        .addComponent(btnSair, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(14, 14, 14))))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 16, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 6, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btnSair, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(14, Short.MAX_VALUE))
         );
 
         pack();
@@ -267,56 +302,76 @@ public class FrmProduto extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_txtCodigoActionPerformed
 
-    private void txtNomeProdutoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtNomeProdutoActionPerformed
+    private void txtTituloActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtTituloActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_txtNomeProdutoActionPerformed
+    }//GEN-LAST:event_txtTituloActionPerformed
 
-    private void jtbTabelaProdutoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jtbTabelaProdutoMouseClicked
+    private void jtbTabelaFilmeMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jtbTabelaFilmeMouseClicked
         // TODO add your handling code here:
-        int linhaSelecionada = jtbTabelaProduto.getSelectedRow();
+        int linhaSelecionada = jtbTabelaFilme.getSelectedRow();
 
-        txtCodigo.setText(jtbTabelaProduto.getValueAt(linhaSelecionada, 0).toString());
-        txtNomeProduto.setText(jtbTabelaProduto.getValueAt(linhaSelecionada, 1).toString());
-        txtaDescricao.setText(jtbTabelaProduto.getValueAt(linhaSelecionada, 2).toString());
+        txtCodigo.setText(jtbTabelaFilme.getValueAt(linhaSelecionada, 0).toString());
+        txtTitulo.setText(jtbTabelaFilme.getValueAt(linhaSelecionada, 1).toString());
+        txtGenero.setText(jtbTabelaFilme.getValueAt(linhaSelecionada, 2).toString());
+        txtProdutora.setText(jtbTabelaFilme.getValueAt(linhaSelecionada, 3).toString());
+        txtDataCompra.setText(jtbTabelaFilme.getValueAt(linhaSelecionada, 4).toString());
 
-    }//GEN-LAST:event_jtbTabelaProdutoMouseClicked
+    }//GEN-LAST:event_jtbTabelaFilmeMouseClicked
 
     private void btnSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalvarActionPerformed
         // TODO add your handling code here:
-        produto.setCodigo(Integer.parseInt(txtCodigo.getText()));
-        produto.setDescricao(txtaDescricao.getText());
-        produto.setNomeProduto(txtNomeProduto.getText());
-        produto.cadastrarProduto();
+        filme.setCodigo(Integer.parseInt(txtCodigo.getText()));
+        filme.setTitulo(txtTitulo.getText());
+        filme.setGenero(txtGenero.getText());
+        filme.setProdutora(txtProdutora.getText());
+        filme.setDataCompra(txtDataCompra.getText());
+        filme.cadastrarFilme();
         consultar();
     }//GEN-LAST:event_btnSalvarActionPerformed
 
     private void btnAlterarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAlterarActionPerformed
         // TODO add your handling code here:
-        produto.setCodigo(Integer.parseInt(txtCodigo.getText()));
-        produto.setDescricao(txtaDescricao.getText());
-        produto.setNomeProduto(txtNomeProduto.getText());
-        produto.alterarProduto();
+        filme.setCodigo(Integer.parseInt(txtCodigo.getText()));
+        filme.setTitulo(txtTitulo.getText());
+        filme.setGenero(txtGenero.getText());
+        filme.setProdutora(txtProdutora.getText());
+        filme.setDataCompra(txtDataCompra.getText());
+        filme.alterarFilme();
         consultar();
     }//GEN-LAST:event_btnAlterarActionPerformed
 
     private void btnExcluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExcluirActionPerformed
         // TODO add your handling code here:
-        produto.setCodigo(Integer.parseInt(txtCodigo.getText()));
-        produto.excluirProduto();
+        filme.setCodigo(Integer.parseInt(txtCodigo.getText()));
+        filme.excluirFilme();
         consultar();
     }//GEN-LAST:event_btnExcluirActionPerformed
 
     private void btnLimparActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLimparActionPerformed
         // TODO add your handling code here:
         txtCodigo.setText("");
-        txtNomeProduto.setText("");
-        txtaDescricao.setText("");
+        txtTitulo.setText("");
+        txtGenero.setText("");
+        txtProdutora.setText("");
+        txtDataCompra.setText("");
     }//GEN-LAST:event_btnLimparActionPerformed
 
     private void btnSairActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSairActionPerformed
         // TODO add your handling code here:
         System.exit(0);
     }//GEN-LAST:event_btnSairActionPerformed
+
+    private void txtGeneroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtGeneroActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtGeneroActionPerformed
+
+    private void txtProdutoraActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtProdutoraActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtProdutoraActionPerformed
+
+    private void txtDataCompraActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtDataCompraActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtDataCompraActionPerformed
 
     /**
      * @param args the command line arguments
@@ -335,20 +390,51 @@ public class FrmProduto extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(FrmProduto.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(FrmCadFilmes.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(FrmProduto.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(FrmCadFilmes.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(FrmProduto.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(FrmCadFilmes.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(FrmProduto.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(FrmCadFilmes.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new FrmProduto().setVisible(true);
+                new FrmCadFilmes().setVisible(true);
             }
         });
     }
@@ -362,12 +448,15 @@ public class FrmProduto extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JTable jtbTabelaProduto;
+    private javax.swing.JTable jtbTabelaFilme;
     private javax.swing.JTextField txtCodigo;
-    private javax.swing.JTextField txtNomeProduto;
-    private javax.swing.JTextArea txtaDescricao;
+    private javax.swing.JTextField txtDataCompra;
+    private javax.swing.JTextField txtGenero;
+    private javax.swing.JTextField txtProdutora;
+    private javax.swing.JTextField txtTitulo;
     // End of variables declaration//GEN-END:variables
 }

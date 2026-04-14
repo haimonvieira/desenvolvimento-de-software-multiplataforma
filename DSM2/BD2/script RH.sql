@@ -134,4 +134,124 @@ select
     format(fn_calcular_bonus(salario), 2) as 'bonus'
 from funcionarios where ativo;
 
+# Exemplo pratico com função data e hora
+
+#Exemplo 1 - Tempo de empresa, ano de entrada e data formatada:
+select
+	concat(nome,' ', sobrenome)                   as 'funcionario',
+	date_format(data_admissao, '%d/%m/%Y')         as 'admitido em',
+    year(data_admissao)                            as 'ano de entrada',
+    timestampdiff(year, data_admissao, curdate())  as 'anos de empresa',
+    timestampdiff(month, data_admissao, curdate()) as 'meses de empresa',
+    datediff(curdate(), data_admissao)             as 'dias de empresa'
+from funcionarios
+where ativo = 1
+order by data_admissao;
+
+# Exemplo 2 - Funcionarios que completarao aniversario de empresa este mes:
+select
+	concat(nome, ' ', sobrenome) as 'funcionario',
+    date_format(data_admissao, '%d/%m/%Y') as 'data admissao',
+    timestampdiff(year, data_admissao, curdate()) + 1 as 'proximo aniversario em anos'
+from funcionarios
+where month(data_admissao) = month(curdate()) and ativo = 1;
+
+# Exemplo 3 - Listar funcionarios e suas datas proximo aumento (a cada 2 anos):
+select
+	nome,
+    data_admissao,
+    date_add(data_admissao,
+		interval(floor(timestampdiff(year, data_admissao, curdate()) / 2) + 1) * 2 year) as 'proximo aumento'
+from funcionarios
+where ativo = 1;
+
+# Criando uma function de data
+
+delimiter $$
+create function fn_tempo_empresa(p_admissao date)
+returns varchar(60)
+deterministic
+begin
+	declare v_anos int;
+    declare v_meses int;
+    set v_anos = timestampdiff(year, p_admissao, curdate());
+    set v_meses = timestampdiff(month, p_admissao, curdate()) mod 12;
+    
+    return concat(v_anos, ' ano(s) e ', v_meses, ' mês(es)');
+
+end$$
+delimiter ;
+
+# Usando a funcao
+select
+	concat(nome, ' ', sobrenome) as 'funcionario',
+    fn_tempo_empresa(data_admissao) as 'tempo de empresa'
+from funcionarios
+where ativo = 1
+order by data_admissao;
+
+
+# Funcoes condificonais (IF e Case)
+# Funcao IF
+# Sintaxe IF(condicao, valor_se_verdadeiro, valor_se_falso)
+select
+	nome,
+    salario,
+    if(ativo = 1, 'ativo', 'inativo') as 'status',
+    if(salario >= 8000, 'senior', 'pleno') as 'nivel'
+from funcionarios;
+
+# IFNULL: substitui NULL por um valor padrao
+select
+	nome,
+    ifnull(cargo, 'sem cargo') as 'cargo'
+from funcionarios;
+
+# COALESCE: retorna o primeiro valor nao-nulo da lista
+select
+	nome,
+	coalesce(cargo, email, 'sem informacao') as referencia
+from funcionarios;
+
+# NULLIF: retorna null se os dois valores forem iguais
+select
+	nome,
+    nullif(ativo, 0) as 'ativo ou nulo'
+from funcionarios;
+
+/*
+Case - Multiplas condicoes
+O CASE funciona como um IF/ELSE dentro do SQL.
+*/
+select
+	nome,
+    case id_depto
+		when 1 then 'Tecnologia'
+        when 2 then 'Comercial'
+        when 3 then 'RH'
+        when 4 then 'Financeiro'
+        else 'Outro'
+    end 
+    as 'Departamento'
+from funcionarios;
+	
+
+# Forma 2: CASE com expressoes (mais poderosa)
+select
+	concat(nome, ' ', sobrenome) as 'funcionario',
+    salario,
+	case
+		when salario < 6000                then 'Faixa A - até 6K'
+        when salario between 6000 and 8999 then 'Faixa B - 6K a 9K'
+        when salario >= 9000               then 'Faixa C - acima de 9K'
+	end
+    as 'Faixa salarial'
+from funcionarios
+order by salario;
+
+# Criando uma function condicional completa
+
+
+
+
 

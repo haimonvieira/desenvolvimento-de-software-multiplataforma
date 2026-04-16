@@ -250,6 +250,56 @@ from funcionarios
 order by salario;
 
 # Criando uma function condicional completa
+delimiter $$
+create function fn_classificar_funcionario(
+	p_salario decimal(10, 2),
+    p_anos_empresa int
+)
+returns varchar(30)
+deterministic
+begin
+	declare v_classe varchar(30);
+    case
+		when p_anos_empresa >= 5 and p_salario >= 8000 then
+			set v_classe = 'Especialista Senior';
+		when p_anos_empresa >= 3 and p_salario >= 3000 then
+			set v_classe = 'Profissional Pleno';
+		when p_anos_empresa >= 1 then 
+			set v_classe = 'Profisional Junior';
+		else
+			set v_classe = 'Trainee';
+        end case;
+        
+        return v_classe;
+    
+end$$
+delimiter ;
+
+# Utilizar a funcao junto com a utilizacao do TIMESTAMPDIFF
+
+select
+	concat(nome, ' ', sobrenome) as 'funcionario',
+    salario,
+    timestampdiff(year, data_admissao, curdate()) as 'tempo de empresa (anos)', 
+    fn_classificar_funcionario(salario, timestampdiff(year, data_admissao, curdate())) as 'classificacao'
+from funcionarios 
+where ativo = 1;
+
+# GERENCIAMENTO DOS FUNCTIONS NO MYSQL
+# Listar todas as functions do banco atual
+show function status where db='empresa_rh';
+
+# Ver codigo-fonte de uma function
+show create function fn_calcular_bonus;
+
+# Remover uma function
+drop function if exists fn_nome_formal;
+
+
+
+
+
+
 
 
 

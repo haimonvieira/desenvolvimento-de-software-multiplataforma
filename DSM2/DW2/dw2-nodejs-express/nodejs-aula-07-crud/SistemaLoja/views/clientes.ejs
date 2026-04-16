@@ -61,6 +61,13 @@
                                         <%= cliente.endereco %>
                                     </td>
                                     <td>
+                                        <a href="/clientes/editar/<%= cliente.id %>">
+                                            <button class="btn btn-warning">
+                                                Editar
+                                            </button>
+                                        </a>
+                                    </td>
+                                    <td>
                                         <a href="/clientes/excluir/<%= cliente.id%>">
                                             <button class="btn btn-danger" onclick="return confirm('Tem certeza que quer excluir o cliente <%= cliente.nome %>?')">Excluir</button>
                                         </a>

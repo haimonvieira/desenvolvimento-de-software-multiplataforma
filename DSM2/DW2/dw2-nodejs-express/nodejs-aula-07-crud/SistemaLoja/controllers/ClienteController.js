@@ -96,5 +96,47 @@ router.get('/clientes/excluir/:id', (req, res) => {
     })
 });
 
+//Rota de edição de cliente
+router.get('/clientes/editar/:id', (req, res) => {
+    const id = req.params.id;
+
+    //Buscando cliente no banco
+    Cliente.findByPk(id).then(cliente => {
+        console.log(cliente);
+        res.render('clienteEditar', {
+            //Passando os dados do cliente para a pagina
+            cliente: cliente
+        });
+    });
+});
+
+//Rota de alteracao de cliente
+router.post('/clientes/alterar', (req, res) => {
+    //Coletando os dados do formulario
+    const nome = req.body.nome;
+    const cpf = req.body.cpf;
+    const endereco = req.body.endereco;
+    const id = req.body.id;
+
+    //Alterando o cliente no banco
+    Cliente.update(
+        {
+            nome: nome,
+            cpf: cpf,
+            endereco: endereco
+        },
+        {
+            where: {
+                id: id
+            }
+        }
+    ).then(() => {
+        res.redirect('/clientes');
+    }).catch((error) => {
+        console.log("Erro ao atualizar cliente: " + error);
+    })
+    ;
+});
+
 //Exportando modulo para usar em outro arquivo
 export default router;

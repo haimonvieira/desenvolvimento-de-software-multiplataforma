@@ -295,6 +295,264 @@ show create function fn_calcular_bonus;
 # Remover uma function
 drop function if exists fn_nome_formal;
 
+# Exercicio
+
+# Bloco A
+/*
+	A1.  Escreva uma consulta que exiba o nome completo (nome + sobrenome) com a inicial do nome 
+    em maiúsculo e o sobrenome todo em maiúsculo. Ex: Carlos MENDES.
+	A2.  Liste o nome do funcionário e o comprimento (LENGTH) do seu e-mail, ordenado do e-mail mais longo para o mais curto.
+	A3.  Mostre todos os funcionários admitidos há mais de 5 anos, exibindo nome, 
+    data de admissão e o número de anos completos de empresa.
+	A4.  Calcule para cada funcionário ativo: salário bruto, desconto INSS de 11% (arredondado) e salário líquido estimado.
+	A5.  Use CASE para classificar cada departamento em 'Área de TI', 'Área Administrativa' ou 'Área Comercial' 
+    com base no nome_depto.
+*/
+
+/*
+A1.  Escreva uma consulta que exiba o nome completo (nome + sobrenome) com a inicial do nome 
+    em maiúsculo e o sobrenome todo em maiúsculo. Ex: Carlos MENDES.
+*/
+
+select 
+	concat(
+		upper(left(nome, 1)), substring(nome, 2), ' ', upper(sobrenome)) as 'funcionario'
+from funcionarios;
+
+/*
+	A2.  Liste o nome do funcionário e o comprimento (LENGTH) do seu e-mail, 
+    ordenado do e-mail mais longo para o mais curto.
+*/
+select 
+	nome, length(email) as comprimento_email
+from funcionarios
+order by length(email) desc;
+
+/*
+	A3.  Mostre todos os funcionários admitidos há mais de 5 anos, exibindo nome, 
+    data de admissão e o número de anos completos de empresa.
+*/
+
+select
+	nome, 
+    date_format(data_admissao, '%d/%m/%Y') as data_admissao, 
+    timestampdiff(year, data_admissao, curdate()) as 'anos completos'
+from funcionarios
+where timestampdiff(year, data_admissao, curdate()) > 5;
+
+/*
+	A4.  Calcule para cada funcionário ativo: salário bruto, 
+    desconto INSS de 11% (arredondado) e salário líquido estimado.
+*/
+select 
+	nome, 
+    round(salario, 2) as salario_bruto, 
+    round(salario * 0.11, 2) as 'desconto 11%', 
+    round(salario - (salario * 0.11), 2) as salario_liquido
+from funcionarios;
+
+/*
+	A5.  Use CASE para classificar cada departamento em 'Área de TI', 'Área Administrativa' ou 'Área Comercial' 
+    com base no nome_depto.
+*/
+select
+	nome,
+	case id_depto
+		when 1 then 'Área TI'
+        when 2 then 'Área Comerical'
+        when 3 then 'Área Admnistrativa'
+        when 4 then 'Área Admnistrativa'
+        when 5 then 'Área TI'
+        else 'Outros'
+	end
+        as 'Departamento'
+from funcionarios;
+select id_depto, nome_depto from departamentos;
+
+# Bloco B
+
+/*
+B1. Crie a função fn_email_corporativo(nome, sobrenome) que gera um e-mail 
+no formato nome.sobrenome@empresa.com.br (tudo minúsculo, sem espaços).
+B2. Crie a função fn_salario_liquido(salario) que calcule:
+ se salário <= 6.000 desconta8% de INSS; se entre 6.001 e 9.000 desconta 11%; acima de 9.000 desconta 14%. 
+ Retorne o valor líquido arredondado em 2 casas.
+B3. Crie a função fn_data_br(data DATE) que receba uma data e retorne no formatobrasileiro DD/MM/AAAA.
+B4. Crie a função fn_nivel_cargo(salario, anos_empresa) que retorne: 
+'Júnior' (< 2anos ou < 6k), 'Pleno' (2–4 anos e 6k–8,9k), 'Sênior' (>= 5 anos e >= 9k) 
+ou'Especialista' (>= 5 anos e >= 10k).
+B5. Crie a função fn_mascara_cpf(cpf VARCHAR(11)) 
+que receba 11 dígitos e retorneno formato XXX.XXX.XXX-XX. Dica: use SUBSTRING e CONCAT.
+*/
+
+/*
+B1. Crie a função fn_email_corporativo(nome, sobrenome) que gera um e-mail 
+no formato nome.sobrenome@empresa.com.br (tudo minúsculo, sem espaços).
+*/
+
+delimiter $$
+create function fn_email_corporativo(nome varchar (100), sobrenome varchar(100))
+returns varchar(100)
+deterministic
+begin
+
+	return lower(concat(nome, '.', sobrenome, '@empresa.com.br'));
+
+end$$
+delimiter ;
+
+select
+	fn_email_corporativo(nome, sobrenome) as 'email corporativo'
+from funcionarios;
+
+/*
+B2. Crie a função fn_salario_liquido(salario) que calcule:
+ se salário <= 6.000 desconta 8% de INSS; se entre 6.001 e 9.000 desconta 11%; acima de 9.000 desconta 14%. 
+ Retorne o valor líquido arredondado em 2 casas.
+*/
+
+delimiter $$
+create function fn_salario_liquido(salario decimal(10, 2))
+returns decimal(10,2)
+deterministic
+begin
+	declare salario_liquido decimal(10, 2);
+    
+    if salario <= 6000 then
+		set salario_liquido = salario - (salario * 0.08);
+	elseif salario >= 6001 and salario <= 9000 then
+		set salario_liquido = salario - (salario * 0.11);
+	else
+		set salario_liquido = salario - (salario * 0.14);
+	end if;
+	return round(salario_liquido, 2);
+end$$
+delimiter ;
+
+select 
+	nome,
+	salario,
+	fn_salario_liquido(salario) as 'salario liquido'
+from funcionarios;
+
+/*
+B3. Crie a função fn_data_br(data DATE) que receba uma data e retorne no formatobrasileiro DD/MM/AAAA.
+*/
+delimiter $$
+create function fn_data_br(data date)
+returns varchar(10)
+deterministic
+begin
+
+	return date_format(data, '%d/%m/%Y');
+
+end$$
+delimiter ;
+
+select 
+	nome,
+    fn_data_br(data_admissao) as data_formatada
+from funcionarios;
+
+/*
+B4. Crie a função fn_nivel_cargo(salario, anos_empresa) que retorne: 
+'Júnior' (< 2anos ou < 6k), 'Pleno' (2–4 anos e 6k–8,9k), 'Sênior' (>= 5 anos e >= 9k) 
+ou'Especialista' (>= 5 anos e >= 10k).
+*/
+
+delimiter $$ 
+create function fn_nivel_cargo(salario decimal(10,2), anos_empresa int)
+returns varchar(20)
+deterministic
+begin
+	
+    declare cargo varchar(20);
+    
+	case 
+		when salario < 6000 or anos_empresa < 2 then
+			set cargo = 'Júnior';
+		when (salario >= 6000 and salario <= 8900) or (anos_empresa >= 2 and anos_empresa <= 4) then
+			set cargo = 'Pleno';
+		when salario >= 9000 or anos_empresa >= 5 then
+			set cargo = 'Sênior';
+		when salario >= 10000 or anos_empresa >= 5 then
+			set cargo = 'Especialista';
+		else
+			set cargo = 'Sem cargo';
+	end case;
+    
+    return cargo;
+        
+end$$
+delimiter ;
+
+select 
+	nome,
+	salario,
+    timestampdiff(year, data_admissao, curdate()),
+	fn_nivel_cargo(salario, timestampdiff(year, data_admissao, curdate()))
+from funcionarios;
+
+/*
+B5. Crie a função fn_mascara_cpf(cpf VARCHAR(11)) 
+que receba 11 dígitos e retorneno formato XXX.XXX.XXX-XX. Dica: use SUBSTRING e CONCAT.
+*/
+
+delimiter $$
+create function fn_mascara_cpf(cpf varchar(11))
+returns varchar(14)
+deterministic
+begin
+	declare cpf_mascarado varchar(14);
+    
+    set cpf_mascarado = concat(substring(cpf, 1, 3), '.', substring(cpf, 4, 3), '.', substring(cpf, 7, 3), '-',
+    substring(cpf, 10, 2));
+    
+    return cpf_mascarado;
+end$$
+delimiter ;
+
+select fn_mascara_cpf('12345678909');
+
+# Bloco C
+/*
+Bloco C — Desafio: Query Completa com Functions
+C1. Relatório Completo de Funcionários:
+Monte uma única consulta SELECT que utilize pelo menos 5 functions diferentes(nativas ou criadas) e exiba:
+• Nome formal (Sobrenome, Nome)
+• Cargo em maiúsculas
+• Tempo de empresa formatado (X anos e Y meses)
+• Salário formatado em Real (R$ X.XXX,XX)
+• Classificação (Júnior / Pleno / Sênior)
+• Status: 'Colaborador Ativo' ou 'Desligado'
+*/
+
+delimiter $$
+create function fn_status(ativo boolean)
+returns varchar(10)
+deterministic
+begin
+
+	if ativo = 1 then
+		return 'Ativo';
+	else
+		return 'Desligado';
+    end if;
+    
+end$$
+delimiter ;
+
+select
+	concat(upper(sobrenome), ', ', nome) as 'funcionario',
+    upper(cargo) as 'cargo',
+    fn_tempo_empresa(data_admissao) as 'tempo de empresa',
+    concat('R$ ', replace(replace(replace(format(salario, 2), ',', '$'), '.', ','), '$', '.')) as 'salario',
+    fn_nivel_cargo(salario, timestampdiff(year, data_admissao, curdate())) as 'nivel do cargo',
+    fn_status(ativo) as 'status'
+from funcionarios;
+
+
+
 
 
 

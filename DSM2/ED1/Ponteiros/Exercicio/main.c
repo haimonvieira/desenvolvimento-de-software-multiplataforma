@@ -12,14 +12,10 @@ int main(int argc, char *argv[]) {
 	p1 = &num1;
 	p2 = &num2;
 	
-	*p1 = *p1 + *p2; // 2
-	printf("*p1 + *p2: %d\n", *p1);
-	*p1 = *p1 - *p2; // 1
-	printf("*p1 - *p2: %d\n", *p1);
-	*p1 = (*p1) * (*p2); // 1
-	printf("(*p1) * (*p2): %d\n", *p1);
-	*p1 = *p1 / *p2; // 1
-	printf("*p1 / *p2: %d\n", *p1);
+	printf("*p1 + *p2: %d\n", *p1 + *p2);
+	printf("*p1 - *p2: %d\n", *p1 - *p2);
+	printf("(*p1) * (*p2): %d\n", (*p1) * (*p2));
+	printf("*p1 / *p2: %d\n", *p1 / *p2);
 	
 	return 0;
 	

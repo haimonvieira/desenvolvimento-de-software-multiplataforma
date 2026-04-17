@@ -7,6 +7,12 @@ import PedidoController from './controllers/PedidoController.js';
 import ProdutoController from './controllers/ProdutoController.js';
 //Importando arquivo de conexão com o banco de dados
 import connection from './config/sequelize-config.js';
+//Importando Models
+import Cliente from './models/Cliente.js';
+import Pedido from './models/Pedido.js';
+//Importando as associações
+import associations from './config/association.js';
+
 
 //Realizando a conexão com o banco de dados
 connection.authenticate()
@@ -23,6 +29,20 @@ connection.query("create database if not exists loja_relacional;")
     console.log("O banco de dados foi criado");
 }).catch((error) => {
     console.log(`Ocorreu um erro ao criar o banco de dados. Erro: ${error}`);
+});
+
+//Invocando a função que cria as associacoes
+associations();
+
+//Sincronizar os models de Cliente e Pedido
+//Transformando as funcoes em promessas
+Promise.all([
+    Cliente.sync({force: true}),
+    Pedido.sync({force: true})
+]).then(() => {
+    console.log("Entidades criadas e relacionadas com sucesso!");
+}).catch((error) => {
+    console.log("Erro ao criar e relacionar entidades: " + error);
 });
 
 // Iniciando o Express 
@@ -42,7 +62,7 @@ app.use('/', ProdutoController);
 // ROTA PRINCIPAL
 app.get("/",function(req,res){
     res.render("index")
-})
+});
 
 
 // INICIA O SERVIDOR NA PORTA 8080
@@ -54,4 +74,4 @@ app.listen(port, function(erro){
     }else{
         console.log(`Servidor iniciado com sucesso em http://localhost:${port}`)
     }
-})
+});

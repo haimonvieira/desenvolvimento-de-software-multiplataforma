@@ -13,5 +13,5 @@ const connection = new Sequelize({
     database: 'loja_relacional'
 
 });
-
+//Exportando modulo
 export default connection;

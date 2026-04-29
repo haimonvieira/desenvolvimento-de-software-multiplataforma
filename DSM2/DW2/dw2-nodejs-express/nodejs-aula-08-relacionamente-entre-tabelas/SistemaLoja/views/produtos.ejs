@@ -1,36 +1,25 @@
 <%- include ('partials/header.ejs') %>
 <%- include ('partials/navbar.ejs') %>
-
-    <!-- Formulário de cadastro -->
-        <div class="container">
+    <div class="container">
             <div class="card">
                 <div class="card-header">
-                    <h1>Cadastrar Produto</h1>
+                    <h1>Cadastrar produtos</h1>
                 </div>
                 <div class="card-body">
-                    <form method="post" action="/produtos/cadastrar">
-                        <label for="nome">Produto:</label>
-                        <input class="form-control" type="text" name="produto" placeholder="Insira o nome do produto" required>
-
-                        <label for="nome">Preço:</label>
-                        <input class="form-control" maxlength="12" type="text" name="preco" placeholder="Insira o preço do produto" required>
-
-                        <label for="nome">Categoria:</label>
-                        <input class="form-control" type="text" name="categoria" placeholder="Insira a categoria do produto" required>
-
+                    <form action="/produtos/cadastrar" method="POST">
+                        <label>Nome do produto:</label>
+                        <input type="text" name="nome" placeholder="Insira o nome do Produto" class="form-control" required>
+                        <label>Preço do produto:</label>
+                        <input type="text" name="preco" placeholder="Insira o preço" class="form-control" required>
+                        <label>Categoria do produto:</label>
+                        <input type="text" name="categoria" placeholder="Insira a categoria" class="form-control" required>
                         <br>
-
-                        <button class="btn btn-success" type="submit">Cadastrar Produto</button>
-                        <button class="btn btn-warning" type="reset">Limpar</button>
-
+                        <button type="submit" class="btn btn-success">Cadastrar</button>
+                        <button type="reset" class="btn btn-danger">Limpar</button>
                     </form>
+                    <hr>
                 </div>
             </div>
-
-            <hr>
-
-        </div>
-
     <div class="container">
         <div class="card">
             <div class="card-header">
@@ -44,7 +33,7 @@
                             <th>Nome:</th>
                             <th>Preço:</th>
                             <th>Categoria:</th>
-                            <th colspan="2" style="text-align: center;">Ações</th>
+                            <th colspan="2" style="align-items: center;">Excluir:</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -55,8 +44,8 @@
                             <td><%= produto.preco.toLocaleString('pt-br', {style: 'currency', currency: 'BRL'}) %></td>
                             <td><%= produto.categoria %></td>
                             <td>
-                                <a href="/produtos/excluir/<%= produto.id%>">
-                                    <button onclick="return confirm('Tem certeza que deseja excluir o produto <%= produto.nome%>?')" class="btn btn-danger">Excluir</button>
+                                <a href="/produtos/excluir/<%=produto.id%>">
+                                <button class="btn btn-danger" onclick="return confirm('Tem certeza que deseja excluir o produto: <%=produto.nome %>')">Excluir</button>
                                 </a>
                             </td>
                         </tr>

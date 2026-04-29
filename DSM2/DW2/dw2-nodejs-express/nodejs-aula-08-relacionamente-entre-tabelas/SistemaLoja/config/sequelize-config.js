@@ -1,17 +1,22 @@
-//Importando a ORM Sequelize
+// Importando a ORM Sequelize
 import Sequelize from "sequelize";
 
-//Definindo os dados de conexão com o banco de dados
+// Definindo os dados de conexão com o banco de dados
+
 const connection = new Sequelize({
-
-    //Tipo do banco
+    // Tipo do banco
     dialect: 'mysql',
+    // Endereço do banco
     host: 'localhost',
+    // Nome de usuário do banco
     username: 'root',
+    // Senha
     password: '',
-    timezone: '-03:00',
+    // Fuso horário
+    timezone: "-03:00",
+    // Nome do banco que será usado na aplicação
     database: 'loja_relacional'
-
 });
-//Exportando modulo
+
+// Exportando o módulo
 export default connection;

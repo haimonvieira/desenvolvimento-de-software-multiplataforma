@@ -1,20 +1,20 @@
 import Sequelize from "sequelize";
 import connection from "../config/sequelize-config.js";
 
-const Produto = connection.define('produtos', {
+const Produto = connection.define('Produtos',{
     nome: {
         type: Sequelize.STRING,
-        allowNull: false
+        allowNull: false,
     },
-    preco: {
+    preco:{
         type: Sequelize.FLOAT,
-        allowNull: false
+        allowNull: false,
     },
-    categoria: {
+    categoria:{
         type: Sequelize.STRING,
-        allowNull: false
+        allowNull: false,
     }
-});
+})
 
-Produto.sync({force: false});
+// Produto.sync({force: false});
 export default Produto;

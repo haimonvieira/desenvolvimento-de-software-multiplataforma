@@ -1,19 +1,19 @@
 import Sequelize from "sequelize";
 import connection from "../config/sequelize-config.js";
 
-const Pedido = connection.define("pedido", {
+const Pedido = connection.define("pedido",{
     numero:{
         type: Sequelize.INTEGER,
-        allowNull: false
+        allowNull: false,
     },
     valor:{
         type: Sequelize.FLOAT,
-        allowNull: false
+        allowNull: false,
     },
     cliente_id:{
         type: Sequelize.INTEGER,
-        allowNull: false
-    }
+        allowNull: false,
+    },
 });
 
 export default Pedido;

@@ -42,6 +42,10 @@ Disciplinas e conteúdos estudados:
 
 Conteúdos voltados para backend, JavaScript avançado e Node.js.
 
+**Localização dos exercícios de DW2:**
+- `DSM2/DW2/exercicios/ATV-01-Node.js-main`
+- `DSM2/DW2/exercicios/ATV02-CRUD-NODEJS`
+
 ### 📘 Aula 01 – Tipos de Funções em JavaScript
 
 📁 Localização:  
@@ -141,7 +145,3 @@ Se houver um `package.json` na pasta:
 ```bash
 npm install
 npm start
-
-
-
-asdasd

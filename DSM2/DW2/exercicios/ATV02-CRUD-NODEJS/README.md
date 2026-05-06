@@ -1,14 +1,18 @@
 # Criptografia Node
 
-Projeto de exercício da disciplina Desenvolvimento Web 2 da FATEC Registro.
+Projeto de exercício da disciplina Desenvolvimento Web II da FATEC Registro.
 
 ## Autor
 
 - Haimon Cugler Vieira
 
+## Localização
+
+- `DSM2/DW2/exercicios/ATV02-CRUD-NODEJS`
+
 ## Descrição
 
-Aplicação web simples em Node.js com Express e EJS que apresenta informações sobre criptografia, algoritmos e história das tecnologias criptográficas.
+Aplicação web em Node.js com Express e EJS que apresenta informações sobre criptografia, algoritmos e história das tecnologias criptográficas.
 
 ## Funcionalidades
 
@@ -33,37 +37,28 @@ Aplicação web simples em Node.js com Express e EJS que apresenta informações
 - `views/` - templates EJS
 - `public/` - arquivos estáticos (CSS, imagens, etc.)
 
+## Requisitos
+
+- Node.js instalado
+- npm disponível
+
 ## Instalação
 
-1. Clone o repositório:
+1. Na pasta do projeto, instale as dependências:
 
 ```bash
-git clone https://github.com/haimonvieira/criptografia-node.git
-```
-
-2. Acesse a pasta do projeto:
-
-```bash
-cd criptografia-node
-```
-
-3. Instale o npm se ainda não estiver instalado (Node.js já inclui o npm).
-
-4. Instale as dependências do projeto:
-
-```bash
-npm install express ejs nodemon
+npm install
 ```
 
 ## Uso
 
-Execute o servidor em modo de desenvolvimento:
+Execute o servidor:
 
 ```bash
 npm start
 ```
 
-Acesse a aplicação em:
+Abra o navegador em:
 
 ```text
 http://localhost:8080
@@ -78,4 +73,4 @@ http://localhost:8080
 
 ## Observações
 
-Este projeto é um exercício acadêmico e demonstra a estrutura básica de um site em Node.js com rotas e templates EJS.
+Este exercício demonstra a estrutura básica de um site em Node.js com rotas e templates EJS.

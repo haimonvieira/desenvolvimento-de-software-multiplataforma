@@ -51,7 +51,6 @@ router.post("/pedidos/cadastrar", function(req, res) {
     console.log("Erro ao inserir dados na tabela Pedidos: " + error);
   })
 
-
 });
 
 router.get("/pedidos/excluir/:id", (req, res) => {

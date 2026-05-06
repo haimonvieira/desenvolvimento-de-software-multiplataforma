@@ -1,0 +1,53 @@
+<%- include('partials/header.ejs')%>
+
+<section class="container my-5">
+
+    <div class="container my-5">
+
+        <h1 style="width: 60%;">História - <span class="azul">Obsidian Ledger</span></h1>
+        <p class="space-grotesk" style="text-transform: uppercase;">introdução</p>
+        <p class="mt-3" style="width: 40%">Uma investigação editorial os marcos criptográficos que garantiram — e ocasionalmente abalaram — o consenso digital moderno. Das rodas mecânicas às ameaças quânticas.</p>
+
+    </div>
+
+    <div class="table-responsive">
+
+        <table class="table align-middle table-dark space-grotesk">
+            <tr style="text-transform: uppercase;" class="table-dark">
+                <th>
+                    <p class="azul">evento/tecnologia</p>
+                </th>
+                <th>
+                    <p class="azul">ano</p>
+                </th>
+                <th>
+                    <p class="azul">significado</p>
+                </th>
+                <th>
+                    <p class="azul">
+                        status atual
+                    </p>
+                </th>
+            </tr>
+            <% historias.forEach(function(historia){ %>
+                <tr>
+                    <td>
+                        <div class="d-flex align-items-center gap-3">
+                            <%- historia.icone %>
+                            <span><%= historia.tecnologia %></span>
+                        </div>
+                        
+                    </td> 
+                    <td><%= historia.ano %></td>
+                    <td class="w-25"><%= historia.significado %></td> 
+                    <td style="text-transform: uppercase; text-align: center;">
+                        <p class="<%= historia.cor  %> rounded text-white"><%= historia.statusAtual %></p>
+                    </td> 
+                </tr>
+            <% }) %>
+            
+        </table>
+    </div>
+</section>
+
+<%- include('partials/footer.ejs')%>

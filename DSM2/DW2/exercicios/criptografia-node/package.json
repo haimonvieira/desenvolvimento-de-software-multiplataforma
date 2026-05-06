@@ -1,0 +1,30 @@
+{
+  "name": "criptografia-node",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "npx nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/haimonvieira/criptografia-node.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/haimonvieira/criptografia-node/issues"
+  },
+  "homepage": "https://github.com/haimonvieira/criptografia-node#readme",
+  "dependencies": {
+    "ejs": "^5.0.1",
+    "express": "^5.2.1",
+    "mysql2": "^3.22.3",
+    "nodemon": "^3.1.14",
+    "prettier-plugin-ejs": "^1.0.3",
+    "sequelize": "^6.37.8"
+  },
+  "type": "module"
+}

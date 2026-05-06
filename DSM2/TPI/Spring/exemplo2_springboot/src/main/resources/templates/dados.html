@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Exemplo 2 thymeleaf</title>
+    <style>
+        body {font-family: sans-serif; text-align: center; margin-top: 50px;}
+        .msg {border: 1px solid #ddd; padding: 20px; display: inline-block; border-radius: 8px;}
+    </style>
+</head>
+<body>
+    <div class="msg">
+        <h1>Seus dados</h1>
+        <p th:text="${mensagem}">texto não foi carregado</p>
+        <p>Ano atual: <strong th:text="${Ano}"></strong></p>
+    </div>
+
+</body>
+</html>

@@ -149,3 +149,59 @@ begin
     return estoqueAtualizado;
 end $$
 delimiter ;
+
+# PROCEDURES
+# nao e obrigatorio ter retorno, apenas procedimento
+delimiter $$
+create procedure saidaEstoque(in id int, in qtd int)
+deterministic
+begin
+
+	declare estoqueAtualizado int;
+    
+    set estoqueAtualizado = baixarEstoque(id, qtd);
+    update livros set estoque = estoqueAtualizado 
+		where livroId = id;
+
+end $$
+delimiter ;
+
+delimiter $$
+create procedure cadVenda(in id int, in qtd int)
+deterministic
+begin
+
+	declare venda int;
+    set venda = valorVenda(id, qtd);
+    insert into vendas(livroId, dataVenda, quantidade, valorTotal) values
+		(id, curdate(), qtd, venda);
+
+end $$
+delimiter ;
+
+# Criar TRIGGER Vender, gatilho para baixar estoque após cadastrarmos a venda
+delimiter $$
+create trigger vender
+after insert on vendas
+for each row
+	begin
+		-- chamar procedure saidaEstoque
+        call saidaEstoque(new.livroId, new.quantidade);
+    end $$
+delimiter ;
+
+
+select * from vendas;
+select * from livros;
+call cadVenda(1, 5);
+
+# VIEW
+create view listarVendas as
+select vendaId, vendas.livroId, livros.titulo, dataVenda, quantidade, valorTotal from vendas join
+livros on livros.livroId = vendas.livroId;
+
+-- Executar VIEW
+select *from listarVendas;
+
+
+

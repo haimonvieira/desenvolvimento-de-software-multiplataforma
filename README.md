@@ -43,13 +43,10 @@ Disciplinas e conteúdos estudados:
 Conteúdos voltados para backend, JavaScript avançado e Node.js.
 
 **Localização dos exercícios de DW2:**
-- `DSM2/DW2/exercicios/ATV-01-Node.js-main`
-- `DSM2/DW2/exercicios/ATV02-CRUD-NODEJS`
+
+- [Exercícios DW2](https://github.com/haimonvieira/desenvolvimento-de-software-multiplataforma/tree/main/DSM2/DW2/exercicios)
 
 ### 📘 Aula 01 – Tipos de Funções em JavaScript
-
-📁 Localização:  
-[js-aula01-tipos-de-funcoes](DSM2/DW2/dw2-nodejs-express/js-aula01-tipos-de-funcoes)
 
 Conteúdos abordados:
 
@@ -71,13 +68,6 @@ Conteúdos abordados:
 ## 📚 Estrutura de Dados (ED1)
 
 Estudo de estruturas de dados homogêneas e algoritmos de ordenação.
-
-### Projeto: Dança dos Algoritmos de Ordenação
-
-- **Entrega:** 23/03
-- **Formato:** Vídeo (3-5 minutos) + Relatório ABNT
-- Explicar algoritmos de ordenação através de analogias de dança
-- Implementação em C
 
 **Estruturas abordadas:**
 - Vetores (arrays)

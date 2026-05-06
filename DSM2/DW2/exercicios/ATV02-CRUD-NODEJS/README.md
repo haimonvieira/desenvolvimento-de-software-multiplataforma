@@ -6,10 +6,6 @@ Projeto de exercício da disciplina Desenvolvimento Web II da FATEC Registro.
 
 - Haimon Cugler Vieira
 
-## Localização
-
-- `DSM2/DW2/exercicios/ATV02-CRUD-NODEJS`
-
 ## Descrição
 
 Aplicação web em Node.js com Express e EJS que apresenta informações sobre criptografia, algoritmos e história das tecnologias criptográficas.
@@ -21,6 +17,7 @@ Aplicação web em Node.js com Express e EJS que apresenta informações sobre c
 - Página de história com tecnologias e marcos da criptografia
 - Página de algoritmos com algoritmos de criptografia e hashes
 - Layout usando views EJS e recursos estáticos em `public/`
+- CRUD de algoritmos
 
 ## Tecnologias
 
@@ -29,6 +26,7 @@ Aplicação web em Node.js com Express e EJS que apresenta informações sobre c
 - Express
 - EJS
 - Nodemon (desenvolvimento)
+- MySQL
 
 ## Estrutura do projeto
 

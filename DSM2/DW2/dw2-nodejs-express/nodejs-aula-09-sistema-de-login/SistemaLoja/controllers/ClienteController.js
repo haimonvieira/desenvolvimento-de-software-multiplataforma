@@ -9,8 +9,11 @@ const router = express.Router();
 // Importando o Model de Cliente
 import Cliente from "../models/Cliente.js";
 
+//Importando middleware de autenticação
+import Auth from "../middlewares/Auth.js";
+
 // ROTA CLIENTES
-router.get("/clientes", function (req, res) {
+router.get("/clientes", Auth, function (req, res) {
   // Aqui iremos chamar o model "Cliente", invocar o método findAll() para buscar todos os registros da tabela de cliente
   Cliente.findAll().then((clientes) => {
     res.render("clientes", {
@@ -22,7 +25,7 @@ router.get("/clientes", function (req, res) {
 });
 
 // Rota de cadastro de clientes (subrota/cadastrar)
-router.post("/clientes/cadastrar", (req,res) => {
+router.post("/clientes/cadastrar", Auth, (req,res) => {
   // CRIANDO AS VARIÁVEIS QUE IRÃO ARMAZENAR OS DADOS VINDOS DO FORMULÁRIO
   const nome = req.body.nome;
   const cpf = req.body.cpf;
@@ -43,7 +46,7 @@ router.post("/clientes/cadastrar", (req,res) => {
 })
 
 // ROTA DE EXCLUSÃO
-router.get("/clientes/excluir/:id", (req,res)=>{
+router.get("/clientes/excluir/:id", Auth, (req,res)=>{
   // Capturado o parâmetro da rota
   const id = req.params.id
   // Eviando o ID do cliente para apagar do banco de dados
@@ -62,7 +65,7 @@ router.get("/clientes/excluir/:id", (req,res)=>{
 })
 
 // ROTA DE EDIÇÃO DE CLIENTE
-router.get("/clientes/editar/:id",(req,res) => {
+router.get("/clientes/editar/:id", Auth, (req,res) => {
   const id = req.params.id
   // Buscando o cliente no banco
   Cliente.findByPk(id).then(cliente =>{
@@ -74,7 +77,7 @@ router.get("/clientes/editar/:id",(req,res) => {
 });
 
 // ROTA DE ALTERAÇÂO DE CLIENTE
-router.post("/clientes/alterar",(req,res)=>{
+router.post("/clientes/alterar", Auth, (req,res)=>{
   // Coletando os dados do formulário
   const nome = req.body.nome;
   const cpf = req.body.nome;

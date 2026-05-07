@@ -86,14 +86,15 @@ router.post("/autenticacao", (req, res) => {
                     id: usuario.id,
                     email: usuario.email
                 }
-                res.send(`Sessão do usuário criada com sucesso!
-                    <br>id: ${req.session.usuario['id']}<br>
-                    Email: ${req.session.usuario['email']}
-                    `)
+
+                res.redirect('/');
+
             }else{
+
                 res.send(`Senha inválida! 
                     <br><a href="/login">Tente novamente.</a>
                     `);
+                    
             }
 
         //Usuario nao existir

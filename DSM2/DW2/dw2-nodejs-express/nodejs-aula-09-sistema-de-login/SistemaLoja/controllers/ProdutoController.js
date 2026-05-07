@@ -3,8 +3,12 @@ import express from "express";
 const router = express.Router();
 
 import Produto from '../models/Produto.js';
+
+//Importando middleware de autenticação
+import Auth from "../middlewares/Auth.js";
+
 // ROTA PRODUTOS
-router.get("/produtos", function (req, res) {
+router.get("/produtos", Auth, function (req, res) {
   Produto.findAll().then((produtos) =>{
     res.render("produtos", {
       produtos: produtos
@@ -14,7 +18,7 @@ router.get("/produtos", function (req, res) {
   })
 });
 
-router.post("/produtos/cadastrar", (req, res)=>{
+router.post("/produtos/cadastrar", Auth, (req, res)=>{
   const nome = req.body.nome;
   const preco = req.body.preco;
   const categoria = req.body.categoria;
@@ -30,7 +34,7 @@ router.post("/produtos/cadastrar", (req, res)=>{
   })
 })
 
-router.get("/produtos/excluir/:id", (req,res)=>{
+router.get("/produtos/excluir/:id", Auth, (req,res)=>{
   const id = req.params.id
 
   Produto.destroy({

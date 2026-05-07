@@ -22,6 +22,9 @@ import Usuario from "./models/Usuario.js";
 // Importando as Associações
 import associations from "./config/associations.js";
 
+//Importanto middleware de autenticação
+import Auth from "./middlewares/Auth.js";
+
 // Realizar a conexão com o banco de dados
 connection.authenticate().then(()=>{
   console.log("Conexão com o banco de dados realizada com sucesso!");
@@ -68,7 +71,7 @@ app.use(express.urlencoded({extended: false}))
 app.use(session({
   secret: "senha-longa-para-sessao",
   cookie: {
-    maxAge: 30000 // 30s de sessao
+    maxAge: 60000 // 30s de sessao
   },
   saveUninitialized: false, //Não salva sessões vazias
   resave: false //Evita que re-salve sessões
@@ -81,7 +84,7 @@ app.use("/", PedidoController);
 app.use("/", UsuarioController);
 
 // ROTA PRINCIPAL
-app.get("/", function (req, res) {
+app.get("/", Auth, function (req, res) {
   res.render("index");
 });
 

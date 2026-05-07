@@ -6,8 +6,12 @@ import Pedido from "../models/Pedido.js";
 import Cliente from "../models/Cliente.js";
 
 
+//Importando middleware de autenticação
+import Auth from "../middlewares/Auth.js";
+
+
 // ROTA PEDIDOS
-router.get("/pedidos", function (req, res) {
+router.get("/pedidos", Auth, function (req, res) {
   // Fazendo o INNER JOIN para trazer as informações do 
   // Cliente junto com as informações do Pedido
 
@@ -35,7 +39,7 @@ router.get("/pedidos", function (req, res) {
   });
 });
 
-router.post("/pedidos/cadastrar", function(req, res) {
+router.post("/pedidos/cadastrar", Auth, function(req, res) {
 
   const numeroPedido = req.body.numero;
   const valorPedido = req.body.valor;
@@ -53,7 +57,7 @@ router.post("/pedidos/cadastrar", function(req, res) {
 
 });
 
-router.get("/pedidos/excluir/:id", (req, res) => {
+router.get("/pedidos/excluir/:id", Auth, (req, res) => {
 
   const id = req.params.id;
 

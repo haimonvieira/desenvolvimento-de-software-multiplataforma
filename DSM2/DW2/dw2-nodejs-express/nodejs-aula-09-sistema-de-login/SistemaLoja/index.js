@@ -6,12 +6,19 @@ import express from "express";
 import ClienteController from "./controllers/ClienteController.js";
 import ProdutoController from "./controllers/ProdutoController.js";
 import PedidoController from "./controllers/PedidoController.js";
+import UsuarioController from "./controllers/UsuarioController.js"
+
+//Importando Express-Session (gerador de sessoes do express)
+import session from "express-session";
+
 // Importando o arquivo de conexão com o banco
 import connection from "./config/sequelize-config.js";
+
 // Importando os Models
 import Cliente from "./models/Cliente.js";
 import Pedido from "./models/Pedido.js";
 import Usuario from "./models/Usuario.js";
+
 // Importando as Associações
 import associations from "./config/associations.js";
 
@@ -57,19 +64,27 @@ app.use(express.static("public"));
 // Configurando o express para aceitar dados vindo de formulários
 app.use(express.urlencoded({extended: false}))
 
+//Configurando a sessão de usuario
+app.use(session({
+  secret: "senha-longa-para-sessao",
+  cookie: {
+    maxAge: 30000 // 30s de sessao
+  },
+  saveUninitialized: false, //Não salva sessões vazias
+  resave: false //Evita que re-salve sessões
+}))
+
 // Ativando o uso das ROTAS
 app.use("/", ClienteController);
 app.use("/", ProdutoController);
 app.use("/", PedidoController);
+app.use("/", UsuarioController);
 
 // ROTA PRINCIPAL
 app.get("/", function (req, res) {
   res.render("index");
 });
 
-app.get('/login', (req, res) => {
-  res.render("login");
-})
 
 // INICIA O SERVIDOR NA PORTA 8080
 const port = 8080;

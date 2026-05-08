@@ -24,7 +24,7 @@ void exibir(F *cabeca){
 			printf("%d ", aux->valor);
 			aux = aux->prox;
 			
-		}while(aux->prox != NULL);
+		}while(aux != NULL);
 		
 		printf("\n");
 		

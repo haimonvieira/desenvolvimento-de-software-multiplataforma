@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Imposto de Renda</title>
+</head>
+<body>
+
+    <h1>Imposto de Renda</h1>
+    <p>
+        Nome pessoa física: <span th:text="${nomeFisico}"></span>,
+        <br>
+        Valor total recebido fonte pagadora: <span th:text="${valorTotalRecebido}"></span>,
+        <br>
+        Quantidade dependentes: <span th:text="${quantidadeDependentes}"></span>
+        <br>
+        Valor pagar imposto: <span th:text="${valorPagar}"></span>
+    </p>
+
+</body>
+</html>

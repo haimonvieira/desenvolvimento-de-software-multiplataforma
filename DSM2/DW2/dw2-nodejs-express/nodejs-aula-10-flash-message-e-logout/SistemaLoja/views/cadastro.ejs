@@ -1,0 +1,34 @@
+<%- include ('partials/header.ejs') %>
+<%- include ('partials/navbar.ejs') %>
+
+<% if(messages.warning) {%>
+<div class="alert alert-warning m-auto alert-dismissible fade show w-25 text-center">
+    <button class="btn btn-close" data-bs-dismiss="alert"></button>
+    <%= messages.warning%>
+</div>
+
+<% } %>
+
+  <!-- Formulário de cadastro de usuário -->
+  <div class="container">
+    <div class="card mt-4">
+      <div class="card-header">
+        <h2>Cadastro de usuário</h2>
+      </div>
+      <div class="card-body">
+        <form action="/caduser" method="post">
+          <label for="email">Email</label>
+          <input type="email" name="email" placeholder="Insira o email" class="form-control">
+
+          <label for="senha">Senha</label>
+          <input type="password" name="senha" placeholder="Insira sua senha" class="form-control">
+          <br>
+          <input type="submit" class="btn btn-success btn-block" value="Cadastrar">
+
+        </form>
+      </div>
+    </div>
+  </div>
+
+
+  <%- include ('partials/footer.ejs') %>

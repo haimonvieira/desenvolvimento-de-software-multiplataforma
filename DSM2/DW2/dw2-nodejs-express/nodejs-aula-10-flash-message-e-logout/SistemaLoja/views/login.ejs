@@ -1,0 +1,43 @@
+<%- include('partials/header.ejs')%>
+<%- include('partials/navbar.ejs')%>
+
+<% if(messages.danger) {%>
+<div class="alert alert-danger m-auto alert-dismissible fade show w-25 text-center">
+  <button class="btn btn-close" data-bs-dismiss="alert"></button>
+  <%= messages.danger%>
+</div>
+<% } else if(messages.warning){%>
+
+    <div class="alert alert-warning m-auto alert-dismissible fade show w-25 text-center">
+        <button class="btn btn-close" data-bs-dismiss="alert"></button>
+        <%= messages.warning%>
+    </div>
+
+<% } %>
+
+<div class="container col-4">
+  <div class="card mt-4">
+    <div class="card-header">
+      <h2>Login de admnistrador</h2>
+    </div>
+    <div class="card-body m-auto">
+      <p style="color: red; font-size: .7rem;">Você precisa estar logado para cessar os recursos do painel admnistrativo</p>
+      <form action="/autenticacao" method="post">
+        <label for="email">E-mail</label>
+        <input type="text" name="email" placeholder="email@exemplo.com" class="form-control" required>
+
+        <label for="senha">Senha</label>
+        <input type="password" name="senha" placeholder="Insira sua senha" class="form-control" required>
+
+        <br>
+
+        <button type="submit" class="btn btn-success btn-block">Entrar</button>
+
+      </form>
+      <hr>
+      <h6>Não possui conta? <a class="text-primary" href="/cadastro">cadastre-se!</a></h6>
+    </div>
+  </div>
+</div>
+
+<%- include('partials/footer.ejs')%>

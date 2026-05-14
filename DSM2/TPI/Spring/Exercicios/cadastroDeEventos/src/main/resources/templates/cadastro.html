@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Cadastro de Evento</title>
+</head>
+<body>
+
+    <h1>Cadastrar Produto</h1>
+    <form th:action="@{/salvar-evento}" method="post">
+        <div>
+            <label>Data do evento</label>
+            <input type="datetime" name="dataEvento" >
+        </div>
+        <div>
+            <label>Tipo de ingresso</label>
+            <select name="tipoIngresso">
+                <option value="vip">Vip</option>
+                <option value="pista">Pista</option>
+                <option value="camarote">Camarote</option>
+            </select>
+        </div>
+        <div>
+            <label>Quantidade de pessoas</label>
+            <input type="number" name="quantidadePessoas">
+        </div>
+        <div>
+            <label>Meia entrada</label>
+            <select name="meiaEntrada">
+                <option value="sim">Sim</option>
+                <option value="não">Não</option>
+            </select>
+        </div>
+        <button type="submit">Cadastrar Evento</button>
+    </form>
+
+    <div th:if="${sucesso}">
+        <h2>Evento cadastrado!</h2>
+        <p>Data do evento: <span th:text="${dataEvento}"></span></p>
+        <p>Tipo de ingresso: <span th:text="${tipoIngresso}"></span></p>
+        <p>Quantidade de pessoas: <span th:text="${quantidadePessoas}"></span></p>
+        <p>Meia entrada: <span th:text="${meiaEntrada}"></span></p>
+    </div>
+
+</body>
+</html>

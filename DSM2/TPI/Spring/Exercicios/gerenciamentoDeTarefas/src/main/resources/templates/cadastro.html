@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Cadastro de Evento</title>
+</head>
+<body>
+
+    <h1>Cadastrar Produto</h1>
+    <form th:action="@{/salvar-tarefa}" method="post">
+        <div>
+            <label>Prioridade da tarefa</label>
+            <input type="number" name="prioridade" >
+        </div>
+        <div>
+            <label>Tarefa</label>
+            <input type="text" name="tarefa">
+        </div>
+        <div>
+            <label>Descrição da tarefa</label>
+            <input type="text" name="descricao">
+        </div>
+        <div>
+            <label>Tempo disponível para tarefa</label>
+            <input type="number" name="tempoDisponivelTarefa">
+        </div>
+        <button type="submit">Cadastrar Tarefa</button>
+    </form>
+
+    <div th:if="${sucesso}">
+        <h2>Tarefa cadastrada!</h2>
+        <p>Prioridade: <span th:text="${prioridade}"></span></p>
+        <p>Tarefa: <span th:text="${tarefa}"></span></p>
+        <p>Descrição: <span th:text="${descricao}"></span></p>
+        <p>Tempo disponível para tarefa: <span th:text="${tempoDisponivelTarefa}"></span></p>
+    </div>
+
+</body>
+</html>

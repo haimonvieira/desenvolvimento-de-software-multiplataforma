@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Cadastro de Funcionário</title>
+
+    <style>
+        body{
+            font-family: Arial;
+            background-color: #a2a2a2;
+        }
+        .container{
+            width: 500px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            margin-top: 50px;
+            border-radius: 10px;
+        }
+        input{
+            width: 475px;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+        button{
+            width: 100%;
+            padding: 10px;
+            background: blue;
+            color: white;
+            border: none;
+        }
+    </style>
+
+</head>
+<body>
+<div class="container">
+
+    <h2>Cadastro de Funcionário</h2>
+
+    <form th:action="@{/salvar}" th:object="${funcionario}" method="post">
+
+        <input type="text"
+               th:field="*{nome}"
+               placeholder="Nome do funcionário">
+        <input type="number"
+               step="0.01"
+               th:field="*{salario}"
+               placeholder="Insira o salário">
+        <input type="text"
+               th:field="*{cargo}"
+               placeholder="Insira o cargo">
+        <button type="submit">
+            Salvar
+        </button>
+    </form>
+</div>
+</body>
+</html>
+

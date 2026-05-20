@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Cadastro de Passagem</title>
+
+    <style>
+        body{
+            font-family: Arial;
+            background-color: #a2a2a2;
+        }
+        .container{
+            width: 500px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            margin-top: 50px;
+            border-radius: 10px;
+        }
+        input{
+            width: 475px;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+        button{
+            width: 100%;
+            padding: 10px;
+            background: blue;
+            color: white;
+            border: none;
+        }
+    </style>
+
+</head>
+<body>
+<div class="container">
+
+    <h2>Cadastro de Passagem</h2>
+
+    <form th:action="@{/salvar}" th:object="${passagem}" method="post">
+
+        <input type="text"
+               th:field="*{nomePassageiro}"
+               placeholder="Nome passageiro">
+        <input type="text"
+               th:field="*{rg}"
+               placeholder="RG">
+        <input type="text"
+               th:field="*{localViagem}"
+               placeholder="Local da viagem">
+        <input type="date"
+               th:field="*{data}"
+               placeholder="Data">
+        <input type="time"
+               th:field="*{horario}"
+               placeholder="Horário">
+        <input type="text"
+               th:field="*{numpoltrona}"
+               placeholder="Número da poltrona">
+        <button type="submit">
+            Salvar
+        </button>
+    </form>
+</div>
+</body>
+</html>
+

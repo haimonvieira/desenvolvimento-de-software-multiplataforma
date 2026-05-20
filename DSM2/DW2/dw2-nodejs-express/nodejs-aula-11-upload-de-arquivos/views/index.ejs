@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Upload de Arquivos</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+</head>
+
+<body>
+
+  <div class="container mt-4">
+    <div class="card">
+      <div class="card-header">
+        <h1>Galeria de Fotos</h1>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <% imagens.forEach(imagem => {%>
+          <div class="col-md-3 m-auto">
+            <img class="img-thumbnail" src="/uploads/<%= imagem.arquivo %>" alt="Imagem da galeria">
+          </div>
+          <% }) %>
+        </div>
+      </div>
+    
+      <h2>Upload de Arquivos</h2>
+
+      <form action="/upload" method="post" enctype="multipart/form-data">
+
+        <input class="form-control" type="file" name="file" required>
+        <br><br>
+        <input type="submit" value="Enviar" class="btn btn-success w-100">
+
+      </form>
+    </div>
+  </div>
+
+
+  <!-- <img src="uploads/c1d73ce5148de8b5523d3f200b5bfaf6" alt="Arquivo"> -->
+
+</body>
+
+</html>

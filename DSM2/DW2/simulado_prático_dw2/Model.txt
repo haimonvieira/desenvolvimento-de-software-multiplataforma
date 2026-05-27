@@ -1,0 +1,7 @@
+// MODEL
+// Filme.js
+
+// ATRIBUTOS:
+// TITULO: String
+// GENERO: String
+// DURACAO: INTEGER

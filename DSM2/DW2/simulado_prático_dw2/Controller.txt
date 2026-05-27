@@ -1,0 +1,14 @@
+// FilmesController.js
+
+import express from "express";
+// import Filme from "../models/Filme.js";
+const router = express.Router();
+
+// ROTA PARA LISTAR FILMES
+// ...
+
+// ROTA PARA CADASTRAR UM FILME
+// ...
+
+// ROTA PARA EXCLUIR UM FILME
+// ...

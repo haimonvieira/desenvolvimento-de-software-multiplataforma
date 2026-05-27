@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Cadastro de Usuário</title>
+    <style>
+        .formulario{
+            margin-bottom: 15px;
+        }
+        label{
+            display: block;
+            font-weight: bold;
+        }
+        .resultado{
+            background: #ccc;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Cadastro de Usuário</h1>
+
+<form th:action="@{/salvar-usuario}" method="post">
+
+    <div class="formulario">
+        <label>Nome</label>
+        <input type="text" name="nome">
+
+        <label>Data de Nascimento</label>
+        <input type="date" name="dataNascimento">
+
+        <label>Profissão</label>
+        <select name="profissao">
+            <option value="Professor">Professor</option>
+            <option value="Estudante">Estudante</option>
+            <option value="Outros">Outros</option>
+        </select>
+
+        <label>Idade</label>
+        <input type="number" step="0" name="idade">
+
+        <label>Altura</label>
+        <input type="number" step="0.01" name="altura">
+
+    </div>
+
+    <button type="submit">Cadastrar Usuário</button>
+
+</form>
+
+
+<div th:if="${sucesso}" class="resultado">
+    <h3>Usuário cadastrado com sucesso!</h3>
+
+    <p><strong>Nome: <span th:text="${nome}"></span></strong></p>
+    <p><strong>Idade: <span th:text="${idade}"></span></strong></p>
+    <p><strong>Data de nascimento: <span th:text="${dataNascimento}"></span></strong></p>
+    <p><strong>Profissão: <span th:text="${profissao}"></span></strong></p>
+    <p><strong>Altura: <span th:text="${altura}"></span></strong></p>
+
+</div>
+
+
+</body>
+</html>

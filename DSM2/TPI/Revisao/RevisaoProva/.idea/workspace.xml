@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="74382702-85bc-4f48-a27a-23ffab413f4d" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/../../../DW2/simulado_prático_dw2/Controller.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../DW2/simulado_prático_dw2/Model.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../DW2/simulado_prático_dw2/config/sequelize-config.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../DW2/simulado_prático_dw2/controller/FilmeController.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../DW2/simulado_prático_dw2/index.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../DW2/simulado_prático_dw2/model/Filme.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../DW2/simulado_prático_dw2/package-lock.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../DW2/simulado_prático_dw2/package.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../DW2/simulado_prático_dw2/public/css/styles.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../DW2/simulado_prático_dw2/views/filmes.ejs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../DW2/simulado_prático_dw2/views/partials/footer.ejs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../DW2/simulado_prático_dw2/views/partials/header.ejs" beforeDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../../../.." />
+  </component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "associatedIndex": 2,
+  "fromUser": false
+}]]></component>
+  <component name="ProjectId" id="3FJYCiRFQL7c8TpWytjMvzakrqF" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
+    "git-widget-placeholder": "main",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "D:/Fatec/desenvolvimento-de-software-multiplataforma/DSM2/TPI/Revisao/RevisaoProva"
+  }
+}]]></component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="74382702-85bc-4f48-a27a-23ffab413f4d" name="Changes" comment="" />
+      <created>1781794513496</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1781794513496</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+</project>

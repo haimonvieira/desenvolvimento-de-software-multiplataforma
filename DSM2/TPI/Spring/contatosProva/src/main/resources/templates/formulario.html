@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Cadastro de Contatos</title>
+</head>
+<style>
+    body{
+        font-family: Arial;
+        background-color: #a2a2a2;
+    }
+    .container{
+        width: 500px;
+        margin: auto;
+        background: white;
+        padding: 20px;
+        margin-top: 20px;
+        border-radius: 10px;
+    }
+    input{
+        width: 475px;
+        padding: 10px;
+        margin-bottom: 10px;
+    }
+    button{
+        width: 100%;
+        padding: 10px;
+        background: blue;
+        color: white;
+        border: none;
+    }
+</style>
+<body>
+<div class="container">
+
+    <h1>Cadastro de Contatos</h1>
+
+    <form th:action="@{/salvar}" th:object="${contato}" method="post">
+
+        <input type="text" th:field="*{nome}" placeholder="Insira o nome">
+        <input type="text" th:field="*{telefone}" placeholder="Insira o telefone">
+        <input type="text" th:field="*{endereco}" placeholder="Insira o endereco">
+        <input type="text" th:field="*{cidade}" placeholder="Insira a cidade">
+        <button type="submit">Cadastra</button>
+
+    </form>
+
+    
+
+</div>
+</body>
+</html>

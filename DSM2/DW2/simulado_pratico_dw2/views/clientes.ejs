@@ -1,0 +1,85 @@
+<%-include ('partials/header.ejs')%>
+
+<div class="container">
+  <div class="card">
+    <div class="card-header">
+      <h1>Cadastrar Cliente</h1>
+    </div>
+    <div class="card-body">
+      <form action="/clientes/cadastrar" method="post">
+        <label for="nome">Nome:</label>
+        <input class="form-control" type="text" name="nome" placeholder="Insira o nome do cliente" required>
+
+        <label for="nome">CPF:</label>
+        <input class="form-control" maxlength="12" type="text" name="cpf" placeholder="Insira o CPF do cliente" required>
+
+        <label for="nome">Endereço:</label>
+        <input class="form-control" type="text" name="endereco" placeholder="Insira o endereço do cliente" required>
+
+        <br>
+
+        <button class="btn btn-success" type="submit">Cadastrar Cliente</button>
+        <button class="btn btn-warning" type="reset">Limpar</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<br>
+
+<div class="container">
+
+  <div class="card">
+    <div class="card-header">
+      <h1>Clientes</h1>
+    </div>
+    <div class="card-body">
+
+      <% if (clientes.length === 0) {%>
+        <p>Sem clientes cadastrados.</p>
+      <%} else{%>
+      <table>
+        <thead>
+          <tr>
+            <th></th>
+            <th>Nome:</th>
+            <th>CPF:</th>
+            <th>Endereço:</th>
+            <th colspan="2" style="text-align: center;">Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% clientes.forEach(cliente => { %>
+          <tr>
+            <td><img src="imgs/avatar.png" width="30px"></td>
+            <td>
+              <%= cliente.nome %>
+            </td>
+            <td>
+              <%= cliente.cpf %>
+            </td>
+            <td>
+              <%= cliente.endereco %>
+            </td>
+            <td>
+              <a href="/clientes/editar/<%= cliente.id %>">
+                <button class="btn btn-warning">
+                  Editar
+                </button>
+              </a>
+            </td>
+            <td>
+              <a href="/clientes/excluir/<%= cliente.id%>">
+                <button class="btn btn-danger" onclick="return confirm('Tem certeza que quer excluir o cliente <%= cliente.nome %>?')">Excluir</button>
+              </a>
+            </td>
+          </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <%}%>
+</div>
+
+<%- include ('partials/footer.ejs')%>

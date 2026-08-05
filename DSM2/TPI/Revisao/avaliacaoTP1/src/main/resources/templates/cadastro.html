@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Cadastro</title>
+    <style>
+        .formulario{
+            margin-bottom: 15px;
+        }
+        label{
+            display: block;
+            font-weight: bold;
+        }
+        .resultado{
+            background: #e7f3fe;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<div>
+
+    <form th:action="@{/salvar}" method="post">
+
+        <div class="formulario">
+            <label>Nome</label>
+            <input type="text" name="nome" required>
+        </div>
+
+        <div class="formulario">
+            <label>Preço</label>
+            <input type="number" name="preco" step="0.01" required>
+        </div>
+
+        <div class="formulario">
+            <label>Categoria</label>
+            <select name="categoria">
+                <option value="eletronico">Eletronico</option>
+                <option value="moveis">Moveis</option>
+                <option value="vestuario">Vestuario</option>
+            </select>
+        </div>
+
+        <button type="submit">Cadastrar Produto</button>
+
+    </form>
+
+    <div th:if="${sucesso}" class="resultado">
+        <p><strong>Nome:</strong> <span th:text="${nome}"></span></p>
+        <p><strong>Preço:</strong> R$ <span th:text="${preco}"></span></p>
+        <p><strong>Categoria:</strong> <span th:text="${categoria}"></span></p>
+    </div>
+
+</div>
+
+</body>
+</html>

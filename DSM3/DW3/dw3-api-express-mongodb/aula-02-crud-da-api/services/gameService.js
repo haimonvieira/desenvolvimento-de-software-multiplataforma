@@ -1,4 +1,5 @@
-//Serviços de games
+//NAO PRINTA CODIGO DE STATUS, APENAS O ERRO
+
 // Aqui será inserido os métodos para ler, cadastrar, alterar e excluir games
 import Game from "../models/Games.js";
 
@@ -38,6 +39,41 @@ class gameService{
 
         }catch(error){
             console.log(error);
+        }
+
+    }
+
+    //Excluir jogo
+    async delete(id){
+
+        try{
+
+            await Game.findByIdAndDelete(id);
+            console.log(`O jogo com a id ${id} foi deletado`)
+
+        }catch(error){
+
+            console.log(error);
+
+        }
+
+    }
+
+    async update(id, title, year, platform, price){
+
+        try{
+
+            await Game.findByIdAndUpdate(id, {
+                title,
+                year, 
+                platform,
+                price
+            });
+
+            console.log(`O jogo de id ${id} foi alterado com sucesso`)
+
+        }catch(error){
+            console.log(error)
         }
 
     }

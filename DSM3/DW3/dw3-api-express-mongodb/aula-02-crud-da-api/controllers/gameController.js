@@ -1,6 +1,7 @@
 // O controller tratara as requisicoes do cliente
 // Importando o service
 import gameService from "../services/gameService.js";
+import { ObjectId } from "mongodb";
 
 // Funcao que ira tratar a requisicao par alistar os jogos
 const getAllGames = async (req, res) => {
@@ -11,7 +12,7 @@ const getAllGames = async (req, res) => {
     }catch(error){
         console.log(error);
         // Retornando json de resposta de erro
-        res.status(500).json({error: "Ocorreu um erro ao listar os jogos. Erro interno no servidor."});
+        res.status(500).json({error: "Erro interno no servidor"});
     }
 
 }
@@ -32,5 +33,62 @@ const createGame = async (req, res) => {
     }
 }
 
+// Função que trata a requisicao para excluir um jogo
+const deleteGame = async (req, res) => {
+
+    try{
+        
+        const id = req.params.id //Pegando id pelo endpoint
+
+        //Validação do ObjectId
+        if(ObjectId.isValid(id)){
+            
+            await gameService.delete(id)
+            res.sendStatus(204) // Enviando codigo 204 sem mensagem
+
+        }else{
+
+            res.status(400).json({error: "Requisição mal formada"}) // Bad Request
+
+        }
+
+
+    }catch(error){
+
+        console.log(error)
+        res.status(500).json({error: "Erro interno no servidor"})
+
+    }
+
+}
+
+const updateGame = async (req, res) => {
+
+    try{
+
+        const id = req.params.id
+
+        if(ObjectId.isValid(id)){
+            
+            const {title, year, platform, price} = req.body
+
+            await gameService.update(id, title, year, platform, price)
+            res.status(200).json({message: "Jogo atualizado com sucesso"})
+
+        }else{
+
+            res.status(400).json({error: "Requisição mal formada."})
+
+        }
+
+        
+
+    }catch(error){
+        console.log(error)
+        res.status(500).json({error: "Erro interno no servidor"})
+    }
+
+}
+
 // Exportando funções
-export default {getAllGames, createGame};
+export default {getAllGames, createGame, deleteGame, updateGame};

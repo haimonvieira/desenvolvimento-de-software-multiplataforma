@@ -78,7 +78,24 @@ class gameService{
 
     }
 
-}
+    // Método para listar um registro unico
+    async getOne(id){
+
+        try{
+
+            // findOne: metodo do mongoose para selecionar um registro
+            const game = await Game.findOne({_id: id})
+            return game
+
+        }catch(error){
+
+            console.log(error)
+            
+        }
+
+    }
+
+}   
 
 
 // Exporta e ja criando a instancia da classe

@@ -4,9 +4,11 @@ import mongoose from "mongoose";
 
 // Importando models
 import Game from "./models/Games.js";
+import User from "./models/Users.js"
 
 // Importando as rotas
 import gameRoutes from "./routes/gameRoutes.js";
+import userRoutes from "./routes/userRoutes.js";
 
 // Carregando express
 const app = express();
@@ -18,6 +20,7 @@ app.use(express.json()) // permitindo usar .json
 // Rota principal da API
 // Carregando as rotas no express
 app.use("/", gameRoutes);
+app.use("/", userRoutes)
 
 // Iniciando a conexao com MongoDB
 mongoose.connect("mongodb://127.0.0.1:27017/apithegames_aninhado");

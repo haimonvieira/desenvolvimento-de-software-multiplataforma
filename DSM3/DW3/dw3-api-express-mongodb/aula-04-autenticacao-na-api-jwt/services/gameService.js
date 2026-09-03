@@ -1,102 +1,79 @@
-//NAO PRINTA CODIGO DE STATUS, APENAS O ERRO
+// Serviços de Games
+// Aqui será inserido os métodos para Ler, cadastrar, Alterar e Excluir games
 
-// Aqui será inserido os métodos para ler, cadastrar, alterar e excluir games
-import Game from "../models/Games.js";
+// Importando o Model
+import Game from "../models/Games.js"
 
-class gameService{
-
-    // Serviço para ler os jogos
-    async getAll(){
-        //Tentativa da promise
-        try{
-            const games = await Game.find();
-            return games;
-
-        }catch(error){
-
-            console.log(error);
-
+class gameService {
+    // Serviço/MÉTODO para ler os jogos
+    async getAll() {
+        // Tentativa da promessa (sucesso)
+        try {
+            //  o método .find() do mongoose busca registros
+            const games = await Game.find()
+            return games
+            // Caso ocorra um erro será executado o catch
+        } catch (error) {
+            console.log(error)
         }
     }
-
-    // Método para cadastrar jogos
-    async create(title, year, price, descriptions){
-
-        try{
-
-            //Enviando os dados a serem cadastrados para o Model
+    // MÉTODO PARA CADASTRAR JOGOS
+    async Create(title, year, price, descriptions) {
+        try {
+            // Enviando os dados a serem cadastrados para o Model
             const newGame = new Game({
-                //title: title,
-                // Mesmo campo que quero inserir é igual ao campo de origem title: title
+                // title: title,
                 title,
                 year,
                 price,
                 descriptions
             });
-
-            //Aguardar a operação de cadastro
-            await newGame.save() // save() é operação do mongoose para cadastrar
-
-        }catch(error){
+            // Aguardar a operação de cadastro
+            await newGame.save(); // .save() é o método do mongoose para cadastrar
+        } catch (error) {
             console.log(error);
         }
-
     }
-
-    //Excluir jogo
-    async delete(id){
-
-        try{
-
+    // MÉTODO PARA EXCLUIR UM JOGO
+    async Delete(id) {
+        try {
             await Game.findByIdAndDelete(id);
-            console.log(`O jogo com a id ${id} foi deletado`)
-
-        }catch(error){
-
-            console.log(error);
-
+            // O método findByIdAndDelete() do mongoose busca um registro pela ID e deleta
+            console.log(`O jogo com a id ${id} foi deletado.`)
+        } catch (error) {
+            console.log(error)
         }
 
     }
 
-    async update(id, title, year, price, descriptions){
-
-        try{
-
+    //  MÉTODO PARA ALTERAR UM JOGO
+    async Update(id, title, year, price, descriptions) {
+        try {
             await Game.findByIdAndUpdate(id, {
+                // title : title
                 title,
-                year, 
+                year,
                 price,
                 descriptions
-            });
-
-            console.log(`O jogo de id ${id} foi alterado com sucesso`)
-
-        }catch(error){
+            })
+            console.log(`O jogo com a id ${id} foi alterado.`)
+        } catch (error) {
             console.log(error)
         }
-
     }
 
-    // Método para listar um registro unico
-    async getOne(id){
-
-        try{
-
-            // findOne: metodo do mongoose para selecionar um registro
-            const game = await Game.findOne({_id: id})
+    // MÉTODO PARA LISTAR UM REGISTRO ÚNICO
+    async getOne(id) {
+        try {
+            const game = await Game.findOne({ _id: id })
+            // findOne : método do Mongoose para selecionar um registro único
             return game
-
-        }catch(error){
-
+        } catch (error) {
             console.log(error)
-            
         }
-
     }
+    // ENCERRA A CLASSE
+}
+// Exportando a classe
+export default new gameService()
 
-}   
-
-
-// Exporta e ja criando a instancia da classe
-export default new gameService();

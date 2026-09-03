@@ -1,36 +1,36 @@
-// Importando as bibliotecas
+// Importar o Express
 import express from "express";
-import mongoose from "mongoose";
-
-// Importando models
-import Game from "./models/Games.js";
+// Importar o Mongoose
+import mongoose from "mongoose"
+// Importar o Model de Game
+import Game from "./models/Games.js"
+// Importar o Model de Usuário
 import User from "./models/Users.js"
-
-// Importando as rotas
-import gameRoutes from "./routes/gameRoutes.js";
+// Importar as rotas (endpoints)
+import gameRoutes from './routes/gameRoutes.js'
 import userRoutes from "./routes/userRoutes.js";
 
-// Carregando express
+// Carregando Express
 const app = express();
 
-//Configurações do express
-app.use(express.urlencoded({extended: false}))
-app.use(express.json()) // permitindo usar .json
+// Configurações do Express
+app.use(express.urlencoded({ extended: false }))
+app.use(express.json());
 
-// Rota principal da API
-// Carregando as rotas no express
-app.use("/", gameRoutes);
-app.use("/", userRoutes)
+// Carregando as rotas de games
+app.use('/', gameRoutes)
+// Carregando as rotas de usuários
+app.use('/', userRoutes)
 
-// Iniciando a conexao com MongoDB
-mongoose.connect("mongodb://127.0.0.1:27017/apithegames_aninhado");
+// Iniciando a conexão com o MongoDB
+mongoose.connect("mongodb://127.0.0.1:27017/apithegames_aninhado")
 
-// Iniciando servidor da API
+// Iniciando o servidor da API
 const port = 4000;
 app.listen(port, (error) => {
-    if(error){
-        console.log("Erro ao iniciar o servidor da API: " + error)
-    }else{
-        console.log("API iniciada com sucesso na porta: http://localhost:" + port)
+    if (error) {
+        console.log("Ocorreu um erro ao iniciar a API!" + error);
+    } else {
+        console.log("API iniciada com sucesso na porta " + port);
     }
-})
+});

@@ -1,11 +1,13 @@
-import mongoose, { mongo } from "mongoose";
+// Users.js
+import mongoose from "mongoose";
 
-//Criando o schema de usuario
+// Criando o schema de Usuário
 const userSchema = new mongoose.Schema({
     email: String,
     password: String
-})
+});
 
-const User = mongoose.model("User", userSchema)
+// Iniciando o Model
+const User = mongoose.model("User", userSchema);
 
-export default User
+export default User;

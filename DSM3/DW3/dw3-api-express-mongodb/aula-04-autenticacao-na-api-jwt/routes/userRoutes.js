@@ -1,9 +1,14 @@
-import express from "express"
-import userController from "../controllers/userController.js"
+// userRoutes.js
+import express from 'express';
+const userRoutes = express.Router();
+// Importando o controller
+import userController from '../controllers/userController.js';
 
-const userRoutes = express.Router()
+// Endpoint para CADASTRAR um usuário
+userRoutes.post("/user", userController.createUser);
 
-userRoutes.post("/user", userController.createUser)
-userRoutes.post("/login", userController.loginUser)
+// Endpoint para LOGAR um usuário
+userRoutes.post("/login", userController.loginUser);
 
-export default userRoutes
+
+export default userRoutes;

@@ -1,137 +1,75 @@
-# 📚 Desenvolvimento de Software Multiplataforma
+# Desenvolvimento de Software Multiplataforma
 
-Este repositório contém materiais, exercícios, projetos e anotações do curso de **Desenvolvimento de Software Multiplataforma (DSM)**.
+Repositório com materiais, exercícios, projetos e anotações do curso de
+Desenvolvimento de Software Multiplataforma (DSM) da Fatec.
 
-O conteúdo está organizado por semestre e disciplina, facilitando a navegação e o estudo progressivo.
+O conteúdo está organizado por semestre e disciplina.
 
----
+## Estrutura do repositório
 
-# 📁 Estrutura do Repositório
-📁 DSM1/ → Conteúdos do 1º semestre
-📁 DSM2/ → Conteúdos do 2º semestre
+- [DSM1](DSM1/) - conteúdos do 1o semestre
+- [DSM2](DSM2/) - conteúdos do 2o semestre
+- [DSM3](DSM3/) - conteúdos do 3o semestre
 
+## DSM1 - 1o semestre
 
-# 🎓 DSM1 – 1º Semestre
+- [ALP](DSM1/ALP/) - Algoritmos e Lógica de Programação
+- [DD](DSM1/DD/) - Design Digital
+- [DW1](DSM1/DW1/) - Desenvolvimento Web I
+- [ES1](DSM1/ES1/) - Engenharia de Software I
+- [MBD](DSM1/MBD/) - Modelagem de Banco de Dados
+- [PI](DSM1/PI/) - Projeto Integrador
+- [SORC1](DSM1/SORC1/) - Sistemas Operacionais e Redes
 
-Disciplinas e conteúdos estudados:
+## DSM2 - 2o semestre
 
-- **ALP/** → Algoritmos e Lógica de Programação  
-- **DD/** → Design Digital  
-- **DW1/** → Desenvolvimento Web I  
-- **ES1/** → Engenharia de Software I  
-- **MBD/** → Modelagem de Banco de Dados  
-- **SORC1/** → Sistemas Operacionais e Redes  
-- **PI/** → Projeto Integrador  
-- **BD/** → Banco de Dados (complementar)  
+- [BD2](DSM2/BD2/) - Banco de Dados II e consultas SQL
+- [DW2](DSM2/DW2/) - Desenvolvimento Web II, JavaScript, Node.js e Express
+- [ED1](DSM2/ED1/) - Estrutura de Dados e algoritmos de ordenação
+- [ES2](DSM2/ES2/) - Engenharia de Software II
+- [MPC](DSM2/MPC/) - Matemática para Computação
+- [TPI](DSM2/TPI/) - Técnica de Programação I e orientação a objetos
 
----
+### Destaques do DW2
 
-# 🎓 DSM2 – 2º Semestre
+- [Exercícios](DSM2/DW2/exercicios/)
+- [Projeto Node.js e Express](DSM2/DW2/dw2-nodejs-express/)
+- JavaScript: funções, arrays, objetos e classes
+- Backend com Node.js e Express
 
-Disciplinas e conteúdos estudados:
+## DSM3 - 3o semestre
 
-- **BD2/** → Banco de Dados II (Scripts SQL, modelagem avançada)
-- **DW2/** → Desenvolvimento Web II (Node.js, Express, JavaScript avançado)
-- **ED1/** → Estrutura de Dados (Vetores, algoritmos de ordenação)
-- **MPC/** → Matemática para Computação (Lógica matemática, proposições)
-- **TPI/** → Técnica de Programação I (Programação Orientada a Objetos)
+- [BDNR](DSM3/BDNR/) - Banco de Dados Não Relacional e MongoDB
+- [DW3](DSM3/DW3/) - Desenvolvimento Web III e API com Express/MongoDB
+- [GAPS](DSM3/GAPS/) - projetos web do semestre
+- [ING1](DSM3/ING1/) - Inglês I
+- [TP2](DSM3/TP2/) - Técnica de Programação II e programação em Python
 
----
+### Destaques do DSM3
 
-## 📂 Desenvolvimento Web II (DW2)
+- [Exemplo de MongoDB](DSM3/BDNR/exemplo-vscode-mongo/)
+- [API de Desenvolvimento Web III](DSM3/DW3/dw3-api-express-mongodb/)
+- Exercícios de Python sobre condicionais, laços e orientação a objetos
+- [Hub Solidário - API](DSM3/GAPS/hub-solidario-api/)
+- [Hub Solidário - web](DSM3/GAPS/hub-solidario-web/)
 
-Conteúdos voltados para backend, JavaScript avançado e Node.js.
+## Tecnologias e conteúdos
 
-**Localização dos exercícios de DW2:**
-
-- [Exercícios DW2](https://github.com/haimonvieira/desenvolvimento-de-software-multiplataforma/tree/main/DSM2/DW2/exercicios)
-
-### 📘 Aula 01 – Tipos de Funções em JavaScript
-
-Conteúdos abordados:
-
-- Variáveis (`var`, `let`, `const`)
-- Funções tradicionais
-- Function Expression
-- Arrow Functions
-- Diferenças de escopo
-- Boas práticas
-
-### 🔧 Tecnologias
-
-- **Node.js** - Interpretador de JavaScript server-side
-- **Express** - Framework web para Node.js
-- **JavaScript (ECMA Script)** - Linguagem de programação principal
-
----
-
-## 📚 Estrutura de Dados (ED1)
-
-Estudo de estruturas de dados homogêneas e algoritmos de ordenação.
-
-**Estruturas abordadas:**
-- Vetores (arrays)
-- Algoritmos de ordenação
-
----
-
-## 🧮 Matemática para Computação (MPC)
-
-### Lógica Matemática
-
-Conceitos fundamentais:
-
-- **Proposição** - Frase declarativa que pode ser verdadeira (V) ou falsa (F)
-- **Proposições Simples** - Uma única ideia
-- **Proposições Complexas** - Duas ou mais ideias ligadas por conectivos
-- **Conectivos Lógicos:**
-  - ¬ → Negação (NOT)
-  - ∧ → Conjunção (AND)
-  - ∨ → Disjunção (OR)
-  - ⊕ → Ou exclusivo (XOR)
-  - → → Condicional
-  - ↔ → Bicondicional
-
----
-
-## 💻 Técnica de Programação I (TPI)
-
-### Programação Orientada a Objetos (OO)
-
-Conceitos fundamentais:
-
-- **Objetos** - Entidades com atributos e métodos
-- **Atributos** - Características do objeto
-- **Métodos** - Ações que o objeto pode realizar
-
-#### Assinatura do Método
-
-Composta por:
-- Nome do método
-- Argumentos (parâmetros)
-- Tipo de resposta (retorno)
-
-Exemplo: `public String calcularSalario(int valor)`
-
-**Getters e Setters** - Cada atributo deve possuir seus acessadores
-
----
-
-# 🚀 Tecnologias Utilizadas
-
-- HTML5
-- CSS3
+- HTML5 e CSS3
 - JavaScript
-- Node.js
-- Express
-- Banco de Dados (modelagem e prática)
+- Node.js e Express
+- Python
+- SQL e MongoDB
+- Estruturas de dados e algoritmos
+- Engenharia de software e design digital
 
----
+## Como executar projetos Node.js
 
-# ▶️ Como executar projetos Node.js
-
-Se houver um `package.json` na pasta:
+Entre na pasta do projeto que contém um `package.json` e execute:
 
 ```bash
 npm install
 npm start
+```
+
+Consulte o `package.json` de cada projeto para verificar os scripts disponíveis.

@@ -1,0 +1,29 @@
+# HHR Solutions - Documentação
+
+> Mapa de contexto para LLMs que auxiliam o responsável pela Documentação do Arquivo Criminal Brasileiro.
+
+Use o guia como contrato da área. A documentação pode começar com o contrato aprovado, mas a versão final precisa refletir a API realmente implementada.
+
+## Project documentation
+
+- [Guia de Documentação](./03_DOCUMENTACAO.md): Swagger, README, Insomnia, rotas, schemas, respostas, status e critérios de conclusão.
+- [Instruções do agente de Documentação](./AGENTS.md): regras específicas para documentar e revisar.
+- [Contrato global](../shared/01_CONTRATO_GLOBAL.md): entidades, rotas e decisões compartilhadas.
+- [Atividade oficial](../shared/00_ATIVIDADE_OFICIAL.md): requisitos obrigatórios da disciplina.
+
+## Classroom references
+
+- [Swagger do professor](https://github.com/maxxdiego/17_documentacao_de_api_com_swagger): principal referência para documentação da API e Swagger.
+- [Aula 05](https://github.com/haimonvieira/desenvolvimento-de-software-multiplataforma/tree/main/DSM3/DW3/dw3-api-express-mongodb/aula-05-hash-de-senha-e-variaveis-de-ambiente): referência para autenticação e comportamento das rotas protegidas.
+
+## External references
+
+- [OpenAPI 3.0](https://swagger.io/docs/specification/v3_0/about/): referência oficial para estrutura OpenAPI.
+- [Bearer Authentication](https://swagger.io/docs/specification/v3_0/authentication/bearer-authentication/): referência para autenticação JWT na documentação.
+- [HTTP Status - MDN](https://developer.mozilla.org/pt-BR/docs/Web/HTTP/Reference/Status): consulta sobre códigos HTTP.
+- [Insomnia Requests](https://developer.konghq.com/insomnia/requests/): referência para testes e organização das requisições.
+
+## Optional
+
+- [PDF do guia](./03_DOCUMENTACAO_HHR_SOLUTIONS.pdf): versão diagramada para leitura humana.
+- [Checklist geral](../shared/02_CHECKLIST_ENTREGA.md): itens finais da atividade.

@@ -1,0 +1,8 @@
+# swaggerDocs.yaml
+# CONTEÚDO DE RESPONSABILIDADE DA ÁREA DE DOCUMENTAÇÃO (guia 01 - seção 9).
+# O Backend apenas fornece a infraestrutura que consome este arquivo.
+# Placeholder mínimo para a interface /api-docs carregar antes da entrega da Documentação.
+# A Documentação deve definir aqui: 8 paths, 4 schemas (User, Caso, Detalhes, Producao),
+# segurança Bearer JWT e a marcação de /user e /login como rotas públicas.
+
+paths: {}

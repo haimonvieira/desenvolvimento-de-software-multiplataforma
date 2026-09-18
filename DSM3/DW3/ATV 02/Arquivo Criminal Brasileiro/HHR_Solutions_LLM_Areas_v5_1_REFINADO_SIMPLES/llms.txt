@@ -1,0 +1,25 @@
+# HHR Solutions - Arquivo Criminal Brasileiro
+
+> Mapa de contexto para LLMs que auxiliam o projeto acadêmico Arquivo Criminal Brasileiro.
+
+Projeto dividido em Backend, Banco de Dados, Documentação e Design. Use o arquivo mais específico da área em trabalho. A atividade oficial define os requisitos obrigatórios, os guias definem o contrato atual e as aulas do professor são a principal referência de implementação.
+
+## Áreas
+
+- [Backend](./backend/llms.txt): contexto e referências específicas para a API REST.
+- [Banco de Dados](./banco/llms.txt): contexto e referências para Models, MongoDB e Atlas.
+- [Documentação](./documentacao/llms.txt): contexto e referências para Swagger, README e Insomnia.
+- [Design](./design/llms.txt): contexto e referências para UX/UI e Figma.
+
+## Documentação compartilhada
+
+- [Atividade oficial em Markdown](./shared/00_ATIVIDADE_OFICIAL.md): requisitos obrigatórios em formato amigável para LLM.
+- [Visão geral](./shared/00_COMECE_AQUI.md): organização geral do projeto.
+- [Contrato global](./shared/01_CONTRATO_GLOBAL.md): entidades, rotas e decisões compartilhadas.
+- [Checklist de entrega](./shared/02_CHECKLIST_ENTREGA.md): itens necessários para finalizar a atividade.
+- [Instruções gerais para agentes](./AGENTS.md): regras operacionais para qualquer área.
+
+## Optional
+
+- [Atividade oficial em PDF](./shared/00_ATIVIDADE_OFICIAL.pdf): fonte original do enunciado.
+- [Testes de comportamento da LLM](./shared/03_LLM_EVALS.md): perguntas para conferir se o agente respeita o projeto.

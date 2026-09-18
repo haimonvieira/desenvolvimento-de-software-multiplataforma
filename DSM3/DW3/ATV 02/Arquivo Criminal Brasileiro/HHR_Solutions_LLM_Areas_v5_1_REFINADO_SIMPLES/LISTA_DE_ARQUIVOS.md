@@ -1,0 +1,33 @@
+# Lista de arquivos
+
+- `AGENTS.md`
+- `LISTA_DE_ARQUIVOS.md`
+- `README.md`
+- `VALIDATION_REPORT.md`
+- `backend/01_BACKEND.md`
+- `backend/01_BACKEND_HHR_SOLUTIONS.pdf`
+- `backend/AGENTS.md`
+- `backend/LLM_CONTEXT_BACKEND.md`
+- `backend/llms.txt`
+- `banco/02_BANCO_DE_DADOS.md`
+- `banco/02_BANCO_DE_DADOS_HHR_SOLUTIONS.pdf`
+- `banco/AGENTS.md`
+- `banco/LLM_CONTEXT_BANCO.md`
+- `banco/llms.txt`
+- `design/04_DESIGN.md`
+- `design/04_DESIGN_HHR_SOLUTIONS.pdf`
+- `design/AGENTS.md`
+- `design/LLM_CONTEXT_DESIGN.md`
+- `design/llms.txt`
+- `documentacao/03_DOCUMENTACAO.md`
+- `documentacao/03_DOCUMENTACAO_HHR_SOLUTIONS.pdf`
+- `documentacao/AGENTS.md`
+- `documentacao/LLM_CONTEXT_DOCUMENTACAO.md`
+- `documentacao/llms.txt`
+- `llms.txt`
+- `shared/00_ATIVIDADE_OFICIAL.md`
+- `shared/00_ATIVIDADE_OFICIAL.pdf`
+- `shared/00_COMECE_AQUI.md`
+- `shared/01_CONTRATO_GLOBAL.md`
+- `shared/02_CHECKLIST_ENTREGA.md`
+- `shared/03_LLM_EVALS.md`

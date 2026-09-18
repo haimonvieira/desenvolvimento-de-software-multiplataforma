@@ -1,0 +1,30 @@
+# HHR Solutions - Backend
+
+> Mapa de contexto para LLMs que auxiliam o responsável pelo Backend do Arquivo Criminal Brasileiro.
+
+Use o guia como contrato da área. Mantenha o padrão Route -> Controller -> Service -> Model, use as aulas como principal referência e trate Argon2id e TMDB como extensões aprovadas.
+
+## Project documentation
+
+- [Guia de Backend](./01_BACKEND.md): escopo, rotas, responsabilidades, arquivos, autenticação, TMDB, Swagger e critérios de conclusão.
+- [Instruções do agente de Backend](./AGENTS.md): comportamento e regras específicas para a área.
+- [Contrato global](../shared/01_CONTRATO_GLOBAL.md): entidades, rotas e decisões compartilhadas.
+- [Atividade oficial](../shared/00_ATIVIDADE_OFICIAL.md): requisitos obrigatórios da disciplina.
+
+## Classroom references
+
+- [Aula 02 - CRUD da API](https://github.com/haimonvieira/desenvolvimento-de-software-multiplataforma/tree/main/DSM3/DW3/dw3-api-express-mongodb/aula-02-crud-da-api): referência para Routes, Controllers, Services, CRUD e ObjectId.
+- [Aula 04 - Autenticação JWT](https://github.com/haimonvieira/desenvolvimento-de-software-multiplataforma/tree/main/DSM3/DW3/dw3-api-express-mongodb/aula-04-autenticacao-na-api-jwt): referência para JWT e middleware.
+- [Aula 05 - Hash e variáveis de ambiente](https://github.com/haimonvieira/desenvolvimento-de-software-multiplataforma/tree/main/DSM3/DW3/dw3-api-express-mongodb/aula-05-hash-de-senha-e-variaveis-de-ambiente): referência principal para cadastro, login, autenticação e segredos.
+- [Swagger do professor](https://github.com/maxxdiego/17_documentacao_de_api_com_swagger): referência de integração Swagger.
+
+## External references
+
+- [node-argon2](https://github.com/ranisalt/node-argon2): referência para hash e verificação com Argon2id.
+- [TMDB Search Multi](https://developer.themoviedb.org/reference/search-multi): referência para pesquisa externa de produções.
+- [Express Routing](https://expressjs.com/en/guide/routing.html): referência oficial de rotas Express.
+
+## Optional
+
+- [PDF do guia](./01_BACKEND_HHR_SOLUTIONS.pdf): versão diagramada para leitura humana.
+- [Checklist geral](../shared/02_CHECKLIST_ENTREGA.md): itens finais da atividade.

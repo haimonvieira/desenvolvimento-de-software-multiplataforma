@@ -1,35 +1,32 @@
+// config/db-connection.js
 import mongoose from "mongoose";
-import dotenv from 'dotenv' // Carrega as variáveis do arquivo .env
-dotenv.config({
-    path: ['.env', 'atlas-credentials.env']
-});
+import dotenv from "dotenv";
 import dns from 'node:dns';
 dns.setServers(['8.8.8.8', '8.8.4.4']); // Força o uso do DNS do Google
 
+dotenv.config();
+
 const dbUser = process.env.MONGODB_USERNAME;
 const dbPassword = process.env.MONGODB_PASSWORD;
+const dbCluster = process.env.MONGODB_CLUSTER;
+const dbName = process.env.MONGODB_DATABASE;
 
-const connect = async () => {
+const connect = () => {
+  mongoose.connect(
+    `mongodb+srv://${dbUser}:${dbPassword}@${dbCluster}/${dbName}?retryWrites=true&w=majority`
+  );
 
-    try {
-        await mongoose.connect(
-            `mongodb+srv://${dbUser}:${dbPassword}@cluster0.7zenwrs.mongodb.net/arquivo_criminal_brasileiro?retryWrites=true&w=majority&appName=Cluster0`
-        )
-    } catch (error) {
-        // Enquanto as credenciais do Atlas não forem configuradas no .env,
-        // a API continua no ar para permitir o desenvolvimento das rotas.
-        console.log("Erro ao conectar ao mongoDB:", error.message)
-    }
+  const connection = mongoose.connection;
 
-    const connection = mongoose.connection
-    connection.on("error", (error) => {
-        console.log("Erro ao conectar ao mongoDB:", error.message)
-    })
-    connection.on("open", () => {
-        console.log("Conectado ao mongoBD com sucesso")
-    })
+  connection.on("error", () => {
+    console.log("Erro ao conectar com o MongoDB.");
+  });
 
-}
+  connection.on("open", () => {
+    console.log("Conectado ao MongoDB com sucesso!");
+  });
+};
 
-connect()
-export default mongoose
+connect();
+
+export default mongoose;

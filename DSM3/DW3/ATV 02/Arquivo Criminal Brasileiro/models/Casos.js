@@ -1,38 +1,87 @@
-// Casos.js
-// PROVISÓRIO: estruturado conforme o contrato global (shared/01_CONTRATO_GLOBAL.md).
-// O responsável pelo Banco deve revisar e assumir este arquivo (guia 01, seção 10),
-// incluindo a validação de documento aninhado com a Aula 03.1.
+// models/Casos.js
 import mongoose from "mongoose";
 
-// Schema aninhado de Detalhes (documento aninhado dentro de Caso)
-const detalhesSchema = new mongoose.Schema({
-    cidade: String,
-    estado: String, // estado/UF
-    anoInicio: Number,
-    anoFim: Number,
-    situacaoJudicial: String
-});
+const detalhesSchema = new mongoose.Schema(
+  {
+    cidade: {
+      type: String,
+      required: true,
+    },
+    estado: {
+      type: String,
+      required: true, // UF
+    },
+    anoInicio: {
+      type: Number,
+      required: true,
+    },
+    anoFim: {
+      type: Number,
+      required: false,
+    },
+    situacaoJudicial: {
+      type: String,
+      required: true,
+    },
+  },
+  { _id: false }
+);
 
-// Schema aninhado de Producao (item da array producoes)
-const producaoSchema = new mongoose.Schema({
-    tmdbId: Number,
-    titulo: String,
-    tipo: String, // filme, série ou documentário
-    ano: Number,
-    sinopse: String,
-    poster: String
-});
+const producaoSchema = new mongoose.Schema(
+  {
+    tmbId: {
+      type: Number,
+      required: true,
+    },
+    titulo: {
+      type: String,
+      required: true,
+    },
+    tipo: {
+      type: String,
+      required: true,
+      enum: ["filme", "serie", "documentario"],
+    },
+    ano: {
+      type: Number,
+      required: false,
+    },
+    sinopse: {
+      type: String,
+      required: false,
+    },
+    poster: {
+      type: String,
+      required: false,
+      default: null,
+    },
+  },
+  { _id: false }
+);
 
-// Criando o schema de Caso
 const casoSchema = new mongoose.Schema({
-    titulo: String,
-    resumo: String,
-    categorias: [String], // lista de classificações do caso
-    detalhes: detalhesSchema, // documento aninhado
-    producoes: [producaoSchema] // array de documentos aninhados
+  titulo: {
+    type: String,
+    required: true,
+  },
+  resumo: {
+    type: String,
+    required: true,
+  },
+  categorias: {
+    type: [String],
+    default: [],
+  },
+  detalhes: {
+    type: detalhesSchema,
+    required: true,
+  },
+  producoes: {
+    type: [producaoSchema],
+    default: [],
+  },
 });
 
-// Iniciando o Model
 const Caso = mongoose.model("Caso", casoSchema);
 
 export default Caso;

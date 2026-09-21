@@ -61,7 +61,7 @@ O log de conexão indica o alvo: `Conectado ao MongoDB com sucesso! (LOCAL)` ou 
 
 | Método | Rota | Descrição |
 |---|---|---|
-| `GET` | `/api-docs` | Swagger UI (contrato em `docs/swaggerDocs.yaml`) |
+| `GET` | `/api-docs` | Swagger UI renderizando `docs/swaggerDocs.yaml` — contrato completo com schemas e testável pelo botão **Authorize** |
 
 ### Body de `Caso`
 
@@ -94,9 +94,30 @@ O log de conexão indica o alvo: `Conectado ao MongoDB com sucesso! (LOCAL)` ou 
 
 ## Uso
 
-- Swagger UI: `http://localhost:4000/api-docs` (contrato em `docs/swaggerDocs.yaml`)
-- Testes manuais: coleção Insomnia **"Crimes"** (pastas `Usuários` e `Casos`, 8 requests) — as URLs e o token usam as variáveis de ambiente da coleção (`base_url`, `token`, `caseId`)
-- Fluxo: `01 Cadastrar usuário` → `02 Fazer login` (copie o token) → cole o token → `03/04` (copie um `_id` para `caseId`) → demais requests
+### Swagger UI — `http://localhost:4000/api-docs`
+
+O contrato completo (8 rotas, schemas, status codes) está em `docs/swaggerDocs.yaml` e é renderizado pelo Swagger UI. Para testar por lá:
+
+1. `POST /login` → **Try it out** → informe `email`/`password` → **Execute**
+2. Copie o valor de `token` da resposta (só o `eyJ...`, sem aspas)
+3. Botão **Authorize** (candado, no topo) → cole o token → **Authorize**
+4. Pronto: qualquer **Try it out** em rota protegida envia `Authorization: Bearer` automaticamente
+
+O token expira em 48h — `401 Token inválido` depois disso é só refazer o login.
+
+### Insomnia
+
+Coleção **"Crimes"** (pastas `Usuários` e `Casos`, 8 requests) — URLs e auth usam as variáveis de ambiente da coleção (`base_url`, `token`, `caseId`), definidas em *Manage Environments*.
+
+Fluxo: `01 Cadastrar usuário` → `02 Fazer login` (copie o token para a variável `token`) → `03/04` (copie um `_id` para `caseId`) → demais requests funcionam direto. Os requests `05`, `06` e `07` usam `{{ caseId }}`; com a variável vazia, a URL vira `/casos/` e o Express responde 404 HTML (`cannot PUT /casos/`).
+
+A query da busca TMDB fica no campo **Query Params** (`query` = `Tremembé`), não na URL — preencher nos dois lugares duplica o parâmetro, o Express monta um array e a rota responde 400.
+
+### Fluxo geral
+
+```
+01 Cadastrar usuário → 02 Fazer login (token) → 03/04 (caseId) → 05..08
+```
 
 ## Estrutura
 
@@ -108,7 +129,9 @@ services/                 Mongoose (classes, export singleton)
 models/                   Users.js, Casos.js (schemas)
 middleware/Auth.js        JWT Bearer -> req.loggedUser
 config/db-connection.js   conexão Atlas (ou MONGODB_URI)
-docs/                     arquitetura, domínio, operações, ADRs, swagger
+config/swagger-config.js  metadados OpenAPI, securitySchemes, globs do contrato
+docs/swaggerDocs.yaml     fonte da verdade do contrato HTTP (8 rotas, 4 schemas)
+docs/                     arquitetura, domínio, operações, ADRs
 ```
 
 Arquitetura fixa: `Route → Controller → Service → Model → MongoDB`. Para agentes de IA, leia `AGENTS.md` primeiro — ele é a porta de entrada (mapa de leitura, regras, comandos, estado atual).

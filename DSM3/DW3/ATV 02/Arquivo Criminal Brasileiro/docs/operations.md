@@ -7,7 +7,7 @@ npm install
 npm start        # nodemon index.js — API na porta 4000 (ou $PORT)
 ```
 
-Swagger UI: `http://localhost:4000/api-docs`. Testes manuais: coleção Insomnia "Arquivo Criminal Brasileiro" (pastas `Usuários` e `Casos`, 8 requests).
+Swagger UI: `http://localhost:4000/api-docs` — contrato completo em `docs/swaggerDocs.yaml` (8 rotas, 4 schemas, botão **Authorize** para colar o token do login). Testes manuais: coleção Insomnia **"Crimes"** (pastas `Usuários` e `Casos`, 8 requests; URLs e auth via variáveis `base_url`, `token`, `caseId`).
 
 ## Variáveis de ambiente (`.env`, gitignored)
 
@@ -46,6 +46,11 @@ Sintomas conhecidos:
 | `401 Token nao informado` | Falta o header `Authorization: Bearer TOKEN` |
 | `401 Token inválido` | Token expirado (48h) ou assinado com outro `JWT_SECRET` |
 | `400` em rota com `:id` | ID não é um ObjectId válido (validação em `casoController.js`) |
+| `404` HTML `cannot PUT /casos/` (sem JSON) | A URL não casou com nenhuma rota — tipicamente `{{ caseId }}` vazio no Insomnia. Copie um `_id` de `03 Listar casos` para a variável |
+| `400` em `/tmdb/buscar` com query aparentemente preenchida | `query` não chegou como string — o mais comum é o parâmetro duplicado (preenchido na URL **e** no campo Query Params), que faz o Express montar um array. Mantenha o valor só no campo |
+| `500` em `/tmdb/buscar` | Integração com o TMDB falhou — veja o log do servidor: `O TMDB respondeu com status 401` = chave inválida/ausente; `429` = limite de requisições. Valide a chave com `curl "https://api.themoviedb.org/3/authentication?api_key=$TMDB_API_TOKEN"` |
+| `listen EADDRINUSE :::4000` ao iniciar | Outro processo já ocupa a porta — feche o `nodemon` antigo (`Ctrl+C` no terminal dele) ou mude `PORT` no `.env` |
+| `/api-docs` abre com rotas desatualizadas/vazias | O processo em execução carregou o YAML antigo (o spec é lido uma vez, no boot). Reinicie a API |
 | `404` em `GET /casos/:id` | ID válido, mas documento inexistente |
 | Login retorna 404 | Usuário não existe (ou banco inacessível — ver primeiro sintoma) |
 

@@ -15,7 +15,7 @@ Entidades e regras de negócio da API. O contrato HTTP (endpoints, schemas, stat
 2. `detalhes` e `producoes` vivem **dentro** do documento `Caso`. Proibido extrair para collections próprias ou usar `ref/populate`.
 3. Senha só persiste como hash Argon2id; comparação sempre via `argon2.verify`.
 4. Rotas `/casos` e `/tmdb/buscar` exigem `Authorization: Bearer TOKEN` válido; `/user` e `/login` são públicas.
-5. `tipo` de produção só admite `filme`, `série` ou `documentário` (o TMDB retorna `movie`/`tv`; a normalização acontece em `services/tmdbService.js`).
+5. `tipo` de produção só admite `filme`, `série` ou `documentário`. O TMDB retorna `movie`/`tv` em `media_type`; `services/tmdbService.js` normaliza para `filme`/`série` e usa `genre_ids` contendo 99 (Documentary) para identificar `documentário` — séries documentais permanecem `série`, pois o contrato não prevê esse valor.
 6. A busca TMDB é apenas auxiliar de preenchimento — nunca cria entidade nem persiste nada.
 
 ## Ciclo de vida

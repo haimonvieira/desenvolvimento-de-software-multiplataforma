@@ -29,7 +29,7 @@ const detalhesSchema = new mongoose.Schema(
 
 const producaoSchema = new mongoose.Schema(
   {
-    tmbId: {
+    tmdbId: {
       type: Number,
       required: true,
     },
@@ -40,7 +40,7 @@ const producaoSchema = new mongoose.Schema(
     tipo: {
       type: String,
       required: true,
-      enum: ["filme", "serie", "documentario"],
+      enum: ["filme", "série", "documentário"],
     },
     ano: {
       type: Number,

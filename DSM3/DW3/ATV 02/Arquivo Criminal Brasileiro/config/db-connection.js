@@ -11,10 +11,16 @@ const dbPassword = process.env.MONGODB_PASSWORD;
 const dbCluster = process.env.MONGODB_CLUSTER;
 const dbName = process.env.MONGODB_DATABASE;
 
+const uri = `mongodb+srv://${dbUser}:${dbPassword}@${dbCluster}/${dbName}?retryWrites=true&w=majority`;
+
 const connect = () => {
-  mongoose.connect(
-    `mongodb+srv://${dbUser}:${dbPassword}@${dbCluster}/${dbName}?retryWrites=true&w=majority`
-  );
+  mongoose.connect(uri).catch(() => {
+    // Sem este catch a promise rejeitada derruba o processo inteiro (Node >= 15),
+    // contradizendo o comportamento pretendido: a API continua no ar.
+    console.log(
+      "Falha ao conectar com o MongoDB. Confira MONGODB_USERNAME/MONGODB_PASSWORD/MONGODB_CLUSTER e o IP liberado no Atlas. A API continua no ar, mas as rotas que usam o banco vão falhar."
+    );
+  });
 
   const connection = mongoose.connection;
 
@@ -23,7 +29,7 @@ const connect = () => {
   });
 
   connection.on("open", () => {
-    console.log("Conectado ao MongoDB com sucesso!");
+    console.log(`Conectado ao MongoDB com sucesso!`);
   });
 };
 

@@ -15,10 +15,24 @@ Swagger UI: `http://localhost:4000/api-docs`. Testes manuais: coleção Insomnia
 |---|---|
 | `PORT` | Porta da API (padrão 4000) |
 | `JWT_SECRET` | Segredo de assinatura/verificação do JWT |
-| `TMDB_API_TOKEN` | Token Bearer da API do TMDB |
+| `TMDB_API_TOKEN` | Chave do TMDB — aceita API Key v3 (32 hex) ou Read Access Token v4 (`eyJ...`) |
 | `MONGODB_USERNAME` / `MONGODB_PASSWORD` | Credenciais do Atlas |
+| `MONGODB_CLUSTER` | Host do cluster Atlas |
+| `MONGODB_DATABASE` | Nome do banco |
+| `MONGODB_URI` | **Opcional.** Se definida, ignora as quatro acima e conecta nessa URI (modo de teste local) |
 
 Nunca publique valores reais. Se um segredo vazar, remova e rotacione.
+
+## Banco local (apenas para testes)
+
+A atividade exige o banco **hospedado no MongoDB Atlas** — é requisito avaliado na apresentação. O `MONGODB_URI` existe só para destravar testes quando o Atlas estiver indisponível (ex.: IP não liberado no cluster):
+
+```bash
+# no .env — descomente para testar contra o MongoDB da máquina
+MONGODB_URI=mongodb://127.0.0.1:27017/arquivo_criminal_brasileiro
+```
+
+O log de conexão indica qual banco está em uso: `Conectado ao MongoDB com sucesso! (LOCAL)` ou `(Atlas)`. **Comente a linha antes de entregar/apresentar.**
 
 ## Depurar
 
@@ -28,7 +42,7 @@ Sintomas conhecidos:
 
 | Sintoma | Causa provável |
 |---|---|
-| `Erro ao conectar ao mongoDB: bad auth` no log | Credenciais do Atlas ausentes/erradas no `.env`. A API continua no ar por desenho (`config/db-connection.js` não propaga o erro) — rotas que tocam o banco vão expirar (buffering timeout) até a conexão funcionar |
+| `Erro ao conectar com o MongoDB.` (seguido de `MongooseServerSelectionError`) no log | Credenciais do Atlas ausentes/erradas ou **IP da máquina não liberado no cluster**. A API continua no ar (`config/db-connection.js` trata a falha) — rotas que tocam o banco vão expirar até a conexão funcionar |
 | `401 Token nao informado` | Falta o header `Authorization: Bearer TOKEN` |
 | `401 Token inválido` | Token expirado (48h) ou assinado com outro `JWT_SECRET` |
 | `400` em rota com `:id` | ID não é um ObjectId válido (validação em `casoController.js`) |

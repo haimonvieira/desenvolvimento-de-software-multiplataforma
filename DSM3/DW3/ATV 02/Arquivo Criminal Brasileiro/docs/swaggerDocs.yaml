@@ -1,8 +1,448 @@
 # swaggerDocs.yaml
-# CONTEÚDO DE RESPONSABILIDADE DA ÁREA DE DOCUMENTAÇÃO (guia 01 - seção 9).
-# O Backend apenas fornece a infraestrutura que consome este arquivo.
-# Placeholder mínimo para a interface /api-docs carregar antes da entrega da Documentação.
-# A Documentação deve definir aqui: 8 paths, 4 schemas (User, Caso, Detalhes, Producao),
-# segurança Bearer JWT e a marcação de /user e /login como rotas públicas.
+# Fonte da verdade do contrato HTTP (endpoints, schemas, status codes).
+# Mantido com base no comportamento real de controllers e models.
+# Infraestrutura que consome este arquivo: config/swagger-config.js + index.js (monta em /api-docs).
 
-paths: {}
+openapi: 3.0.0
+info:
+  title: Arquivo Criminal Brasileiro API
+  description: |
+    Organiza informações públicas sobre casos criminais brasileiros e os
+    relaciona a filmes, séries e documentários via TMDB.
+
+    **Autenticação:** as rotas de `/casos` e `/tmdb/buscar` exigem o header
+    `Authorization: Bearer TOKEN`. Use `POST /login` para obter o token e o
+    botão **Authorize** (candado) para colá-lo.
+  version: 1.0.0
+  contact:
+    name: HHR Solutions
+
+servers:
+  - url: http://localhost:4000
+
+tags:
+  - name: Usuários
+    description: Cadastro e autenticação (rotas públicas)
+  - name: Casos
+    description: CRUD de casos criminais (rotas protegidas)
+  - name: TMDB
+    description: Busca de produções audiovisuais (rota protegida)
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    User:
+      type: object
+      required: [email, password]
+      properties:
+        email:
+          type: string
+          format: email
+          description: E-mail único (normalizado para minúsculas pelo model)
+          example: usuario@teste.com
+        password:
+          type: string
+          format: password
+          description: Senha em texto no request; armazenada como hash Argon2id
+          example: senha123
+
+    Detalhes:
+      type: object
+      required: [cidade, estado, anoInicio, situacaoJudicial]
+      properties:
+        cidade:
+          type: string
+          example: São Paulo
+        estado:
+          type: string
+          description: UF
+          example: SP
+        anoInicio:
+          type: integer
+          example: 2019
+        anoFim:
+          type: integer
+          description: Opcional
+          example: 2020
+        situacaoJudicial:
+          type: string
+          description: Texto simples com a situação judicial geral do caso
+          example: Investigação em andamento
+
+    Producao:
+      type: object
+      required: [tmdbId, titulo, tipo]
+      properties:
+        tmdbId:
+          type: integer
+          description: Identificador da produção no TMDB
+          example: 532321
+        titulo:
+          type: string
+          example: Blindados
+        tipo:
+          type: string
+          enum: [filme, série, documentário]
+          example: documentário
+        ano:
+          type: integer
+          description: Opcional
+          example: 2023
+        sinopse:
+          type: string
+          description: Opcional
+          example: Série documental sobre fugas e o sistema prisional.
+        poster:
+          type: string
+          description: URL completa da imagem; opcional
+          example: https://image.tmdb.org/t/p/w500/exemplo.jpg
+
+    Caso:
+      type: object
+      required: [titulo, resumo, detalhes]
+      properties:
+        _id:
+          type: string
+          description: Gerado pelo MongoDB; NÃO enviar em POST/PUT
+          example: 6ab08649f602be0d59f7b90c
+        titulo:
+          type: string
+          example: Caso Tremembé
+        resumo:
+          type: string
+          example: Fuga de blinds do complexo de Tremembé em São Paulo.
+        categorias:
+          type: array
+          items:
+            type: string
+          example: [Fuga, Repercussão nacional]
+        detalhes:
+          $ref: '#/components/schemas/Detalhes'
+        producoes:
+          type: array
+          description: Documentos aninhados (sem ref/populate)
+          items:
+            $ref: '#/components/schemas/Producao'
+
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+        message:
+          type: string
+
+paths:
+  /user:
+    post:
+      tags: [Usuários]
+      summary: Cadastra um usuário
+      description: Rota pública. A senha recebe hash Argon2id antes de ser persistida.
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        '201':
+          description: Usuário cadastrado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Usuário cadastrado com sucesso!
+        '500':
+          description: Erro interno do servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /login:
+    post:
+      tags: [Usuários]
+      summary: Autentica e retorna um JWT
+      description: Rota pública. Token expira em 48 horas.
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        '200':
+          description: Token gerado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+        '400':
+          description: E-mail ausente/inválido ou falha ao gerar o token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Senha incorreta
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Usuário não existe
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Erro interno do servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /casos:
+    get:
+      tags: [Casos]
+      summary: Lista todos os casos
+      responses:
+        '200':
+          description: Lista de casos
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  casos:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Caso'
+        '401':
+          description: Token ausente ou inválido
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Erro interno do servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    post:
+      tags: [Casos]
+      summary: Cadastra um caso
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Caso'
+      responses:
+        '201':
+          description: Caso cadastrado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Caso cadastrado com sucesso!
+        '401':
+          description: Token ausente ou inválido
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Erro interno do servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /casos/{id}:
+    get:
+      tags: [Casos]
+      summary: Consulta um caso pelo ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ObjectId do caso
+      responses:
+        '200':
+          description: Caso encontrado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  caso:
+                    $ref: '#/components/schemas/Caso'
+        '400':
+          description: ID não é um ObjectId válido
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Caso não encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Token ausente ou inválido
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Erro interno do servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    put:
+      tags: [Casos]
+      summary: Atualiza um caso pelo ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ObjectId do caso
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Caso'
+      responses:
+        '200':
+          description: Caso atualizado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Caso atualizado com sucesso.
+        '400':
+          description: ID inválido
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Token ausente ou inválido
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Erro interno do servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      tags: [Casos]
+      summary: Exclui um caso pelo ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ObjectId do caso
+      responses:
+        '204':
+          description: Caso excluído (sem corpo de resposta)
+        '400':
+          description: ID inválido
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Token ausente ou inválido
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Erro interno do servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /tmdb/buscar:
+    get:
+      tags: [TMDB]
+      summary: Busca produções no TMDB
+      description: |
+        Proxies o endpoint Search Multi do TMDB e normaliza cada resultado
+        para o formato Producao. Não cria entidade nem persiste nada.
+        A busca não distingue "nada encontrado" de falha: 200 vazio = sem resultados,
+        500 = falha na integração (token, limite, indisponibilidade).
+      parameters:
+        - name: query
+          in: query
+          required: true
+          schema:
+            type: string
+          description: Texto da busca
+          example: Tremembé
+      responses:
+        '200':
+          description: Produções encontradas (possivelmente vazia)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  producoes:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Producao'
+        '400':
+          description: Query string "query" ausente ou vazia
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Token ausente ou inválido
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Falha na integração com o TMDB (token inválido, limite, indisponibilidade)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'

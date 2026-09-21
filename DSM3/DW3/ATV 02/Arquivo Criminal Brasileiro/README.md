@@ -11,7 +11,13 @@ npm install
 npm start              # API em http://localhost:4000
 ```
 
-Crie um `.env` na raiz (gitignored — não existe `.env.example`) com as variáveis listadas abaixo.
+Crie um `.env` a partir do modelo:
+
+```bash
+cp .env.example .env   # depois preencha com seus valores reais
+```
+
+O `.env` é gitignored (nunca vai para o repositório); o `.env.example` é o modelo commitado com todas as variáveis que o código lê e comentários explicando cada uma.
 
 **Requisito de versão:** Node ≥ 20.19.0 (imposto por `mongoose`/`mongodb`; nada no repo fixa isso).
 

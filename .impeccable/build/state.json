@@ -39,9 +39,9 @@
       "status": "closed",
       "openedAt": "2026-09-28T09:35:00.000Z",
       "closedAt": "2026-09-28T09:35:00.000Z",
-      "attempts": 1,
-      "notes": [{ "at": "2026-09-28T09:35:00.000Z", "text": "1440px reproduction recorded at .impeccable/review/hero-repro.png." }],
-      "gate": { "ok": true, "score": 0.94, "at": "2026-09-28T09:35:00.000Z", "report": ".impeccable/review/diff/final/report.json" },
+      "attempts": 2,
+      "notes": [{ "at": "2026-09-28T09:38:00.000Z", "text": "Settled reduced-motion recapture at 1440px recorded at .impeccable/review/hero-repro.png; final desktop evidence is .impeccable/review/desktop.png." }],
+      "gate": { "ok": true, "score": 0.94, "at": "2026-09-28T09:38:00.000Z", "report": ".impeccable/review/diff/final/report.json" },
       "forced": null
     },
     "sections": {
@@ -66,20 +66,20 @@
       "status": "closed",
       "openedAt": "2026-09-28T09:35:00.000Z",
       "closedAt": "2026-09-28T09:35:00.000Z",
-      "attempts": 1,
-      "notes": [{ "at": "2026-09-28T09:35:00.000Z", "text": "390, 768, and 1440px overflow plus 200% text-size checks passed." }],
-      "gate": { "ok": true, "at": "2026-09-28T09:35:00.000Z" },
+      "attempts": 2,
+      "notes": [{ "at": "2026-09-28T09:38:00.000Z", "text": "Settled reduced-motion captures refreshed at 390, 768, and 1440px; both illustrative metric labels were asserted before capture." }],
+      "gate": { "ok": true, "at": "2026-09-28T09:38:00.000Z", "captures": [".impeccable/review/mobile.png", ".impeccable/review/tablet.png", ".impeccable/review/desktop.png"] },
       "forced": null
     },
     "review": {
       "status": "closed",
       "openedAt": "2026-09-28T09:35:00.000Z",
-      "closedAt": "2026-09-28T09:35:00.000Z",
-      "attempts": 2,
-      "notes": [{ "at": "2026-09-28T09:35:00.000Z", "text": "Independent reviewer fixes resolved: build phases recorded and demonstration metrics visibly labeled illustrative." }],
-      "gate": { "ok": true, "at": "2026-09-28T09:35:00.000Z", "disposition": "ship" },
+      "closedAt": "2026-09-28T09:38:00.000Z",
+      "attempts": 3,
+      "notes": [{ "at": "2026-09-28T09:38:00.000Z", "text": "Recapture disposition resolved with fresh settled desktop/tablet/mobile evidence; final diff is 94% overall, 93% structure, with required Exemplo labels visible." }],
+      "gate": { "ok": true, "at": "2026-09-28T09:38:00.000Z", "disposition": "ship" },
       "forced": null
     }
   },
-  "finish": { "disposition": "ship", "at": "2026-09-28T09:35:00.000Z" }
+  "finish": { "disposition": "ship", "at": "2026-09-28T09:38:00.000Z" }
 }

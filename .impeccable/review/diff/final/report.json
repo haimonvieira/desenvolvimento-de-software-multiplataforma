@@ -1,24 +1,24 @@
 {
   "tool": "comp-diff",
   "version": 1,
-  "createdAt": "2026-09-28T09:30:55.566Z",
+  "createdAt": "2026-09-28T09:46:10.678Z",
   "label": "desktop",
-  "comp": "../.impeccable/mocks/approved/atlas-guided-desktop.png",
-  "build": "../.impeccable/review/desktop.png",
-  "spec": "../.impeccable/build/spec.json",
+  "comp": ".impeccable/mocks/approved/atlas-guided-desktop.png",
+  "build": ".impeccable/review/desktop.png",
+  "spec": ".impeccable/build/spec.json",
   "compSize": "1440x900",
   "buildSize": "1440x949",
   "align": "top",
-  "overall": 0.9395,
+  "overall": 0.9408,
   "verdict": "match",
   "scores": {
-    "overall": 0.9395,
-    "structure": 0.9232,
-    "color": 0.9734,
-    "colorIntersection": 0.9492,
-    "paletteMatch": 0.9864,
-    "detail": 0.9131,
-    "detailRaw": 0.9131,
+    "overall": 0.9408,
+    "structure": 0.9273,
+    "color": 0.9735,
+    "colorIntersection": 0.9491,
+    "paletteMatch": 0.9866,
+    "detail": 0.9129,
+    "detailRaw": 0.9129,
     "detailAdded": 0,
     "bands": 0.9647
   },
@@ -52,27 +52,27 @@
     "build": [
       {
         "hex": "#f5f5e9",
-        "coverage": 0.9136
+        "coverage": 0.914
       },
       {
         "hex": "#182818",
-        "coverage": 0.0675
+        "coverage": 0.0674
       },
       {
         "hex": "#4868e8",
-        "coverage": 0.0082
+        "coverage": 0.0079
       },
       {
         "hex": "#d8f858",
-        "coverage": 0.0054
+        "coverage": 0.0059
       },
       {
         "hex": "#f87858",
-        "coverage": 0.003
+        "coverage": 0.0026
       },
       {
-        "hex": "#a8a8a4",
-        "coverage": 0.0023
+        "hex": "#bbbbab",
+        "coverage": 0.0022
       }
     ]
   },
@@ -255,15 +255,15 @@
       "h": 0.7,
       "kind": "chrome",
       "score": {
-        "overall": 0.9157,
-        "structure": 0.9239,
-        "color": 0.9651,
-        "colorIntersection": 0.9337,
-        "paletteMatch": 0.982,
-        "detail": 0.9001,
-        "detailRaw": 0.9053,
+        "overall": 0.9166,
+        "structure": 0.9341,
+        "color": 0.9655,
+        "colorIntersection": 0.9351,
+        "paletteMatch": 0.9819,
+        "detail": 0.9031,
+        "detailRaw": 0.9083,
         "detailAdded": 0.0104,
-        "bands": 0.84
+        "bands": 0.8169
       },
       "verdict": "match",
       "inkBox": {
@@ -289,14 +289,14 @@
       "h": 0.7,
       "kind": "chrome",
       "score": {
-        "overall": 0.8234,
-        "structure": 0.6757,
-        "color": 0.9637,
-        "colorIntersection": 0.94,
-        "paletteMatch": 0.9765,
-        "detail": 0.815,
-        "detailRaw": 0.8358,
-        "detailAdded": 0.0417,
+        "overall": 0.8241,
+        "structure": 0.6855,
+        "color": 0.9635,
+        "colorIntersection": 0.9369,
+        "paletteMatch": 0.9779,
+        "detail": 0.8043,
+        "detailRaw": 0.8304,
+        "detailAdded": 0.0521,
         "bands": 0.9478
       },
       "verdict": "match",
@@ -317,16 +317,16 @@
     }
   ],
   "files": {
-    "sideBySide": "D:/Fatec/desenvolvimento-de-software-multiplataforma/.worktrees/dsm-atlas/atlas/../.impeccable/review/diff/final/side-by-side.png",
-    "heatmap": "D:/Fatec/desenvolvimento-de-software-multiplataforma/.worktrees/dsm-atlas/atlas/../.impeccable/review/diff/final/heatmap.png",
+    "sideBySide": "D:/Fatec/desenvolvimento-de-software-multiplataforma/.worktrees/dsm-atlas/.impeccable/review/diff/final/side-by-side.png",
+    "heatmap": "D:/Fatec/desenvolvimento-de-software-multiplataforma/.worktrees/dsm-atlas/.impeccable/review/diff/final/heatmap.png",
     "regionFiles": [
-      "D:/Fatec/desenvolvimento-de-software-multiplataforma/.worktrees/dsm-atlas/atlas/../.impeccable/review/diff/final/regions/topbar.png",
-      "D:/Fatec/desenvolvimento-de-software-multiplataforma/.worktrees/dsm-atlas/atlas/../.impeccable/review/diff/final/regions/semester-rail.png",
-      "D:/Fatec/desenvolvimento-de-software-multiplataforma/.worktrees/dsm-atlas/atlas/../.impeccable/review/diff/final/regions/headline.png",
-      "D:/Fatec/desenvolvimento-de-software-multiplataforma/.worktrees/dsm-atlas/atlas/../.impeccable/review/diff/final/regions/view-toggle.png",
-      "D:/Fatec/desenvolvimento-de-software-multiplataforma/.worktrees/dsm-atlas/atlas/../.impeccable/review/diff/final/regions/legend.png",
-      "D:/Fatec/desenvolvimento-de-software-multiplataforma/.worktrees/dsm-atlas/atlas/../.impeccable/review/diff/final/regions/map.png",
-      "D:/Fatec/desenvolvimento-de-software-multiplataforma/.worktrees/dsm-atlas/atlas/../.impeccable/review/diff/final/regions/detail-rail.png"
+      "D:/Fatec/desenvolvimento-de-software-multiplataforma/.worktrees/dsm-atlas/.impeccable/review/diff/final/regions/topbar.png",
+      "D:/Fatec/desenvolvimento-de-software-multiplataforma/.worktrees/dsm-atlas/.impeccable/review/diff/final/regions/semester-rail.png",
+      "D:/Fatec/desenvolvimento-de-software-multiplataforma/.worktrees/dsm-atlas/.impeccable/review/diff/final/regions/headline.png",
+      "D:/Fatec/desenvolvimento-de-software-multiplataforma/.worktrees/dsm-atlas/.impeccable/review/diff/final/regions/view-toggle.png",
+      "D:/Fatec/desenvolvimento-de-software-multiplataforma/.worktrees/dsm-atlas/.impeccable/review/diff/final/regions/legend.png",
+      "D:/Fatec/desenvolvimento-de-software-multiplataforma/.worktrees/dsm-atlas/.impeccable/review/diff/final/regions/map.png",
+      "D:/Fatec/desenvolvimento-de-software-multiplataforma/.worktrees/dsm-atlas/.impeccable/review/diff/final/regions/detail-rail.png"
     ]
   }
 }

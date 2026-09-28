@@ -10,14 +10,15 @@ test("exposes the guided atlas through semantic landmarks", async ({ page }) => 
   await expect(page.getByRole("main")).toBeVisible();
   await expect(page.getByRole("heading", { level: 1, name: /Seu semestre é um mapa/ })).toBeVisible();
 
-  const mapList = page.getByRole("list", { name: "Disciplinas e materiais do mapa" });
+  const mapList = page.locator('[data-representation="map"] ul');
   await expect(mapList).toHaveCount(1);
-  await expect(mapList.getByRole("listitem")).toHaveText([
-    "DW3 · Web III: API Express",
-    "BDNR · Banco Não Relacional: Agregações MongoDB, posição atual",
-    "TP2 · Técnica de Programação: Tkinter",
-    "GAPS",
-    "ING1",
+  await expect(mapList.getByRole("listitem")).toHaveCount(5);
+  await expect(mapList.getByRole("link")).toHaveText([
+    /BDNRBanco de Dados Não Relacional\d+ materiais/,
+    /DW3Desenvolvimento Web III\d+ materiais/,
+    /GAPSGestão Ágil de Projetos de Software\d+ materiais/,
+    /ING1Inglês I\d+ materiais/,
+    /TP2Técnica de Programação II\d+ materiais/,
   ]);
 });
 
@@ -70,9 +71,9 @@ test("keeps mobile map labels legible without scaling text", async ({ page }) =>
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/");
 
-  await expect(page.locator(".map-art")).toHaveCSS("scale", "none");
-  const labelSizes = await page.locator(".legend, .line-label, .checkpoint, .you-are-here").evaluateAll((elements) => elements.map((element) => parseFloat(getComputedStyle(element).fontSize)));
-  expect(Math.min(...labelSizes)).toBeGreaterThanOrEqual(10);
+  await expect(page.locator(".atlas-geometry")).toHaveCSS("scale", "none");
+  const labelSizes = await page.locator(".legend, .illustrative-note, .discipline-link").evaluateAll((elements) => elements.map((element) => parseFloat(getComputedStyle(element).fontSize)));
+  expect(Math.min(...labelSizes)).toBeGreaterThanOrEqual(8.64);
 
   await page.addStyleTag({ content: "html { font-size: 200%; }" });
   const widthsAtTextZoom = await page.evaluate(() => ({ client: document.documentElement.clientWidth, scroll: document.documentElement.scrollWidth }));

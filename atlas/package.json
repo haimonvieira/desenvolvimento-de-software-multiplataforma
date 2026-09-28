@@ -6,16 +6,17 @@
   "packageManager": "pnpm@12.6.0",
   "scripts": {
     "catalog:build": "node --experimental-strip-types scripts/build-catalog.ts",
-    "predev": "node --experimental-strip-types scripts/build-catalog.ts",
+    "content-index:build": "node --experimental-strip-types scripts/build-content-index.ts",
+    "predev": "node --experimental-strip-types scripts/build-catalog.ts && node --experimental-strip-types scripts/build-content-index.ts",
     "dev": "vite dev",
-    "prebuild": "node --experimental-strip-types scripts/build-catalog.ts",
+    "prebuild": "node --experimental-strip-types scripts/build-catalog.ts && node --experimental-strip-types scripts/build-content-index.ts",
     "build": "vite build",
     "preview": "wrangler dev --config dist/server/wrangler.json",
     "deploy": "vinext-cloudflare deploy --config dist/server/wrangler.json",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "pretest:e2e": "node --experimental-strip-types scripts/build-catalog.ts",
+    "pretest:e2e": "node --experimental-strip-types scripts/build-catalog.ts && node --experimental-strip-types scripts/build-content-index.ts",
     "test:e2e": "playwright test"
   },
   "dependencies": {

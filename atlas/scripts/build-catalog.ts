@@ -83,7 +83,7 @@ const REVIEWED_PREVIEW_PATHS = new Set([
   "DSM1/ALP/PROGRAMAS/visualg3.0.7/visualg3.0.7/help/telaprin.html",
   "DSM2/DW2/dw2-nodejs-express/exercicios-js/arrays-e-objetos/script.js",
 ]);
-const SECRET_MARKER = /(?:api[_-]?key|authorization\s*[:=]|client[_-]?secret|jwt[_-]?secret|jwtsecret|mongodb(?:\+srv)?:\/\/|password\s*[:=]|private[_ -]?key|secret\s*[:=]|senha\s*[:=]|session[_-]?secret|token\s*[:=])/i;
+export const SECRET_MARKER = /(?:api[_-]?key|authorization\s*[:=]|client[_-]?secret|jwt[_-]?secret|jwtsecret|mongodb(?:\+srv)?:\/\/|password\s*[:=]|private[_ -]?key|secret\s*[:=]|senha\s*[:=]|session[_-]?secret|token\s*[:=])/i;
 
 function classify(extension: string): { kind: MaterialKind; previewKind: PreviewKind } {
   if (IMAGE_EXTENSIONS.has(extension)) return { kind: "image", previewKind: "image" };
@@ -96,7 +96,7 @@ function classify(extension: string): { kind: MaterialKind; previewKind: Preview
   return { kind: "other", previewKind: "none" };
 }
 
-function isExcludedPath(path: string, mode: string): boolean {
+export function isExcludedPath(path: string, mode: string): boolean {
   const segments = path.split("/");
   const name = segments.at(-1) ?? "";
   return mode !== "100644"
@@ -106,7 +106,7 @@ function isExcludedPath(path: string, mode: string): boolean {
     || EXCLUDED_EXTENSIONS.has(extname(name).toLowerCase());
 }
 
-type GitTreeEntry = Readonly<{
+export type GitTreeEntry = Readonly<{
   mode: string;
   type: string;
   oid: string;
@@ -114,7 +114,7 @@ type GitTreeEntry = Readonly<{
   path: string;
 }>;
 
-function listGitTree(repositoryRoot: string, commitSha: string): GitTreeEntry[] {
+export function listGitTree(repositoryRoot: string, commitSha: string): GitTreeEntry[] {
   const output = execFileSync("git", [
     "ls-tree", "-r", "-z", "-l", commitSha, "--",
     "DSM1", "DSM2", "DSM3", "DSM4", "DSM5", "DSM6",

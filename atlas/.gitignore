@@ -7,3 +7,4 @@ next-env.d.ts
 .wrangler/
 *.tsbuildinfo
 /public/material-previews/
+/public/_index/

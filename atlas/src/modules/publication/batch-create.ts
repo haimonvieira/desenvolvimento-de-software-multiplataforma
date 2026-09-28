@@ -75,27 +75,14 @@ export function createBatchCreateHandler(
     }
     const id = randomId();
     const expiresAt = new Date(now() + BATCH_TTL_MS).toISOString();
-    const query = dependencies.query;
-    await query("BEGIN", []);
-    try {
-      await query(
-        `INSERT INTO upload_batch (id, base_commit_sha, owner_admin_id, status, total_bytes, expires_at) VALUES ($1, $2, $3, 'draft', $4, $5)`,
-        [id, sha, adminId, validation.totalBytes, expiresAt],
-      );
-      for (const file of files) {
-        await query(
-          `INSERT INTO staged_upload_file (batch_id, destination, mime_type, size, blob_sha) VALUES ($1, $2, $3, $4, NULL)`,
-          [id, file.destination, file.mimeType, file.size],
-        );
-      }
-      await query("COMMIT", []);
-    } catch (error) {
-      await query("ROLLBACK", []).catch(() => undefined);
-      await query(`DELETE FROM upload_batch WHERE id = $1`, [id]).catch(
-        () => undefined,
-      );
-      throw error;
-    }
+    // One atomic statement: the plpgsql function inserts the batch row and
+    // all staged rows in a single implicit transaction (sync_study precedent).
+    // The Neon HTTP driver has no session, so multi-statement BEGIN/COMMIT
+    // would not be transactional here.
+    await dependencies.query(
+      `SELECT create_upload_batch($1, $2, $3, $4, $5, $6::jsonb)`,
+      [id, sha, adminId, validation.totalBytes, expiresAt, JSON.stringify(files)],
+    );
     return json(201, {
       id,
       baseCommitSha: sha,

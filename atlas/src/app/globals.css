@@ -438,6 +438,22 @@ main {
 .profile-controls [role="alert"] { margin-top: var(--space-4); padding: var(--space-4); background: var(--color-selection); }
 .profile-controls article { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-3); border-top: var(--border-hairline); }
 
+.tutor-panel { margin-top: var(--space-6); border: var(--border-strong); background: var(--color-paper-raised); }
+.tutor-panel > h2 { margin: 0; padding: var(--space-5) var(--space-5) 0; font-family: var(--font-display); font-size: clamp(1.5rem, 3vw, 2.4rem); }
+.tutor-hint { margin: var(--space-2) 0 0; padding: 0 var(--space-5); color: var(--color-ink-soft); }
+.tutor-panel form { display: grid; gap: var(--space-3); padding: var(--space-5); border-top: var(--border-hairline); margin-top: var(--space-4); }
+.tutor-panel form:first-of-type { margin-top: 0; }
+.tutor-panel label { font: 600 .68rem var(--font-data); text-transform: uppercase; }
+.tutor-panel textarea, .tutor-panel input[type="password"] { width: 100%; border: var(--border-hairline); border-radius: 0; background: var(--color-paper); padding: .75rem; color: var(--color-ink); }
+.tutor-panel textarea { min-height: 6rem; resize: vertical; }
+.tutor-panel fieldset { display: flex; flex-wrap: wrap; gap: var(--space-3); margin: 0; padding: 0; border: 0; }
+.tutor-panel fieldset legend { padding: 0; font: 600 .68rem var(--font-data); text-transform: uppercase; }
+.tutor-panel button { min-height: 2.5rem; padding: .6rem .85rem; border: var(--border-hairline); background: var(--color-ink); color: var(--color-paper); font: 600 .62rem var(--font-data); text-transform: uppercase; cursor: pointer; justify-self: start; }
+.tutor-panel button:disabled, .tutor-panel textarea:disabled, .tutor-panel input:disabled { cursor: not-allowed; opacity: .55; }
+.tutor-panel [role="alert"], .tutor-panel [role="status"] { margin: 0; padding: var(--space-3) var(--space-5); font-weight: 600; }
+.tutor-panel [role="alert"] { background: var(--color-selection); }
+.tutor-panel blockquote { margin: var(--space-2) 0; padding-left: var(--space-3); border-left: var(--border-strong); overflow-wrap: anywhere; }
+
 @keyframes atlas-route-draw { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
 @keyframes location-pulse { from { translate: 0 0.35rem; } to { translate: 0; } }
 

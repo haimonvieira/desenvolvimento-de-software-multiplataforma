@@ -580,7 +580,14 @@ export function createPublishHandler(
       confirmation,
     );
     if (result.type === "published") {
-      await dependencies.audit?.();
+      // The commit exists, the ref moved and the batch is marked published:
+      // an audit failure must never turn that irreversible success into an
+      // error response, so it is recorded and swallowed.
+      try {
+        await dependencies.audit?.();
+      } catch (error) {
+        console.error("publication audit failed", error);
+      }
       return json(200, result);
     }
     if (result.type === "conflict") return json(409, result);

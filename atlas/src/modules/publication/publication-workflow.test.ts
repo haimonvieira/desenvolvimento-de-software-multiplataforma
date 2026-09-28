@@ -2,7 +2,7 @@ import { fileURLToPath } from "node:url";
 import { PGlite } from "@electric-sql/pglite";
 import { drizzle } from "drizzle-orm/pglite";
 import { migrate } from "drizzle-orm/pglite/migrator";
-import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { AdminAuthorizationError } from "../identity/admin-authorizer";
 import type {
@@ -743,5 +743,40 @@ describe("publication HTTP handlers", () => {
     );
     expect(published.status).toBe(200);
     expect(audits).toEqual(["published"]);
+  });
+
+  it("still reports the published commit when the post-publish audit fails", async () => {
+    const git = createFakeGit();
+    await seedBatch(git, { files: [await staged(git, "DSM1/ALP/novo.pdf")] });
+    const logged = vi.spyOn(console, "error").mockImplementation(() => {});
+    try {
+      const handler = createPublishHandler({
+        ...deps(git, "owner"),
+        audit: async () => {
+          throw new Error("audit store unavailable");
+        },
+      });
+      const review = await createPublicationWorkflow({
+        query,
+        source: git,
+        branch: BRANCH,
+      }).reviseBatch("batch-1", []);
+
+      const response = await handler(
+        request({ baseCommitSha: git.head(), confirmation: review.confirmationPhrase }),
+        "batch-1",
+      );
+
+      expect(response.status).toBe(200);
+      const payload = (await response.json()) as {
+        type: string;
+        commitSha: string;
+      };
+      expect(payload.type).toBe("published");
+      expect(payload.commitSha).toBe(git.refs.get(REF));
+      expect(logged).toHaveBeenCalled();
+    } finally {
+      logged.mockRestore();
+    }
   });
 });

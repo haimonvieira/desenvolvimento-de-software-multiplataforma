@@ -74,7 +74,7 @@ describe("catalog builder", () => {
     ]);
   });
 
-  it("rejects symlink blobs from the committed tree", async () => {
+  it("catalogs only regular non-executable blobs from the committed tree", async () => {
     const root = await fixture({ "DSM1/ALP/aula.md": "lesson" });
     execFileSync("git", ["init", "--quiet"], { cwd: root });
     const linkBlob = execFileSync("git", ["hash-object", "-w", "--stdin"], {
@@ -82,11 +82,17 @@ describe("catalog builder", () => {
       encoding: "utf8",
       input: ".env",
     }).trim();
+    const executableBlob = execFileSync("git", ["hash-object", "-w", "--stdin"], {
+      cwd: root,
+      encoding: "utf8",
+      input: "#!/bin/sh\n",
+    }).trim();
     execFileSync("git", ["update-index", "--add", "--cacheinfo", `120000,${linkBlob},DSM1/ALP/private.md`], { cwd: root });
+    execFileSync("git", ["update-index", "--add", "--cacheinfo", `100755,${executableBlob},DSM1/ALP/run.sh`], { cwd: root });
     execFileSync("git", ["add", "-f", "DSM1/ALP/aula.md"], { cwd: root });
     execFileSync("git", [
       "-c", "user.name=Atlas Test", "-c", "user.email=atlas@example.test",
-      "commit", "--quiet", "-m", "symlink fixture",
+      "commit", "--quiet", "-m", "mode fixture",
     ], { cwd: root });
     const sha = execFileSync("git", ["rev-parse", "HEAD"], { cwd: root, encoding: "utf8" }).trim();
 

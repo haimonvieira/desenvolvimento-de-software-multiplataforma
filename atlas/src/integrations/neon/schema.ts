@@ -266,4 +266,42 @@ export const stagedUploadFile = pgTable("staged_upload_file", {
   blobSha: text("blob_sha"),
 }, (table) => [primaryKey({ columns: [table.batchId, table.destination] })]);
 
+export const aiUsageWindow = pgTable("ai_usage_window", {
+  scope: text("scope").notNull(),
+  subjectKey: text("subject_key").notNull(),
+  windowKind: text("window_kind").notNull(),
+  windowStart: timestamp("window_start", { withTimezone: true }).notNull(),
+  requests: integer("requests").notNull().default(0),
+  reservedInputTokens: bigint("reserved_input_tokens", { mode: "number" }).notNull().default(0),
+  reservedOutputTokens: bigint("reserved_output_tokens", { mode: "number" }).notNull().default(0),
+  inputTokens: bigint("input_tokens", { mode: "number" }).notNull().default(0),
+  outputTokens: bigint("output_tokens", { mode: "number" }).notNull().default(0),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+}, (table) => [
+  primaryKey({ columns: [table.scope, table.subjectKey, table.windowKind, table.windowStart] }),
+  check("ai_usage_window_scope_check", sql`${table.scope} in ('public', 'admin')`),
+  check("ai_usage_window_kind_check", sql`${table.windowKind} in ('hour', 'day', 'global')`),
+  check("ai_usage_window_global_subject_check", sql`(${table.windowKind} = 'global') = (${table.subjectKey} = '*')`),
+]);
+
+export const aiReservation = pgTable("ai_reservation", {
+  id: text("id").primaryKey(),
+  scope: text("scope").notNull(),
+  subjectKey: text("subject_key").notNull(),
+  status: text("status").notNull(),
+  maxInputTokens: integer("max_input_tokens").notNull(),
+  maxOutputTokens: integer("max_output_tokens").notNull(),
+  maxToolCalls: integer("max_tool_calls").notNull(),
+  actualInputTokens: bigint("actual_input_tokens", { mode: "number" }),
+  actualOutputTokens: bigint("actual_output_tokens", { mode: "number" }),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
+  settledAt: timestamp("settled_at", { withTimezone: true }),
+}, (table) => [
+  index("ai_reservation_scope_subject_idx").on(table.scope, table.subjectKey),
+  index("ai_reservation_expiry_idx").on(table.status, table.expiresAt),
+  check("ai_reservation_scope_check", sql`${table.scope} in ('public', 'admin')`),
+  check("ai_reservation_status_check", sql`${table.status} in ('reserved', 'settled', 'unknown', 'expired')`),
+]);
+
 export const authSchema = { user, session, account, verification, rateLimit, passkey };

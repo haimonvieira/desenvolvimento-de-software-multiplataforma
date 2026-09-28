@@ -11,7 +11,7 @@ Aplicação mínima App Router/TypeScript para validar o runtime do DSM Atlas no
 
 ## Configuração
 
-Defina `DATABASE_URL` e `GITHUB_TOKEN` como secrets do Worker (`wrangler secret put ...`). Defina `GITHUB_REPOSITORY` como `owner/repository` em configuração de ambiente. Nenhum desses valores pertence ao bundle cliente ou ao repositório.
+Defina `DATABASE_URL`, `GITHUB_TOKEN` e `TUTOR_SUBJECT_SECRET` (32+ bytes, usado para derivar a chave anônima da cota de IA) como secrets do Worker (`wrangler secret put ...`). Defina `GITHUB_REPOSITORY` como `owner/repository` em configuração de ambiente. Nenhum desses valores pertence ao bundle cliente ou ao repositório.
 
 ## Comandos
 

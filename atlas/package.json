@@ -5,13 +5,17 @@
   "type": "module",
   "packageManager": "pnpm@12.6.0",
   "scripts": {
+    "catalog:build": "node --experimental-strip-types scripts/build-catalog.ts",
+    "predev": "node --experimental-strip-types scripts/build-catalog.ts",
     "dev": "vite dev",
+    "prebuild": "node --experimental-strip-types scripts/build-catalog.ts",
     "build": "vite build",
     "preview": "wrangler dev --config dist/server/wrangler.json",
     "deploy": "vinext-cloudflare deploy --config dist/server/wrangler.json",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
+    "pretest:e2e": "node --experimental-strip-types scripts/build-catalog.ts",
     "test:e2e": "playwright test"
   },
   "dependencies": {

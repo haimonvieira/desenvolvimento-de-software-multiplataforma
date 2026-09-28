@@ -1,4 +1,6 @@
 node_modules
+.worktrees/
+.superpowers/
 /DSM2/TPI/exercicios/Forms/ProjetoCRUD/nbproject/private/
 /DSM2/TPI/exercicios/Forms/ProjetoCRUD/build/
 /DSM2/TPI/exercicios/Forms/ProdutoTela/nbproject/private/

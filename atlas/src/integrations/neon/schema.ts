@@ -245,4 +245,22 @@ export const adminAuditEvent = pgTable("admin_audit_event", {
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 }, (table) => [check("admin_audit_event_action_check", sql`${table.action} in ('admin.bootstrap', 'admin.passkey.add', 'admin.batch.publish', 'admin.recovery')`)]);
 
+export const uploadBatch = pgTable("upload_batch", {
+  id: text("id").primaryKey(),
+  baseCommitSha: text("base_commit_sha").notNull(),
+  ownerAdminId: text("owner_admin_id").notNull().references(() => adminIdentity.adminId, { onDelete: "restrict" }),
+  status: text("status").notNull(),
+  totalBytes: integer("total_bytes").notNull(),
+  expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+}, (table) => [check("upload_batch_status_check", sql`${table.status} in ('draft', 'ready', 'published', 'expired')`)]);
+
+export const stagedUploadFile = pgTable("staged_upload_file", {
+  batchId: text("batch_id").notNull().references(() => uploadBatch.id, { onDelete: "cascade" }),
+  destination: text("destination").notNull(),
+  mimeType: text("mime_type").notNull(),
+  size: integer("size").notNull(),
+  blobSha: text("blob_sha"),
+}, (table) => [primaryKey({ columns: [table.batchId, table.destination] })]);
+
 export const authSchema = { user, session, account, verification, rateLimit, passkey };

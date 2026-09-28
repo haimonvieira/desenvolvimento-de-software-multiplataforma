@@ -41,6 +41,16 @@ CREATE TABLE "sync_operation" (
 --> statement-breakpoint
 CREATE UNIQUE INDEX "sync_operation_profile_operation_uidx" ON "sync_operation" ("profile_id", "operation_id");
 --> statement-breakpoint
+CREATE TABLE "sync_request" (
+  "profile_id" text NOT NULL REFERENCES "study_profile"("id") ON DELETE cascade,
+  "device_id" text NOT NULL,
+  "request_id" text NOT NULL,
+  "body_hash" text NOT NULL,
+  "response" text NOT NULL,
+  "created_at" timestamp with time zone DEFAULT now() NOT NULL,
+  CONSTRAINT "sync_request_profile_device_request_pk" PRIMARY KEY("profile_id", "device_id", "request_id")
+);
+--> statement-breakpoint
 CREATE TABLE "note_conflict" (
   "id" text NOT NULL,
   "profile_id" text NOT NULL REFERENCES "study_profile"("id") ON DELETE cascade,
@@ -56,8 +66,10 @@ CREATE INDEX "note_conflict_profile_id_idx" ON "note_conflict" ("profile_id");
 CREATE TABLE "profile_deletion_proof" (
   "token_hash" text PRIMARY KEY NOT NULL,
   "profile_id" text NOT NULL REFERENCES "study_profile"("id") ON DELETE cascade,
+  "challenge_hash" text NOT NULL,
   "expires_at" timestamp with time zone NOT NULL,
-  "verified_at" timestamp with time zone
+  "verified_at" timestamp with time zone,
+  CONSTRAINT "profile_deletion_proof_profile_id_unique" UNIQUE("profile_id")
 );
 --> statement-breakpoint
 CREATE FUNCTION sync_study(p_profile_id text, p_request jsonb)
@@ -66,9 +78,16 @@ DECLARE
   op jsonb; change jsonb; op_sequence bigint; server_cursor bigint; next_cursor bigint;
   entity_id text; changed_at timestamptz; existing_note note%ROWTYPE; incoming_note jsonb; conflict_id text;
   request_device text := p_request->>'deviceId'; request_cursor bigint := COALESCE((p_request->>'cursor')::bigint, 0);
+  current_request_id text := p_request->>'requestId'; request_hash text := md5((p_request - 'requestId')::text); stored_request sync_request%ROWTYPE; response_body jsonb;
 BEGIN
   PERFORM 1 FROM study_profile WHERE id = p_profile_id FOR UPDATE;
   IF NOT FOUND THEN RAISE EXCEPTION 'profile not found' USING ERRCODE = '42501'; END IF;
+
+  SELECT * INTO stored_request FROM sync_request replay WHERE replay.profile_id=p_profile_id AND replay.device_id=request_device AND replay.request_id=current_request_id;
+  IF FOUND THEN
+    IF stored_request.body_hash <> request_hash THEN RAISE EXCEPTION 'request mismatch' USING ERRCODE='22023'; END IF;
+    RETURN stored_request.response::jsonb;
+  END IF;
 
   SELECT cursor::bigint INTO server_cursor FROM sync_cursor WHERE profile_id = p_profile_id AND device_id = request_device;
   IF FOUND THEN
@@ -125,10 +144,13 @@ BEGIN
 
   SELECT COALESCE(max(sequence),0) INTO next_cursor FROM sync_operation WHERE profile_id=p_profile_id;
   INSERT INTO sync_cursor(profile_id,device_id,cursor,updated_at) VALUES(p_profile_id,request_device,next_cursor::text,now()) ON CONFLICT(profile_id,device_id) DO UPDATE SET cursor=EXCLUDED.cursor,updated_at=EXCLUDED.updated_at;
-  RETURN jsonb_build_object('cursor',next_cursor::text,'acknowledgedIds',COALESCE((SELECT jsonb_agg(value->>'id') FROM jsonb_array_elements(COALESCE(p_request->'outbox','[]'::jsonb))),'[]'::jsonb),'conflicts',COALESCE((SELECT jsonb_agg(jsonb_build_object('id',id,'noteId',note_id,'versions',versions::jsonb) ORDER BY id) FROM note_conflict WHERE profile_id=p_profile_id),'[]'::jsonb),'snapshot',jsonb_build_object(
+
+  response_body := jsonb_build_object('cursor',next_cursor::text,'acknowledgedIds',COALESCE((SELECT jsonb_agg(value->>'id') FROM jsonb_array_elements(COALESCE(p_request->'outbox','[]'::jsonb))),'[]'::jsonb),'conflicts',COALESCE((SELECT jsonb_agg(jsonb_build_object('id',id,'noteId',note_id,'versions',versions::jsonb) ORDER BY id) FROM note_conflict WHERE profile_id=p_profile_id),'[]'::jsonb),'snapshot',jsonb_build_object(
     'progress',COALESCE((SELECT jsonb_agg(jsonb_build_object('id',id,'material',jsonb_build_object('path',material_path,'commitSha',material_commit_sha),'status',status,'updatedAt',to_char(updated_at AT TIME ZONE 'UTC','YYYY-MM-DD"T"HH24:MI:SS.MS"Z"'),'deletedAt',CASE WHEN deleted_at IS NULL THEN NULL ELSE to_jsonb(to_char(deleted_at AT TIME ZONE 'UTC','YYYY-MM-DD"T"HH24:MI:SS.MS"Z"')) END) ORDER BY id) FROM study_progress WHERE profile_id=p_profile_id),'[]'::jsonb),
     'favorites',COALESCE((SELECT jsonb_agg(jsonb_build_object('id',id,'material',jsonb_build_object('path',material_path,'commitSha',material_commit_sha),'value',value,'updatedAt',to_char(updated_at AT TIME ZONE 'UTC','YYYY-MM-DD"T"HH24:MI:SS.MS"Z"'),'deletedAt',CASE WHEN deleted_at IS NULL THEN NULL ELSE to_jsonb(to_char(deleted_at AT TIME ZONE 'UTC','YYYY-MM-DD"T"HH24:MI:SS.MS"Z"')) END) ORDER BY id) FROM favorite WHERE profile_id=p_profile_id),'[]'::jsonb),
     'notes',COALESCE((SELECT jsonb_agg(jsonb_build_object('id',id,'material',jsonb_build_object('path',material_path,'commitSha',material_commit_sha),'text',text,'updatedAt',to_char(updated_at AT TIME ZONE 'UTC','YYYY-MM-DD"T"HH24:MI:SS.MS"Z"'),'deletedAt',CASE WHEN deleted_at IS NULL THEN NULL ELSE to_jsonb(to_char(deleted_at AT TIME ZONE 'UTC','YYYY-MM-DD"T"HH24:MI:SS.MS"Z"')) END) ORDER BY id) FROM note WHERE profile_id=p_profile_id),'[]'::jsonb),
     'flashcards',COALESCE((SELECT jsonb_agg(jsonb_build_object('id',id,'material',jsonb_build_object('path',material_path,'commitSha',material_commit_sha),'front',front,'back',back,'updatedAt',to_char(updated_at AT TIME ZONE 'UTC','YYYY-MM-DD"T"HH24:MI:SS.MS"Z"'),'deletedAt',CASE WHEN deleted_at IS NULL THEN NULL ELSE to_jsonb(to_char(deleted_at AT TIME ZONE 'UTC','YYYY-MM-DD"T"HH24:MI:SS.MS"Z"')) END) ORDER BY id) FROM flashcard WHERE profile_id=p_profile_id),'[]'::jsonb),'outbox','[]'::jsonb,'conflicts','[]'::jsonb,'currentMaterial',NULL));
+  INSERT INTO sync_request(profile_id,device_id,request_id,body_hash,response) VALUES(p_profile_id,request_device,current_request_id,request_hash,response_body::text);
+  RETURN response_body;
 END;
 $$;

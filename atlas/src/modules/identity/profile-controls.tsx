@@ -3,6 +3,7 @@
 import { passkeyClient } from "@better-auth/passkey/client";
 import { createAuthClient } from "better-auth/react";
 import { anonymousClient } from "better-auth/client/plugins";
+import { startAuthentication } from "@simplewebauthn/browser";
 import { useEffect, useMemo, useState } from "react";
 import { createIndexedDbStudyWorkspace } from "../study/indexed-db-study-store";
 import { synchronizeStudy } from "../study/synchronize-study";
@@ -76,9 +77,10 @@ export function ProfileControls() {
     try {
       const proofResponse = await fetch("/api/profile/delete/proof", { method: "POST" });
       if (!proofResponse.ok) throw new Error("proof failed");
-      const { proof } = await proofResponse.json() as { proof: string };
-      const assertion = await authClient.signIn.passkey();
-      if (assertion.error) throw new Error(assertion.error.message);
+      const { proof, options } = await proofResponse.json() as { proof: string; options: Parameters<typeof startAuthentication>[0]["optionsJSON"] };
+      const response = await startAuthentication({ optionsJSON: options });
+      const verified = await fetch("/api/profile/delete/verify", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ response }) });
+      if (!verified.ok) throw new Error("verification failed");
       const deleted = await fetch("/api/profile/delete", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ proof }) });
       if (!deleted.ok) throw new Error("delete failed");
       if (!keepLocal) await workspace.clear();

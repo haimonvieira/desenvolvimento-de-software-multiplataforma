@@ -183,20 +183,39 @@ describe("Better Auth HTTP boundary", () => {
     `);
     let clock = new Date("2026-09-28T12:00:00.000Z");
     const service = createProfileDeletionService({ query: async (sql, params) => (await database.query(sql, [...params])).rows as Record<string, unknown>[] }, () => clock);
-    const otherUser = await service.begin("delete-1");
-    await service.verifyCredential("delete-credential-1");
+    const otherUser = await service.begin("delete-1", "other-challenge");
+    await service.verifyCeremony("delete-credential-1", "other-challenge");
     expect(await service.consumeAndDelete("delete-2", otherUser)).toBe(false);
-    const stale = await service.begin("delete-1");
-    await service.verifyCredential("delete-credential-1");
+    const stale = await service.begin("delete-1", "stale-challenge");
+    await service.verifyCeremony("delete-credential-1", "stale-challenge");
     clock = new Date("2026-09-28T12:03:00.000Z");
     expect(await service.consumeAndDelete("delete-1", stale)).toBe(false);
     clock = new Date("2026-09-28T12:00:00.000Z");
-    const valid = await service.begin("delete-1");
+    const valid = await service.begin("delete-1", "valid-challenge");
     expect(await service.consumeAndDelete("delete-1", valid)).toBe(false);
-    await service.verifyCredential("delete-credential-1");
+    await service.verifyCeremony("delete-credential-1", "valid-challenge");
     expect(await service.consumeAndDelete("delete-1", valid)).toBe(true);
     expect(await service.consumeAndDelete("delete-1", valid)).toBe(false);
     expect((await database.query(`SELECT id FROM "user" WHERE id='delete-2'`)).rows).toHaveLength(1);
+  });
+
+  it("binds one outstanding intent to its exact deletion ceremony", async () => {
+    await database.exec(`
+      INSERT INTO "user" (id,name,email,email_verified,is_anonymous,created_at,updated_at)
+      VALUES ('ceremony-1','Visitante','ceremony-1@anonymous.placeholder.invalid',false,true,now(),now());
+      INSERT INTO passkey (id,public_key,user_id,credential_id,counter,device_type,backed_up,created_at)
+      VALUES ('ceremony-key','public','ceremony-1','ceremony-credential',0,'singleDevice',false,now());
+    `);
+    const service = createProfileDeletionService({ query: async (sql, params) => (await database.query(sql, [...params])).rows as Record<string, unknown>[] });
+    const first = await service.begin("ceremony-1", "challenge-1");
+    const second = await service.begin("ceremony-1", "challenge-2");
+    expect((await database.query(`SELECT token_hash FROM profile_deletion_proof WHERE profile_id='ceremony-1'`)).rows).toHaveLength(1);
+    await service.verifyCeremony("ceremony-credential", "challenge-login");
+    expect(await service.consumeAndDelete("ceremony-1", second)).toBe(false);
+    await service.verifyCeremony("ceremony-credential", "challenge-2");
+    expect(await service.consumeAndDelete("ceremony-1", first)).toBe(false);
+    expect(await service.consumeAndDelete("ceremony-1", second)).toBe(true);
+    expect(await service.consumeAndDelete("ceremony-1", second)).toBe(false);
   });
 });
 

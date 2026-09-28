@@ -214,11 +214,21 @@ export const noteConflict = pgTable(
   (table) => [primaryKey({ columns: [table.profileId, table.id] }), index("note_conflict_profile_id_idx").on(table.profileId)],
 );
 
+export const syncRequest = pgTable("sync_request", {
+  profileId: text("profile_id").notNull().references(() => studyProfile.id, { onDelete: "cascade" }),
+  deviceId: text("device_id").notNull(),
+  requestId: text("request_id").notNull(),
+  bodyHash: text("body_hash").notNull(),
+  response: text("response").notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+}, (table) => [primaryKey({ columns: [table.profileId, table.deviceId, table.requestId] })]);
+
 export const profileDeletionProof = pgTable("profile_deletion_proof", {
   tokenHash: text("token_hash").primaryKey(),
   profileId: text("profile_id").notNull().references(() => studyProfile.id, { onDelete: "cascade" }),
   expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
+  challengeHash: text("challenge_hash").notNull(),
   verifiedAt: timestamp("verified_at", { withTimezone: true }),
-});
+}, (table) => [uniqueIndex("profile_deletion_proof_profile_uidx").on(table.profileId)]);
 
 export const authSchema = { user, session, account, verification, rateLimit, passkey };

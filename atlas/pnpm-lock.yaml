@@ -172,6 +172,12 @@ importers:
       '@neondatabase/serverless':
         specifier: 1.1.0
         version: 1.1.0
+      '@simplewebauthn/browser':
+        specifier: 13.3.0
+        version: 13.3.0
+      '@simplewebauthn/server':
+        specifier: 13.3.3
+        version: 13.3.3
       '@vinext/cloudflare':
         specifier: 1.0.0-beta.11
         version: 1.0.0-beta.11(c8f77b5b130c982a8c6956a562c66828)

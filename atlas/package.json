@@ -21,6 +21,8 @@
   "dependencies": {
     "@better-auth/passkey": "1.7.6",
     "@neondatabase/serverless": "1.1.0",
+    "@simplewebauthn/browser": "13.3.0",
+    "@simplewebauthn/server": "13.3.3",
     "@vinext/cloudflare": "1.0.0-beta.11",
     "better-auth": "1.7.6",
     "drizzle-orm": "0.45.3",

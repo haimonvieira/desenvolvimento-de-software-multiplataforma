@@ -14,6 +14,7 @@ const change = z.discriminatedUnion("type", [
 ]);
 
 export const syncRequestSchema = z.object({
+  requestId: z.string().uuid(),
   deviceId: z.string().uuid(),
   cursor: z.string().regex(/^\d+$/),
   outbox: z.array(record.extend({ change })).max(500),

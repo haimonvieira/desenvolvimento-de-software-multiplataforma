@@ -1,7 +1,7 @@
 import { neon } from "@neondatabase/serverless";
 import type { NoteConflict, OutboxEntry, StudySnapshot } from "./model";
 
-export type SyncRequest = Readonly<{ deviceId: string; cursor: string; outbox: readonly OutboxEntry[] }>;
+export type SyncRequest = Readonly<{ requestId: string; deviceId: string; cursor: string; outbox: readonly OutboxEntry[] }>;
 export type SyncResult = Readonly<{ snapshot: StudySnapshot; conflicts: readonly NoteConflict[]; cursor: string; acknowledgedIds: readonly string[] }>;
 export interface RemoteStudyStore { sync(request: SyncRequest): Promise<SyncResult> }
 export interface PostgresExecutor { query(sql: string, params: readonly unknown[]): Promise<readonly Record<string, unknown>[]> }
@@ -23,6 +23,7 @@ export function createPostgresStudyStore(database: PostgresExecutor, profileId: 
   return {
     async sync(request) {
       const payload = JSON.stringify({
+        requestId: request.requestId,
         deviceId: request.deviceId,
         cursor: request.cursor,
         outbox: request.outbox,

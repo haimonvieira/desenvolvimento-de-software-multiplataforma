@@ -11,16 +11,19 @@ export interface SyncableStudyWorkspace extends StudyWorkspace {
   reconcile(snapshot: StudySnapshot, conflicts: readonly NoteConflict[], acknowledgedIds: readonly string[], cursor: string): Promise<StudySnapshot>;
   cursor(): Promise<string>;
   clear(): Promise<void>;
+  syncRequestId(): Promise<string>;
 }
 
 export function createIndexedDbStudyWorkspace(options: Readonly<{
   databaseName?: string;
   indexedDB?: IDBFactory;
   createOperationId?: () => string;
+  createSyncRequestId?: () => string;
 }> = {}): SyncableStudyWorkspace {
   const factory = options.indexedDB ?? globalThis.indexedDB;
   const databaseName = options.databaseName ?? "dsm-atlas";
   const createOperationId = options.createOperationId ?? (() => crypto.randomUUID());
+  const createSyncRequestId = options.createSyncRequestId ?? (() => crypto.randomUUID());
 
   async function open(): Promise<IDBDatabase> {
     const { promise, resolve, reject } = Promise.withResolvers<IDBDatabase>();
@@ -95,6 +98,21 @@ export function createIndexedDbStudyWorkspace(options: Readonly<{
     }
   }
 
+  async function syncRequestId(): Promise<string> {
+    const db = await open();
+    try {
+      const transaction = db.transaction("meta", "readwrite");
+      const store = transaction.objectStore("meta");
+      const existing = await get<StudyRecord & { value: string }>(store, "sync-request-id");
+      const value = existing?.value ?? createSyncRequestId();
+      if (!existing) store.put({ id: "sync-request-id", value, updatedAt: new Date().toISOString(), deletedAt: null });
+      await transactionDone(transaction);
+      return value;
+    } finally {
+      db.close();
+    }
+  }
+
   async function reconcile(remote: StudySnapshot, conflicts: readonly NoteConflict[], acknowledgedIds: readonly string[], nextCursor: string): Promise<StudySnapshot> {
     const db = await open();
     try {
@@ -115,6 +133,7 @@ export function createIndexedDbStudyWorkspace(options: Readonly<{
       conflictStore.clear();
       for (const conflict of conflicts) conflictStore.put(conflict);
       transaction.objectStore("meta").put({ id: "sync-cursor", value: nextCursor, updatedAt: new Date().toISOString(), deletedAt: null });
+      transaction.objectStore("meta").delete("sync-request-id");
       await transactionDone(transaction);
     } finally {
       db.close();
@@ -128,7 +147,7 @@ export function createIndexedDbStudyWorkspace(options: Readonly<{
     await deleteStudyDatabase(databaseName, factory);
   }
 
-  return { load, apply, reconcile, cursor, clear };
+  return { load, apply, reconcile, cursor, syncRequestId, clear };
 }
 
 function storesFor(change: StudyChange): readonly [StoreName] {

@@ -43,19 +43,19 @@ function store() {
 describe("reviewed synchronization invariants", () => {
   it("rejects future and regressive cursors but accepts a new device at zero", async () => {
     const remote = store();
-    await expect(remote.sync({ deviceId: "a", cursor: "9", outbox: [] })).rejects.toThrow(/cursor mismatch/);
-    const first = await remote.sync({ deviceId: "a", cursor: "0", outbox: [entry("op-1", "base", "2026-09-28T10:00:00.000Z")] });
-    await expect(remote.sync({ deviceId: "a", cursor: "0", outbox: [] })).rejects.toThrow(/cursor mismatch/);
-    await expect(remote.sync({ deviceId: "b", cursor: "0", outbox: [] })).resolves.toMatchObject({ cursor: first.cursor });
+    await expect(remote.sync({ requestId: "00000000-0000-4000-8000-000000000001", deviceId: "a", cursor: "9", outbox: [] })).rejects.toThrow(/cursor mismatch/);
+    const first = await remote.sync({ requestId: "00000000-0000-4000-8000-000000000002", deviceId: "a", cursor: "0", outbox: [entry("op-1", "base", "2026-09-28T10:00:00.000Z")] });
+    await expect(remote.sync({ requestId: "00000000-0000-4000-8000-000000000003", deviceId: "a", cursor: "0", outbox: [] })).rejects.toThrow(/cursor mismatch/);
+    await expect(remote.sync({ requestId: "00000000-0000-4000-8000-000000000004", deviceId: "b", cursor: "0", outbox: [] })).resolves.toMatchObject({ cursor: first.cursor });
   });
 
   it("serializes concurrent same-base note edits and preserves both texts", async () => {
     const remote = store();
-    await remote.sync({ deviceId: "a", cursor: "0", outbox: [entry("base", "base", "2026-09-28T10:00:00.000Z")] });
-    await remote.sync({ deviceId: "b", cursor: "0", outbox: [] });
+    await remote.sync({ requestId: "00000000-0000-4000-8000-000000000005", deviceId: "a", cursor: "0", outbox: [entry("base", "base", "2026-09-28T10:00:00.000Z")] });
+    await remote.sync({ requestId: "00000000-0000-4000-8000-000000000006", deviceId: "b", cursor: "0", outbox: [] });
     const [a, b] = await Promise.all([
-      remote.sync({ deviceId: "a", cursor: "1", outbox: [entry("edit-a", "versão A", "2026-09-28T11:00:00.000Z")] }),
-      remote.sync({ deviceId: "b", cursor: "1", outbox: [entry("edit-b", "versão B", "2026-09-28T11:01:00.000Z")] }),
+      remote.sync({ requestId: "00000000-0000-4000-8000-000000000007", deviceId: "a", cursor: "1", outbox: [entry("edit-a", "versão A", "2026-09-28T11:00:00.000Z")] }),
+      remote.sync({ requestId: "00000000-0000-4000-8000-000000000008", deviceId: "b", cursor: "1", outbox: [entry("edit-b", "versão B", "2026-09-28T11:01:00.000Z")] }),
     ]);
     const conflicts = [...a.conflicts, ...b.conflicts];
     expect(conflicts.some((conflict) => conflict.versions.map(({ text }) => text).toSorted().join("|") === "versão A|versão B")).toBe(true);
@@ -64,13 +64,13 @@ describe("reviewed synchronization invariants", () => {
   it("chooses the same equal-timestamp winner regardless of delivery order", async () => {
     const sameTime = "2026-09-28T12:00:00.000Z";
     const first = store();
-    await first.sync({ deviceId: "b", cursor: "0", outbox: [entry("op-b", "B", sameTime)] });
-    const firstResult = await first.sync({ deviceId: "a", cursor: "0", outbox: [entry("op-a", "A", sameTime)] });
+    await first.sync({ requestId: "00000000-0000-4000-8000-000000000009", deviceId: "b", cursor: "0", outbox: [entry("op-b", "B", sameTime)] });
+    const firstResult = await first.sync({ requestId: "00000000-0000-4000-8000-000000000010", deviceId: "a", cursor: "0", outbox: [entry("op-a", "A", sameTime)] });
 
     await database.exec("DELETE FROM note_conflict; DELETE FROM sync_cursor; DELETE FROM sync_operation; DELETE FROM note;");
     const second = store();
-    await second.sync({ deviceId: "a", cursor: "0", outbox: [entry("op-a", "A", sameTime)] });
-    const secondResult = await second.sync({ deviceId: "b", cursor: "0", outbox: [entry("op-b", "B", sameTime)] });
+    await second.sync({ requestId: "00000000-0000-4000-8000-000000000011", deviceId: "a", cursor: "0", outbox: [entry("op-a", "A", sameTime)] });
+    const secondResult = await second.sync({ requestId: "00000000-0000-4000-8000-000000000012", deviceId: "b", cursor: "0", outbox: [entry("op-b", "B", sameTime)] });
 
     expect(firstResult.snapshot.notes[0].text).toBe(secondResult.snapshot.notes[0].text);
   });
@@ -99,12 +99,30 @@ describe("reviewed synchronization invariants", () => {
     const handler = createStudySyncHandler({ profileId: async () => "profile-1", store });
     const response = await handler(new Request("https://atlas.example/api/study/sync", {
       method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({
-        deviceId: "00000000-0000-4000-8000-000000000001", cursor: "0",
+        requestId: "00000000-0000-4000-8000-000000000099", deviceId: "00000000-0000-4000-8000-000000000001", cursor: "0",
         outbox: [entry("http-op", "via handler", "2026-09-28T13:00:00.000Z")],
       }),
     }));
     expect(response.status).toBe(200);
     expect((await response.json() as { snapshot: { notes: Note[] } }).snapshot.notes[0].text).toBe("via handler");
+  });
+
+  it("replays a committed response for the same request ID and rejects a changed body", async () => {
+    const remote = store();
+    const request = { requestId: "00000000-0000-4000-8000-000000000010", deviceId: "a", cursor: "0", outbox: [entry("lost-op", "committed", "2026-09-28T14:00:00.000Z")] };
+    const committed = await remote.sync(request);
+    await expect(remote.sync(request)).resolves.toEqual(committed);
+    await expect(remote.sync({ ...request, outbox: [entry("changed-op", "tampered", "2026-09-28T14:01:00.000Z")] })).rejects.toThrow(/request mismatch/);
+    await expect(remote.sync({ requestId: "00000000-0000-4000-8000-000000000011", deviceId: "a", cursor: "0", outbox: [] })).rejects.toThrow(/cursor mismatch/);
+  });
+
+  it("keeps one stable request ID through retries and a later invocation until reconciliation", async () => {
+    const local = createIndexedDbStudyWorkspace({ databaseName, createOperationId: () => "pending-op", createSyncRequestId: () => "00000000-0000-4000-8000-000000000020" });
+    await local.apply({ type: "note.save", note: { id: "note-1", material, text: "pending", updatedAt: "2026-09-28T15:00:00.000Z", deletedAt: null } });
+    const seen: string[] = [];
+    await expect(synchronizeStudy(local, { sync: async (request) => { seen.push(request.requestId); throw new TypeError("lost response"); } }, { deviceId: "00000000-0000-4000-8000-000000000021", retryDelaysMs: [0] })).rejects.toThrow("lost response");
+    await expect(synchronizeStudy(local, { sync: async (request) => { seen.push(request.requestId); throw new TypeError("still lost"); } }, { deviceId: "00000000-0000-4000-8000-000000000021", retryDelaysMs: [] })).rejects.toThrow("still lost");
+    expect(new Set(seen)).toEqual(new Set(["00000000-0000-4000-8000-000000000020"]));
   });
 });
 function neverNote(): never { throw new Error("expected note operation"); }

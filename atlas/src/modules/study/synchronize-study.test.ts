@@ -106,8 +106,8 @@ describe("study synchronization", () => {
     await device.apply({ type: "note.save", note: note("uma vez", "2026-09-28T10:00:00.000Z") });
     const outbox = (await device.load()).outbox;
 
-    const first = await server.sync({ deviceId: "a", cursor: "0", outbox });
-    const replay = await server.sync({ deviceId: "a", cursor: first.cursor, outbox });
+    const first = await server.sync({ requestId: "00000000-0000-4000-8000-000000000001", deviceId: "a", cursor: "0", outbox });
+    const replay = await server.sync({ requestId: "00000000-0000-4000-8000-000000000001", deviceId: "a", cursor: "0", outbox });
 
     expect(replay).toEqual(first);
     expect(replay.snapshot.notes).toHaveLength(1);
@@ -120,8 +120,8 @@ describe("study synchronization", () => {
     await device.apply({ type: "note.save", note: note("privada", "2026-09-28T10:00:00.000Z") });
     const outbox = (await device.load()).outbox;
 
-    await profileOne.sync({ deviceId: "a", cursor: "0", outbox });
-    const other = await profileTwo.sync({ deviceId: "b", cursor: "0", outbox: [] });
+    await profileOne.sync({ requestId: "00000000-0000-4000-8000-000000000003", deviceId: "a", cursor: "0", outbox });
+    const other = await profileTwo.sync({ requestId: "00000000-0000-4000-8000-000000000004", deviceId: "b", cursor: "0", outbox: [] });
 
     expect(other.snapshot.notes).toEqual([]);
     expect(other.conflicts).toEqual([]);

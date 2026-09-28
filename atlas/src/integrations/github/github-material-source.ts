@@ -41,8 +41,22 @@ function bytesOf(base64: string): Uint8Array {
 export interface GitHubMaterialSource {
   readHead(): Promise<string>;
   readTree(commitSha: string): Promise<readonly GitTreeEntry[]>;
+  readTreeSha(commitSha: string): Promise<string>;
   readBlob(blobSha: string): Promise<Uint8Array>;
   createBlob(bytes: Uint8Array): Promise<string>;
+  createTree(
+    entries: readonly TreeEntryInput[],
+    baseTreeSha: string,
+  ): Promise<string>;
+  createCommit(
+    input: Readonly<{
+      message: string;
+      treeSha: string;
+      parents: readonly string[];
+    }>,
+  ): Promise<GitCommitResult>;
+  readRef(ref: string): Promise<string>;
+  updateRef(ref: string, sha: string): Promise<boolean>;
 }
 
 export interface GitTreeEntry {
@@ -50,6 +64,15 @@ export interface GitTreeEntry {
   readonly sha: string;
   readonly type: "blob" | "tree";
 }
+
+export type TreeEntryInput = Readonly<{
+  path: string;
+  mode: "100644";
+  type: "blob";
+  sha: string;
+}>;
+
+export type GitCommitResult = Readonly<{ sha: string; url: string }>;
 
 export function createGitHubMaterialSource(
   transport: GitHubTransport,
@@ -84,6 +107,13 @@ export function createGitHubMaterialSource(
       )) as { tree: GitTreeEntry[] };
       return data.tree;
     },
+    async readTreeSha(commitSha: string): Promise<string> {
+      const data = (await call(
+        `/repos/${repository}/git/commits/${commitSha}`,
+        "GET",
+      )) as { tree: { sha: string } };
+      return data.tree.sha;
+    },
     async readBlob(blobSha: string): Promise<Uint8Array> {
       const data = (await call(
         `/repos/${repository}/git/blobs/${blobSha}`,
@@ -99,6 +129,43 @@ export function createGitHubMaterialSource(
         encoding: "base64",
       })) as { sha: string };
       return data.sha;
+    },
+    async createTree(
+      entries: readonly TreeEntryInput[],
+      baseTreeSha: string,
+    ): Promise<string> {
+      const data = (await call(`/repos/${repository}/git/trees`, "POST", {
+        tree: entries,
+        base_tree: baseTreeSha,
+      })) as { sha: string };
+      return data.sha;
+    },
+    async createCommit(input): Promise<GitCommitResult> {
+      const data = (await call(`/repos/${repository}/git/commits`, "POST", {
+        message: input.message,
+        tree: input.treeSha,
+        parents: [...input.parents],
+      })) as { sha: string; html_url: string };
+      return { sha: data.sha, url: data.html_url };
+    },
+    async readRef(ref: string): Promise<string> {
+      const data = (await call(
+        `/repos/${repository}/git/ref/${ref}`,
+        "GET",
+      )) as { object: { sha: string } };
+      return data.object.sha;
+    },
+    async updateRef(ref: string, sha: string): Promise<boolean> {
+      // force is never true: GitHub rejects a non-fast-forward update with 422,
+      // which is how a concurrent commit becomes an atomic conflict here.
+      const response = await transport(`/repos/${repository}/git/refs/${ref}`, {
+        method: "PATCH",
+        body: JSON.stringify({ sha, force: false }),
+      });
+      if (response.status === 422 || response.status === 409) return false;
+      if (response.status >= 400)
+        throw new Error(`GitHub request failed: ${response.status}`);
+      return true;
     },
   };
 }

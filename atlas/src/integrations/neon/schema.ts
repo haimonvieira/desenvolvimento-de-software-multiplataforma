@@ -253,6 +253,9 @@ export const uploadBatch = pgTable("upload_batch", {
   totalBytes: integer("total_bytes").notNull(),
   expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  publishedCommitSha: text("published_commit_sha"),
+  publishedCommitUrl: text("published_commit_url"),
+  publishedAt: timestamp("published_at", { withTimezone: true }),
 }, (table) => [check("upload_batch_status_check", sql`${table.status} in ('draft', 'ready', 'published', 'expired')`)]);
 
 export const stagedUploadFile = pgTable("staged_upload_file", {

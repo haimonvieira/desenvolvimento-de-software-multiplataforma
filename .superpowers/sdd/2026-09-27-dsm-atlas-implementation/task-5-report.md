@@ -36,4 +36,4 @@ Correctness, security, readability, architecture, and performance were reviewed.
 
 ## Commit
 
-Pending atomic implementation/report commit.
+Implementation and report commit: `268f010` (`feat(atlas): add material discovery and safe previews`). This line was appended in a report-only follow-up commit.

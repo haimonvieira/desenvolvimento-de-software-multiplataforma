@@ -138,6 +138,28 @@ export function resolveCommitSha(repositoryRoot: string): string {
   }).trim();
 }
 
+function readGitBlobs(repositoryRoot: string, commitSha: string, paths: readonly string[]): Readonly<Record<string, string>> {
+  if (paths.length === 0) return {};
+  const input = `${paths.map((path) => `${commitSha}:${path}`).join("\n")}\n`;
+  const output = execFileSync("git", ["cat-file", "--batch"], { cwd: repositoryRoot, input, maxBuffer: 32 * 1024 * 1024 });
+  const blobs: Record<string, string> = {};
+  let offset = 0;
+  for (const path of paths) {
+    const headerEnd = output.indexOf(10, offset);
+    const header = output.subarray(offset, headerEnd).toString("utf8");
+    const size = Number(header.match(/ blob (\d+)$/)?.[1]);
+    const contentStart = headerEnd + 1;
+    blobs[path] = output.subarray(contentStart, contentStart + size).toString("utf8");
+    offset = contentStart + size + 1;
+  }
+  return blobs;
+}
+
+export function buildTextPreviews(repositoryRoot: string, catalog: CatalogData): Readonly<Record<string, string>> {
+  const paths = catalog.materials.filter((material) => material.previewKind === "text").map((material) => material.ref.path);
+  return readGitBlobs(repositoryRoot, catalog.commitSha, paths);
+}
+
 export async function buildCatalog(repositoryRoot: string, commitSha: string): Promise<CatalogData> {
   const entries = listGitTree(repositoryRoot, commitSha).sort((left, right) => left.path.localeCompare(right.path));
   const roots = new Set<string>();
@@ -177,7 +199,10 @@ export async function buildCatalog(repositoryRoot: string, commitSha: string): P
 export async function writeCatalog(repositoryRoot: string, outputPath: string, commitSha = resolveCommitSha(repositoryRoot)): Promise<void> {
   const catalog = await buildCatalog(repositoryRoot, commitSha);
   await mkdir(dirname(outputPath), { recursive: true });
-  await writeFile(outputPath, `${JSON.stringify(catalog, null, 2)}\n`);
+  await Promise.all([
+    writeFile(outputPath, `${JSON.stringify(catalog, null, 2)}\n`),
+    writeFile(resolve(dirname(outputPath), "material-text.json"), `${JSON.stringify(buildTextPreviews(repositoryRoot, catalog))}\n`),
+  ]);
 }
 
 const scriptPath = fileURLToPath(import.meta.url);

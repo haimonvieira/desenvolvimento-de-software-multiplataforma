@@ -4,7 +4,7 @@ import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
 
-import { buildCatalog, writeCatalog } from "../../../scripts/build-catalog";
+import { buildCatalog, buildTextPreviews, writeCatalog } from "../../../scripts/build-catalog";
 import { createCatalogQuery } from "./catalog-query";
 import type { CatalogData } from "./model";
 
@@ -156,6 +156,17 @@ describe("catalog builder", () => {
     ]);
     expect(catalog.materials.every(({ ref }) => !ref.path.includes("\\"))).toBe(true);
     expect(unknown).toMatchObject({ kind: "other", previewKind: "none" });
+  });
+
+  it("stores exact committed text for inert previews", async () => {
+    const root = await fixture({ "DSM1/ALP/page.html": "<script>alert('never')</script>" });
+    const sha = commitFixture(root);
+    const data = await buildCatalog(root, sha);
+    const previews = buildTextPreviews(root, data);
+
+    await writeFile(join(root, "DSM1/ALP/page.html"), "changed working tree");
+
+    expect(previews["DSM1/ALP/page.html"]).toBe("<script>alert('never')</script>");
   });
 
 

@@ -16,9 +16,11 @@ export default async function Home({ searchParams }: HomeProps) {
   const requested = await searchParams;
   const semesterValue = typeof requested?.semester === "string" ? requested.semester : undefined;
   const viewValue = typeof requested?.view === "string" ? requested.view : undefined;
+  const searchValue = typeof requested?.q === "string" ? requested.q.trim() : "";
   const semester = knownSemesters.includes(semesterValue ?? "") ? semesterValue! : latestSemester;
   const view: CatalogViewMode = viewValue === "list" ? "list" : "map";
   const materials = catalogQuery.browse({ semester });
+  const searchResults = searchValue.length > 0 && searchValue.length <= 120 ? catalogQuery.search(searchValue) : undefined;
   const counts: Record<string, number> = {};
   for (const material of materials) counts[material.disciplineCode] = (counts[material.disciplineCode] ?? 0) + 1;
   const disciplines = data.disciplines
@@ -34,7 +36,7 @@ export default async function Home({ searchParams }: HomeProps) {
           <form className="search" role="search" action="/" method="get">
             <svg aria-hidden="true" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="6" /><path d="m16 16 4 4" /></svg>
             <label className="sr-only" htmlFor="catalog-search">Buscar no catálogo</label>
-            <input id="catalog-search" name="q" type="search" placeholder="Busque por disciplina, aula ou arquivo" />
+            <input id="catalog-search" name="q" type="search" minLength={1} maxLength={120} defaultValue={searchValue} placeholder="Busque por disciplina, aula ou arquivo" />
             <input name="semester" type="hidden" value={semester} />
             <input name="view" type="hidden" value={view} />
           </form>
@@ -58,6 +60,19 @@ export default async function Home({ searchParams }: HomeProps) {
               <a aria-current={view === "list" ? "page" : undefined} href={`/?semester=${semester}&view=list`}>Lista</a>
             </nav>
           </section>
+          {searchResults ? (
+            <section className="search-results" aria-labelledby="search-results-title">
+              <header><h2 id="search-results-title">Resultados para “{searchValue}”</h2><span>{searchResults.items.length}{searchResults.nextCursor ? "+" : ""} encontrados</span></header>
+              {searchResults.items.length ? (
+                <ul>
+                  {searchResults.items.map((material) => {
+                    const href = `/materiais/${material.ref.path.split("/").map(encodeURIComponent).join("/")}?semester=${encodeURIComponent(material.semesterCode)}`;
+                    return <li key={material.ref.path}><a data-search-result href={href}><strong>{material.name}</strong><small>{material.semesterCode} / {material.disciplineCode} / {material.ref.path.split("/").slice(2, -1).join(" / ")}</small></a></li>;
+                  })}
+                </ul>
+              ) : <p>Nenhum material encontrado. Tente outro termo.</p>}
+            </section>
+          ) : null}
 
           <section className="workspace" aria-label={`Catálogo do semestre ${semester}`}>
             <CatalogView disciplines={disciplines} materials={materials} semester={semester} view={view} />

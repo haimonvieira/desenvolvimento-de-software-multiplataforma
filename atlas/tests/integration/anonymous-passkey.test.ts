@@ -1,21 +1,23 @@
-import { readFile } from "node:fs/promises";
+import { fileURLToPath } from "node:url";
 import { PGlite } from "@electric-sql/pglite";
 import { drizzle } from "drizzle-orm/pglite";
+import { migrate } from "drizzle-orm/pglite/migrator";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
 import { createAuth, createAuthForDatabase, createVisitorIdentity } from "../../src/modules/identity/auth";
 import { authSchema } from "../../src/integrations/neon/schema";
 
-const migrationUrl = new URL(
-  "../../drizzle/migrations/0001_identity_and_study.sql",
+const migrationsFolder = fileURLToPath(new URL(
+  "../../drizzle/migrations",
   import.meta.url,
-);
+));
 
 let database: PGlite;
 
 beforeEach(async () => {
   database = new PGlite();
-  await database.exec(await readFile(migrationUrl, "utf8"));
+  await migrate(drizzle(database), { migrationsFolder });
+  await migrate(drizzle(database), { migrationsFolder });
 });
 
 afterEach(async () => database.close());
@@ -97,10 +99,18 @@ describe("Better Auth HTTP boundary", () => {
     const body = await response.json() as { user: Record<string, unknown> };
     expect(body.user.isAnonymous).toBe(true);
     expect(body.user.id).toEqual(expect.any(String));
-    expect(body.user.email).toMatch(/@anonymous\.placeholder\.invalid$/);
-    expect(body.user.name).toBe("Anonymous");
+    expect(body.user).not.toHaveProperty("email");
+    expect(body.user).not.toHaveProperty("name");
     expect(body.user).not.toHaveProperty("role");
     expect(response.headers.get("set-cookie")).toMatch(/HttpOnly;.*Secure;.*SameSite=Lax/i);
+
+    const sessionResponse = await auth.handler(new Request("https://atlas.example/api/auth/get-session", {
+      headers: { cookie: response.headers.get("set-cookie")!.split(";")[0] },
+    }));
+    const restored = await sessionResponse.json() as { user: Record<string, unknown> };
+    expect(restored.user.id).toBe(body.user.id);
+    expect(restored.user).not.toHaveProperty("email");
+    expect(restored.user).not.toHaveProperty("name");
   });
 
   it("requires the anonymous session and produces a fixed discoverable passkey challenge", async () => {

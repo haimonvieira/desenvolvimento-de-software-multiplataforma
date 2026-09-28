@@ -6,6 +6,18 @@ import { anonymous } from "better-auth/plugins";
 import { createDatabase } from "../../integrations/neon/db";
 import { authSchema } from "../../integrations/neon/schema";
 
+const pseudonymousUserOutput = {
+  id: "pseudonymous-user-output",
+  schema: {
+    user: {
+      fields: {
+        name: { type: "string" as const, required: true, returned: false },
+        email: { type: "string" as const, required: true, returned: false },
+      },
+    },
+  },
+};
+
 export type VisitorSession = Readonly<{ user: Readonly<{ id: string }> }>;
 export type VisitorIdentityState =
   | Readonly<{ kind: "local" }>
@@ -74,6 +86,7 @@ export function createAuthForDatabase(config: AuthRuntimeConfig, database: DB) {
       ipAddress: { ipAddressHeaders: ["cf-connecting-ip"] },
     },
     plugins: [
+      pseudonymousUserOutput,
       anonymous(),
       passkey({
         rpID: config.rpId,

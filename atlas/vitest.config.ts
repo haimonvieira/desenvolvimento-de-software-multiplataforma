@@ -11,6 +11,11 @@ export default defineConfig({
     },
   },
   test: {
+    // PGlite suites spin a WASM database and apply every migration in a
+    // beforeAll hook. Under parallel file execution that init contends for CPU
+    // and can exceed vitest's 10s default, failing the hook rather than the
+    // test. The assertions themselves are fast; only the shared init is slow.
+    hookTimeout: 60_000,
     include: [
       "tests/**/*.test.ts",
       "tests/**/*.test.tsx",

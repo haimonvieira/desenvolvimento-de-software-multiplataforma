@@ -55,16 +55,31 @@ describe("IndexedDB study workspace", () => {
     expect(snapshot.currentMaterial).toEqual(material);
   });
 
-  it("saves notes and flashcards and emits deterministic outbox entries", async () => {
-    const workspace = createIndexedDbStudyWorkspace({ databaseName });
+  it("keeps distinct outbox operations for identical entities and timestamps", async () => {
+    const operationIds = ["op-note-save", "op-note-delete", "op-note-delete-again"];
+    const workspace = createIndexedDbStudyWorkspace({ databaseName, createOperationId: () => operationIds.shift()! });
+    await workspace.apply({ type: "note.save", note });
+    await workspace.apply({ type: "item.delete", entity: "note", id: note.id, at: note.updatedAt });
+    const snapshot = await workspace.apply({ type: "item.delete", entity: "note", id: note.id, at: note.updatedAt });
+
+    expect(snapshot.outbox.map(({ id, change }) => [id, change.type])).toEqual([
+      ["op-note-delete", "item.delete"],
+      ["op-note-delete-again", "item.delete"],
+      ["op-note-save", "note.save"],
+    ]);
+  });
+
+  it("saves notes and flashcards and emits stable injected outbox IDs", async () => {
+    const operationIds = ["op-note", "op-card"];
+    const workspace = createIndexedDbStudyWorkspace({ databaseName, createOperationId: () => operationIds.shift()! });
     await workspace.apply({ type: "note.save", note });
     const snapshot = await workspace.apply({ type: "flashcard.save", flashcard });
 
     expect(snapshot.notes).toEqual([note]);
     expect(snapshot.flashcards).toEqual([flashcard]);
     expect(snapshot.outbox.map(({ id, change }) => [id, change.type])).toEqual([
-      ["note:note-1:2026-09-28T10:03:00.000Z", "note.save"],
-      ["flashcard:card-1:2026-09-28T10:04:00.000Z", "flashcard.save"],
+      ["op-note", "note.save"],
+      ["op-card", "flashcard.save"],
     ]);
   });
 

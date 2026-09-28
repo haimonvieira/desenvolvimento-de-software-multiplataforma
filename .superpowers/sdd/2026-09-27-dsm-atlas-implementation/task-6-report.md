@@ -47,3 +47,11 @@ Observed result: `{ offlineStatus: "Em estudo", reloadedStatus: "Em estudo", not
 #### Concerns
 
 - A hard reload while the browser remains offline is intentionally outside this task because static/offline asset caching is explicitly deferred. IndexedDB state itself survives the reload boundary, as confirmed once the existing app shell was available again.
+
+#### Review round 1
+
+- Atlas now owns one client-side study wrapper that loads the workspace once and passes the latest studying `MaterialRef` to both map and list representations. Each renders exactly one `Você está aqui` marker; illustrative progress copy was removed.
+- Outbox keys are native UUID operation IDs (injectable in tests), generated once per enqueue and stored with the change. Repeated operations for the same entity and caller timestamp no longer overwrite one another; `add` rejects an accidental duplicate operation ID.
+- Study controls centralize pending/error handling: initial load failure leaves all controls unavailable with a persistent `role=alert`; mutations disable conflicting controls, catch rejection, restore controls, and keep a persistent mutation alert.
+- RED: outbox regression initially collapsed three same-entity/same-timestamp changes into one; two Playwright error-path tests initially found no alert.
+- GREEN: `vitest ...study-workspace.test.ts` passes 6/6; Atlas marker Playwright test passes 1/1; load/mutation failure Playwright tests pass 2/2; `tsc --noEmit` and production build pass.

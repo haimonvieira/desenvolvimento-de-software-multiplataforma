@@ -10,9 +10,11 @@ type StoredData = Progress | Favorite | Note | Flashcard | OutboxEntry | StudyRe
 export function createIndexedDbStudyWorkspace(options: Readonly<{
   databaseName?: string;
   indexedDB?: IDBFactory;
+  createOperationId?: () => string;
 }> = {}): StudyWorkspace {
   const factory = options.indexedDB ?? globalThis.indexedDB;
   const databaseName = options.databaseName ?? "dsm-atlas";
+  const createOperationId = options.createOperationId ?? (() => crypto.randomUUID());
 
   async function open(): Promise<IDBDatabase> {
     const { promise, resolve, reject } = Promise.withResolvers<IDBDatabase>();
@@ -65,7 +67,7 @@ export function createIndexedDbStudyWorkspace(options: Readonly<{
       const store = transaction.objectStore(stores[0]);
       const record = await recordForChange(store, change);
       store.put(record);
-      transaction.objectStore("outbox").put(outboxFor(change, record.updatedAt));
+      transaction.objectStore("outbox").add(outboxFor(change, record.updatedAt, createOperationId()));
       await transactionDone(transaction);
     } finally {
       db.close();
@@ -102,13 +104,8 @@ function materialId(material: Readonly<{ commitSha: string; path: string }>): st
   return `${material.commitSha}:${material.path}`;
 }
 
-function outboxFor(change: StudyChange, updatedAt: string): OutboxEntry {
-  const subject = change.type === "progress.set" || change.type === "favorite.set"
-    ? materialId(change.material)
-    : change.type === "note.save" ? `note:${change.note.id}`
-      : change.type === "flashcard.save" ? `flashcard:${change.flashcard.id}`
-        : `${change.entity}:${change.id}`;
-  return { id: `${subject}:${updatedAt}`, change, updatedAt, deletedAt: null };
+function outboxFor(change: StudyChange, updatedAt: string, operationId: string): OutboxEntry {
+  return { id: operationId, change, updatedAt, deletedAt: null };
 }
 
 function getAll<T>(store: IDBObjectStore): Promise<T[]> {

@@ -1,4 +1,4 @@
-import type { Discipline, Material } from "./model";
+import type { Discipline, Material, MaterialRef } from "./model";
 
 export type CatalogDiscipline = Discipline & Readonly<{ materialCount: number }>;
 
@@ -26,7 +26,8 @@ export function DisciplineLink({ discipline }: Readonly<{ discipline: CatalogDis
   );
 }
 
-export function CatalogList({ disciplines, materials, semester }: Readonly<{
+export function CatalogList({ currentMaterial, disciplines, materials, semester }: Readonly<{
+  currentMaterial?: MaterialRef | null;
   disciplines: readonly CatalogDiscipline[];
   materials: readonly Material[];
   semester: string;
@@ -43,7 +44,7 @@ export function CatalogList({ disciplines, materials, semester }: Readonly<{
             <DisciplineLink discipline={discipline} />
             <ul className="catalog-materials" aria-label={`Materiais de ${discipline.name}`}>
               {materials.filter((material) => material.disciplineCode === discipline.code).map((material) => (
-                <li key={material.ref.path}><MaterialLink material={material} /></li>
+                <li key={material.ref.path}><MaterialLink material={material} />{sameRef(material.ref, currentMaterial) && <span className="current-marker">Você está aqui</span>}</li>
               ))}
             </ul>
           </li>
@@ -51,4 +52,8 @@ export function CatalogList({ disciplines, materials, semester }: Readonly<{
       </ul>
     </section>
   );
+}
+
+function sameRef(left: MaterialRef, right?: MaterialRef | null): boolean {
+  return left.path === right?.path && left.commitSha === right.commitSha;
 }

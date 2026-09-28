@@ -1,5 +1,7 @@
 import { expect, test, type Page } from "@playwright/test";
+import { readFileSync } from "node:fs";
 
+const catalogCommitSha = JSON.parse(readFileSync(new URL("../../src/generated/catalog.json", import.meta.url), "utf8")).commitSha as string;
 const viewports = [
   { name: "desktop", width: 1440, height: 900 },
   { name: "mobile", width: 390, height: 844 },
@@ -132,4 +134,34 @@ test("reduced motion draws no animated route", async ({ page }) => {
 
   await expect(page.locator(".atlas-route").first()).toHaveCSS("animation-name", "none");
   expect(await page.locator(".atlas-station").first().evaluate((station) => parseFloat(getComputedStyle(station).transitionDuration))).toBeLessThanOrEqual(0.001);
+});
+
+test("Atlas marks only the latest studying material in map and list", async ({ page }) => {
+  await page.goto("/?semester=DSM1&view=map");
+  const references = await page.locator('[data-representation="map"] [data-material-link]').evaluateAll((links) => links.slice(0, 2).map((link) => {
+    const href = link.getAttribute("href")!;
+    return decodeURIComponent(new URL(href, location.origin).pathname.replace("/materiais/", ""));
+  }));
+  const commitSha = catalogCommitSha;
+  await page.evaluate(async ({ commitSha, references }) => {
+    const request = indexedDB.open("dsm-atlas", 2);
+    await new Promise<void>((resolve, reject) => {
+      request.onupgradeneeded = () => {
+        for (const name of ["progress", "favorites", "notes", "flashcards", "meta", "outbox"]) request.result.createObjectStore(name, { keyPath: "id" });
+      };
+      request.onsuccess = () => resolve();
+      request.onerror = () => reject(request.error);
+    });
+    const transaction = request.result.transaction("progress", "readwrite");
+    for (const [index, path] of references.entries()) transaction.objectStore("progress").put({ id: `${commitSha}:${path}`, material: { path, commitSha }, status: "studying", updatedAt: `2026-09-28T10:0${index}:00.000Z`, deletedAt: null });
+    await new Promise<void>((resolve, reject) => { transaction.oncomplete = () => resolve(); transaction.onerror = () => reject(transaction.error); });
+    request.result.close();
+  }, { commitSha, references });
+
+  await page.reload();
+  await expect(page.locator('[data-representation="map"] .current-marker')).toHaveCount(1);
+  await expect(page.locator('[data-representation="map"] .current-marker')).toHaveText("Você está aqui");
+  await page.getByRole("link", { name: "Lista", exact: true }).click();
+  await expect(page.locator('[data-representation="list"] .current-marker')).toHaveCount(1);
+  await expect(page.locator('[data-representation="list"] .current-marker')).toHaveText("Você está aqui");
 });

@@ -1,6 +1,7 @@
 import catalog from "../generated/catalog.json";
 import { createCatalogQuery } from "../modules/catalog/catalog-query";
-import { CatalogView, type CatalogViewMode } from "../modules/catalog/catalog-view";
+import { type CatalogViewMode } from "../modules/catalog/catalog-view";
+import { StudyCatalogView } from "../modules/study/study-catalog-view";
 import type { CatalogData } from "../modules/catalog/model";
 
 const data = catalog as CatalogData;
@@ -75,7 +76,7 @@ export default async function Home({ searchParams }: HomeProps) {
           ) : null}
 
           <section className="workspace" aria-label={`Catálogo do semestre ${semester}`}>
-            <CatalogView disciplines={disciplines} materials={materials} semester={semester} view={view} />
+            <StudyCatalogView disciplines={disciplines} materials={materials} semester={semester} view={view} />
             <aside className="discipline-detail" aria-labelledby="discipline-title">
               <header className="detail-header"><span>{semester} / CATÁLOGO</span><span>{disciplines.length} disciplinas</span></header>
               <h2 id="discipline-title">Explore por<br />disciplina</h2>

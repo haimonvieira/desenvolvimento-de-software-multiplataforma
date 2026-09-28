@@ -430,6 +430,14 @@ main {
 .study-load-error { margin: 0; padding: var(--space-3); border: var(--border-hairline); background: var(--color-selection); font-weight: 600; }
 .study-load-error button, .study-error button { margin-left: var(--space-2); border: 0; background: transparent; font-weight: 600; text-decoration: underline; cursor: pointer; }
 
+.profile-controls { margin: var(--space-6); padding: var(--space-5); border: var(--border-strong); background: var(--color-paper-raised); }
+.profile-controls h2 { margin-top: 0; font-family: var(--font-display); font-size: 1.8rem; }
+.profile-actions { display: flex; flex-wrap: wrap; gap: var(--space-3); }
+.profile-controls button { min-height: 2.5rem; padding: .6rem .85rem; border: var(--border-hairline); background: var(--color-paper); color: var(--color-ink); font: 600 .62rem var(--font-data); text-transform: uppercase; cursor: pointer; }
+.profile-controls button:disabled { cursor: not-allowed; opacity: .55; }
+.profile-controls [role="alert"] { margin-top: var(--space-4); padding: var(--space-4); background: var(--color-selection); }
+.profile-controls article { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-3); border-top: var(--border-hairline); }
+
 @keyframes atlas-route-draw { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
 @keyframes location-pulse { from { translate: 0 0.35rem; } to { translate: 0; } }
 
@@ -478,6 +486,8 @@ main {
   .material-heading dl div { flex: 1; min-width: 0; }
   .study-controls > header { flex-direction: column; }
   .study-editors form { padding: var(--space-4); }
+  .profile-controls { margin: var(--space-4); }
+  .profile-controls article { grid-template-columns: 1fr; }
   .material-group header { align-items: start; flex-direction: column; gap: 0; }
   .native-preview { min-height: 20rem; }
   .native-preview object { min-height: 65vh; }

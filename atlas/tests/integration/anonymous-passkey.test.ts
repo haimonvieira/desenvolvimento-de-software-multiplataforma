@@ -157,6 +157,31 @@ describe("Better Auth HTTP boundary", () => {
     expect(first.status).toBe(500);
     expect(await replay.json()).toMatchObject({ code: "CHALLENGE_NOT_FOUND" });
   });
+
+  it("deletes a passkey profile only with a fresh application session", async () => {
+    const auth = createAuthForDatabase({
+      databaseUrl: "unused",
+      secret: "a".repeat(32),
+      baseUrl: "https://atlas.example",
+      rpId: "atlas.example",
+      trustedOrigins: ["https://atlas.example"],
+    }, drizzle(database, { schema: authSchema }));
+    const anonymous = await auth.handler(new Request("https://atlas.example/api/auth/sign-in/anonymous", {
+      method: "POST", headers: { origin: "https://atlas.example" },
+    }));
+    const cookie = anonymous.headers.get("set-cookie")!.split(";")[0];
+    const userId = (await anonymous.json() as { user: { id: string } }).user.id;
+    await database.exec(`
+      INSERT INTO passkey (id, public_key, user_id, credential_id, counter, device_type, backed_up, created_at)
+      VALUES ('delete-key', 'public', '${userId}', 'delete-credential', 0, 'singleDevice', false, now());
+    `);
+
+    const deleted = await auth.handler(new Request("https://atlas.example/api/auth/delete-user", {
+      method: "POST", headers: { cookie, origin: "https://atlas.example", "content-type": "application/json" }, body: "{}",
+    }));
+    expect(deleted.status).toBe(200);
+    expect((await database.query(`SELECT id FROM "user" WHERE id = $1`, [userId])).rows).toEqual([]);
+  });
 });
 
 describe("identity schema boundaries", () => {

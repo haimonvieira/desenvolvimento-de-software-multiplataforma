@@ -76,6 +76,8 @@ export function createAuthForDatabase(config: AuthRuntimeConfig, database: DB) {
       // Neon HTTP supports atomic batches but not interactive transactions.
       transaction: false,
     }),
+    session: { freshAge: 5 * 60 },
+    user: { deleteUser: { enabled: true } },
     rateLimit: { enabled: true, storage: "database" },
     advanced: {
       useSecureCookies: true,

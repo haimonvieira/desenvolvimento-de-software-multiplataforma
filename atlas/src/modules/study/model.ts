@@ -35,6 +35,12 @@ export type StudyChange =
   | { type: "item.delete"; entity: "note" | "flashcard"; id: string; at: string };
 
 export type OutboxEntry = StudyRecord & Readonly<{ change: StudyChange }>;
+export type NoteConflict = Readonly<{
+  id: string;
+  noteId: string;
+  versions: readonly [Note, Note];
+}>;
+
 
 export type StudySnapshot = Readonly<{
   progress: readonly Progress[];
@@ -42,5 +48,6 @@ export type StudySnapshot = Readonly<{
   notes: readonly Note[];
   flashcards: readonly Flashcard[];
   outbox: readonly OutboxEntry[];
+  conflicts: readonly NoteConflict[];
   currentMaterial: MaterialRef | null;
 }>;

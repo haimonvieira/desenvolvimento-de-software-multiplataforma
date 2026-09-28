@@ -1,17 +1,23 @@
-import type { Favorite, Flashcard, Note, OutboxEntry, Progress, StudyChange, StudyRecord, StudySnapshot } from "./model";
+import type { Favorite, Flashcard, Note, NoteConflict, OutboxEntry, Progress, StudyChange, StudyRecord, StudySnapshot } from "./model";
 import type { StudyWorkspace } from "./study-workspace";
 
-const DATABASE_VERSION = 2;
+const DATABASE_VERSION = 3;
 const DATA_STORES = ["progress", "favorites", "notes", "flashcards"] as const;
-const ALL_STORES = [...DATA_STORES, "meta", "outbox"] as const;
+const ALL_STORES = [...DATA_STORES, "meta", "outbox", "conflicts"] as const;
 type StoreName = typeof ALL_STORES[number];
-type StoredData = Progress | Favorite | Note | Flashcard | OutboxEntry | StudyRecord;
+type StoredData = Progress | Favorite | Note | Flashcard | OutboxEntry | StudyRecord | NoteConflict;
+
+export interface SyncableStudyWorkspace extends StudyWorkspace {
+  reconcile(snapshot: StudySnapshot, conflicts: readonly NoteConflict[], acknowledgedIds: readonly string[], cursor: string): Promise<StudySnapshot>;
+  cursor(): Promise<string>;
+  clear(): Promise<void>;
+}
 
 export function createIndexedDbStudyWorkspace(options: Readonly<{
   databaseName?: string;
   indexedDB?: IDBFactory;
   createOperationId?: () => string;
-}> = {}): StudyWorkspace {
+}> = {}): SyncableStudyWorkspace {
   const factory = options.indexedDB ?? globalThis.indexedDB;
   const databaseName = options.databaseName ?? "dsm-atlas";
   const createOperationId = options.createOperationId ?? (() => crypto.randomUUID());
@@ -34,12 +40,13 @@ export function createIndexedDbStudyWorkspace(options: Readonly<{
     const db = await open();
     try {
       const transaction = db.transaction(ALL_STORES, "readonly");
-      const [progress, favorites, notes, flashcards, outbox] = await Promise.all([
+      const [progress, favorites, notes, flashcards, outbox, conflicts] = await Promise.all([
         getAll<Progress>(transaction.objectStore("progress")),
         getAll<Favorite>(transaction.objectStore("favorites")),
         getAll<Note>(transaction.objectStore("notes")),
         getAll<Flashcard>(transaction.objectStore("flashcards")),
         getAll<OutboxEntry>(transaction.objectStore("outbox")),
+        getAll<NoteConflict>(transaction.objectStore("conflicts")),
       ]);
       await transactionDone(transaction);
       const currentMaterial = progress
@@ -52,6 +59,7 @@ export function createIndexedDbStudyWorkspace(options: Readonly<{
         notes: notes.toSorted(compareId),
         flashcards: flashcards.toSorted(compareId),
         outbox: outbox.toSorted(compareUpdatedAt),
+        conflicts: conflicts.toSorted((left, right) => left.id.localeCompare(right.id)),
         currentMaterial,
       };
     } finally {
@@ -65,7 +73,7 @@ export function createIndexedDbStudyWorkspace(options: Readonly<{
       const stores = storesFor(change);
       const transaction = db.transaction([...stores, "outbox"], "readwrite");
       const store = transaction.objectStore(stores[0]);
-      const record = await recordForChange(store, change);
+      const record = await recordForChange(store, change) as Progress | Favorite | Note | Flashcard;
       store.put(record);
       transaction.objectStore("outbox").add(outboxFor(change, record.updatedAt, createOperationId()));
       await transactionDone(transaction);
@@ -75,7 +83,46 @@ export function createIndexedDbStudyWorkspace(options: Readonly<{
     return load();
   }
 
-  return { load, apply };
+  async function cursor(): Promise<string> {
+    const db = await open();
+    try {
+      const transaction = db.transaction("meta", "readonly");
+      const value = await get<StudyRecord & { value: string }>(transaction.objectStore("meta"), "sync-cursor");
+      await transactionDone(transaction);
+      return value?.value ?? "0";
+    } finally {
+      db.close();
+    }
+  }
+
+  async function reconcile(remote: StudySnapshot, conflicts: readonly NoteConflict[], acknowledgedIds: readonly string[], nextCursor: string): Promise<StudySnapshot> {
+    const db = await open();
+    try {
+      const transaction = db.transaction(ALL_STORES, "readwrite");
+      for (const name of DATA_STORES) {
+        const store = transaction.objectStore(name);
+        store.clear();
+        for (const record of remote[name]) store.put(record);
+      }
+      for (const id of acknowledgedIds) transaction.objectStore("outbox").delete(id);
+      const conflictStore = transaction.objectStore("conflicts");
+      conflictStore.clear();
+      for (const conflict of conflicts) conflictStore.put(conflict);
+      transaction.objectStore("meta").put({ id: "sync-cursor", value: nextCursor, updatedAt: new Date().toISOString(), deletedAt: null });
+      await transactionDone(transaction);
+    } finally {
+      db.close();
+    }
+    return load();
+  }
+
+  async function clear(): Promise<void> {
+    const db = await open();
+    db.close();
+    await deleteStudyDatabase(databaseName, factory);
+  }
+
+  return { load, apply, reconcile, cursor, clear };
 }
 
 function storesFor(change: StudyChange): readonly [StoreName] {

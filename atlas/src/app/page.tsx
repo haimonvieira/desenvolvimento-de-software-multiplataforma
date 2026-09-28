@@ -3,6 +3,7 @@ import { createCatalogQuery } from "../modules/catalog/catalog-query";
 import { type CatalogViewMode } from "../modules/catalog/catalog-view";
 import { StudyCatalogView } from "../modules/study/study-catalog-view";
 import type { CatalogData } from "../modules/catalog/model";
+import { ProfileControls } from "../modules/identity/profile-controls";
 
 const data = catalog as CatalogData;
 const catalogQuery = createCatalogQuery(data);
@@ -93,6 +94,7 @@ export default async function Home({ searchParams }: HomeProps) {
               </dl>
             </aside>
           </section>
+          <ProfileControls />
         </main>
       </div>
     </>

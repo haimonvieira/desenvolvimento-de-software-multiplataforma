@@ -8,6 +8,13 @@
       "when": 1790597980423,
       "tag": "0000_identity_and_study",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1790604000000,
+      "tag": "0001_atomic_study_sync",
+      "breakpoints": true
     }
   ]
 }

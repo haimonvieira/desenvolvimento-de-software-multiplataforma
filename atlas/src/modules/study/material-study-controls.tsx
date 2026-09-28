@@ -6,7 +6,7 @@ import type { MaterialRef } from "../catalog/model";
 import { createIndexedDbStudyWorkspace } from "./indexed-db-study-store";
 import type { Favorite, Flashcard, Note, Progress, StudySnapshot } from "./model";
 
-const emptySnapshot: StudySnapshot = { progress: [], favorites: [], notes: [], flashcards: [], outbox: [], currentMaterial: null };
+const emptySnapshot: StudySnapshot = { progress: [], favorites: [], notes: [], flashcards: [], outbox: [], conflicts: [], currentMaterial: null };
 
 export function MaterialStudyControls({ material }: Readonly<{ material: MaterialRef }>) {
   const workspace = useMemo(() => createIndexedDbStudyWorkspace(), []);

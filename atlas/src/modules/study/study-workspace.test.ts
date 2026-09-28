@@ -94,7 +94,7 @@ describe("IndexedDB study workspace", () => {
     expect(snapshot.flashcards[0]).toMatchObject({ id: "card-1", deletedAt: "2026-09-28T10:06:00.000Z", updatedAt: "2026-09-28T10:06:00.000Z" });
   });
 
-  it("migrates a version 1 database to version 2 without losing records", async () => {
+  it("migrates a version 1 database to version 3 without losing records", async () => {
     const { promise, resolve, reject } = Promise.withResolvers<void>();
     const request = indexedDB.open(databaseName, 1);
     request.onupgradeneeded = () => {
@@ -110,7 +110,7 @@ describe("IndexedDB study workspace", () => {
     const snapshot = await workspace.load();
 
     expect(snapshot.notes).toEqual([note]);
-    expect([...await listStores(databaseName)]).toEqual(["favorites", "flashcards", "meta", "notes", "outbox", "progress"]);
+    expect([...await listStores(databaseName)]).toEqual(["conflicts", "favorites", "flashcards", "meta", "notes", "outbox", "progress"]);
   });
 });
 

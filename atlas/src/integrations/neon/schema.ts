@@ -113,7 +113,7 @@ const materialFields = {
 export const studyProgress = pgTable(
   "study_progress",
   {
-    id: text("id").primaryKey(),
+    id: text("id").notNull(),
     profileId: text("profile_id").notNull().references(() => studyProfile.id, { onDelete: "cascade" }),
     ...materialFields,
     status: text("status").notNull(),
@@ -121,6 +121,7 @@ export const studyProgress = pgTable(
     deletedAt: timestamp("deleted_at", { withTimezone: true }),
   },
   (table) => [
+    primaryKey({ columns: [table.profileId, table.id] }),
     uniqueIndex("study_progress_profile_material_uidx").on(table.profileId, table.materialPath, table.materialCommitSha),
     check("study_progress_status_check", sql`${table.status} in ('new', 'studying', 'done')`),
   ],
@@ -129,33 +130,36 @@ export const studyProgress = pgTable(
 export const favorite = pgTable(
   "favorite",
   {
-    id: text("id").primaryKey(),
+    id: text("id").notNull(),
     profileId: text("profile_id").notNull().references(() => studyProfile.id, { onDelete: "cascade" }),
     ...materialFields,
     value: boolean("value").notNull(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull(),
     deletedAt: timestamp("deleted_at", { withTimezone: true }),
   },
-  (table) => [uniqueIndex("favorite_profile_material_uidx").on(table.profileId, table.materialPath, table.materialCommitSha)],
+  (table) => [
+    primaryKey({ columns: [table.profileId, table.id] }),
+    uniqueIndex("favorite_profile_material_uidx").on(table.profileId, table.materialPath, table.materialCommitSha),
+  ],
 );
 
 export const note = pgTable(
   "note",
   {
-    id: text("id").primaryKey(),
+    id: text("id").notNull(),
     profileId: text("profile_id").notNull().references(() => studyProfile.id, { onDelete: "cascade" }),
     ...materialFields,
     text: text("text").notNull(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull(),
     deletedAt: timestamp("deleted_at", { withTimezone: true }),
   },
-  (table) => [index("note_profile_id_idx").on(table.profileId)],
+  (table) => [primaryKey({ columns: [table.profileId, table.id] }), index("note_profile_id_idx").on(table.profileId)],
 );
 
 export const flashcard = pgTable(
   "flashcard",
   {
-    id: text("id").primaryKey(),
+    id: text("id").notNull(),
     profileId: text("profile_id").notNull().references(() => studyProfile.id, { onDelete: "cascade" }),
     ...materialFields,
     front: text("front").notNull(),
@@ -163,7 +167,7 @@ export const flashcard = pgTable(
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull(),
     deletedAt: timestamp("deleted_at", { withTimezone: true }),
   },
-  (table) => [index("flashcard_profile_id_idx").on(table.profileId)],
+  (table) => [primaryKey({ columns: [table.profileId, table.id] }), index("flashcard_profile_id_idx").on(table.profileId)],
 );
 
 export const syncCursor = pgTable(
@@ -175,6 +179,31 @@ export const syncCursor = pgTable(
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull(),
   },
   (table) => [primaryKey({ columns: [table.profileId, table.deviceId] })],
+);
+
+export const syncOperation = pgTable(
+  "sync_operation",
+  {
+    sequence: bigint("sequence", { mode: "number" }).primaryKey().generatedAlwaysAsIdentity(),
+    profileId: text("profile_id").notNull().references(() => studyProfile.id, { onDelete: "cascade" }),
+    operationId: text("operation_id").notNull(),
+    deviceId: text("device_id").notNull(),
+    change: text("change").notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [uniqueIndex("sync_operation_profile_operation_uidx").on(table.profileId, table.operationId)],
+);
+
+export const noteConflict = pgTable(
+  "note_conflict",
+  {
+    id: text("id").notNull(),
+    profileId: text("profile_id").notNull().references(() => studyProfile.id, { onDelete: "cascade" }),
+    noteId: text("note_id").notNull(),
+    versions: text("versions").notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [primaryKey({ columns: [table.profileId, table.id] }), index("note_conflict_profile_id_idx").on(table.profileId)],
 );
 
 export const authSchema = { user, session, account, verification, rateLimit, passkey };

@@ -1,6 +1,6 @@
 import catalog from "../../../generated/catalog.json";
-import textPreviews from "../../../generated/material-text.json";
 import { createCatalogQuery } from "../../../modules/catalog/catalog-query";
+import { materialPathCandidates } from "../../../modules/catalog/material-path";
 import { MaterialPreview } from "../../../modules/catalog/material-preview";
 import type { CatalogData } from "../../../modules/catalog/model";
 
@@ -19,8 +19,9 @@ function formatBytes(size: number): string {
 
 export default async function MaterialPage({ params }: PageProps) {
   const segments = (await params).path;
-  const path = segments.map((segment) => decodeURIComponent(segment)).join("/");
-  const material = query.getMaterial({ path, commitSha: data.commitSha });
+  const material = materialPathCandidates(segments)
+    .map((path) => query.getMaterial({ path, commitSha: data.commitSha }))
+    .find((candidate) => candidate !== null) ?? null;
 
   if (!material) {
     return (
@@ -58,7 +59,7 @@ export default async function MaterialPage({ params }: PageProps) {
               <div><dt>Tamanho</dt><dd>{formatBytes(material.size)}</dd></div>
             </dl>
           </header>
-          <MaterialPreview material={material} text={(textPreviews as Record<string, string>)[material.ref.path]} />
+          <MaterialPreview material={material} />
         </main>
       </div>
     </>

@@ -13,6 +13,7 @@ export type Material = Readonly<{
   kind: MaterialKind;
   downloadUrl: string;
   previewKind: PreviewKind;
+  previewUrl?: string;
 }>;
 
 export type Semester = Readonly<{ code: string; name: string }>;

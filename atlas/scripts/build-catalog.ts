@@ -1,5 +1,5 @@
-import { execFileSync } from "node:child_process";
-import { mkdir, writeFile } from "node:fs/promises";
+import { execFileSync, spawn } from "node:child_process";
+import { mkdir, rm, writeFile } from "node:fs/promises";
 import { basename, dirname, extname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -78,6 +78,10 @@ const CODE_EXTENSIONS = new Set([
 const DOCUMENT_EXTENSIONS = new Set([".csv", ".doc", ".docx", ".md", ".odt", ".pdf", ".ppt", ".pptx", ".txt", ".xls", ".xlsx"]);
 const IMAGE_EXTENSIONS = new Set([".gif", ".jpeg", ".jpg", ".png", ".svg", ".webp"]);
 const ARCHIVE_EXTENSIONS = new Set([".7z", ".gz", ".rar", ".tar", ".zip"]);
+const PREVIEW_EXTENSIONS = new Set([".c", ".cpp", ".css", ".html", ".java", ".js", ".jsx", ".md", ".php", ".py", ".sql", ".ts", ".tsx", ".txt"]);
+const PREVIEW_LIMIT = 200_000;
+const SENSITIVE_PATH = /(^|\/)(?:\.env(?:\..*)?|config(?:uration)?|credentials?|secrets?|settings?)(?:\.|\/|$)/i;
+const SECRET_MARKER = /(?:api[_-]?key|authorization\s*[:=]|client[_-]?secret|jwt[_-]?secret|jwtsecret|mongodb(?:\+srv)?:\/\/|password\s*[:=]|private[_-]?key|session[_-]?secret|token\s*[:=])/i;
 
 function classify(extension: string): { kind: MaterialKind; previewKind: PreviewKind } {
   if (IMAGE_EXTENSIONS.has(extension)) return { kind: "image", previewKind: "image" };
@@ -103,6 +107,7 @@ function isExcludedPath(path: string, mode: string): boolean {
 type GitTreeEntry = Readonly<{
   mode: string;
   type: string;
+  oid: string;
   size: number | null;
   path: string;
 }>;
@@ -119,10 +124,11 @@ function listGitTree(repositoryRoot: string, commitSha: string): GitTreeEntry[] 
 
   return output.split("\0").filter(Boolean).map((record) => {
     const separator = record.indexOf("\t");
-    const [mode, type, , size] = record.slice(0, separator).trim().split(/\s+/);
+    const [mode, type, oid, size] = record.slice(0, separator).trim().split(/\s+/);
     return {
       mode,
       type,
+      oid,
       size: size === "-" ? null : Number(size),
       path: record.slice(separator + 1).replace(/\\/g, "/"),
     };
@@ -138,26 +144,51 @@ export function resolveCommitSha(repositoryRoot: string): string {
   }).trim();
 }
 
-function readGitBlobs(repositoryRoot: string, commitSha: string, paths: readonly string[]): Readonly<Record<string, string>> {
-  if (paths.length === 0) return {};
-  const input = `${paths.map((path) => `${commitSha}:${path}`).join("\n")}\n`;
-  const output = execFileSync("git", ["cat-file", "--batch"], { cwd: repositoryRoot, input, maxBuffer: 32 * 1024 * 1024 });
-  const blobs: Record<string, string> = {};
-  let offset = 0;
-  for (const path of paths) {
-    const headerEnd = output.indexOf(10, offset);
-    const header = output.subarray(offset, headerEnd).toString("utf8");
-    const size = Number(header.match(/ blob (\d+)$/)?.[1]);
-    const contentStart = headerEnd + 1;
-    blobs[path] = output.subarray(contentStart, contentStart + size).toString("utf8");
-    offset = contentStart + size + 1;
-  }
-  return blobs;
+function readBlobPrefix(repositoryRoot: string, oid: string): Promise<Buffer> {
+  const { promise, resolve: resolveBlob, reject: rejectBlob } = Promise.withResolvers<Buffer>();
+  const child = spawn("git", ["cat-file", "blob", oid], { cwd: repositoryRoot, stdio: ["ignore", "pipe", "pipe"] });
+  const chunks: Buffer[] = [];
+  let size = 0;
+  let error = "";
+  child.stdout.on("data", (chunk: Buffer) => {
+    const remaining = PREVIEW_LIMIT - size;
+    if (remaining <= 0) return;
+    const bounded = chunk.subarray(0, remaining);
+    chunks.push(bounded);
+    size += bounded.byteLength;
+    if (size === PREVIEW_LIMIT) child.kill();
+  });
+  child.stderr.setEncoding("utf8").on("data", (chunk: string) => { error += chunk; });
+  child.on("error", rejectBlob);
+  child.on("close", (code) => code === 0 || size === PREVIEW_LIMIT
+    ? resolveBlob(Buffer.concat(chunks, size))
+    : rejectBlob(new Error(error || `git show exited ${code}`)));
+  return promise;
 }
 
-export function buildTextPreviews(repositoryRoot: string, catalog: CatalogData): Readonly<Record<string, string>> {
-  const paths = catalog.materials.filter((material) => material.previewKind === "text").map((material) => material.ref.path);
-  return readGitBlobs(repositoryRoot, catalog.commitSha, paths);
+async function writeTextPreviews(repositoryRoot: string, outputRoot: string, catalog: CatalogData, oidByPath: ReadonlyMap<string, string>): Promise<CatalogData> {
+  await rm(outputRoot, { recursive: true, force: true });
+  const materials: Material[] = [];
+  for (const material of catalog.materials) {
+    const canPreview = material.previewKind === "text" && PREVIEW_EXTENSIONS.has(material.extension) && !SENSITIVE_PATH.test(material.ref.path);
+    if (!canPreview) {
+      materials.push(material);
+      continue;
+    }
+    const oid = oidByPath.get(material.ref.path);
+    if (!oid) throw new Error(`Missing Git blob for ${material.ref.path}`);
+    const content = await readBlobPrefix(repositoryRoot, oid);
+    if (SECRET_MARKER.test(content.toString("utf8"))) {
+      materials.push(material);
+      continue;
+    }
+    const previewUrl = `/material-previews/${material.ref.path.split("/").map(encodeURIComponent).join("/")}.txt`;
+    const outputPath = resolve(outputRoot, ...material.ref.path.split("/").slice(0, -1), `${basename(material.ref.path)}.txt`);
+    await mkdir(dirname(outputPath), { recursive: true });
+    await writeFile(outputPath, content);
+    materials.push({ ...material, previewUrl });
+  }
+  return { ...catalog, materials };
 }
 
 export async function buildCatalog(repositoryRoot: string, commitSha: string): Promise<CatalogData> {
@@ -197,12 +228,12 @@ export async function buildCatalog(repositoryRoot: string, commitSha: string): P
 }
 
 export async function writeCatalog(repositoryRoot: string, outputPath: string, commitSha = resolveCommitSha(repositoryRoot)): Promise<void> {
+  const entries = listGitTree(repositoryRoot, commitSha);
   const catalog = await buildCatalog(repositoryRoot, commitSha);
   await mkdir(dirname(outputPath), { recursive: true });
-  await Promise.all([
-    writeFile(outputPath, `${JSON.stringify(catalog, null, 2)}\n`),
-    writeFile(resolve(dirname(outputPath), "material-text.json"), `${JSON.stringify(buildTextPreviews(repositoryRoot, catalog))}\n`),
-  ]);
+  const oidByPath = new Map(entries.map((entry) => [entry.path, entry.oid]));
+  const publicCatalog = await writeTextPreviews(repositoryRoot, resolve(dirname(outputPath), "../../public/material-previews"), catalog, oidByPath);
+  await writeFile(outputPath, `${JSON.stringify(publicCatalog, null, 2)}\n`);
 }
 
 const scriptPath = fileURLToPath(import.meta.url);

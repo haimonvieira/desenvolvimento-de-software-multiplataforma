@@ -1,6 +1,8 @@
 import { expect, test } from "@playwright/test";
 import type { Page } from "@playwright/test";
 
+import { materialPathCandidates, materialPathFromSegments } from "../../src/modules/catalog/material-path";
+
 const materialPath = (path: string) => path.split("/").map(encodeURIComponent).join("/");
 
 const pdf = "DSM1/ALP/LISTAS DE EXERCÍCIOS/Lista 01 - Pseudocódigo.docx.pdf";
@@ -88,6 +90,15 @@ test("invalid and non-catalog material paths fail safely", async ({ page }) => {
   await page.goto("/materiais/DSM1/ALP/inexistente.pdf?semester=DSM1");
   await expect(page.getByRole("heading", { name: "Material não encontrado" })).toBeVisible();
   expect((await page.locator("iframe, object, embed, script[data-repository-content]").count())).toBe(0);
+});
+
+test("literal percent and malformed route segments remain literal", () => {
+  expect(materialPathFromSegments(["DSM1", "ALP", "percent%file.txt"])).toBe("DSM1/ALP/percent%file.txt");
+  expect(materialPathCandidates(["DSM1", "ALP", "broken%ZZ.txt"])).toEqual(["DSM1/ALP/broken%ZZ.txt"]);
+  expect(materialPathCandidates(["DSM1", "ALP", "percent%2525file.txt"])).toEqual([
+    "DSM1/ALP/percent%2525file.txt",
+    "DSM1/ALP/percent%25file.txt",
+  ]);
 });
 
 test("material and search surfaces fit mobile width", async ({ page }) => {

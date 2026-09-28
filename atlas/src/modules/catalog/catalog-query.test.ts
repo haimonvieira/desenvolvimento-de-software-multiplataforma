@@ -1,10 +1,10 @@
-import { mkdtemp, mkdir, readFile, rm, writeFile } from "node:fs/promises";
+import { mkdtemp, mkdir, readFile, readdir, rm, writeFile } from "node:fs/promises";
 import { execFileSync } from "node:child_process";
 import { tmpdir } from "node:os";
-import { join, resolve } from "node:path";
+import { dirname, join, resolve } from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
 
-import { buildCatalog, buildTextPreviews, writeCatalog } from "../../../scripts/build-catalog";
+import { buildCatalog, writeCatalog } from "../../../scripts/build-catalog";
 import { createCatalogQuery } from "./catalog-query";
 import type { CatalogData } from "./model";
 
@@ -158,15 +158,35 @@ describe("catalog builder", () => {
     expect(unknown).toMatchObject({ kind: "other", previewKind: "none" });
   });
 
-  it("stores exact committed text for inert previews", async () => {
-    const root = await fixture({ "DSM1/ALP/page.html": "<script>alert('never')</script>" });
+  it("writes only capped safe preview assets and excludes credential-like content", async () => {
+    const root = await fixture({
+      "DSM1/ALP/safe.js": `${"a".repeat(210_000)}TAIL_SECRET`,
+      "DSM1/ALP/auth.js": "const JWTSecret = 'apigamessecret'",
+      "DSM1/ALP/config.json": '{"password":"secret"}',
+      "DSM1/ALP/.env": "TOKEN=real-secret",
+    });
     const sha = commitFixture(root);
-    const data = await buildCatalog(root, sha);
-    const previews = buildTextPreviews(root, data);
+    const output = join(root, "generated/catalog.json");
 
-    await writeFile(join(root, "DSM1/ALP/page.html"), "changed working tree");
+    await writeCatalog(root, output, sha);
 
-    expect(previews["DSM1/ALP/page.html"]).toBe("<script>alert('never')</script>");
+    const previewRoot = resolve(dirname(output), "../../public/material-previews/DSM1/ALP");
+    const safePreview = await readFile(join(previewRoot, "safe.js.txt"));
+    expect(safePreview.byteLength).toBe(200_000);
+    await expect(readFile(join(previewRoot, "auth.js.txt"))).rejects.toThrow();
+    await expect(readFile(join(previewRoot, "config.json.txt"))).rejects.toThrow();
+    await expect(readFile(join(dirname(output), "material-text.json"))).rejects.toThrow();
+  });
+
+  it("keeps secret markers and monolithic preview data out of deployed bundles", async () => {
+    const serverRoot = resolve(import.meta.dirname, "../../../dist/server");
+    const files = (await readdir(serverRoot, { recursive: true })).filter((path) => /\.(?:js|json)$/.test(path));
+    const output = await Promise.all(files.map((path) => readFile(join(serverRoot, path), "utf8")));
+    const deployed = output.join("\n");
+
+    expect(deployed).not.toContain("apigamessecret");
+    expect(deployed).not.toContain("material-text.json");
+    expect(Buffer.byteLength(deployed)).toBeLessThan(10 * 1024 * 1024);
   });
 
 

@@ -1,6 +1,6 @@
 import type { Material } from "./model";
+import { TextPreview } from "./text-preview";
 
-const TEXT_LIMIT = 200_000;
 const ACTIVE_EXTENSIONS: Readonly<Record<string, true>> = { ".html": true, ".js": true, ".jsx": true, ".svg": true, ".tsx": true };
 
 function githubUrl(material: Material): string {
@@ -21,7 +21,7 @@ function PreviewFallback({ material, reason = "Pré-visualização indisponível
   );
 }
 
-export function MaterialPreview({ material, text }: Readonly<{ material: Material; text?: string }>) {
+export async function MaterialPreview({ material }: Readonly<{ material: Material }>) {
   if (material.previewKind === "image" && material.extension !== ".svg") {
     return (
       <figure className="native-preview">
@@ -41,15 +41,9 @@ export function MaterialPreview({ material, text }: Readonly<{ material: Materia
   }
 
   if (material.previewKind === "text") {
-    const preview = text?.slice(0, TEXT_LIMIT);
-    if (preview === undefined) return <PreviewFallback material={material} reason="Não foi possível carregar a pré-visualização em texto." />;
-    return (
-      <section className="text-preview" aria-labelledby="text-preview-title">
-        <h2 id="text-preview-title">Conteúdo do arquivo</h2>
-        {ACTIVE_EXTENSIONS[material.extension] ? <p>Exibido como texto inerte por segurança; o conteúdo não é executado.</p> : null}
-        <pre data-material-preview="text"><code>{preview}</code></pre>
-      </section>
-    );
+    return material.previewUrl
+      ? <TextPreview active={Boolean(ACTIVE_EXTENSIONS[material.extension])} name={material.name} url={material.previewUrl} />
+      : <PreviewFallback material={material} reason="Pré-visualização bloqueada por segurança ou indisponível." />;
   }
 
   return <PreviewFallback material={material} />;

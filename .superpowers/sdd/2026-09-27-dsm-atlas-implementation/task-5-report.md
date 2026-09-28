@@ -37,3 +37,10 @@ Correctness, security, readability, architecture, and performance were reviewed.
 ## Commit
 
 Implementation and report commit: `268f010` (`feat(atlas): add material discovery and safe previews`). This line was appended in a report-only follow-up commit.
+
+## Review fix round 1
+
+- RED: builder regression failed because no capped per-file asset existed; deployed output contained `apigamessecret` through the monolithic JSON import. Route regression captured literal `%` and malformed encoding semantics.
+- Fix: removed `material-text.json` and its route import. The builder now allows only explicit educational text/code extensions, rejects config/credential paths and secret markers, streams each Git blob by object ID, retains at most 200,000 bytes, and emits isolated `.txt` assets. Blocked content receives the download/GitHub fallback. The generated catalog only records `previewUrl` after a file passes scanning.
+- Fix: material route resolution prefers framework-decoded segments and uses one guarded legacy-decoded candidate, preserving literal percent paths and avoiding malformed `decodeURIComponent` failures while retaining exact catalog path+commit lookup.
+- GREEN: production build passed; 18 focused unit/API tests and 8 material/search E2E tests passed. `corepack pnpm typecheck` and `git diff --check` passed. Deployed server/client scans found no `apigamessecret` or `material-text.json`; combined artifacts measured 4,337,606 bytes, below the 10 MiB Worker guard.

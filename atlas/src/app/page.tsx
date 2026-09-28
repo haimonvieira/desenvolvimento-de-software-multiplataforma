@@ -60,7 +60,7 @@ export default async function Home({ searchParams }: HomeProps) {
           </section>
 
           <section className="workspace" aria-label={`Catálogo do semestre ${semester}`}>
-            <CatalogView disciplines={disciplines} semester={semester} view={view} />
+            <CatalogView disciplines={disciplines} materials={materials} semester={semester} view={view} />
             <aside className="discipline-detail" aria-labelledby="discipline-title">
               <header className="detail-header"><span>{semester} / CATÁLOGO</span><span>{disciplines.length} disciplinas</span></header>
               <h2 id="discipline-title">Explore por<br />disciplina</h2>

@@ -10,7 +10,7 @@ test("exposes the guided atlas through semantic landmarks", async ({ page }) => 
   await expect(page.getByRole("main")).toBeVisible();
   await expect(page.getByRole("heading", { level: 1, name: /Seu semestre é um mapa/ })).toBeVisible();
 
-  const mapList = page.locator('[data-representation="map"] ul');
+  const mapList = page.locator('[data-representation="map"] > .atlas-disciplines');
   await expect(mapList).toHaveCount(1);
   await expect(mapList.getByRole("listitem")).toHaveCount(5);
   await expect(mapList.getByRole("link")).toHaveText([

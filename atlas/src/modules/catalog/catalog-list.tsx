@@ -1,6 +1,15 @@
-import type { Discipline } from "./model";
+import type { Discipline, Material } from "./model";
 
 export type CatalogDiscipline = Discipline & Readonly<{ materialCount: number }>;
+
+function materialHref(material: Material): string {
+  const path = material.ref.path.split("/").map(encodeURIComponent).join("/");
+  return `/materiais/${path}?semester=${encodeURIComponent(material.semesterCode)}`;
+}
+
+export function MaterialLink({ className, material }: Readonly<{ className?: string; material: Material }>) {
+  return <a className={className} data-material-link href={materialHref(material)}>{material.name}</a>;
+}
 
 export function DisciplineLink({ discipline }: Readonly<{ discipline: CatalogDiscipline }>) {
   return (
@@ -17,16 +26,27 @@ export function DisciplineLink({ discipline }: Readonly<{ discipline: CatalogDis
   );
 }
 
-export function CatalogList({ disciplines, semester }: Readonly<{ disciplines: readonly CatalogDiscipline[]; semester: string }>) {
+export function CatalogList({ disciplines, materials, semester }: Readonly<{
+  disciplines: readonly CatalogDiscipline[];
+  materials: readonly Material[];
+  semester: string;
+}>) {
   return (
     <section className="catalog-list" data-representation="list" aria-labelledby="catalog-list-title">
       <header className="catalog-list-header">
         <h2 id="catalog-list-title">Disciplinas de {semester}</h2>
         <p>{disciplines.length} {disciplines.length === 1 ? "disciplina" : "disciplinas"}</p>
       </header>
-      <ul>
+      <ul className="catalog-disciplines-list">
         {disciplines.map((discipline) => (
-          <li key={discipline.code}><DisciplineLink discipline={discipline} /></li>
+          <li key={discipline.code}>
+            <DisciplineLink discipline={discipline} />
+            <ul className="catalog-materials" aria-label={`Materiais de ${discipline.name}`}>
+              {materials.filter((material) => material.disciplineCode === discipline.code).map((material) => (
+                <li key={material.ref.path}><MaterialLink material={material} /></li>
+              ))}
+            </ul>
+          </li>
         ))}
       </ul>
     </section>

@@ -1,16 +1,25 @@
-import { DisciplineLink, type CatalogDiscipline } from "./catalog-list";
+import { DisciplineLink, MaterialLink, type CatalogDiscipline } from "./catalog-list";
+import type { Material } from "./model";
 
 const colors = ["route", "progress", "recent", "crossing", "language"] as const;
 
-function routePath(index: number): string {
-  const y = 72 + index * 70;
-  const bend = index % 2 === 0 ? -24 : 24;
-  return `M 52 ${y} C 245 ${y + bend}, 420 ${y - bend}, 668 ${y}`;
+function percent(index: number, count: number): string {
+  return `${((index + 0.5) / count) * 100}%`;
 }
 
-export function AtlasMap({ disciplines, semester }: Readonly<{ disciplines: readonly CatalogDiscipline[]; semester: string }>) {
+function routePath(index: number, count: number): string {
+  const y = 10 + index * (80 / Math.max(1, count - 1));
+  const bend = index % 2 ? 2 : -2;
+  return `M 45 ${y} C 240 ${y + bend}, 470 ${y - bend}, 675 ${y}`;
+}
+
+export function AtlasMap({ disciplines, materials, semester }: Readonly<{
+  disciplines: readonly CatalogDiscipline[];
+  materials: readonly Material[];
+  semester: string;
+}>) {
   return (
-    <section className="atlas-map" data-representation="map" aria-labelledby="atlas-map-title">
+    <section className="atlas-map" data-representation="map" aria-labelledby="atlas-map-title" style={{ "--discipline-count": disciplines.length } as React.CSSProperties}>
       <h2 className="sr-only" id="atlas-map-title">Mapa de disciplinas de {semester}</h2>
       <dl className="legend" aria-label="Legenda do mapa">
         <div><dt>Linha</dt><dd><span className="legend-route" aria-hidden="true" /> Disciplina</dd></div>
@@ -18,19 +27,28 @@ export function AtlasMap({ disciplines, semester }: Readonly<{ disciplines: read
         <div><dt><span className="legend-node legend-node--current" aria-hidden="true" /></dt><dd>Posição ilustrativa</dd></div>
       </dl>
       <p className="illustrative-note">Posição ilustrativa — seu progresso estará disponível em breve.</p>
-      <svg className="atlas-geometry" aria-hidden="true" viewBox="0 0 720 420" preserveAspectRatio="none">
+      <svg className="atlas-geometry" aria-hidden="true" viewBox="0 0 720 100" preserveAspectRatio="none">
         {disciplines.map((discipline, index) => (
-          <path className={`atlas-route atlas-route--${colors[index % colors.length]}`} d={routePath(index)} key={discipline.code} pathLength="1" />
+          <path className={`atlas-route atlas-route--${colors[index % colors.length]}`} d={routePath(index, disciplines.length)} key={discipline.code} pathLength="1" />
         ))}
       </svg>
       <ul className="atlas-disciplines">
-        {disciplines.map((discipline, index) => (
-          <li className={`atlas-discipline atlas-discipline--${index + 1}`} key={discipline.code}>
-            <span className={`atlas-station atlas-station--${colors[index % colors.length]}`} aria-hidden="true" />
-            <DisciplineLink discipline={discipline} />
-          </li>
-        ))}
+        {disciplines.map((discipline) => <li className="atlas-discipline" key={discipline.code}><DisciplineLink discipline={discipline} /></li>)}
       </ul>
+      <div className="atlas-material-routes">
+        {disciplines.map((discipline) => {
+          const disciplineMaterials = materials.filter((material) => material.disciplineCode === discipline.code);
+          return (
+            <ul className="atlas-materials" aria-label={`Materiais de ${discipline.name}`} key={discipline.code}>
+              {disciplineMaterials.map((material, index) => (
+                <li key={material.ref.path} style={{ left: percent(index, disciplineMaterials.length) }}>
+                  <MaterialLink className="atlas-station" material={material} />
+                </li>
+              ))}
+            </ul>
+          );
+        })}
+      </div>
     </section>
   );
 }

@@ -15,6 +15,12 @@ async function disciplineLinks(page: Page, representation: "map" | "list") {
   );
 }
 
+async function materialLinks(page: Page, representation: "map" | "list") {
+  return page.locator(`[data-representation="${representation}"] [data-material-link]`).evaluateAll((links) =>
+    links.map((link) => ({ href: link.getAttribute("href"), text: link.textContent?.replace(/\s+/g, " ").trim() })),
+  );
+}
+
 async function focusFirstDisciplineWithKeyboard(page: Page) {
   for (let attempt = 0; attempt < 20; attempt += 1) {
     await page.keyboard.press("Tab");
@@ -37,12 +43,15 @@ for (const viewport of viewports) {
     await expect(map).toBeVisible();
     const mapLinks = await disciplineLinks(page, "map");
     expect(mapLinks.length).toBeGreaterThan(0);
+    const mapMaterials = await materialLinks(page, "map");
+    expect(mapMaterials.length).toBeGreaterThan(0);
 
     await page.getByRole("link", { name: "Lista", exact: true }).click();
     await expect(page).toHaveURL(/\?semester=DSM3&view=list$/);
     const list = page.locator('[data-representation="list"]');
     await expect(list).toBeVisible();
     expect(await disciplineLinks(page, "list")).toEqual(mapLinks);
+    expect(await materialLinks(page, "list")).toEqual(mapMaterials);
 
     await page.goBack();
     await expect(page).toHaveURL(/\?semester=DSM3&view=map$/);
@@ -58,6 +67,39 @@ for (const viewport of viewports) {
     await page.keyboard.press("Enter");
     await expect(page).toHaveURL(new RegExp(`${focusedHref!.replace(/[?]/g, "\\?")}$`));
   });
+}
+
+for (const semester of ["DSM1", "DSM2"] as const) {
+  for (const viewport of viewports) {
+    test(`${viewport.name}: ${semester} derives visible non-overlapping routes from its discipline count`, async ({ page }) => {
+      await page.setViewportSize(viewport);
+      await page.goto(`/?semester=${semester}&view=map`);
+
+      const map = page.locator('[data-representation="map"]');
+      const rows = map.locator(".atlas-discipline");
+      const expectedCount = semester === "DSM1" ? 7 : 6;
+      await expect(rows).toHaveCount(expectedCount);
+      const mapBox = await map.boundingBox();
+      const boxes = await rows.evaluateAll((elements) => elements.map((element) => {
+        const box = element.getBoundingClientRect();
+        return { top: box.top, bottom: box.bottom };
+      }));
+      expect(mapBox).not.toBeNull();
+      expect(boxes.every((box) => box.top >= mapBox!.y && box.bottom <= mapBox!.y + mapBox!.height)).toBe(true);
+      expect(boxes.every((box, index) => index === 0 || box.top >= boxes[index - 1].bottom)).toBe(true);
+
+      await page.locator("body").press("Home");
+      const reached = new Set<string>();
+      for (let attempt = 0; attempt < 40 && reached.size < expectedCount; attempt += 1) {
+        await page.keyboard.press("Tab");
+        const code = await page.evaluate(() => document.activeElement?.hasAttribute("data-discipline-link")
+          ? document.activeElement.querySelector(".discipline-code")?.textContent
+          : null);
+        if (code) reached.add(code);
+      }
+      expect(reached.size).toBe(expectedCount);
+    });
+  }
 }
 
 test("invalid URL values render the latest semester and map fallback", async ({ page }) => {

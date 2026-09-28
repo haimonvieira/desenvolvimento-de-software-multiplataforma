@@ -35,3 +35,12 @@ The implementation is server-rendered and uses native anchors, so the list and a
 ## Commit
 
 Implementation and report commit: `a86f411` (`feat(atlas): add guided map and equivalent list`). This line was appended in a report-only follow-up commit so the implementation commit can be identified exactly.
+
+## Review fix round 1
+
+- RED: expanded `catalog-navigation.spec.ts` first. The focused run had 6 expected failures: map/list exposed zero material links, and DSM1 (7 disciplines) / DSM2 (6) overlapped at desktop and mobile sizes.
+- Fix: `CatalogView` now passes the exact selected-semester `CatalogQuery.browse` materials to both renderers. Both map and list expose identical native material links. Every map material is a semantic link styled as a station; SVG remains `aria-hidden` route geometry. The explicit illustrative-position label remains unchanged.
+- Fix: route geometry and HTML rows derive from `disciplines.length`; CSS uses the count for grid rows and mobile map height rather than five positional selectors.
+- GREEN: `corepack pnpm exec playwright test tests/e2e/atlas-visual.spec.ts tests/e2e/catalog-navigation.spec.ts --reporter=line` — 17 passed. Coverage includes DSM1/DSM2 desktop/mobile containment, non-overlap, all discipline links keyboard-reachable, and DSM3 map/list discipline plus material equivalence.
+- `corepack pnpm typecheck` — exit 0. `git diff --check` — exit 0 with only Git's Windows line-ending notices.
+- Actual mobile Chromium at 390 × 844 on DSM1: 7 discipline links, 223 material links/stations, 7 routes, 0 px horizontal overflow, and 0 console errors; full-page screenshot reviewed.

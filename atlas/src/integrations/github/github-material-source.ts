@@ -1,9 +1,3 @@
-import type { MaterialRef } from "../../modules/catalog/model";
-import type {
-  GitHubMaterialSource,
-  GitTreeEntry,
-} from "../../modules/publication/model";
-
 export type GitHubTransport = (
   path: string,
   init: { method: string; body?: string },
@@ -44,9 +38,21 @@ function bytesOf(base64: string): Uint8Array {
   return out;
 }
 
+export interface GitHubMaterialSource {
+  readHead(): Promise<string>;
+  readTree(commitSha: string): Promise<readonly GitTreeEntry[]>;
+  readBlob(blobSha: string): Promise<Uint8Array>;
+  createBlob(bytes: Uint8Array): Promise<string>;
+}
+
+export interface GitTreeEntry {
+  readonly path: string;
+  readonly sha: string;
+  readonly type: "blob" | "tree";
+}
+
 export function createGitHubMaterialSource(
   transport: GitHubTransport,
-  getToken: () => Promise<string>,
   repository: string,
 ): GitHubMaterialSource {
   async function call(
@@ -54,13 +60,12 @@ export function createGitHubMaterialSource(
     method: string,
     body?: unknown,
   ): Promise<unknown> {
-    const token = await getToken();
-    void token;
     const response = await transport(path, {
       method,
       body: body === undefined ? undefined : JSON.stringify(body),
     });
-    if (response.status >= 400) throw new Error(`GitHub request failed: ${response.status}`);
+    if (response.status >= 400)
+      throw new Error(`GitHub request failed: ${response.status}`);
     return response.json();
   }
 
@@ -79,12 +84,13 @@ export function createGitHubMaterialSource(
       )) as { tree: GitTreeEntry[] };
       return data.tree;
     },
-    async readBlob(ref: MaterialRef): Promise<Uint8Array> {
+    async readBlob(blobSha: string): Promise<Uint8Array> {
       const data = (await call(
-        `/repos/${repository}/git/blobs/${ref.commitSha}`,
+        `/repos/${repository}/git/blobs/${blobSha}`,
         "GET",
       )) as { content: string; encoding: string };
-      if (data.encoding !== "base64") throw new Error("Unsupported blob encoding");
+      if (data.encoding !== "base64")
+        throw new Error("Unsupported blob encoding");
       return bytesOf(data.content.replaceAll("\n", ""));
     },
     async createBlob(bytes: Uint8Array): Promise<string> {
@@ -108,7 +114,9 @@ export function createInstallationTokenProvider(
     void appId;
     void privateKey;
     void installationId;
-    throw new Error("GitHub App installation token minting is not configured in this environment");
+    throw new Error(
+      "GitHub App installation token minting is not configured in this environment",
+    );
   };
 }
 

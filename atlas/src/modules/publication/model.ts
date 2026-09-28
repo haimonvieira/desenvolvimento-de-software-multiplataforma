@@ -1,5 +1,3 @@
-import type { MaterialRef } from "../catalog/model";
-
 export type UploadBatchStatus = "draft" | "ready" | "published" | "expired";
 
 export type UploadBatch = Readonly<{
@@ -29,6 +27,6 @@ export interface GitTreeEntry {
 export interface GitHubMaterialSource {
   readHead(): Promise<string>;
   readTree(commitSha: string): Promise<readonly GitTreeEntry[]>;
-  readBlob(ref: MaterialRef): Promise<Uint8Array>;
+  readBlob(blobSha: string): Promise<Uint8Array>;
   createBlob(bytes: Uint8Array): Promise<string>;
 }

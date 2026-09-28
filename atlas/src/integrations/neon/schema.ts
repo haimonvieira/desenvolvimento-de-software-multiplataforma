@@ -231,4 +231,18 @@ export const profileDeletionProof = pgTable("profile_deletion_proof", {
   verifiedAt: timestamp("verified_at", { withTimezone: true }),
 }, (table) => [uniqueIndex("profile_deletion_proof_profile_uidx").on(table.profileId)]);
 
+export const adminIdentity = pgTable("admin_identity", {
+  singleton: boolean("singleton").primaryKey().default(true),
+  adminId: text("admin_id").notNull().unique().references(() => user.id, { onDelete: "restrict" }),
+  githubUserId: text("github_user_id").notNull().unique(),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+}, (table) => [check("admin_identity_singleton_check", sql`${table.singleton} = true`), check("admin_identity_github_user_id_check", sql`${table.githubUserId} ~ '^[1-9][0-9]*$'`)]);
+
+export const adminAuditEvent = pgTable("admin_audit_event", {
+  id: bigint("id", { mode: "number" }).primaryKey().generatedAlwaysAsIdentity(),
+  adminId: text("admin_id").notNull().references(() => adminIdentity.adminId, { onDelete: "restrict" }),
+  action: text("action").notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+}, (table) => [check("admin_audit_event_action_check", sql`${table.action} in ('admin.bootstrap', 'admin.passkey.add', 'admin.batch.publish', 'admin.recovery')`)]);
+
 export const authSchema = { user, session, account, verification, rateLimit, passkey };

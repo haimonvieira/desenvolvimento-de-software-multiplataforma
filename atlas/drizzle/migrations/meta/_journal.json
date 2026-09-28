@@ -15,6 +15,13 @@
       "when": 1790604000000,
       "tag": "0001_atomic_study_sync",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1790611200000,
+      "tag": "0002_admin_identity",
+      "breakpoints": true
     }
   ]
 }

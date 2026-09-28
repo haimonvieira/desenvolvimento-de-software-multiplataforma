@@ -3,5 +3,12 @@ declare module "cloudflare:workers" {
     DATABASE_URL?: string;
     GITHUB_TOKEN?: string;
     GITHUB_REPOSITORY?: string;
+    BETTER_AUTH_SECRET?: string;
+    BETTER_AUTH_URL?: string;
+    BETTER_AUTH_TRUSTED_ORIGINS?: string;
+    PASSKEY_RP_ID?: string;
+    GITHUB_CLIENT_ID?: string;
+    GITHUB_CLIENT_SECRET?: string;
+    ADMIN_GITHUB_USER_ID?: string;
   };
 }

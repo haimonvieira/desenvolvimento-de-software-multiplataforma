@@ -11,6 +11,7 @@
   }
   // Production secrets/configuration (values are never committed):
   // DATABASE_URL, BETTER_AUTH_SECRET, BETTER_AUTH_URL,
-  // BETTER_AUTH_TRUSTED_ORIGINS, PASSKEY_RP_ID, GITHUB_TOKEN,
+  // BETTER_AUTH_TRUSTED_ORIGINS, PASSKEY_RP_ID, GITHUB_CLIENT_ID,
+  // GITHUB_CLIENT_SECRET, ADMIN_GITHUB_USER_ID, GITHUB_TOKEN,
   // GITHUB_REPOSITORY. Preview uses a separate Neon branch and RP ID.
 }

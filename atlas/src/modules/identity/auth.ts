@@ -56,6 +56,9 @@ export type AuthRuntimeConfig = Readonly<{
   baseUrl: string;
   rpId: string;
   trustedOrigins: readonly string[];
+  githubClientId?: string;
+  githubClientSecret?: string;
+  afterAdminPasskeyRegistration?: (request: Request, purpose: "addition" | "recovery") => Promise<void>;
 }>;
 export function createAuth(config: AuthRuntimeConfig) {
   assertProductionAuthConfig(config);
@@ -70,6 +73,12 @@ export function createAuthForDatabase(config: AuthRuntimeConfig, database: DB) {
     baseURL: config.baseUrl,
     secret: config.secret,
     trustedOrigins: [...config.trustedOrigins],
+    socialProviders: config.githubClientId && config.githubClientSecret ? {
+      github: {
+        clientId: config.githubClientId,
+        clientSecret: config.githubClientSecret,
+      },
+    } : undefined,
     database: drizzleAdapter(database, {
       provider: "pg",
       schema: authSchema,
@@ -99,6 +108,13 @@ export function createAuthForDatabase(config: AuthRuntimeConfig, database: DB) {
           requireResidentKey: true,
           userVerification: "preferred",
         },
+        registration: config.afterAdminPasskeyRegistration ? {
+          afterVerification: async ({ ctx, context }) => {
+            if (context !== "admin-add" && context !== "admin-recovery") return;
+            if (!ctx.request) throw new Error("Passkey registration request is required");
+            await config.afterAdminPasskeyRegistration!(ctx.request, context === "admin-recovery" ? "recovery" : "addition");
+          },
+        } : undefined,
       }),
     ],
   });

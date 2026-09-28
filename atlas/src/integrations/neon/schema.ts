@@ -119,6 +119,8 @@ export const studyProgress = pgTable(
     status: text("status").notNull(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull(),
     deletedAt: timestamp("deleted_at", { withTimezone: true }),
+    syncDeviceId: text("sync_device_id").notNull().default(""),
+    syncOperationId: text("sync_operation_id").notNull().default(""),
   },
   (table) => [
     primaryKey({ columns: [table.profileId, table.id] }),
@@ -136,6 +138,8 @@ export const favorite = pgTable(
     value: boolean("value").notNull(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull(),
     deletedAt: timestamp("deleted_at", { withTimezone: true }),
+    syncDeviceId: text("sync_device_id").notNull().default(""),
+    syncOperationId: text("sync_operation_id").notNull().default(""),
   },
   (table) => [
     primaryKey({ columns: [table.profileId, table.id] }),
@@ -152,6 +156,8 @@ export const note = pgTable(
     text: text("text").notNull(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull(),
     deletedAt: timestamp("deleted_at", { withTimezone: true }),
+    syncDeviceId: text("sync_device_id").notNull().default(""),
+    syncOperationId: text("sync_operation_id").notNull().default(""),
   },
   (table) => [primaryKey({ columns: [table.profileId, table.id] }), index("note_profile_id_idx").on(table.profileId)],
 );
@@ -166,6 +172,8 @@ export const flashcard = pgTable(
     back: text("back").notNull(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull(),
     deletedAt: timestamp("deleted_at", { withTimezone: true }),
+    syncDeviceId: text("sync_device_id").notNull().default(""),
+    syncOperationId: text("sync_operation_id").notNull().default(""),
   },
   (table) => [primaryKey({ columns: [table.profileId, table.id] }), index("flashcard_profile_id_idx").on(table.profileId)],
 );
@@ -205,5 +213,12 @@ export const noteConflict = pgTable(
   },
   (table) => [primaryKey({ columns: [table.profileId, table.id] }), index("note_conflict_profile_id_idx").on(table.profileId)],
 );
+
+export const profileDeletionProof = pgTable("profile_deletion_proof", {
+  tokenHash: text("token_hash").primaryKey(),
+  profileId: text("profile_id").notNull().references(() => studyProfile.id, { onDelete: "cascade" }),
+  expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
+  verifiedAt: timestamp("verified_at", { withTimezone: true }),
+});
 
 export const authSchema = { user, session, account, verification, rateLimit, passkey };

@@ -6,6 +6,7 @@ import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
 import { createAuth, createAuthForDatabase, createVisitorIdentity } from "../../src/modules/identity/auth";
 import { authSchema } from "../../src/integrations/neon/schema";
+import { createProfileDeletionService } from "../../src/modules/identity/profile-deletion";
 
 const migrationsFolder = fileURLToPath(new URL(
   "../../drizzle/migrations",
@@ -158,29 +159,44 @@ describe("Better Auth HTTP boundary", () => {
     expect(await replay.json()).toMatchObject({ code: "CHALLENGE_NOT_FOUND" });
   });
 
-  it("deletes a passkey profile only with a fresh application session", async () => {
+  it("blocks generic deletion even for a fresh anonymous session", async () => {
     const auth = createAuthForDatabase({
-      databaseUrl: "unused",
-      secret: "a".repeat(32),
-      baseUrl: "https://atlas.example",
-      rpId: "atlas.example",
-      trustedOrigins: ["https://atlas.example"],
+      databaseUrl: "unused", secret: "a".repeat(32), baseUrl: "https://atlas.example",
+      rpId: "atlas.example", trustedOrigins: ["https://atlas.example"],
     }, drizzle(database, { schema: authSchema }));
-    const anonymous = await auth.handler(new Request("https://atlas.example/api/auth/sign-in/anonymous", {
-      method: "POST", headers: { origin: "https://atlas.example" },
-    }));
+    const anonymous = await auth.handler(new Request("https://atlas.example/api/auth/sign-in/anonymous", { method: "POST", headers: { origin: "https://atlas.example" } }));
     const cookie = anonymous.headers.get("set-cookie")!.split(";")[0];
-    const userId = (await anonymous.json() as { user: { id: string } }).user.id;
-    await database.exec(`
-      INSERT INTO passkey (id, public_key, user_id, credential_id, counter, device_type, backed_up, created_at)
-      VALUES ('delete-key', 'public', '${userId}', 'delete-credential', 0, 'singleDevice', false, now());
-    `);
-
-    const deleted = await auth.handler(new Request("https://atlas.example/api/auth/delete-user", {
+    const response = await auth.handler(new Request("https://atlas.example/api/auth/delete-user", {
       method: "POST", headers: { cookie, origin: "https://atlas.example", "content-type": "application/json" }, body: "{}",
     }));
-    expect(deleted.status).toBe(200);
-    expect((await database.query(`SELECT id FROM "user" WHERE id = $1`, [userId])).rows).toEqual([]);
+    expect(response.status).toBe(404);
+  });
+
+  it("consumes a user-bound deletion proof once and rejects stale, replayed, and other-user proofs", async () => {
+    await database.exec(`
+      INSERT INTO "user" (id,name,email,email_verified,is_anonymous,created_at,updated_at) VALUES
+      ('delete-1','Visitante','delete-1@anonymous.placeholder.invalid',false,true,now(),now()),
+      ('delete-2','Visitante','delete-2@anonymous.placeholder.invalid',false,true,now(),now());
+      INSERT INTO passkey (id,public_key,user_id,credential_id,counter,device_type,backed_up,created_at) VALUES
+      ('delete-key-1','public','delete-1','delete-credential-1',0,'singleDevice',false,now()),
+      ('delete-key-2','public','delete-2','delete-credential-2',0,'singleDevice',false,now());
+    `);
+    let clock = new Date("2026-09-28T12:00:00.000Z");
+    const service = createProfileDeletionService({ query: async (sql, params) => (await database.query(sql, [...params])).rows as Record<string, unknown>[] }, () => clock);
+    const otherUser = await service.begin("delete-1");
+    await service.verifyCredential("delete-credential-1");
+    expect(await service.consumeAndDelete("delete-2", otherUser)).toBe(false);
+    const stale = await service.begin("delete-1");
+    await service.verifyCredential("delete-credential-1");
+    clock = new Date("2026-09-28T12:03:00.000Z");
+    expect(await service.consumeAndDelete("delete-1", stale)).toBe(false);
+    clock = new Date("2026-09-28T12:00:00.000Z");
+    const valid = await service.begin("delete-1");
+    expect(await service.consumeAndDelete("delete-1", valid)).toBe(false);
+    await service.verifyCredential("delete-credential-1");
+    expect(await service.consumeAndDelete("delete-1", valid)).toBe(true);
+    expect(await service.consumeAndDelete("delete-1", valid)).toBe(false);
+    expect((await database.query(`SELECT id FROM "user" WHERE id='delete-2'`)).rows).toHaveLength(1);
   });
 });
 

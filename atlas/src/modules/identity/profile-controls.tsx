@@ -74,10 +74,13 @@ export function ProfileControls() {
     setPending(true);
     setMessage("");
     try {
+      const proofResponse = await fetch("/api/profile/delete/proof", { method: "POST" });
+      if (!proofResponse.ok) throw new Error("proof failed");
+      const { proof } = await proofResponse.json() as { proof: string };
       const assertion = await authClient.signIn.passkey();
       if (assertion.error) throw new Error(assertion.error.message);
-      const deleted = await authClient.deleteUser();
-      if (deleted.error) throw new Error(deleted.error.message);
+      const deleted = await fetch("/api/profile/delete", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ proof }) });
+      if (!deleted.ok) throw new Error("delete failed");
       if (!keepLocal) await workspace.clear();
       setProfile(false);
       setConflicts([]);

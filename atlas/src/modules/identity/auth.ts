@@ -3,8 +3,9 @@ import { betterAuth } from "better-auth";
 import { drizzleAdapter, type DB } from "better-auth/adapters/drizzle";
 import { anonymous } from "better-auth/plugins";
 
-import { createDatabase } from "../../integrations/neon/db";
+import { createDatabase, createSqlExecutor } from "../../integrations/neon/db";
 import { authSchema } from "../../integrations/neon/schema";
+import { createProfileDeletionService, type ProfileDeletionDatabase } from "./profile-deletion";
 
 const pseudonymousUserOutput = {
   id: "pseudonymous-user-output",
@@ -59,10 +60,11 @@ export type AuthRuntimeConfig = Readonly<{
 }>;
 export function createAuth(config: AuthRuntimeConfig) {
   assertProductionAuthConfig(config);
-  return createAuthForDatabase(config, createDatabase(config.databaseUrl));
+  const database = createDatabase(config.databaseUrl);
+  return createAuthForDatabase(config, database, createSqlExecutor(config.databaseUrl));
 }
 
-export function createAuthForDatabase(config: AuthRuntimeConfig, database: DB) {
+export function createAuthForDatabase(config: AuthRuntimeConfig, database: DB, deletionDatabase?: ProfileDeletionDatabase) {
   assertProductionAuthConfig(config);
 
   return betterAuth({
@@ -77,7 +79,7 @@ export function createAuthForDatabase(config: AuthRuntimeConfig, database: DB) {
       transaction: false,
     }),
     session: { freshAge: 5 * 60 },
-    user: { deleteUser: { enabled: true } },
+    user: { deleteUser: { enabled: false } },
     rateLimit: { enabled: true, storage: "database" },
     advanced: {
       useSecureCookies: true,
@@ -99,6 +101,11 @@ export function createAuthForDatabase(config: AuthRuntimeConfig, database: DB) {
           requireResidentKey: true,
           userVerification: "preferred",
         },
+        authentication: deletionDatabase ? {
+          async afterVerification({ clientData }) {
+            await createProfileDeletionService(deletionDatabase).verifyCredential(clientData.id);
+          },
+        } : undefined,
       }),
     ],
   });

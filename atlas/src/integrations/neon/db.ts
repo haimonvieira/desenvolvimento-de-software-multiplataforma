@@ -8,4 +8,9 @@ export function createDatabase(databaseUrl: string) {
   return drizzle(neon(databaseUrl), { schema });
 }
 
+export function createSqlExecutor(databaseUrl: string) {
+  const sql = neon(databaseUrl);
+  return { query: async (text: string, params: readonly unknown[]) => sql.query(text, [...params]) as Promise<Record<string, unknown>[]> };
+}
+
 export type AtlasDatabase = NeonHttpDatabase<typeof schema>;

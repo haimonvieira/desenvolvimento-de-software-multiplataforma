@@ -99,10 +99,16 @@ export function createIndexedDbStudyWorkspace(options: Readonly<{
     const db = await open();
     try {
       const transaction = db.transaction(ALL_STORES, "readwrite");
+      const acknowledged = new Set(acknowledgedIds);
+      const pending = (await getAll<OutboxEntry>(transaction.objectStore("outbox"))).filter(({ id }) => !acknowledged.has(id));
       for (const name of DATA_STORES) {
         const store = transaction.objectStore(name);
         store.clear();
         for (const record of remote[name]) store.put(record);
+      }
+      for (const entry of pending.toSorted(compareUpdatedAt)) {
+        const store = transaction.objectStore(storesFor(entry.change)[0]);
+        store.put(await recordForChange(store, entry.change));
       }
       for (const id of acknowledgedIds) transaction.objectStore("outbox").delete(id);
       const conflictStore = transaction.objectStore("conflicts");

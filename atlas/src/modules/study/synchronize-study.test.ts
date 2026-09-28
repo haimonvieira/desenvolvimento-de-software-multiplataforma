@@ -107,7 +107,7 @@ describe("study synchronization", () => {
     const outbox = (await device.load()).outbox;
 
     const first = await server.sync({ deviceId: "a", cursor: "0", outbox });
-    const replay = await server.sync({ deviceId: "a", cursor: "0", outbox });
+    const replay = await server.sync({ deviceId: "a", cursor: first.cursor, outbox });
 
     expect(replay).toEqual(first);
     expect(replay.snapshot.notes).toHaveLength(1);

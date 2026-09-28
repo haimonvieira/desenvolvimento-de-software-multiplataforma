@@ -10,6 +10,7 @@ export default function Home() {
   return (
     <>
       <a className="skip-link" href="#conteudo">Pular para o conteúdo</a>
+      <div className="app-frame">
       <header className="topbar">
         <a className="brand" href="/" aria-label="DSM Atlas, início"><span className="brand-mark" aria-hidden="true" /><span>DSM ATLAS</span></a>
         <form className="search" role="search">
@@ -54,9 +55,9 @@ export default function Home() {
           </div>
 
           <aside className="discipline-detail" aria-labelledby="discipline-title">
-            <header className="detail-header"><span>BDNR / DSM3</span><span className="progress">68% concluído</span></header>
+            <header className="detail-header"><span>BDNR / DSM3</span><span className="progress">Exemplo · 68% concluído</span></header>
             <h2 id="discipline-title">Banco de Dados<br />Não Relacional</h2>
-            <p className="discipline-meta">12 materiais · 4 exercícios · atualizado recentemente</p>
+            <p className="discipline-meta">Exemplo visual · 12 materiais · 4 exercícios</p>
             <a className="resume" href="#agregacoes"><span>Continuar: agregações</span><svg aria-hidden="true" className="icon" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M14 7l5 5-5 5" /></svg></a>
             <h3>Materiais recentes</h3>
             <ul className="materials">
@@ -74,6 +75,7 @@ export default function Home() {
           </aside>
         </section>
       </main>
+      </div>
     </>
   );
 }

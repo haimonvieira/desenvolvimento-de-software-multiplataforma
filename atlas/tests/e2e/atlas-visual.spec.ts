@@ -9,27 +9,49 @@ test("exposes the guided atlas through semantic landmarks", async ({ page }) => 
   await expect(page.getByRole("navigation", { name: "Semestres" })).toBeVisible();
   await expect(page.getByRole("main")).toBeVisible();
   await expect(page.getByRole("heading", { level: 1, name: /Seu semestre é um mapa/ })).toBeVisible();
-  await expect(page.getByText("Linha")).toBeVisible();
-  await expect(page.getByText("Disciplina", { exact: true })).toBeVisible();
-  await expect(page.getByText("Material", { exact: true })).toBeVisible();
-  await expect(page.getByText("Onde você parou", { exact: true })).toBeVisible();
-  await expect(page.getByText("DW3 · Web III", { exact: true })).toBeVisible();
-  await expect(page.getByText("BDNR · Banco Não Relacional", { exact: true })).toBeVisible();
-  await expect(page.getByText("TP2 · Técnica de Programação", { exact: true })).toBeVisible();
-  await expect(page.locator(".line-label--gaps")).toHaveText("GAPS");
-  await expect(page.locator(".line-label--ing")).toHaveText("ING1");
+
+  const mapList = page.getByRole("list", { name: "Disciplinas e materiais do mapa" });
+  await expect(mapList).toHaveCount(1);
+  await expect(mapList.getByRole("listitem")).toHaveText([
+    "DW3 · Web III: API Express",
+    "BDNR · Banco Não Relacional: Agregações MongoDB, posição atual",
+    "TP2 · Técnica de Programação: Tkinter",
+    "GAPS",
+    "ING1",
+  ]);
 });
 
-test("reveals a themed skip link and focus ring from the keyboard", async ({ page }) => {
-  await page.goto("/");
-  await page.keyboard.press("Tab");
+for (const colorScheme of ["light", "dark"] as const) {
+  test(`keeps keyboard focus visible in ${colorScheme} mode`, async ({ page }) => {
+    await page.emulateMedia({ colorScheme });
+    await page.goto("/");
+    await page.keyboard.press("Tab");
 
-  const skipLink = page.getByRole("link", { name: "Pular para o conteúdo" });
-  await expect(skipLink).toBeFocused();
-  await expect(skipLink).toBeVisible();
-  await expect(skipLink).toHaveCSS("outline-style", "solid");
-  await expect(skipLink).toHaveCSS("outline-color", "rgb(79, 102, 232)");
-});
+    const skipLink = page.getByRole("link", { name: "Pular para o conteúdo" });
+    await expect(skipLink).toBeFocused();
+    await expect(skipLink).toBeVisible();
+
+    const focusEvidence = await skipLink.evaluate((element) => {
+      const style = getComputedStyle(element);
+      const parseRgb = (value: string) => value.match(/\d+/g)!.slice(0, 3).map(Number);
+      const luminance = (rgb: number[]) => rgb.map((channel) => {
+        const normalized = channel / 255;
+        return normalized <= 0.04045 ? normalized / 12.92 : ((normalized + 0.055) / 1.055) ** 2.4;
+      }).reduce((sum, channel, index) => sum + channel * [0.2126, 0.7152, 0.0722][index], 0);
+      const outline = luminance(parseRgb(style.outlineColor));
+      const background = luminance(parseRgb(style.backgroundColor));
+      return {
+        contrast: (Math.max(outline, background) + 0.05) / (Math.min(outline, background) + 0.05),
+        outlineStyle: style.outlineStyle,
+        outlineWidth: parseFloat(style.outlineWidth),
+      };
+    });
+
+    expect(focusEvidence.outlineStyle).toBe("solid");
+    expect(focusEvidence.outlineWidth).toBeGreaterThanOrEqual(3);
+    expect(focusEvidence.contrast).toBeGreaterThanOrEqual(3);
+  });
+}
 
 for (const width of widths) {
   test(`does not overflow horizontally at ${width}px`, async ({ page }) => {
@@ -43,6 +65,19 @@ for (const width of widths) {
     expect(sizes.scrollWidth).toBeLessThanOrEqual(sizes.clientWidth);
   });
 }
+
+test("keeps mobile map labels legible without scaling text", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/");
+
+  await expect(page.locator(".map-art")).toHaveCSS("scale", "none");
+  const labelSizes = await page.locator(".legend, .line-label, .checkpoint, .you-are-here").evaluateAll((elements) => elements.map((element) => parseFloat(getComputedStyle(element).fontSize)));
+  expect(Math.min(...labelSizes)).toBeGreaterThanOrEqual(10);
+
+  await page.addStyleTag({ content: "html { font-size: 200%; }" });
+  const widthsAtTextZoom = await page.evaluate(() => ({ client: document.documentElement.clientWidth, scroll: document.documentElement.scrollWidth }));
+  expect(widthsAtTextZoom.scroll).toBeLessThanOrEqual(widthsAtTextZoom.client);
+});
 
 test("removes animated displacement when reduced motion is enabled", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });

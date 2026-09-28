@@ -1,26 +1,26 @@
 {
   "tool": "comp-diff",
   "version": 1,
-  "createdAt": "2026-09-28T09:20:44.122Z",
+  "createdAt": "2026-09-28T09:30:55.566Z",
   "label": "desktop",
   "comp": "../.impeccable/mocks/approved/atlas-guided-desktop.png",
   "build": "../.impeccable/review/desktop.png",
   "spec": "../.impeccable/build/spec.json",
   "compSize": "1440x900",
-  "buildSize": "1440x900",
+  "buildSize": "1440x949",
   "align": "top",
-  "overall": 0.7095,
-  "verdict": "drift",
+  "overall": 0.9395,
+  "verdict": "match",
   "scores": {
-    "overall": 0.7095,
-    "structure": 0.5662,
-    "color": 0.9341,
-    "colorIntersection": 0.8979,
-    "paletteMatch": 0.9536,
-    "detail": 0.6013,
-    "detailRaw": 0.643,
-    "detailAdded": 0.0833,
-    "bands": 0.8497
+    "overall": 0.9395,
+    "structure": 0.9232,
+    "color": 0.9734,
+    "colorIntersection": 0.9492,
+    "paletteMatch": 0.9864,
+    "detail": 0.9131,
+    "detailRaw": 0.9131,
+    "detailAdded": 0,
+    "bands": 0.9647
   },
   "palette": {
     "comp": [
@@ -51,16 +51,16 @@
     ],
     "build": [
       {
-        "hex": "#f7f7eb",
-        "coverage": 0.9287
+        "hex": "#f5f5e9",
+        "coverage": 0.9136
       },
       {
         "hex": "#182818",
-        "coverage": 0.0523
+        "coverage": 0.0675
       },
       {
         "hex": "#4868e8",
-        "coverage": 0.0086
+        "coverage": 0.0082
       },
       {
         "hex": "#d8f858",
@@ -68,11 +68,11 @@
       },
       {
         "hex": "#f87858",
-        "coverage": 0.0032
+        "coverage": 0.003
       },
       {
-        "hex": "#f8d858",
-        "coverage": 0.0018
+        "hex": "#a8a8a4",
+        "coverage": 0.0023
       }
     ]
   },
@@ -85,17 +85,17 @@
       "h": 0.1,
       "kind": "chrome",
       "score": {
-        "overall": 0.4848,
-        "structure": 0.8458,
-        "color": 0.7026,
-        "colorIntersection": 0.4457,
-        "paletteMatch": 0.8409,
-        "detail": 0.0523,
-        "detailRaw": 0.12,
-        "detailAdded": 0.1354,
-        "bands": 0
+        "overall": 0.9587,
+        "structure": 0.989,
+        "color": 0.9901,
+        "colorIntersection": 0.9815,
+        "paletteMatch": 0.9947,
+        "detail": 0.9082,
+        "detailRaw": 0.9186,
+        "detailAdded": 0.0208,
+        "bands": 0.92
       },
-      "verdict": "missing",
+      "verdict": "match",
       "inkBox": {
         "comp": {
           "x": 24,
@@ -105,9 +105,9 @@
         },
         "build": {
           "x": 24,
-          "y": 70,
+          "y": 24,
           "w": 1392,
-          "h": 20
+          "h": 66
         }
       }
     },
@@ -119,17 +119,17 @@
       "h": 0.1,
       "kind": "control",
       "score": {
-        "overall": 0.7478,
-        "structure": 0.9042,
-        "color": 0.9349,
-        "colorIntersection": 0.8453,
-        "paletteMatch": 0.9832,
-        "detail": 0.0685,
-        "detailRaw": 0.2977,
-        "detailAdded": 0.4583,
-        "bands": 0
+        "overall": 0.9515,
+        "structure": 0.9653,
+        "color": 0.9771,
+        "colorIntersection": 0.9515,
+        "paletteMatch": 0.9909,
+        "detail": 0.8754,
+        "detailRaw": 0.9275,
+        "detailAdded": 0.1042,
+        "bands": 1
       },
-      "verdict": "drift",
+      "verdict": "match",
       "inkBox": {
         "comp": {
           "x": 24,
@@ -138,10 +138,10 @@
           "h": 90
         },
         "build": {
-          "x": 0,
+          "x": 24,
           "y": 0,
-          "w": 1440,
-          "h": 84
+          "w": 1392,
+          "h": 90
         }
       }
     },
@@ -153,17 +153,17 @@
       "h": 0.12,
       "kind": "text",
       "score": {
-        "overall": 0.5256,
-        "structure": 0.4213,
-        "color": 0.8927,
-        "colorIntersection": 0.8256,
-        "paletteMatch": 0.9288,
-        "detail": 0.3053,
-        "detailRaw": 0.4199,
-        "detailAdded": 0.2292,
-        "bands": 0.46
+        "overall": 0.8492,
+        "structure": 0.7898,
+        "color": 0.9513,
+        "colorIntersection": 0.9076,
+        "paletteMatch": 0.9749,
+        "detail": 0.8652,
+        "detailRaw": 0.9277,
+        "detailAdded": 0.125,
+        "bands": 0.8667
       },
-      "verdict": "contradicted",
+      "verdict": "match",
       "inkBox": {
         "comp": {
           "x": 9,
@@ -172,10 +172,10 @@
           "h": 98
         },
         "build": {
-          "x": 0,
-          "y": 0,
-          "w": 750,
-          "h": 108
+          "x": 9,
+          "y": 10,
+          "w": 729,
+          "h": 98
         }
       }
     },
@@ -187,17 +187,17 @@
       "h": 0.04,
       "kind": "control",
       "score": {
-        "overall": 0.5491,
-        "structure": 0.4178,
-        "color": 0.9448,
-        "colorIntersection": 0.8826,
-        "paletteMatch": 0.9784,
-        "detail": 0.1518,
-        "detailRaw": 0.2977,
-        "detailAdded": 0.2917,
-        "bands": 0
+        "overall": 0.8037,
+        "structure": 0.7284,
+        "color": 0.9548,
+        "colorIntersection": 0.9047,
+        "paletteMatch": 0.9818,
+        "detail": 0.7087,
+        "detailRaw": 0.8076,
+        "detailAdded": 0.1979,
+        "bands": 0.2571
       },
-      "verdict": "contradicted",
+      "verdict": "match",
       "inkBox": {
         "comp": {
           "x": 10,
@@ -206,10 +206,10 @@
           "h": 30
         },
         "build": {
-          "x": 27,
-          "y": 24,
-          "w": 105,
-          "h": 24
+          "x": 15,
+          "y": 14,
+          "w": 110,
+          "h": 33
         }
       }
     },
@@ -221,17 +221,17 @@
       "h": 0.0533,
       "kind": "control",
       "score": {
-        "overall": 0.6229,
-        "structure": 0.6517,
-        "color": 0.9418,
-        "colorIntersection": 0.9169,
-        "paletteMatch": 0.9553,
-        "detail": 0,
-        "detailRaw": 0.1457,
-        "detailAdded": 0.3854,
-        "bands": 0.2857
+        "overall": 0.7441,
+        "structure": 0.6865,
+        "color": 0.9288,
+        "colorIntersection": 0.9021,
+        "paletteMatch": 0.9431,
+        "detail": 0.5503,
+        "detailRaw": 0.6649,
+        "detailAdded": 0.2292,
+        "bands": 0.95
       },
-      "verdict": "missing",
+      "verdict": "drift",
       "inkBox": {
         "comp": {
           "x": 11,
@@ -240,9 +240,9 @@
           "h": 30
         },
         "build": {
-          "x": 0,
-          "y": 14,
-          "w": 320,
+          "x": 9,
+          "y": 5,
+          "w": 345,
           "h": 32
         }
       }
@@ -255,17 +255,17 @@
       "h": 0.7,
       "kind": "chrome",
       "score": {
-        "overall": 0.795,
-        "structure": 0.695,
-        "color": 0.9403,
-        "colorIntersection": 0.8876,
-        "paletteMatch": 0.9686,
-        "detail": 0.7244,
-        "detailRaw": 0.7765,
-        "detailAdded": 0.1042,
-        "bands": 0.9036
+        "overall": 0.9157,
+        "structure": 0.9239,
+        "color": 0.9651,
+        "colorIntersection": 0.9337,
+        "paletteMatch": 0.982,
+        "detail": 0.9001,
+        "detailRaw": 0.9053,
+        "detailAdded": 0.0104,
+        "bands": 0.84
       },
-      "verdict": "drift",
+      "verdict": "match",
       "inkBox": {
         "comp": {
           "x": 24,
@@ -274,10 +274,10 @@
           "h": 606
         },
         "build": {
-          "x": 0,
+          "x": 24,
           "y": 0,
-          "w": 1152,
-          "h": 590
+          "w": 1128,
+          "h": 630
         }
       }
     },
@@ -289,17 +289,17 @@
       "h": 0.7,
       "kind": "chrome",
       "score": {
-        "overall": 0.7523,
-        "structure": 0.5918,
-        "color": 0.9294,
-        "colorIntersection": 0.8901,
-        "paletteMatch": 0.9506,
-        "detail": 0.6514,
-        "detailRaw": 0.7139,
-        "detailAdded": 0.125,
-        "bands": 1
+        "overall": 0.8234,
+        "structure": 0.6757,
+        "color": 0.9637,
+        "colorIntersection": 0.94,
+        "paletteMatch": 0.9765,
+        "detail": 0.815,
+        "detailRaw": 0.8358,
+        "detailAdded": 0.0417,
+        "bands": 0.9478
       },
-      "verdict": "drift",
+      "verdict": "match",
       "inkBox": {
         "comp": {
           "x": 0,
@@ -310,8 +310,8 @@
         "build": {
           "x": 0,
           "y": 0,
-          "w": 432,
-          "h": 590
+          "w": 408,
+          "h": 630
         }
       }
     }

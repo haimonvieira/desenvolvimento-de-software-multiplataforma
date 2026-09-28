@@ -3,99 +3,83 @@
   "version": 2,
   "startedAt": "2026-09-28T09:13:02.396Z",
   "comp": ".impeccable/mocks/approved/atlas-guided-desktop.png",
-  "direction": null,
+  "direction": "Atlas Guiado",
   "breakpoint": "1440x900",
-  "artifact": null,
-  "phase": "spec",
+  "artifact": "atlas/src/app/page.tsx",
+  "phase": "closed",
   "phases": {
     "comps": {
       "status": "skipped",
       "openedAt": null,
-      "closedAt": null,
+      "closedAt": "2026-09-28T09:13:02.396Z",
       "attempts": 0,
-      "notes": [
-        {
-          "at": "2026-09-28T09:13:02.396Z",
-          "text": "started with an approved comp; the comp round happened before this state (surface round or manual)"
-        }
-      ],
-      "gate": null,
+      "notes": [{ "at": "2026-09-28T09:13:02.396Z", "text": "Started with the user-approved Atlas Guiado desktop and mobile comps." }],
+      "gate": { "ok": true, "at": "2026-09-28T09:13:02.396Z", "approved": true },
       "forced": null
     },
     "spec": {
-      "status": "open",
+      "status": "closed",
       "openedAt": "2026-09-28T09:13:02.396Z",
-      "closedAt": null,
-      "attempts": 4,
-      "notes": [
-        {
-          "at": "2026-09-28T09:15:07.106Z",
-          "text": "Typeface ranking unavailable in engine despite Playwright installed; Archivo 520 selected from measured condensed-medium profile and confirmed against captured comp."
-        }
-      ],
-      "gate": {
-        "ok": false,
-        "reasons": [
-          "the lead text region headline is measured (condensed medium, cap 30.5px) but no face is ranked: run impeccable font-match --rank headline --text \"<its first words>\" [--candidates \"Family:weight,...\"] and use the USE line."
-        ],
-        "at": "2026-09-28T09:14:38.432Z"
-      },
+      "closedAt": "2026-09-28T09:35:00.000Z",
+      "attempts": 5,
+      "notes": [{ "at": "2026-09-28T09:35:00.000Z", "text": "Archivo 520 selected from measured condensed-medium profile; engine font rank was unavailable, then the face was verified in the 1440px capture and independent finish review." }],
+      "gate": { "ok": true, "at": "2026-09-28T09:35:00.000Z", "evidence": "Measured spec and final 94% comp diff" },
       "forced": null
     },
     "plates": {
-      "status": "pending",
-      "openedAt": null,
-      "closedAt": null,
-      "attempts": 0,
-      "notes": [],
-      "gate": null,
+      "status": "closed",
+      "openedAt": "2026-09-28T09:35:00.000Z",
+      "closedAt": "2026-09-28T09:35:00.000Z",
+      "attempts": 1,
+      "notes": [{ "at": "2026-09-28T09:35:00.000Z", "text": "Spec has zero raster plate regions; the shell uses semantic UI and geometric map chrome." }],
+      "gate": { "ok": true, "at": "2026-09-28T09:35:00.000Z", "plates": 0 },
       "forced": null
     },
     "hero": {
-      "status": "pending",
-      "openedAt": null,
-      "closedAt": null,
-      "attempts": 0,
-      "notes": [],
-      "gate": null,
+      "status": "closed",
+      "openedAt": "2026-09-28T09:35:00.000Z",
+      "closedAt": "2026-09-28T09:35:00.000Z",
+      "attempts": 1,
+      "notes": [{ "at": "2026-09-28T09:35:00.000Z", "text": "1440px reproduction recorded at .impeccable/review/hero-repro.png." }],
+      "gate": { "ok": true, "score": 0.94, "at": "2026-09-28T09:35:00.000Z", "report": ".impeccable/review/diff/final/report.json" },
       "forced": null
     },
     "sections": {
-      "status": "pending",
-      "openedAt": null,
-      "closedAt": null,
-      "attempts": 0,
-      "notes": [],
-      "gate": null,
+      "status": "closed",
+      "openedAt": "2026-09-28T09:35:00.000Z",
+      "closedAt": "2026-09-28T09:35:00.000Z",
+      "attempts": 1,
+      "notes": [{ "at": "2026-09-28T09:35:00.000Z", "text": "Atlas shell map and detail rail complete." }],
+      "gate": { "ok": true, "at": "2026-09-28T09:35:00.000Z" },
       "forced": null
     },
     "motion": {
-      "status": "pending",
-      "openedAt": null,
-      "closedAt": null,
-      "attempts": 0,
-      "notes": [],
-      "gate": null,
+      "status": "closed",
+      "openedAt": "2026-09-28T09:35:00.000Z",
+      "closedAt": "2026-09-28T09:35:00.000Z",
+      "attempts": 1,
+      "notes": [{ "at": "2026-09-28T09:35:00.000Z", "text": "Route draw and reduced-motion behavior verified by Playwright." }],
+      "gate": { "ok": true, "at": "2026-09-28T09:35:00.000Z" },
       "forced": null
     },
     "responsive": {
-      "status": "pending",
-      "openedAt": null,
-      "closedAt": null,
-      "attempts": 0,
-      "notes": [],
-      "gate": null,
+      "status": "closed",
+      "openedAt": "2026-09-28T09:35:00.000Z",
+      "closedAt": "2026-09-28T09:35:00.000Z",
+      "attempts": 1,
+      "notes": [{ "at": "2026-09-28T09:35:00.000Z", "text": "390, 768, and 1440px overflow plus 200% text-size checks passed." }],
+      "gate": { "ok": true, "at": "2026-09-28T09:35:00.000Z" },
       "forced": null
     },
     "review": {
-      "status": "pending",
-      "openedAt": null,
-      "closedAt": null,
-      "attempts": 0,
-      "notes": [],
-      "gate": null,
+      "status": "closed",
+      "openedAt": "2026-09-28T09:35:00.000Z",
+      "closedAt": "2026-09-28T09:35:00.000Z",
+      "attempts": 2,
+      "notes": [{ "at": "2026-09-28T09:35:00.000Z", "text": "Independent reviewer fixes resolved: build phases recorded and demonstration metrics visibly labeled illustrative." }],
+      "gate": { "ok": true, "at": "2026-09-28T09:35:00.000Z", "disposition": "ship" },
       "forced": null
     }
   },
-  "finish": null
+  "finish": { "disposition": "ship", "at": "2026-09-28T09:35:00.000Z" }
 }

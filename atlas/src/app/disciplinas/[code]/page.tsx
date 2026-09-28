@@ -1,5 +1,5 @@
 import catalog from "../../../generated/catalog.json";
-import { MaterialLink } from "../../../modules/catalog/catalog-list";
+import { StudyMaterialLink } from "../../../modules/study/study-material-link";
 import { createCatalogQuery } from "../../../modules/catalog/catalog-query";
 import type { CatalogData, Material } from "../../../modules/catalog/model";
 
@@ -59,7 +59,7 @@ export default async function DisciplinePage({ params, searchParams }: PageProps
                   {entries.map((material) => (
                     <li key={material.ref.path}>
                       <span className="file-type">{material.extension.slice(1).toUpperCase() || "FILE"}</span>
-                      <MaterialLink material={material} />
+                      <StudyMaterialLink material={material} />
                       <small>{material.ref.path.split("/").slice(2, -1).join(" / ") || "Raiz da disciplina"}</small>
                     </li>
                   ))}

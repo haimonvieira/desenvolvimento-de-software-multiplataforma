@@ -2,6 +2,7 @@ import catalog from "../../../generated/catalog.json";
 import { createCatalogQuery } from "../../../modules/catalog/catalog-query";
 import { materialPathCandidates } from "../../../modules/catalog/material-path";
 import { MaterialPreview } from "../../../modules/catalog/material-preview";
+import { MaterialStudyControls } from "../../../modules/study/material-study-controls";
 import type { CatalogData } from "../../../modules/catalog/model";
 
 const data = catalog as CatalogData;
@@ -60,6 +61,7 @@ export default async function MaterialPage({ params }: PageProps) {
             </dl>
           </header>
           <MaterialPreview material={material} />
+          <MaterialStudyControls material={material.ref} />
         </main>
       </div>
     </>

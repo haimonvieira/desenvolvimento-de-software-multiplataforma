@@ -1,6 +1,7 @@
 import { mkdtemp, mkdir, readFile, rm, writeFile } from "node:fs/promises";
+import { execFileSync } from "node:child_process";
 import { tmpdir } from "node:os";
-import { join } from "node:path";
+import { join, resolve } from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
 
 import { buildCatalog, writeCatalog } from "../../../scripts/build-catalog";
@@ -23,6 +24,16 @@ async function fixture(files: Record<string, string>): Promise<string> {
   return root;
 }
 
+function commitFixture(root: string): string {
+  execFileSync("git", ["init", "--quiet"], { cwd: root });
+  execFileSync("git", ["add", "-f", "."], { cwd: root });
+  execFileSync("git", [
+    "-c", "user.name=Atlas Test", "-c", "user.email=atlas@example.test",
+    "commit", "--quiet", "-m", "fixture",
+  ], { cwd: root });
+  return execFileSync("git", ["rev-parse", "HEAD"], { cwd: root, encoding: "utf8" }).trim();
+}
+
 afterEach(async () => {
   await Promise.all(roots.splice(0).map((root) => rm(root, { recursive: true })));
 });
@@ -37,7 +48,8 @@ describe("catalog builder", () => {
       "README.md": "no",
     });
 
-    const catalog = await buildCatalog(root, commitSha);
+    const sha = commitFixture(root);
+    const catalog = await buildCatalog(root, sha);
 
     expect(catalog.materials.map(({ ref, semesterCode, disciplineCode }) => ({
       path: ref.path,
@@ -49,11 +61,23 @@ describe("catalog builder", () => {
     ]);
   });
 
+  it("reads blobs and sizes from the exact commit instead of the working tree", async () => {
+    const root = await fixture({ "DSM1/ALP/aula.md": "committed" });
+    const sha = commitFixture(root);
+    await writeFile(join(root, "DSM1", "ALP", "aula.md"), "dirty working tree");
+    await writeFile(join(root, "DSM1", "ALP", "untracked.md"), "untracked");
+
+    const catalog = await buildCatalog(root, sha);
+
+    expect(catalog.materials.map(({ ref, size }) => ({ path: ref.path, size }))).toEqual([
+      { path: "DSM1/ALP/aula.md", size: 9 },
+    ]);
+  });
+
   it("excludes generated, cache, private, executable, and build artifacts", async () => {
     const root = await fixture({
       "DSM1/ALP/keep.md": "yes",
       "DSM1/ALP/node_modules/pkg/index.js": "no",
-      "DSM1/ALP/.git/config": "no",
       "DSM1/ALP/.env": "no",
       "DSM1/ALP/.env.local": "no",
       "DSM1/ALP/__pycache__/code.pyc": "no",
@@ -67,9 +91,13 @@ describe("catalog builder", () => {
       "DSM1/ALP/bin/output.txt": "no",
       "DSM1/ALP/nbproject/private/config.properties": "no",
       "DSM1/ALP/program.exe": "no",
+      "DSM1/ALP/.idea/workspace.xml": "no",
+      "DSM1/ALP/mvnw.cmd": "no",
+      "DSM1/ALP/setup.bat": "no",
     });
+    const sha = commitFixture(root);
 
-    const catalog = await buildCatalog(root, commitSha);
+    const catalog = await buildCatalog(root, sha);
 
     expect(catalog.materials.map((material) => material.ref.path)).toEqual([
       "DSM1/ALP/keep.md",
@@ -84,9 +112,9 @@ describe("catalog builder", () => {
     });
     const first = join(root, "first.json");
     const second = join(root, "second.json");
-    await writeCatalog(root, first, commitSha);
-    await writeCatalog(root, second, commitSha);
-
+    const sha = commitFixture(root);
+    await writeCatalog(root, first, sha);
+    await writeCatalog(root, second, sha);
     const [firstJson, secondJson] = await Promise.all([
       readFile(first, "utf8"),
       readFile(second, "utf8"),
@@ -102,15 +130,30 @@ describe("catalog builder", () => {
     expect(catalog.materials.every(({ ref }) => !ref.path.includes("\\"))).toBe(true);
     expect(unknown).toMatchObject({ kind: "other", previewKind: "none" });
   });
-});
 
+
+  it("keeps IDE metadata and executable scripts out of the real repository catalog", async () => {
+    const repositoryRoot = resolve(import.meta.dirname, "../../../..");
+    const sha = execFileSync("git", ["rev-parse", "HEAD"], {
+      cwd: repositoryRoot,
+      encoding: "utf8",
+    }).trim();
+
+    const catalog = await buildCatalog(repositoryRoot, sha);
+
+    expect(catalog.materials.some(({ ref }) =>
+      /(^|\/)\.idea(\/|$)|\.(?:bat|cmd)$/i.test(ref.path),
+    )).toBe(false);
+  });
+});
 describe("CatalogQuery", () => {
   it("browses immutable generated data and resolves a material by path and commit", async () => {
     const root = await fixture({
       "DSM1/ALP/aula.md": "one",
       "DSM2/TPI/exercicio.java": "two",
     });
-    const data = await buildCatalog(root, commitSha);
+    const sha = commitFixture(root);
+    const data = await buildCatalog(root, sha);
     const query = createCatalogQuery(data);
 
     const result = query.browse({ semester: "DSM1", discipline: "ALP" });

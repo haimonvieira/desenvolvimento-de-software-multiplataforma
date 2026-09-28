@@ -1,6 +1,6 @@
 import { execFileSync } from "node:child_process";
-import { readdir, stat, writeFile, mkdir } from "node:fs/promises";
-import { basename, dirname, extname, relative, resolve, sep } from "node:path";
+import { mkdir, writeFile } from "node:fs/promises";
+import { basename, dirname, extname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 import type {
@@ -43,6 +43,7 @@ const DISCIPLINE_NAMES: Readonly<Record<string, string>> = {
 };
 const EXCLUDED_DIRECTORIES = new Set([
   ".cache",
+  ".idea",
   ".git",
   ".next",
   ".vinext",
@@ -59,6 +60,8 @@ const EXCLUDED_DIRECTORIES = new Set([
   "target",
 ]);
 const EXCLUDED_EXTENSIONS = new Set([
+  ".bat",
+  ".cmd",
   ".class",
   ".dll",
   ".dylib",
@@ -87,40 +90,43 @@ function classify(extension: string): { kind: MaterialKind; previewKind: Preview
   return { kind: "other", previewKind: "none" };
 }
 
-function isExcludedFile(name: string): boolean {
-  return name === ".env" || name.startsWith(".env.") || EXCLUDED_EXTENSIONS.has(extname(name).toLowerCase());
+function isExcludedPath(path: string, mode: string): boolean {
+  const segments = path.split("/");
+  const name = segments.at(-1) ?? "";
+  return mode.endsWith("755")
+    || segments.some((segment) => EXCLUDED_DIRECTORIES.has(segment))
+    || name === ".env"
+    || name.startsWith(".env.")
+    || EXCLUDED_EXTENSIONS.has(extname(name).toLowerCase());
 }
 
-async function academicRoots(repositoryRoot: string): Promise<Array<{ code: string; disciplines: string[] }>> {
-  const roots = (await readdir(repositoryRoot, { withFileTypes: true }))
-    .filter((entry) => entry.isDirectory() && /^DSM[1-6]$/.test(entry.name))
-    .map((entry) => entry.name)
-    .sort();
+type GitTreeEntry = Readonly<{
+  mode: string;
+  type: string;
+  size: number | null;
+  path: string;
+}>;
 
-  return Promise.all(roots.map(async (code) => ({
-    code,
-    disciplines: (await readdir(resolve(repositoryRoot, code), { withFileTypes: true }))
-      .filter((entry) => entry.isDirectory() && !EXCLUDED_DIRECTORIES.has(entry.name))
-      .map((entry) => entry.name)
-      .sort(),
-  })));
-}
+function listGitTree(repositoryRoot: string, commitSha: string): GitTreeEntry[] {
+  const output = execFileSync("git", [
+    "ls-tree", "-r", "-z", "-l", commitSha, "--",
+    "DSM1", "DSM2", "DSM3", "DSM4", "DSM5", "DSM6",
+  ], {
+    cwd: repositoryRoot,
+    encoding: "utf8",
+    maxBuffer: 16 * 1024 * 1024,
+  });
 
-async function collectFiles(directory: string): Promise<string[]> {
-  const files: string[] = [];
-  const entries = (await readdir(directory, { withFileTypes: true }))
-    .sort((left, right) => left.name.localeCompare(right.name));
-
-  for (const entry of entries) {
-    if (entry.isSymbolicLink()) continue;
-    const path = resolve(directory, entry.name);
-    if (entry.isDirectory()) {
-      if (!EXCLUDED_DIRECTORIES.has(entry.name)) files.push(...await collectFiles(path));
-    } else if (entry.isFile() && !isExcludedFile(entry.name)) {
-      files.push(path);
-    }
-  }
-  return files;
+  return output.split("\0").filter(Boolean).map((record) => {
+    const separator = record.indexOf("\t");
+    const [mode, type, , size] = record.slice(0, separator).trim().split(/\s+/);
+    return {
+      mode,
+      type,
+      size: size === "-" ? null : Number(size),
+      path: record.slice(separator + 1).replace(/\\/g, "/"),
+    };
+  });
 }
 
 export function resolveCommitSha(repositoryRoot: string): string {
@@ -133,35 +139,33 @@ export function resolveCommitSha(repositoryRoot: string): string {
 }
 
 export async function buildCatalog(repositoryRoot: string, commitSha: string): Promise<CatalogData> {
-  const roots = await academicRoots(repositoryRoot);
-  const paths = (await Promise.all(roots.map(({ code }) => collectFiles(resolve(repositoryRoot, code)))))
-    .flat()
-    .map((path) => relative(repositoryRoot, path).split(sep).join("/"))
-    .sort();
-  const disciplineKeys = new Set(roots.flatMap(({ code, disciplines }) =>
-    disciplines.map((discipline) => `${code}/${discipline}`),
-  ));
+  const entries = listGitTree(repositoryRoot, commitSha).sort((left, right) => left.path.localeCompare(right.path));
+  const roots = new Set<string>();
+  const disciplineKeys = new Set<string>();
   const materials: Material[] = [];
 
-  for (const path of paths) {
-    const [semesterCode, disciplineCode] = path.split("/");
-    if (!disciplineCode) continue;
+  for (const entry of entries) {
+    const [semesterCode, disciplineCode] = entry.path.split("/");
+    if (!/^DSM[1-6]$/.test(semesterCode)) continue;
+    roots.add(semesterCode);
+    if (!disciplineCode || EXCLUDED_DIRECTORIES.has(disciplineCode)) continue;
     disciplineKeys.add(`${semesterCode}/${disciplineCode}`);
-    const extension = extname(path).toLowerCase();
+    if (entry.type !== "blob" || entry.size === null || isExcludedPath(entry.path, entry.mode)) continue;
+    const extension = extname(entry.path).toLowerCase();
     const classification = classify(extension);
     materials.push({
-      ref: { path, commitSha },
-      name: basename(path),
+      ref: { path: entry.path, commitSha },
+      name: basename(entry.path),
       extension,
-      size: (await stat(resolve(repositoryRoot, ...path.split("/")))).size,
+      size: entry.size,
       disciplineCode,
       semesterCode,
       ...classification,
-      downloadUrl: `${REPOSITORY_URL}/raw/${encodeURIComponent(commitSha)}/${path.split("/").map(encodeURIComponent).join("/")}`,
+      downloadUrl: `${REPOSITORY_URL}/raw/${encodeURIComponent(commitSha)}/${entry.path.split("/").map(encodeURIComponent).join("/")}`,
     });
   }
 
-  const semesters: Semester[] = roots.map(({ code }) => ({ code, name: SEMESTER_NAMES[code] }));
+  const semesters: Semester[] = [...roots].sort().map((code) => ({ code, name: SEMESTER_NAMES[code] }));
   const disciplines: Discipline[] = [...disciplineKeys].sort().map((key) => {
     const [semesterCode, code] = key.split("/");
     return { code, name: DISCIPLINE_NAMES[code] ?? code, semesterCode };

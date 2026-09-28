@@ -1,0 +1,101 @@
+{
+  "tool": "build-phase",
+  "version": 2,
+  "startedAt": "2026-09-28T09:13:02.396Z",
+  "comp": ".impeccable/mocks/approved/atlas-guided-desktop.png",
+  "direction": null,
+  "breakpoint": "1440x900",
+  "artifact": null,
+  "phase": "spec",
+  "phases": {
+    "comps": {
+      "status": "skipped",
+      "openedAt": null,
+      "closedAt": null,
+      "attempts": 0,
+      "notes": [
+        {
+          "at": "2026-09-28T09:13:02.396Z",
+          "text": "started with an approved comp; the comp round happened before this state (surface round or manual)"
+        }
+      ],
+      "gate": null,
+      "forced": null
+    },
+    "spec": {
+      "status": "open",
+      "openedAt": "2026-09-28T09:13:02.396Z",
+      "closedAt": null,
+      "attempts": 4,
+      "notes": [
+        {
+          "at": "2026-09-28T09:15:07.106Z",
+          "text": "Typeface ranking unavailable in engine despite Playwright installed; Archivo 520 selected from measured condensed-medium profile and confirmed against captured comp."
+        }
+      ],
+      "gate": {
+        "ok": false,
+        "reasons": [
+          "the lead text region headline is measured (condensed medium, cap 30.5px) but no face is ranked: run impeccable font-match --rank headline --text \"<its first words>\" [--candidates \"Family:weight,...\"] and use the USE line."
+        ],
+        "at": "2026-09-28T09:14:38.432Z"
+      },
+      "forced": null
+    },
+    "plates": {
+      "status": "pending",
+      "openedAt": null,
+      "closedAt": null,
+      "attempts": 0,
+      "notes": [],
+      "gate": null,
+      "forced": null
+    },
+    "hero": {
+      "status": "pending",
+      "openedAt": null,
+      "closedAt": null,
+      "attempts": 0,
+      "notes": [],
+      "gate": null,
+      "forced": null
+    },
+    "sections": {
+      "status": "pending",
+      "openedAt": null,
+      "closedAt": null,
+      "attempts": 0,
+      "notes": [],
+      "gate": null,
+      "forced": null
+    },
+    "motion": {
+      "status": "pending",
+      "openedAt": null,
+      "closedAt": null,
+      "attempts": 0,
+      "notes": [],
+      "gate": null,
+      "forced": null
+    },
+    "responsive": {
+      "status": "pending",
+      "openedAt": null,
+      "closedAt": null,
+      "attempts": 0,
+      "notes": [],
+      "gate": null,
+      "forced": null
+    },
+    "review": {
+      "status": "pending",
+      "openedAt": null,
+      "closedAt": null,
+      "attempts": 0,
+      "notes": [],
+      "gate": null,
+      "forced": null
+    }
+  },
+  "finish": null
+}

@@ -1,0 +1,9 @@
+{
+  "approved": true,
+  "direction": "Atlas Guiado",
+  "viewport": { "width": 1440, "height": 900 },
+  "source": "Approved prototype at .superpowers/brainstorm/910-1790552430/content/atlas-guiado.html",
+  "prompt": "Translate the approved Atlas Guiado prototype into a desktop application shell comp at 1440x900. Preserve the technical-paper ground, cartographic grid, named discipline routes DW3, BDNR, TP2, GAPS and ING1, labeled stations, current-position marker, semester tabs, search, map/list control, and BDNR detail rail. Remove the prototype-only intro, approval control, emoji and Unicode icons. Keep all claims illustrative and avoid any Fatec endorsement.",
+  "producedFrom": ".impeccable/mocks/atlas-guided-comp.html",
+  "capturedWith": "Playwright Chromium"
+}

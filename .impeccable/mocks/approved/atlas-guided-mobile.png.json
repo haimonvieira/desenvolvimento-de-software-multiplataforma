@@ -1,0 +1,9 @@
+{
+  "approved": true,
+  "direction": "Atlas Guiado",
+  "viewport": { "width": 390, "height": 844 },
+  "source": "Approved prototype at .superpowers/brainstorm/910-1790552430/content/atlas-guiado.html",
+  "prompt": "Translate the approved Atlas Guiado prototype into a 390px mobile application shell comp. Preserve the technical-paper ground, complete legend, semantically equivalent map content, real discipline labels DW3, BDNR, TP2, GAPS and ING1, and the BDNR details after the map. Keep search reachable and collapse the add-materials label to an authored plus icon. Remove prototype-only framing and avoid any Fatec endorsement.",
+  "producedFrom": ".impeccable/mocks/atlas-guided-comp.html",
+  "capturedWith": "Playwright Chromium"
+}

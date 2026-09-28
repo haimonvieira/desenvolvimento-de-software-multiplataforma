@@ -1,0 +1,11 @@
+{
+  "regions": [
+    { "id": "topbar", "kind": "chrome", "grid": "A0:J0", "note": "brand, search and add-material control" },
+    { "id": "semester-rail", "kind": "control", "grid": "A1:J1", "note": "semester navigation" },
+    { "id": "headline", "kind": "text", "grid": "A1:G2", "note": "compact two-line semester map heading" },
+    { "id": "view-toggle", "kind": "control", "grid": "I2:J2", "note": "map and list switch" },
+    { "id": "legend", "kind": "control", "grid": "A3:C3", "note": "line station current-position key" },
+    { "id": "map", "kind": "chrome", "grid": "A3:H9", "note": "five named discipline lines and stations", "container": true },
+    { "id": "detail-rail", "kind": "chrome", "grid": "H3:J9", "note": "selected BDNR discipline details and materials", "container": true }
+  ]
+}

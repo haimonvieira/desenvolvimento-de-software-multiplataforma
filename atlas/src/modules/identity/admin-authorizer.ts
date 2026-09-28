@@ -65,7 +65,12 @@ export function createAdminAuthorizer(dependencies: AdminDependencies): AdminAut
   async function verifiedOwner(request: Request) {
     const session = await dependencies.session(request);
     if (!configuredOwner || !session || session.expiresAt.getTime() <= Date.now()) throw new AdminAuthorizationError();
-    const github = await dependencies.githubIdentity(request, session.userId);
+    let github: { userId: string } | null = null;
+    try {
+      github = await dependencies.githubIdentity(request, session.userId);
+    } catch {
+      throw new AdminAuthorizationError();
+    }
     if (github?.userId !== configuredOwner) throw new AdminAuthorizationError();
     return { adminId: session.userId, githubUserId: github.userId };
   }

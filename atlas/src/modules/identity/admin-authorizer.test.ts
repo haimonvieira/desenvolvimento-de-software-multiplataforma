@@ -63,6 +63,18 @@ describe("positive administrative authorization", () => {
     await expect(verify(request(), "owner")).resolves.toBeNull();
   });
 
+  it("fails closed with 403 at every admin entry when the GitHub identity check throws", async () => {
+    const githubFailure = async (): Promise<{ userId: string }> => {
+      throw new Error("GitHub is unreachable");
+    };
+    const authorizer = createAdminAuthorizer(dependencies({ githubIdentity: githubFailure }));
+    const handler = createAdminBootstrapHandler(createAdminAuthorizer(dependencies({ identity: async () => null, githubIdentity: githubFailure })));
+
+    await expect(authorizer.requireAdmin(request())).rejects.toMatchObject({ status: 403 });
+    await expect(authorizer.authorizePasskeyAddition(request(), "recovery")).rejects.toMatchObject({ status: 403 });
+    expect((await handler(request("/api/admin/bootstrap", {}))).status).toBe(403);
+  });
+
   it("bootstraps the configured numeric GitHub owner once and audits no token", async () => {
     const created: string[] = [];
     const audited: unknown[] = [];

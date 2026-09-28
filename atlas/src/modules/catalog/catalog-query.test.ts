@@ -160,8 +160,11 @@ describe("catalog builder", () => {
 
   it("writes only capped safe preview assets and excludes credential-like content", async () => {
     const root = await fixture({
-      "DSM1/ALP/safe.js": `${"a".repeat(210_000)}TAIL_SECRET`,
-      "DSM1/ALP/auth.js": "const JWTSecret = 'apigamessecret'",
+      "DSM2/DW2/dw2-nodejs-express/exercicios-js/arrays-e-objetos/script.js": `${"a".repeat(210_000)}TAIL_SECRET`,
+      "DSM1/ALP/unreviewed.js": "console.log('ordinary but unreviewed')",
+      "DSM1/ALP/session.js": 'session({ secret: "senha-longa-para-sessao" })',
+      "DSM1/ALP/senha.js": 'const senha = "abc"',
+      "DSM1/ALP/private.js": "const privateKey = 'abc'",
       "DSM1/ALP/config.json": '{"password":"secret"}',
       "DSM1/ALP/.env": "TOKEN=real-secret",
     });
@@ -170,12 +173,25 @@ describe("catalog builder", () => {
 
     await writeCatalog(root, output, sha);
 
-    const previewRoot = resolve(dirname(output), "../../public/material-previews/DSM1/ALP");
-    const safePreview = await readFile(join(previewRoot, "safe.js.txt"));
-    expect(safePreview.byteLength).toBe(200_000);
-    await expect(readFile(join(previewRoot, "auth.js.txt"))).rejects.toThrow();
-    await expect(readFile(join(previewRoot, "config.json.txt"))).rejects.toThrow();
+    const catalog = JSON.parse(await readFile(output, "utf8")) as CatalogData;
+    const previewRoot = resolve(dirname(output), "../../public/material-previews");
+    const approvedPath = "DSM2/DW2/dw2-nodejs-express/exercicios-js/arrays-e-objetos/script.js";
+    expect((await readFile(join(previewRoot, `${approvedPath}.txt`))).byteLength).toBe(200_000);
+    expect(catalog.materials.find((material) => material.ref.path === approvedPath)?.previewUrl).toBe(`/material-previews/${approvedPath}.txt`);
+    for (const name of ["unreviewed.js", "session.js", "senha.js", "private.js", "config.json"]) {
+      expect(catalog.materials.find((material) => material.name === name)?.previewUrl).toBeUndefined();
+    }
+    const previewFiles = await readdir(previewRoot, { recursive: true });
+    expect(previewFiles.some((path) => /(?:unreviewed|session|senha|private|config)/i.test(path))).toBe(false);
     await expect(readFile(join(dirname(output), "material-text.json"))).rejects.toThrow();
+  });
+
+  it("contains no credential markers in generated preview assets", async () => {
+    const previewRoot = resolve(import.meta.dirname, "../../../public/material-previews");
+    const files = await readdir(previewRoot, { recursive: true });
+    const content = (await Promise.all(files.filter((path) => path.endsWith(".txt")).map((path) => readFile(join(previewRoot, path), "utf8")))).join("\n");
+
+    expect(content).not.toMatch(/(?:api[_-]?key|jwt[_-]?secret|mongodb(?:\+srv)?:\/\/|password\s*[:=]|private[_-]?key|secret\s*[:=]|senha\s*[:=]|token\s*[:=])/i);
   });
 
   it("keeps secret markers and monolithic preview data out of deployed bundles", async () => {

@@ -78,10 +78,12 @@ const CODE_EXTENSIONS = new Set([
 const DOCUMENT_EXTENSIONS = new Set([".csv", ".doc", ".docx", ".md", ".odt", ".pdf", ".ppt", ".pptx", ".txt", ".xls", ".xlsx"]);
 const IMAGE_EXTENSIONS = new Set([".gif", ".jpeg", ".jpg", ".png", ".svg", ".webp"]);
 const ARCHIVE_EXTENSIONS = new Set([".7z", ".gz", ".rar", ".tar", ".zip"]);
-const PREVIEW_EXTENSIONS = new Set([".c", ".cpp", ".css", ".html", ".java", ".js", ".jsx", ".md", ".php", ".py", ".sql", ".ts", ".tsx", ".txt"]);
 const PREVIEW_LIMIT = 200_000;
-const SENSITIVE_PATH = /(^|\/)(?:\.env(?:\..*)?|config(?:uration)?|credentials?|secrets?|settings?)(?:\.|\/|$)/i;
-const SECRET_MARKER = /(?:api[_-]?key|authorization\s*[:=]|client[_-]?secret|jwt[_-]?secret|jwtsecret|mongodb(?:\+srv)?:\/\/|password\s*[:=]|private[_-]?key|session[_-]?secret|token\s*[:=])/i;
+const REVIEWED_PREVIEW_PATHS = new Set([
+  "DSM1/ALP/PROGRAMAS/visualg3.0.7/visualg3.0.7/help/telaprin.html",
+  "DSM2/DW2/dw2-nodejs-express/exercicios-js/arrays-e-objetos/script.js",
+]);
+const SECRET_MARKER = /(?:api[_-]?key|authorization\s*[:=]|client[_-]?secret|jwt[_-]?secret|jwtsecret|mongodb(?:\+srv)?:\/\/|password\s*[:=]|private[_ -]?key|secret\s*[:=]|senha\s*[:=]|session[_-]?secret|token\s*[:=])/i;
 
 function classify(extension: string): { kind: MaterialKind; previewKind: PreviewKind } {
   if (IMAGE_EXTENSIONS.has(extension)) return { kind: "image", previewKind: "image" };
@@ -170,7 +172,7 @@ async function writeTextPreviews(repositoryRoot: string, outputRoot: string, cat
   await rm(outputRoot, { recursive: true, force: true });
   const materials: Material[] = [];
   for (const material of catalog.materials) {
-    const canPreview = material.previewKind === "text" && PREVIEW_EXTENSIONS.has(material.extension) && !SENSITIVE_PATH.test(material.ref.path);
+    const canPreview = material.previewKind === "text" && REVIEWED_PREVIEW_PATHS.has(material.ref.path);
     if (!canPreview) {
       materials.push(material);
       continue;

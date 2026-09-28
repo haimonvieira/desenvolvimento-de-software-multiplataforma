@@ -34,4 +34,4 @@ The implementation is server-rendered and uses native anchors, so the list and a
 
 ## Commit
 
-Pending immediately after this report; final commit hash recorded below after commit.
+Implementation and report commit: `a86f411` (`feat(atlas): add guided map and equivalent list`). This line was appended in a report-only follow-up commit so the implementation commit can be identified exactly.

@@ -28,3 +28,15 @@ node_modules
 /DSM2/TPI/exercicios/Forms/Menu/ProjetoVeiculo/dist/
 /DSM2/TPI/exercicios/Forms/PizzaOnline/nbproject/private/
 /DSM2/TPI/Revisao/RevisaoProva/target/
+
+# DSM Atlas
+/atlas/.next/
+/atlas/.vinext/
+/atlas/.wrangler/
+/atlas/dist/
+/atlas/src/generated/
+/atlas/test-results/
+/atlas/playwright-report/
+/atlas/.env
+/atlas/.env.*
+!/atlas/.env.example

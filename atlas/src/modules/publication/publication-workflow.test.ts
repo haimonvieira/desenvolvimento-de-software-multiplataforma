@@ -239,7 +239,7 @@ describe("atomic batch publication", () => {
     const review = await workflow(git).reviseBatch("batch-1", []);
     expect(review.errors).toEqual([]);
     expect(review.baseCommitSha).toBe(git.head());
-    expect(review.confirmationPhrase).toBe("PUBLICAR 3 ARQUIVOS EM main");
+    expect(review.confirmationPhrase).toMatch(/^PUBLICAR 3 ARQUIVOS EM main #[0-9a-f]{8}$/);
     expect(review.files.map((file) => file.destination)).toEqual([
       "DSM1/ALP/novo-a.pdf",
       "DSM1/ALP/novo-b.pdf",
@@ -275,7 +275,7 @@ describe("atomic batch publication", () => {
     const result = await workflow(git).publishBatch(
       "batch-1",
       git.head(),
-      "PUBLICAR 1 ARQUIVOS EM main",
+      "PUBLICAR 0 ARQUIVOS EM main #00000000",
     );
 
     expect(result).toMatchObject({ type: "rejected" });
@@ -317,11 +317,13 @@ describe("atomic batch publication", () => {
       parents: [reviewed],
     });
     git.refs.set(REF, moved.sha);
+    const review = await workflow(git).reviseBatch("batch-1", []);
+    expect(review.errors).toEqual([]);
 
     const result = await workflow(git).publishBatch(
       "batch-1",
       reviewed,
-      "PUBLICAR 1 ARQUIVOS EM main",
+      review.confirmationPhrase,
     );
 
     expect(result).toEqual({ type: "conflict", currentHead: moved.sha });
@@ -338,11 +340,13 @@ describe("atomic batch publication", () => {
     const files = [await staged(git, "DSM1/ALP/novo.pdf")];
     await seedBatch(git, { files });
     git.concurrentOnCommit = true;
+    const review = await workflow(git).reviseBatch("batch-1", []);
+    expect(review.errors).toEqual([]);
 
     const result = await workflow(git).publishBatch(
       "batch-1",
       git.head(),
-      "PUBLICAR 1 ARQUIVOS EM main",
+      review.confirmationPhrase,
     );
 
     expect(result).toMatchObject({ type: "conflict" });
@@ -361,11 +365,13 @@ describe("atomic batch publication", () => {
     await seedBatch(git, { files });
     const before = git.head();
     git.failTree = true;
+    const review = await workflow(git).reviseBatch("batch-1", []);
+    expect(review.errors).toEqual([]);
 
     const result = await workflow(git).publishBatch(
       "batch-1",
       before,
-      "PUBLICAR 1 ARQUIVOS EM main",
+      review.confirmationPhrase,
     );
 
     expect(result).toMatchObject({ type: "rejected" });
@@ -382,11 +388,13 @@ describe("atomic batch publication", () => {
     await seedBatch(git, { files });
     const before = git.head();
     git.failCommit = true;
+    const review = await workflow(git).reviseBatch("batch-1", []);
+    expect(review.errors).toEqual([]);
 
     const result = await workflow(git).publishBatch(
       "batch-1",
       before,
-      "PUBLICAR 1 ARQUIVOS EM main",
+      review.confirmationPhrase,
     );
 
     expect(result).toMatchObject({ type: "rejected" });
@@ -400,7 +408,9 @@ describe("atomic batch publication", () => {
     await seedBatch(git, { files });
     const run = workflow(git);
     const base = git.head();
-    const phrase = "PUBLICAR 1 ARQUIVOS EM main";
+    const review = await run.reviseBatch("batch-1", []);
+    expect(review.errors).toEqual([]);
+    const phrase = review.confirmationPhrase;
 
     const first = await run.publishBatch("batch-1", base, phrase);
     const second = await run.publishBatch("batch-1", base, phrase);
@@ -425,7 +435,9 @@ describe("atomic batch publication", () => {
     ];
     await seedBatch(git, { files });
     const base = git.head();
-    const stale = "PUBLICAR 2 ARQUIVOS EM main";
+    const before = await workflow(git).reviseBatch("batch-1", []);
+    expect(before.errors).toEqual([]);
+    const stale = before.confirmationPhrase;
 
     await query(
       `INSERT INTO staged_upload_file (batch_id, destination, mime_type, size, blob_sha)
@@ -439,10 +451,45 @@ describe("atomic batch publication", () => {
     expect(rejected.errors[0]?.reason).toBe("confirmation-mismatch");
     expect(git.updateRefCalls).toHaveLength(0);
 
+    const fresh = await workflow(git).reviseBatch("batch-1", []);
+    expect(fresh.errors).toEqual([]);
     const published = await workflow(git).publishBatch(
       "batch-1",
       base,
-      "PUBLICAR 3 ARQUIVOS EM main",
+      fresh.confirmationPhrase,
+    );
+    expect(published).toMatchObject({ type: "published" });
+  });
+
+  it("rejects a same-count substitution that changes reviewed content", async () => {
+    const git = createFakeGit();
+    const files = [await staged(git, "DSM1/ALP/novo-a.pdf")];
+    await seedBatch(git, { files });
+    const base = git.head();
+    const before = await workflow(git).reviseBatch("batch-1", []);
+    expect(before.errors).toEqual([]);
+    const stale = before.confirmationPhrase;
+
+    await query(`DELETE FROM staged_upload_file WHERE batch_id = 'batch-1'`, []);
+    await query(
+      `INSERT INTO staged_upload_file (batch_id, destination, mime_type, size, blob_sha)
+       VALUES ('batch-1', 'DSM1/ALP/novo-b.pdf', 'application/pdf', 1024, $1)`,
+      [await git.blobSha(new TextEncoder().encode("novo-b"))],
+    );
+
+    const rejected = await workflow(git).publishBatch("batch-1", base, stale);
+    expect(rejected).toMatchObject({ type: "rejected" });
+    if (rejected.type !== "rejected") throw new Error("expected rejected");
+    expect(rejected.errors[0]?.reason).toBe("confirmation-mismatch");
+    expect(git.updateRefCalls).toHaveLength(0);
+
+    const fresh = await workflow(git).reviseBatch("batch-1", []);
+    expect(fresh.errors).toEqual([]);
+    expect(fresh.confirmationPhrase).not.toBe(stale);
+    const published = await workflow(git).publishBatch(
+      "batch-1",
+      base,
+      fresh.confirmationPhrase,
     );
     expect(published).toMatchObject({ type: "published" });
   });
@@ -455,7 +502,7 @@ describe("atomic batch publication", () => {
     const result = await workflow(git).publishBatch(
       "batch-1",
       git.head(),
-      "PUBLICAR 1 ARQUIVOS EM preview",
+      "PUBLICAR 1 ARQUIVOS EM preview #00000000",
     );
 
     expect(result).toMatchObject({ type: "rejected" });
@@ -482,7 +529,7 @@ describe("batch revision and logical diff", () => {
         collidesWithHead: false,
       }),
     ]);
-    expect(review.confirmationPhrase).toBe("PUBLICAR 1 ARQUIVOS EM main");
+    expect(review.confirmationPhrase).toMatch(/^PUBLICAR 1 ARQUIVOS EM main #[0-9a-f]{8}$/);
     const rows = await query(`SELECT destination FROM staged_upload_file WHERE batch_id = $1`, [
       "batch-1",
     ]);
@@ -580,6 +627,29 @@ describe("publication HTTP handlers", () => {
     });
   });
 
+  it("forwards authorization headers on the GET review route", async () => {
+    const git = createFakeGit();
+    await seedBatch(git, { files: [await staged(git, "DSM1/ALP/novo.pdf")] });
+    const seen: Array<string | null> = [];
+    const response = await createBatchReviewHandler({
+      requireAdmin: async (request) => {
+        seen.push(request.headers.get("authorization"));
+        return { adminId: "owner" };
+      },
+      query,
+      source: git,
+      branch: BRANCH,
+    })(
+      new Request("https://atlas.example/api/admin/batches/batch-1", {
+        headers: { authorization: "Bearer session-token" },
+      }),
+      "batch-1",
+    );
+
+    expect(response.status).toBe(200);
+    expect(seen).toEqual(["Bearer session-token"]);
+  });
+
   it("refuses a batch owned by another admin", async () => {
     const git = createFakeGit();
     await seedBatch(git, { files: [await staged(git, "DSM1/ALP/novo.pdf")] });
@@ -611,8 +681,13 @@ describe("publication HTTP handlers", () => {
     const malformed = await handler(request({ baseCommitSha: "stale", confirmation: "x" }), "batch-1");
     expect(malformed.status).toBe(400);
 
+    const review = await createPublicationWorkflow({ query, source: git, branch: BRANCH }).reviseBatch(
+      "batch-1",
+      [],
+    );
+    expect(review.errors).toEqual([]);
     const published = await handler(
-      request({ baseCommitSha: base, confirmation: "PUBLICAR 1 ARQUIVOS EM main" }),
+      request({ baseCommitSha: base, confirmation: review.confirmationPhrase }),
       "batch-1",
     );
     expect(published.status).toBe(200);
@@ -623,14 +698,50 @@ describe("publication HTTP handlers", () => {
       id: "batch-2",
       files: [await staged(other, "DSM1/ALP/outro.pdf")],
     });
+    const otherReview = await createPublicationWorkflow({
+      query,
+      source: other,
+      branch: BRANCH,
+    }).reviseBatch("batch-2", []);
+    expect(otherReview.errors).toEqual([]);
     const conflicted = await createPublishHandler(deps(other, "owner"))(
       request({
         baseCommitSha: "a".repeat(40),
-        confirmation: "PUBLICAR 1 ARQUIVOS EM main",
+        confirmation: otherReview.confirmationPhrase,
       }),
       "batch-2",
     );
     expect(conflicted.status).toBe(409);
     expect(await conflicted.json()).toMatchObject({ type: "conflict" });
+  });
+
+  it("audits only successful publications, never rejections or conflicts", async () => {
+    const git = createFakeGit();
+    await seedBatch(git, { files: [await staged(git, "DSM1/ALP/novo.pdf")] });
+    const audits: string[] = [];
+    const handler = createPublishHandler({
+      ...deps(git, "owner"),
+      audit: async () => {
+        audits.push("published");
+      },
+    });
+    const review = await createPublicationWorkflow({ query, source: git, branch: BRANCH }).reviseBatch(
+      "batch-1",
+      [],
+    );
+
+    const rejected = await handler(
+      request({ baseCommitSha: git.head(), confirmation: "wrong phrase" }),
+      "batch-1",
+    );
+    expect(rejected.status).toBe(400);
+    expect(audits).toEqual([]);
+
+    const published = await handler(
+      request({ baseCommitSha: git.head(), confirmation: review.confirmationPhrase }),
+      "batch-1",
+    );
+    expect(published.status).toBe(200);
+    expect(audits).toEqual(["published"]);
   });
 });

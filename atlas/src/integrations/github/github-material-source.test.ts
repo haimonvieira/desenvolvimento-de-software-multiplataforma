@@ -31,7 +31,8 @@ describe("github material source adapter", () => {
     const source = createGitHubMaterialSource(
       transport({
         "/repos/owner/repo/commits/HEAD": { sha: "head-sha" },
-        "/repos/owner/repo/git/trees/head-sha?recursive=1": { tree: [] },
+        "/repos/owner/repo/git/commits/head-sha": { tree: { sha: "tree-sha" } },
+        "/repos/owner/repo/git/trees/tree-sha?recursive=1": { tree: [] },
       }),
       "owner/repo",
     );
@@ -51,6 +52,22 @@ describe("github material source adapter", () => {
     const bytes = await source.readBlob("deadbeef");
     expect(bytes).toEqual(new Uint8Array([72, 105]));
     expect(calls).toEqual(["GET /repos/owner/repo/git/blobs/deadbeef"]);
+  });
+
+  it("resolves commit to tree before hitting the trees endpoint", async () => {
+    const calls: string[] = [];
+    const source = createGitHubMaterialSource(async (path, init) => {
+      calls.push(`${init.method} ${path}`);
+      if (path === "/repos/owner/repo/git/commits/commit-sha") {
+        return { status: 200, json: async () => ({ tree: { sha: "tree-sha" } }) };
+      }
+      return { status: 200, json: async () => ({ tree: [] }) };
+    }, "owner/repo");
+    await source.readTree("commit-sha");
+    expect(calls).toEqual([
+      "GET /repos/owner/repo/git/commits/commit-sha",
+      "GET /repos/owner/repo/git/trees/tree-sha?recursive=1",
+    ]);
   });
 
   it("never calls fetch directly", async () => {

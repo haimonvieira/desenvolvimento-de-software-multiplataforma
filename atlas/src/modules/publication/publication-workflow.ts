@@ -82,8 +82,34 @@ export type PublicationWorkflowDependencies = Readonly<{
 export const DEFAULT_PUBLICATION_BRANCH = "main";
 export const MAX_FILES_PER_PUBLICATION = 100;
 
-export function confirmationPhrase(count: number, branch: string): string {
-  return `PUBLICAR ${count} ARQUIVOS EM ${branch}`;
+export function contentDigest(
+  files: readonly Readonly<{
+    destination: string;
+    blobSha: string;
+    size: number;
+  }>[],
+): string {
+  const canonical = [...files]
+    .map((file) => `${file.destination}\n${file.blobSha}\n${file.size}`)
+    .sort()
+    .join("\n");
+  let hash = 0x811c9dc5;
+  for (let index = 0; index < canonical.length; index += 1) {
+    hash ^= canonical.charCodeAt(index);
+    hash = Math.imul(hash, 0x01000193) >>> 0;
+  }
+  return hash.toString(16).padStart(8, "0");
+}
+
+export function confirmationPhrase(
+  files: readonly Readonly<{
+    destination: string;
+    blobSha: string;
+    size: number;
+  }>[],
+  branch: string,
+): string {
+  return `PUBLICAR ${files.length} ARQUIVOS EM ${branch} #${contentDigest(files)}`;
 }
 
 type BatchRow = Readonly<{
@@ -157,7 +183,7 @@ function emptyReview(
     fileCount: 0,
     files: [],
     errors: [error],
-    confirmationPhrase: confirmationPhrase(0, branch),
+    confirmationPhrase: confirmationPhrase([], branch),
   };
 }
 
@@ -304,7 +330,7 @@ export function createPublicationWorkflow(
         fileCount: files.length,
         files,
         errors: [...applied.errors, ...errors],
-        confirmationPhrase: confirmationPhrase(files.length, branch),
+        confirmationPhrase: confirmationPhrase(files, branch),
       };
     }
     if (applied.renames.length > 0) {
@@ -320,7 +346,7 @@ export function createPublicationWorkflow(
       fileCount: files.length,
       files,
       errors,
-      confirmationPhrase: confirmationPhrase(files.length, branch),
+      confirmationPhrase: confirmationPhrase(files, branch),
     };
   }
 
@@ -345,7 +371,7 @@ export function createPublicationWorkflow(
     const { files, errors } = evaluate(rows, tree);
     if (errors.length > 0) return { type: "rejected", errors };
 
-    const phrase = confirmationPhrase(files.length, branch);
+    const phrase = confirmationPhrase(files, branch);
     if (confirmation !== phrase) {
       return {
         type: "rejected",

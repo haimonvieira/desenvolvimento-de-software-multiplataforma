@@ -45,10 +45,13 @@ export const POST = async (
     repository,
   );
   return createPublishHandler({
-    requireAdmin: (req) => serverAdmin.auditBatchPublication(req),
+    requireAdmin: (req) => serverAdmin.requireAdmin(req),
     query: (text, params) =>
       createSqlExecutor(databaseUrl).query(text, params) as Promise<Record<string, unknown>[]>,
     source,
+    audit: async () => {
+      await serverAdmin.auditBatchPublication(request);
+    },
   })(request, id);
 };
 

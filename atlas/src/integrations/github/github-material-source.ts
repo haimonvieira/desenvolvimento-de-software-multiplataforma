@@ -101,8 +101,14 @@ export function createGitHubMaterialSource(
       return data.sha;
     },
     async readTree(commitSha: string): Promise<readonly GitTreeEntry[]> {
+      // The trees endpoint addresses a tree SHA, not a commit SHA: resolve the
+      // commit to its tree first so callers can pass what they actually hold.
+      const commit = (await call(
+        `/repos/${repository}/git/commits/${commitSha}`,
+        "GET",
+      )) as { tree: { sha: string } };
       const data = (await call(
-        `/repos/${repository}/git/trees/${commitSha}?recursive=1`,
+        `/repos/${repository}/git/trees/${commit.tree.sha}?recursive=1`,
         "GET",
       )) as { tree: GitTreeEntry[] };
       return data.tree;

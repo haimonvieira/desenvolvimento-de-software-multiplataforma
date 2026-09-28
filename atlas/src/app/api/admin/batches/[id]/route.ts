@@ -40,7 +40,7 @@ function unconfigured() {
 }
 
 export const GET = async (
-  _request: Request,
+  request: Request,
   context: { params: Promise<{ id: string }> },
 ): Promise<Response> => {
   const { id } = await context.params;
@@ -58,7 +58,7 @@ export const GET = async (
       runtime.GITHUB_INSTALLATION_TOKEN,
       runtime.GITHUB_REPOSITORY,
     ),
-  })(new Request(`https://atlas.example/api/admin/batches/${id}`), id);
+  })(request, id);
 };
 
 export const POST = async (

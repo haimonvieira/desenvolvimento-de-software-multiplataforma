@@ -93,7 +93,7 @@ function classify(extension: string): { kind: MaterialKind; previewKind: Preview
 function isExcludedPath(path: string, mode: string): boolean {
   const segments = path.split("/");
   const name = segments.at(-1) ?? "";
-  return mode.endsWith("755")
+  return mode !== "100644"
     || segments.some((segment) => EXCLUDED_DIRECTORIES.has(segment))
     || name === ".env"
     || name.startsWith(".env.")

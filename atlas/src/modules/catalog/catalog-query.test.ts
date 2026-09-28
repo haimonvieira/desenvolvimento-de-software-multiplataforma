@@ -74,6 +74,27 @@ describe("catalog builder", () => {
     ]);
   });
 
+  it("rejects symlink blobs from the committed tree", async () => {
+    const root = await fixture({ "DSM1/ALP/aula.md": "lesson" });
+    execFileSync("git", ["init", "--quiet"], { cwd: root });
+    const linkBlob = execFileSync("git", ["hash-object", "-w", "--stdin"], {
+      cwd: root,
+      encoding: "utf8",
+      input: ".env",
+    }).trim();
+    execFileSync("git", ["update-index", "--add", "--cacheinfo", `120000,${linkBlob},DSM1/ALP/private.md`], { cwd: root });
+    execFileSync("git", ["add", "-f", "DSM1/ALP/aula.md"], { cwd: root });
+    execFileSync("git", [
+      "-c", "user.name=Atlas Test", "-c", "user.email=atlas@example.test",
+      "commit", "--quiet", "-m", "symlink fixture",
+    ], { cwd: root });
+    const sha = execFileSync("git", ["rev-parse", "HEAD"], { cwd: root, encoding: "utf8" }).trim();
+
+    const catalog = await buildCatalog(root, sha);
+
+    expect(catalog.materials.map(({ ref }) => ref.path)).toEqual(["DSM1/ALP/aula.md"]);
+  });
+
   it("excludes generated, cache, private, executable, and build artifacts", async () => {
     const root = await fixture({
       "DSM1/ALP/keep.md": "yes",

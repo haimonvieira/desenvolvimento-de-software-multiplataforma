@@ -124,5 +124,40 @@ describe("reviewed synchronization invariants", () => {
     await expect(synchronizeStudy(local, { sync: async (request) => { seen.push(request.requestId); throw new TypeError("still lost"); } }, { deviceId: "00000000-0000-4000-8000-000000000021", retryDelaysMs: [] })).rejects.toThrow("still lost");
     expect(new Set(seen)).toEqual(new Set(["00000000-0000-4000-8000-000000000020"]));
   });
+
+  it("persists and replays the immutable pending body after restart while preserving newer edits", async () => {
+    let requestSequence = 30;
+    let operationSequence = 30;
+    const makeLocal = () => createIndexedDbStudyWorkspace({
+      databaseName,
+      createOperationId: () => `operation-${++operationSequence}`,
+      createSyncRequestId: () => `00000000-0000-4000-8000-${String(++requestSequence).padStart(12, "0")}`,
+    });
+    const firstLocal = makeLocal();
+    await firstLocal.apply({ type: "note.save", note: { id: "note-1", material, text: "primeira", updatedAt: "2026-09-28T16:00:00.000Z", deletedAt: null } });
+    const remote = store();
+    let committedRequest: Parameters<typeof remote.sync>[0] | undefined;
+    await expect(synchronizeStudy(firstLocal, { sync: async (request) => {
+      committedRequest = structuredClone(request);
+      await remote.sync(request);
+      throw new TypeError("response lost");
+    } }, { deviceId: "00000000-0000-4000-8000-000000000031", retryDelaysMs: [] })).rejects.toThrow("response lost");
+
+    await firstLocal.apply({ type: "note.save", note: { id: "note-1", material, text: "mais nova", updatedAt: "2026-09-28T17:00:00.000Z", deletedAt: null } });
+    const restarted = makeLocal();
+    const replayed: Parameters<typeof remote.sync>[0][] = [];
+    const recovered = await synchronizeStudy(restarted, { sync: async (request) => { replayed.push(structuredClone(request)); return remote.sync(request); } }, { deviceId: "00000000-0000-4000-8000-000000000031", retryDelaysMs: [] });
+
+    expect(replayed[0]).toEqual(committedRequest);
+    expect(recovered.snapshot.notes[0].text).toBe("mais nova");
+    expect(recovered.snapshot.outbox).toHaveLength(1);
+    const next: Parameters<typeof remote.sync>[0][] = [];
+    await synchronizeStudy(restarted, { sync: async (request) => { next.push(structuredClone(request)); return remote.sync(request); } }, { deviceId: "00000000-0000-4000-8000-000000000031", retryDelaysMs: [] });
+    expect(next[0].requestId).not.toBe(replayed[0].requestId);
+    expect(next[0].outbox).toHaveLength(1);
+    const queuedChange = next[0].outbox[0].change;
+    if (queuedChange.type !== "note.save") throw new Error("expected queued note");
+    expect(queuedChange.note.text).toBe("mais nova");
+  });
 });
 function neverNote(): never { throw new Error("expected note operation"); }

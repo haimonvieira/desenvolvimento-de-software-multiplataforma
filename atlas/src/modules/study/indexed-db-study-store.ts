@@ -1,3 +1,4 @@
+import type { SyncRequest } from "./neon-study-store";
 import type { Favorite, Flashcard, Note, NoteConflict, OutboxEntry, Progress, StudyChange, StudyRecord, StudySnapshot } from "./model";
 import type { StudyWorkspace } from "./study-workspace";
 
@@ -11,7 +12,7 @@ export interface SyncableStudyWorkspace extends StudyWorkspace {
   reconcile(snapshot: StudySnapshot, conflicts: readonly NoteConflict[], acknowledgedIds: readonly string[], cursor: string): Promise<StudySnapshot>;
   cursor(): Promise<string>;
   clear(): Promise<void>;
-  syncRequestId(): Promise<string>;
+  pendingSyncRequest(deviceId: string): Promise<SyncRequest>;
 }
 
 export function createIndexedDbStudyWorkspace(options: Readonly<{
@@ -98,16 +99,22 @@ export function createIndexedDbStudyWorkspace(options: Readonly<{
     }
   }
 
-  async function syncRequestId(): Promise<string> {
+  async function pendingSyncRequest(deviceId: string): Promise<SyncRequest> {
     const db = await open();
     try {
-      const transaction = db.transaction("meta", "readwrite");
-      const store = transaction.objectStore("meta");
-      const existing = await get<StudyRecord & { value: string }>(store, "sync-request-id");
-      const value = existing?.value ?? createSyncRequestId();
-      if (!existing) store.put({ id: "sync-request-id", value, updatedAt: new Date().toISOString(), deletedAt: null });
+      const transaction = db.transaction(["meta", "outbox"], "readwrite");
+      const meta = transaction.objectStore("meta");
+      const existing = await get<StudyRecord & { value: SyncRequest }>(meta, "sync-request");
+      if (existing) {
+        await transactionDone(transaction);
+        return existing.value;
+      }
+      const cursor = (await get<StudyRecord & { value: string }>(meta, "sync-cursor"))?.value ?? "0";
+      const outbox = (await getAll<OutboxEntry>(transaction.objectStore("outbox"))).toSorted(compareUpdatedAt);
+      const request = { requestId: createSyncRequestId(), deviceId, cursor, outbox };
+      meta.put({ id: "sync-request", value: request, updatedAt: new Date().toISOString(), deletedAt: null });
       await transactionDone(transaction);
-      return value;
+      return request;
     } finally {
       db.close();
     }
@@ -133,7 +140,7 @@ export function createIndexedDbStudyWorkspace(options: Readonly<{
       conflictStore.clear();
       for (const conflict of conflicts) conflictStore.put(conflict);
       transaction.objectStore("meta").put({ id: "sync-cursor", value: nextCursor, updatedAt: new Date().toISOString(), deletedAt: null });
-      transaction.objectStore("meta").delete("sync-request-id");
+      transaction.objectStore("meta").delete("sync-request");
       await transactionDone(transaction);
     } finally {
       db.close();
@@ -147,7 +154,7 @@ export function createIndexedDbStudyWorkspace(options: Readonly<{
     await deleteStudyDatabase(databaseName, factory);
   }
 
-  return { load, apply, reconcile, cursor, syncRequestId, clear };
+  return { load, apply, reconcile, cursor, pendingSyncRequest, clear };
 }
 
 function storesFor(change: StudyChange): readonly [StoreName] {

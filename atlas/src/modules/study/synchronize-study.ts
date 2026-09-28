@@ -6,15 +6,13 @@ export async function synchronizeStudy(
   remote: RemoteStudyStore,
   options: Readonly<{ deviceId: string; retryDelaysMs?: readonly number[] }>,
 ): Promise<SyncResult> {
-  const snapshot = await local.load();
-  const cursor = await local.cursor();
-  const requestId = await local.syncRequestId();
+  const request = await local.pendingSyncRequest(options.deviceId);
   const retryDelays = options.retryDelaysMs ?? [250, 1_000, 4_000];
   let result: SyncResult;
 
   for (let attempt = 0; ; attempt += 1) {
     try {
-      result = await remote.sync({ requestId, deviceId: options.deviceId, cursor, outbox: snapshot.outbox });
+      result = await remote.sync(request);
       break;
     } catch (error) {
       if (attempt >= retryDelays.length) throw error;

@@ -1,7 +1,7 @@
 import catalog from "../../../generated/catalog.json";
-import { StudyMaterialLink } from "../../../modules/study/study-material-link";
+import { StudyDisciplineMaterials } from "../../../modules/study/study-discipline-materials";
 import { createCatalogQuery } from "../../../modules/catalog/catalog-query";
-import type { CatalogData, Material } from "../../../modules/catalog/model";
+import type { CatalogData } from "../../../modules/catalog/model";
 
 const data = catalog as CatalogData;
 const query = createCatalogQuery(data);
@@ -11,10 +11,6 @@ type PageProps = Readonly<{
   searchParams?: Promise<Record<string, string | string[] | undefined>>;
 }>;
 
-function groupName(material: Material): string {
-  const relative = material.ref.path.split("/").slice(2, -1);
-  return relative[0] || "Materiais gerais";
-}
 
 export default async function DisciplinePage({ params, searchParams }: PageProps) {
   const { code } = await params;
@@ -33,7 +29,6 @@ export default async function DisciplinePage({ params, searchParams }: PageProps
   }
 
   const materials = query.browse({ semester: discipline.semesterCode, discipline: discipline.code });
-  const groups = Map.groupBy(materials, groupName);
 
   return (
     <>
@@ -51,22 +46,7 @@ export default async function DisciplinePage({ params, searchParams }: PageProps
             <h1>{discipline.name}</h1>
             <p>{discipline.code} — navegue por pastas ou abra um material diretamente.</p>
           </header>
-          <div className="material-groups">
-            {[...groups].map(([name, entries]) => (
-              <section className="material-group" key={name}>
-                <header><h2>{name}</h2><span>{entries.length} {entries.length === 1 ? "arquivo" : "arquivos"}</span></header>
-                <ul>
-                  {entries.map((material) => (
-                    <li key={material.ref.path}>
-                      <span className="file-type">{material.extension.slice(1).toUpperCase() || "FILE"}</span>
-                      <StudyMaterialLink material={material} />
-                      <small>{material.ref.path.split("/").slice(2, -1).join(" / ") || "Raiz da disciplina"}</small>
-                    </li>
-                  ))}
-                </ul>
-              </section>
-            ))}
-          </div>
+          <StudyDisciplineMaterials materials={materials} />
         </main>
       </div>
     </>

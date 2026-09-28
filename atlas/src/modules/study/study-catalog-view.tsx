@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import type { CatalogDiscipline } from "../catalog/catalog-list";
 import { CatalogView, type CatalogViewMode } from "../catalog/catalog-view";
-import type { Material, MaterialRef } from "../catalog/model";
-import { createIndexedDbStudyWorkspace } from "./indexed-db-study-store";
+import type { Material } from "../catalog/model";
+import { useCurrentStudyMaterial } from "./use-current-study-material";
 
 export function StudyCatalogView(props: Readonly<{
   disciplines: readonly CatalogDiscipline[];
@@ -12,11 +12,13 @@ export function StudyCatalogView(props: Readonly<{
   semester: string;
   view: CatalogViewMode;
 }>) {
-  const [currentMaterial, setCurrentMaterial] = useState<MaterialRef | null>(null);
+  const study = useCurrentStudyMaterial();
+  useEffect(() => { void study.load(); }, [study.load]);
 
-  useEffect(() => {
-    createIndexedDbStudyWorkspace().load().then(({ currentMaterial: current }) => setCurrentMaterial(current)).catch(() => setCurrentMaterial(null));
-  }, []);
-
-  return <CatalogView {...props} currentMaterial={currentMaterial} />;
+  return (
+    <>
+      {study.error && <p className="study-load-error" role="status" aria-label="Estado de estudo">Não foi possível carregar seu progresso. <button type="button" disabled={study.pending} onClick={study.load}>Tentar novamente</button></p>}
+      <CatalogView {...props} currentMaterial={study.currentMaterial} />
+    </>
+  );
 }

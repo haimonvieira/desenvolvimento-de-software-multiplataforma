@@ -1,5 +1,6 @@
 "use client";
 
+import type { FormEvent } from "react";
 import { useEffect, useMemo, useState } from "react";
 import type { MaterialRef } from "../catalog/model";
 import { createIndexedDbStudyWorkspace } from "./indexed-db-study-store";
@@ -19,40 +20,54 @@ export function MaterialStudyControls({ material }: Readonly<{ material: Materia
   const notes = snapshot.notes.filter((entry) => !entry.deletedAt && sameMaterial(entry, material));
   const flashcards = snapshot.flashcards.filter((entry) => !entry.deletedAt && sameMaterial(entry, material));
 
-  useEffect(() => {
-    let current = true;
-    workspace.load()
-      .then((loaded) => { if (current) setSnapshot(loaded); })
-      .catch(() => { if (current) { setUnavailable(true); setError("Não foi possível acessar seus dados de estudo. Tente novamente."); } })
-      .finally(() => { if (current) setPending(false); });
-    return () => { current = false; };
-  }, [workspace]);
-
-  async function mutate(change: Parameters<typeof workspace.apply>[0]) {
+  async function load() {
     setPending(true);
     setError("");
     try {
-      setSnapshot(await workspace.apply(change));
+      setSnapshot(await workspace.load());
+      setUnavailable(false);
     } catch {
-      setError("Não foi possível salvar sua alteração. Tente novamente.");
+      setUnavailable(true);
+      setError("Não foi possível acessar seus dados de estudo.");
     } finally {
       setPending(false);
     }
   }
 
-  async function saveNote(formData: FormData) {
-    const text = String(formData.get("text") ?? "").trim();
-    if (!text) return;
-    const at = new Date().toISOString();
-    await mutate({ type: "note.save", note: { id: crypto.randomUUID(), material, text, updatedAt: at, deletedAt: null } });
+  useEffect(() => { void load(); }, []);
+
+  async function mutate(change: Parameters<typeof workspace.apply>[0]): Promise<boolean> {
+    setPending(true);
+    setError("");
+    try {
+      setSnapshot(await workspace.apply(change));
+      return true;
+    } catch {
+      setError("Não foi possível salvar sua alteração. Tente novamente.");
+      return false;
+    } finally {
+      setPending(false);
+    }
   }
 
-  async function saveFlashcard(formData: FormData) {
-    const front = String(formData.get("front") ?? "").trim();
-    const back = String(formData.get("back") ?? "").trim();
+  async function saveNote(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const form = event.currentTarget;
+    const text = String(new FormData(form).get("text") ?? "").trim();
+    if (!text) return;
+    const at = new Date().toISOString();
+    if (await mutate({ type: "note.save", note: { id: crypto.randomUUID(), material, text, updatedAt: at, deletedAt: null } })) form.reset();
+  }
+
+  async function saveFlashcard(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const form = event.currentTarget;
+    const data = new FormData(form);
+    const front = String(data.get("front") ?? "").trim();
+    const back = String(data.get("back") ?? "").trim();
     if (!front || !back) return;
     const at = new Date().toISOString();
-    await mutate({ type: "flashcard.save", flashcard: { id: crypto.randomUUID(), material, front, back, updatedAt: at, deletedAt: null } });
+    if (await mutate({ type: "flashcard.save", flashcard: { id: crypto.randomUUID(), material, front, back, updatedAt: at, deletedAt: null } })) form.reset();
   }
 
   return (
@@ -61,7 +76,7 @@ export function MaterialStudyControls({ material }: Readonly<{ material: Materia
         <div><p className="study-eyebrow">Estudo local</p><h2 id="study-controls-title">Seu progresso neste material</h2></div>
         <span className="study-status" role="status">{progress?.status === "done" ? "Concluído" : progress?.status === "studying" ? "Em estudo" : "Não iniciado"}</span>
       </header>
-      {error && <p className="study-error" role="alert">{error}</p>}
+      {error && <p className="study-error" role="alert">{error}{unavailable && <> <button type="button" disabled={pending} onClick={load}>Tentar novamente</button></>}</p>}
       <div className="study-actions">
         <button type="button" disabled={pending || unavailable} onClick={() => mutate({ type: "progress.set", material, status: "studying", at: new Date().toISOString() })}>Iniciar</button>
         <button type="button" disabled={pending || unavailable} onClick={() => mutate({ type: "progress.set", material, status: "done", at: new Date().toISOString() })}>Concluir</button>
@@ -70,12 +85,12 @@ export function MaterialStudyControls({ material }: Readonly<{ material: Materia
         </button>
       </div>
       <div className="study-editors">
-        <form action={saveNote}>
+        <form onSubmit={saveNote}>
           <label htmlFor="study-note">Nota</label>
           <textarea id="study-note" name="text" disabled={pending || unavailable} required placeholder="Registre uma observação" />
           <button type="submit" disabled={pending || unavailable}>Salvar nota</button>
         </form>
-        <form action={saveFlashcard}>
+        <form onSubmit={saveFlashcard}>
           <label htmlFor="flashcard-front">Flashcard</label>
           <input id="flashcard-front" name="front" disabled={pending || unavailable} required placeholder="Pergunta" />
           <label className="sr-only" htmlFor="flashcard-back">Resposta</label>

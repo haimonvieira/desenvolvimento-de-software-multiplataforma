@@ -55,3 +55,11 @@ Observed result: `{ offlineStatus: "Em estudo", reloadedStatus: "Em estudo", not
 - Study controls centralize pending/error handling: initial load failure leaves all controls unavailable with a persistent `role=alert`; mutations disable conflicting controls, catch rejection, restore controls, and keep a persistent mutation alert.
 - RED: outbox regression initially collapsed three same-entity/same-timestamp changes into one; two Playwright error-path tests initially found no alert.
 - GREEN: `vitest ...study-workspace.test.ts` passes 6/6; Atlas marker Playwright test passes 1/1; load/mutation failure Playwright tests pass 2/2; `tsc --noEmit` and production build pass.
+
+#### Review round 2
+
+- Material, Atlas, and discipline study loads now expose accessible retry status/actions. A successful retry clears the error and re-enables material controls.
+- Discipline materials use one shared client loader rather than one IndexedDB load per row.
+- Note and flashcard submissions use `onSubmit`; failed writes retain drafts, while successful writes explicitly reset only the submitted form.
+- RED: retry controls/statuses were absent and uncontrolled forms lost drafts after caught write failures.
+- GREEN: `study-state.spec.ts` passes 4/4 for material retry, mutation error, draft retention/success reset, and Atlas/discipline retries; typecheck and production build pass.

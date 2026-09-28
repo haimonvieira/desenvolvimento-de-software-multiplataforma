@@ -427,6 +427,8 @@ main {
 .atlas-station--current { background: var(--color-progress); }
 .current-marker--map { position: absolute; z-index: 4; top: 1.4rem; left: 50%; translate: -50% 0; }
 .catalog-materials li { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); }
+.study-load-error { margin: 0; padding: var(--space-3); border: var(--border-hairline); background: var(--color-selection); font-weight: 600; }
+.study-load-error button, .study-error button { margin-left: var(--space-2); border: 0; background: transparent; font-weight: 600; text-decoration: underline; cursor: pointer; }
 
 @keyframes atlas-route-draw { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
 @keyframes location-pulse { from { translate: 0 0.35rem; } to { translate: 0; } }

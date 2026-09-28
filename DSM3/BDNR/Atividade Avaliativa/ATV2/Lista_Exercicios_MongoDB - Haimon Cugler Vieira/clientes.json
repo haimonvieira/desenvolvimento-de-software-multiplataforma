@@ -1,0 +1,110 @@
+[
+  {
+    "codigo": "CLI001",
+    "nome": "Ana Paula Ribeiro",
+    "email": "ana.ribeiro@email.com",
+    "telefone": "(13) 98888-1011",
+    "cidade": "Registro",
+    "uf": "SP",
+    "segmento": "pessoa fisica"
+  },
+  {
+    "codigo": "CLI002",
+    "nome": "Bruno Martins Costa",
+    "email": "bruno.costa@email.com",
+    "telefone": "(13) 98888-2022",
+    "cidade": "Cajati",
+    "uf": "SP",
+    "segmento": "pessoa fisica"
+  },
+  {
+    "codigo": "CLI003",
+    "nome": "Carla Mendes Souza",
+    "email": "carla.mendes@email.com",
+    "telefone": "(13) 98888-3033",
+    "cidade": "Jacupiranga",
+    "uf": "SP",
+    "segmento": "pessoa fisica"
+  },
+  {
+    "codigo": "CLI004",
+    "nome": "Diego Alves Rocha",
+    "email": "diego.rocha@email.com",
+    "telefone": "(13) 98888-4044",
+    "cidade": "Pariquera-Acu",
+    "uf": "SP",
+    "segmento": "pessoa fisica"
+  },
+  {
+    "codigo": "CLI005",
+    "nome": "Escola Novo Horizonte",
+    "email": "compras@novohorizonte.edu.br",
+    "telefone": "(13) 3211-5055",
+    "cidade": "Registro",
+    "uf": "SP",
+    "segmento": "empresa"
+  },
+  {
+    "codigo": "CLI006",
+    "nome": "FarmaVale Drogaria",
+    "email": "ti@farmavale.com.br",
+    "telefone": "(13) 3211-6066",
+    "cidade": "Cajati",
+    "uf": "SP",
+    "segmento": "empresa"
+  },
+  {
+    "codigo": "CLI007",
+    "nome": "Gabriel Fernandes Lima",
+    "email": "gabriel.lima@email.com",
+    "telefone": "(13) 98888-7077",
+    "cidade": "Eldorado",
+    "uf": "SP",
+    "segmento": "pessoa fisica"
+  },
+  {
+    "codigo": "CLI008",
+    "nome": "Helena Prado Nunes",
+    "email": "helena.nunes@email.com",
+    "telefone": "(13) 98888-8088",
+    "cidade": "Sete Barras",
+    "uf": "SP",
+    "segmento": "pessoa fisica"
+  },
+  {
+    "codigo": "CLI009",
+    "nome": "Inova Contabilidade Ltda",
+    "email": "administrativo@inovacont.com.br",
+    "telefone": "(13) 3211-9099",
+    "cidade": "Registro",
+    "uf": "SP",
+    "segmento": "empresa"
+  },
+  {
+    "codigo": "CLI010",
+    "nome": "Joao Victor Moreira",
+    "email": "joao.moreira@email.com",
+    "telefone": "(13) 98888-1110",
+    "cidade": "Cananeia",
+    "uf": "SP",
+    "segmento": "pessoa fisica"
+  },
+  {
+    "codigo": "CLI011",
+    "nome": "Katia Oliveira Santos",
+    "email": "katia.santos@email.com",
+    "telefone": "(13) 98888-1211",
+    "cidade": "Iguape",
+    "uf": "SP",
+    "segmento": "pessoa fisica"
+  },
+  {
+    "codigo": "CLI012",
+    "nome": "Litoral Sul Assistencia Tecnica",
+    "email": "compras@litoralsultech.com.br",
+    "telefone": "(13) 3211-1312",
+    "cidade": "Registro",
+    "uf": "SP",
+    "segmento": "empresa"
+  }
+]

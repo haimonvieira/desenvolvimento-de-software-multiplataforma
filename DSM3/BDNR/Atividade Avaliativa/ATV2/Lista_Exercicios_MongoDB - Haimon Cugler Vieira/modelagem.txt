@@ -1,0 +1,46 @@
+EXERCÍCIO 2 – Modelagem (referencing vs embedding) e validação de esquema
+
+// 2.7 - Justificativa da modelagem (cliente referenciado, itens incorporados)
+
+O cliente foi referenciado porque seus dados cadastrais podem mudar com o tempo
+(email, telefone, cidade) e, com a referencia, a atualização acontece em um único
+documento, sem precisar alterar todos os pedidos em que ele aparece. Isso também
+evita duplicar os mesmos dados do cliente em cada pedido, economizando espaço e
+mantendo a consistência. Já os itens foram incorporados (embedding) porque
+pertencem exclusivamente a um único pedido: não fazem sentido fora dele, nunca
+são reutilizados por outros documentos e sempre são lidos junto com o pedido, então
+uma única leitura já traz o pedido completo, sem join. Resumindo: referencing para
+dados compartilhados e mutáveis, embedding para dados exclusivos do documento.
+
+// 2.8 - Comando usado para a validação de esquema da coleção pedidos
+// (exige, no mínimo, os campos cliente_id, data e itens)
+
+db.runCommand({
+  collMod: "pedidos",
+  validator: {
+    $jsonSchema: {
+      bsonType: "object",
+      required: ["cliente_id", "data", "itens"],
+      properties: {
+        cliente_id: { bsonType: "string", description: "codigo do cliente - obrigatorio" },
+        data:       { bsonType: "string", description: "data do pedido AAAA-MM-DD - obrigatoria" },
+        itens: {
+          bsonType: "array",
+          minItems: 1,
+          description: "lista de itens - obrigatoria",
+          items: {
+            bsonType: "object",
+            required: ["produto", "quantidade", "preco"],
+            properties: {
+              produto:    { bsonType: "string" },
+              quantidade: { bsonType: "int" },
+              preco:      { bsonType: "double" }
+            }
+          }
+        }
+      }
+    }
+  },
+  validationLevel: "moderate",
+  validationAction: "error"
+})

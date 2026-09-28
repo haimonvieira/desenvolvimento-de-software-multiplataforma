@@ -1,0 +1,53 @@
+MASSA DE DADOS - EXERCÍCIOS PRÁTICOS DE MONGODB
+
+Banco sugerido: lojaTech
+
+Coleções:
+- produtos
+- clientes
+- pedidos
+
+Arquivos JSON:
+- produtos.json: 20 produtos
+- clientes.json: 12 clientes
+- pedidos.json: 20 pedidos
+
+Os arquivos .json estão estruturados como arrays JSON válidos.
+
+OPÇÃO 1 - MongoDB Compass
+1. Criar ou selecionar o banco lojaTech.
+2. Criar a coleção desejada.
+3. Importar o respectivo arquivo JSON.
+
+OPÇÃO 2 - mongoimport
+Para arquivos .json em formato de array:
+mongoimport --uri "<SUA_STRING_DE_CONEXAO>" --db lojaTech --collection produtos --file produtos.json --jsonArray
+mongoimport --uri "<SUA_STRING_DE_CONEXAO>" --db lojaTech --collection clientes --file clientes.json --jsonArray
+mongoimport --uri "<SUA_STRING_DE_CONEXAO>" --db lojaTech --collection pedidos --file pedidos.json --jsonArray
+
+Também foram incluídos arquivos .jsonl, com um documento por linha.
+
+RELACIONAMENTO
+pedidos.cliente_id corresponde a clientes.codigo.
+
+ITENS DOS PEDIDOS
+Cada pedido possui um array itens com:
+- produto_codigo
+- produto
+- quantidade
+- preco
+
+Isso permite praticar:
+- find / findOne
+- projeção
+- operadores de comparação e lógicos
+- sort / skip / limit
+- updateOne / updateMany
+- $set / $inc / $addToSet
+- deleteOne / deleteMany
+- embedding e referencing
+- $unwind / $group / $sum
+- $lookup
+- createIndex / unique / text / explain
+
+Observação: as datas foram mantidas como texto no padrão AAAA-MM-DD para simplificar o trabalho dos alunos neste conjunto de exercícios.

@@ -1,0 +1,101 @@
+EXERCÍCIO 2 – Sistema de Pedidos: embedding e referencing
+Uma loja precisa armazenar seus clientes e os pedidos realizados. Um cliente pode realizar vários pedidos ao longo do tempo e seus dados cadastrais podem ser alterados. Cada pedido possui vários itens que pertencem somente àquele pedido.
+
+//2.1 - Crie duas coleções chamadas clientes e pedidos.
+
+db.createCollection("clientes")
+db.createCollection("pedidos")
+
+//2.2 - Cadastre no mínimo 4 clientes, cada um com identificador próprio, nome, email e telefone.
+
+db.clientes.insertMany([
+  {
+    codigo: "CLI001",
+    nome: "Ana Paula Ribeiro",
+    email: "ana.ribeiro@email.com",
+    telefone: "(13) 98888-1011",
+    cidade: "Registro",
+    uf: "SP",
+    segmento: "pessoa fisica"
+  },
+  {
+    codigo: "CLI002",
+    nome: "Bruno Martins Costa",
+    email: "bruno.costa@email.com",
+    telefone: "(13) 98888-2022",
+    cidade: "Cajati",
+    uf: "SP",
+    segmento: "pessoa fisica"
+  }
+])
+
+demais clientes: clientes.json (CLI003 a CLI012, 12 no total)
+
+//2.3 a 2.6 - Cadastre no mínimo 5 pedidos (2.3). Cada pedido deve possuir cliente_id, data, status e uma lista chamada itens, e dentro de itens documentos com pelo menos produto, quantidade e preço (2.4). Utilize referencing para relacionar cada pedido ao cliente por meio de cliente_id (2.5) e embedding para guardar os itens dentro do documento do pedido (2.6).
+
+db.pedidos.insertMany([
+  {
+    codigo: "PED001",
+    cliente_id: "CLI001",
+    data: "2026-08-03",
+    forma_pagamento: "pix",
+    status: "concluido",
+    itens: [
+      { produto_codigo: "PRD011", produto: "Cabo HDMI 2m", quantidade: 2, preco: 39.90 },
+      { produto_codigo: "PRD002", produto: "Mouse Logitech M170", quantidade: 1, preco: 79.90 }
+    ],
+    total: 214.60
+  }
+])
+
+demais pedidos: pedidos.json (PED002 a PED020, 20 no total)
+
+db.pedidos.aggregate([
+  { $lookup: { from: "clientes", localField: "cliente_id", foreignField: "codigo", as: "cliente" } },
+  { $project: { _id: 0, codigo: 1, data: 1, status: 1, total: 1, cliente: { $first: "$cliente" } } },
+  { $limit: 2 }
+])
+
+//2.7 - Escreva um pequeno texto, com aproximadamente 5 linhas, explicando por que o cliente foi referenciado e os itens foram incorporados ao pedido.
+
+O cliente foi referenciado porque seus dados cadastrais podem mudar com o tempo
+(email, telefone, cidade) e, com a referencia, a atualização acontece em um único
+documento, sem precisar alterar todos os pedidos em que ele aparece. Isso também
+evita duplicar os mesmos dados do cliente em cada pedido, economizando espaço e
+mantendo a consistência. Já os itens foram incorporados (embedding) porque
+pertencem exclusivamente a um único pedido: não fazem sentido fora dele, nunca
+são reutilizados por outros documentos e sempre são lidos junto com o pedido, então
+uma única leitura já traz o pedido completo, sem join. Referencing para dados
+compartilhados e mutáveis, embedding para dados exclusivos do documento.
+
+//2.8 - Crie uma validação de esquema para a coleção pedidos exigindo, no mínimo, os campos cliente_id, data e itens.
+
+db.runCommand({
+  collMod: "pedidos",
+  validator: {
+    $jsonSchema: {
+      bsonType: "object",
+      required: ["cliente_id", "data", "itens"],
+      properties: {
+        cliente_id: { bsonType: "string", description: "codigo do cliente - obrigatorio" },
+        data:       { bsonType: "string", description: "data do pedido AAAA-MM-DD - obrigatoria" },
+        itens: {
+          bsonType: "array",
+          minItems: 1,
+          description: "lista de itens - obrigatoria",
+          items: {
+            bsonType: "object",
+            required: ["produto", "quantidade", "preco"],
+            properties: {
+              produto:    { bsonType: "string" },
+              quantidade: { bsonType: "int" },
+              preco:      { bsonType: "double" }
+            }
+          }
+        }
+      }
+    }
+  },
+  validationLevel: "moderate",
+  validationAction: "error"
+})

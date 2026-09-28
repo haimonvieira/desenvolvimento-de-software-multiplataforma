@@ -113,3 +113,89 @@ db.createCollection("produtos_validacao",
     }
   }
 )
+
+//Exemplo 1 - filtrar uma categoria
+db.produtos.aggregate([
+  {$match: {
+    categoria: 'papelaria'
+  }}
+])
+
+//Exemplo 2 - Filtrar, escolher campos e calcular uma informacao
+db.produto.aggregate([
+  {$match: {
+    categoria: 'infromatica'
+  }},
+  //Escoelhe os campos para mostrar e pode realizar calculos
+  {$project: {
+    _id: 0,
+    nome: 1,
+    preco: 1,
+    // Criou 'caro', pegando campo do preco e verificando se o preco e maior igual que 100
+    caro: {
+      $gt: ['$preco', 100] // '$preco' interpreta o valor do campo 'preco'
+    }
+  }}
+])
+
+/*
+Dentro das expressoes do pipeline, $preco significa "use o valor do campo 'preco'". Sem o cifrao, o MongoDB interpretaria o conteudo como valor literal nao como referencia ao campo
+*/
+
+// Group de Acumuladores
+/*
+'$group' reune documentos que compartilham um criterio. O campo '_id' do group define por qual valor ocorrera o agrupamento. Os acumuladores calculam resultados para cada grupo
+*/
+
+// Exemplo 3: Relatorio por categoria
+db.produtos.aggregate([
+  {$group: {
+    _id: '$categoria',
+    quantidade: {
+      $sum: 1
+    },
+    preco_media: {
+      $avg: '$preco'
+    },
+    mais_barato: {
+      $min: '$preco'
+    },
+    mais_caro: {
+      $max: '$preco'
+    }
+  }},
+  {$sort: {
+    _id: 1
+  }}
+])
+
+//Exemplo 4: Ranking das categorias com mais produtos
+// sort, limit e unwind
+db.produtos.aggregate([
+  {$group: {
+    _id: '$categoria',
+    total: {
+      $sum: 1
+    }
+  }},
+  {$sort: {
+    total: -1,
+    _id: 1
+  }},
+  {
+    $limit: 3
+  }
+])
+
+/*
+ $unwind 'desmonta' um lista, criando uma saida para cada elemento. Na colecao pedido, isso permite tratat=r cada item como uma unidaded de analise
+*/
+// Exemplo 5: Observar o efeito do unwind
+db.produtoss.aggregate([
+  {
+    $unwind: '$itens'
+  },
+  {
+    
+  }
+])

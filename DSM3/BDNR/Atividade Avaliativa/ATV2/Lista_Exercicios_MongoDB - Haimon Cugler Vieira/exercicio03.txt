@@ -1,0 +1,61 @@
+EXERCÍCIO 3 – Relatórios de Vendas com Aggregation Pipeline
+A gerência deseja obter informações resumidas a partir da coleção pedidos criada no exercício anterior, sem analisar cada pedido manualmente. Para isso, será utilizado o pipeline de agregação do MongoDB.
+
+//3.1 a 3.5 - Crie um pipeline que utilize $unwind para trabalhar individualmente com os itens armazenados no array itens (3.1). Agrupe os itens pelo nome do produto utilizando $group (3.2). Calcule, com $sum, a quantidade total vendida de cada produto (3.3). Ordene o resultado da maior para a menor quantidade vendida (3.4). Exiba somente os 3 produtos com maior quantidade vendida (3.5).
+
+db.pedidos.aggregate([
+  { $unwind: "$itens" },
+  { $group: {
+      _id: "$itens.produto",
+      quantidadeTotal: { $sum: "$itens.quantidade" }
+  }},
+  { $sort: { quantidadeTotal: -1 } },
+  { $limit: 3 }
+])
+
+// Exemplo em JSON do formato esperado do resultado:
+[
+  { "_id": "Cabo HDMI 2m",          "quantidadeTotal": 30 },
+  { "_id": "Cabo de Rede Cat6 3m",  "quantidadeTotal": 29 },
+  { "_id": "Mouse Logitech M170",   "quantidadeTotal": 27 }
+]
+
+//3.6 e 3.7 - Crie um segundo pipeline utilizando $lookup para relacionar as coleções pedidos e clientes (3.6). No resultado do segundo pipeline, apresente informações do pedido juntamente com dados do cliente relacionado (3.7).
+
+db.pedidos.aggregate([
+  { $lookup: {
+      from: "clientes",
+      localField: "cliente_id",
+      foreignField: "codigo",
+      as: "cliente"
+  }},
+  { $project: {
+      _id: 0,
+      codigo: 1,
+      data: 1,
+      status: 1,
+      total: 1,
+      cliente: { $first: "$cliente" }
+  }},
+  { $unset: "cliente._id" },
+  { $limit: 2 }
+])
+
+// Exemplo em JSON do formato esperado do resultado:
+[
+  {
+    "codigo": "PED001",
+    "data": "2026-08-03",
+    "status": "concluido",
+    "total": 214.60,
+    "cliente": {
+      "codigo": "CLI001",
+      "nome": "Ana Paula Ribeiro",
+      "email": "ana.ribeiro@email.com",
+      "cidade": "Registro",
+      "uf": "SP",
+      "segmento": "pessoa fisica",
+      "telefone": "(13) 98888-1011"
+    }
+  }
+]

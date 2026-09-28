@@ -1,0 +1,286 @@
+[
+  {
+    "codigo": "PRD001",
+    "nome": "Notebook Lenovo IdeaPad 3",
+    "categoria": "informatica",
+    "descricao": "Notebook para estudos e atividades de escritorio, com SSD e tela de 15,6 polegadas.",
+    "preco": 3299.9,
+    "estoque": 18,
+    "tags": [
+      "notebook",
+      "estudo",
+      "ssd",
+      "informatica"
+    ],
+    "memoria": "8GB",
+    "armazenamento": "256GB SSD"
+  },
+  {
+    "codigo": "PRD002",
+    "nome": "Mouse Logitech M170",
+    "categoria": "perifericos",
+    "descricao": "Mouse sem fio compacto para uso cotidiano em computadores e notebooks.",
+    "preco": 89.9,
+    "estoque": 75,
+    "tags": [
+      "mouse",
+      "sem fio",
+      "periferico",
+      "ergonomico"
+    ]
+  },
+  {
+    "codigo": "PRD003",
+    "nome": "Teclado Redragon Kumara",
+    "categoria": "perifericos",
+    "descricao": "Teclado mecanico compacto voltado para produtividade e jogos.",
+    "preco": 249.9,
+    "estoque": 34,
+    "tags": [
+      "teclado",
+      "mecanico",
+      "periferico",
+      "gamer"
+    ],
+    "layout": "ABNT2"
+  },
+  {
+    "codigo": "PRD004",
+    "nome": "Monitor LG 24MP400",
+    "categoria": "monitores",
+    "descricao": "Monitor de 24 polegadas Full HD indicado para trabalho, estudo e entretenimento.",
+    "preco": 749.9,
+    "estoque": 22,
+    "tags": [
+      "monitor",
+      "full hd",
+      "24 polegadas"
+    ],
+    "tamanho_tela": "24"
+  },
+  {
+    "codigo": "PRD005",
+    "nome": "SSD Kingston NV2 1TB",
+    "categoria": "armazenamento",
+    "descricao": "Unidade SSD NVMe de alto desempenho para computadores e notebooks compativeis.",
+    "preco": 429.9,
+    "estoque": 41,
+    "tags": [
+      "ssd",
+      "nvme",
+      "1tb",
+      "armazenamento"
+    ],
+    "capacidade": "1TB"
+  },
+  {
+    "codigo": "PRD006",
+    "nome": "HD Externo Seagate 2TB",
+    "categoria": "armazenamento",
+    "descricao": "Disco externo USB para backup e transporte de arquivos.",
+    "preco": 489.9,
+    "estoque": 28,
+    "tags": [
+      "hd externo",
+      "backup",
+      "2tb",
+      "armazenamento"
+    ],
+    "capacidade": "2TB"
+  },
+  {
+    "codigo": "PRD007",
+    "nome": "Webcam Logitech C920",
+    "categoria": "acessorios",
+    "descricao": "Webcam Full HD para reunioes, aulas remotas e transmissao de video.",
+    "preco": 459.9,
+    "estoque": 19,
+    "tags": [
+      "webcam",
+      "video",
+      "full hd",
+      "acessorio"
+    ]
+  },
+  {
+    "codigo": "PRD008",
+    "nome": "Headset HyperX Cloud Stinger 2",
+    "categoria": "audio",
+    "descricao": "Headset com microfone ajustavel para comunicacao, estudo e jogos.",
+    "preco": 319.9,
+    "estoque": 31,
+    "tags": [
+      "headset",
+      "audio",
+      "microfone",
+      "gamer"
+    ]
+  },
+  {
+    "codigo": "PRD009",
+    "nome": "Roteador TP-Link Archer C6",
+    "categoria": "redes",
+    "descricao": "Roteador dual band para residencias e pequenos escritorios.",
+    "preco": 289.9,
+    "estoque": 26,
+    "tags": [
+      "roteador",
+      "wifi",
+      "dual band",
+      "redes"
+    ]
+  },
+  {
+    "codigo": "PRD010",
+    "nome": "Switch TP-Link 8 Portas",
+    "categoria": "redes",
+    "descricao": "Switch de mesa para expansao de rede cabeada em pequenos ambientes.",
+    "preco": 129.9,
+    "estoque": 38,
+    "tags": [
+      "switch",
+      "rede",
+      "ethernet",
+      "8 portas"
+    ]
+  },
+  {
+    "codigo": "PRD011",
+    "nome": "Cabo HDMI 2m",
+    "categoria": "cabos",
+    "descricao": "Cabo HDMI de dois metros para conexao de monitores, TVs e projetores.",
+    "preco": 39.9,
+    "estoque": 120,
+    "tags": [
+      "hdmi",
+      "cabo",
+      "video"
+    ]
+  },
+  {
+    "codigo": "PRD012",
+    "nome": "Cabo de Rede Cat6 3m",
+    "categoria": "cabos",
+    "descricao": "Cabo de rede Cat6 para conexoes Gigabit Ethernet.",
+    "preco": 29.9,
+    "estoque": 95,
+    "tags": [
+      "cabo",
+      "cat6",
+      "ethernet",
+      "rede"
+    ]
+  },
+  {
+    "codigo": "PRD013",
+    "nome": "Pen Drive SanDisk 64GB",
+    "categoria": "armazenamento",
+    "descricao": "Pen drive USB para armazenamento e transporte de arquivos.",
+    "preco": 54.9,
+    "estoque": 74,
+    "tags": [
+      "pen drive",
+      "usb",
+      "64gb",
+      "armazenamento"
+    ],
+    "capacidade": "64GB"
+  },
+  {
+    "codigo": "PRD014",
+    "nome": "Fonte Corsair CV550",
+    "categoria": "componentes",
+    "descricao": "Fonte de alimentacao de 550W para computadores de uso geral e intermediario.",
+    "preco": 349.9,
+    "estoque": 17,
+    "tags": [
+      "fonte",
+      "550w",
+      "componente"
+    ],
+    "potencia": "550W"
+  },
+  {
+    "codigo": "PRD015",
+    "nome": "Memoria Kingston Fury 16GB DDR4",
+    "categoria": "componentes",
+    "descricao": "Modulo de memoria RAM DDR4 de 16GB para desktops compativeis.",
+    "preco": 279.9,
+    "estoque": 44,
+    "tags": [
+      "memoria",
+      "ram",
+      "16gb",
+      "ddr4"
+    ],
+    "memoria": "16GB"
+  },
+  {
+    "codigo": "PRD016",
+    "nome": "Hub USB 3.0 4 Portas",
+    "categoria": "acessorios",
+    "descricao": "Hub USB para expansao de portas em notebooks e computadores.",
+    "preco": 89.9,
+    "estoque": 52,
+    "tags": [
+      "hub",
+      "usb",
+      "acessorio"
+    ]
+  },
+  {
+    "codigo": "PRD017",
+    "nome": "Suporte Articulado para Monitor",
+    "categoria": "acessorios",
+    "descricao": "Suporte de mesa articulado para monitores de uso residencial ou profissional.",
+    "preco": 219.9,
+    "estoque": 23,
+    "tags": [
+      "suporte",
+      "monitor",
+      "ergonomia",
+      "acessorio"
+    ]
+  },
+  {
+    "codigo": "PRD018",
+    "nome": "Nobreak Intelbras 1200VA",
+    "categoria": "energia",
+    "descricao": "Nobreak para protecao de computadores, roteadores e equipamentos de escritorio.",
+    "preco": 699.9,
+    "estoque": 14,
+    "tags": [
+      "nobreak",
+      "energia",
+      "protecao"
+    ],
+    "voltagem": "bivolt"
+  },
+  {
+    "codigo": "PRD019",
+    "nome": "Impressora Epson EcoTank L3250",
+    "categoria": "impressao",
+    "descricao": "Impressora multifuncional com tanque de tinta e conexao Wi-Fi.",
+    "preco": 1299.9,
+    "estoque": 11,
+    "tags": [
+      "impressora",
+      "multifuncional",
+      "wifi",
+      "ecotank"
+    ]
+  },
+  {
+    "codigo": "PRD020",
+    "nome": "Cadeira Escritorio Ergonomica",
+    "categoria": "mobiliario",
+    "descricao": "Cadeira com ajustes de altura e apoio lombar para estudo e trabalho.",
+    "preco": 899.9,
+    "estoque": 16,
+    "tags": [
+      "cadeira",
+      "ergonomia",
+      "escritorio"
+    ]
+  }
+]

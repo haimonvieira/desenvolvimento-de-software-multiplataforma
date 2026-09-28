@@ -1,0 +1,51 @@
+EXERCÍCIO 4 – Otimização de Consultas com Índices
+Com o aumento da quantidade de produtos cadastrados, algumas consultas passaram a ser realizadas com muita frequência. O objetivo é utilizar índices para melhorar a eficiência das buscas e analisar como o MongoDB executa uma consulta.
+
+//4.1 - Na coleção produtos, crie um índice único para o campo código.
+
+db.produtos.createIndex({ codigo: 1 }, { unique: true })
+
+//4.2 - Crie um índice composto envolvendo os campos categoria e preço.
+
+db.produtos.createIndex({ categoria: 1, preco: 1 })
+
+//4.3 - Escreva uma consulta que possa se beneficiar do índice composto criado.
+
+db.produtos.find(
+  { categoria: "armazenamento", preco: { $gte: 100 } },
+  { _id: 0, codigo: 1, nome: 1, categoria: 1, preco: 1 }
+)
+
+//4.4 - Execute essa consulta utilizando explain('executionStats') e registre o comando utilizado.
+
+db.produtos.find(
+  { categoria: "armazenamento", preco: { $gte: 100 } },
+  { _id: 0, codigo: 1, nome: 1, categoria: 1, preco: 1 }
+).explain("executionStats")
+
+Resultado: winningPlan usa o estagio IXSCAN com o índice categoria_1_preco_1
+(sem COLLSCAN), com indexBounds categoria = ["armazenamento"] e preco = [100, inf].
+executionStats mostra totalKeysExamined: 2, totalDocsExamined: 2 e nReturned: 2,
+ou seja, o banco leu somente as entradas necessárias do índice e os documentos
+correspondentes, provando o ganho do índice composto.
+
+//4.5 - Crie um índice de texto em um ou mais campos textuais adequados da coleção produtos.
+
+db.produtos.createIndex({ nome: "text", descricao: "text", tags: "text" })
+
+//4.6 - Faça uma pesquisa utilizando $text e $search.
+
+db.produtos.find(
+  { $text: { $search: "ssd wireless" } },
+  { _id: 0, codigo: 1, nome: 1, score: { $meta: "textScore" } }
+).sort({ score: { $meta: "textScore" } })
+
+//4.7 - Escreva entre 3 e 5 linhas explicando por que não é recomendado criar índices em todos os campos de uma coleção.
+
+Não é recomendado criar índices em todos os campos porque cada índice ocupa
+espaço em disco e em memoria RAM, e quanto maior o volume de dados, mais
+recursos são consumidos. Além disso, todo insert, update ou delete precisa
+atualizar todos os índices existentes da coleção, o que torna as operações
+de escrita mais lentas, e muitos desses índices raramente seriam usados pelas
+consultas. O correto e indexar apenas os campos realmente usados em filtros,
+ordenações e joins frequentes, observando o plano de execução com explain.

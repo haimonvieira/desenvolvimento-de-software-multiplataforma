@@ -1,0 +1,98 @@
+[
+  {
+    "codigo": "CLI001",
+    "nome": "Ana Paula Ribeiro",
+    "email": "ana.ribeiro@email.com",
+    "cidade": "Registro",
+    "uf": "SP",
+    "segmento": "pessoa fisica"
+  },
+  {
+    "codigo": "CLI002",
+    "nome": "Bruno Martins Costa",
+    "email": "bruno.costa@email.com",
+    "cidade": "Cajati",
+    "uf": "SP",
+    "segmento": "pessoa fisica"
+  },
+  {
+    "codigo": "CLI003",
+    "nome": "Carla Mendes Souza",
+    "email": "carla.mendes@email.com",
+    "cidade": "Jacupiranga",
+    "uf": "SP",
+    "segmento": "pessoa fisica"
+  },
+  {
+    "codigo": "CLI004",
+    "nome": "Diego Alves Rocha",
+    "email": "diego.rocha@email.com",
+    "cidade": "Pariquera-Acu",
+    "uf": "SP",
+    "segmento": "pessoa fisica"
+  },
+  {
+    "codigo": "CLI005",
+    "nome": "Escola Novo Horizonte",
+    "email": "compras@novohorizonte.edu.br",
+    "cidade": "Registro",
+    "uf": "SP",
+    "segmento": "empresa"
+  },
+  {
+    "codigo": "CLI006",
+    "nome": "FarmaVale Drogaria",
+    "email": "ti@farmavale.com.br",
+    "cidade": "Cajati",
+    "uf": "SP",
+    "segmento": "empresa"
+  },
+  {
+    "codigo": "CLI007",
+    "nome": "Gabriel Fernandes Lima",
+    "email": "gabriel.lima@email.com",
+    "cidade": "Eldorado",
+    "uf": "SP",
+    "segmento": "pessoa fisica"
+  },
+  {
+    "codigo": "CLI008",
+    "nome": "Helena Prado Nunes",
+    "email": "helena.nunes@email.com",
+    "cidade": "Sete Barras",
+    "uf": "SP",
+    "segmento": "pessoa fisica"
+  },
+  {
+    "codigo": "CLI009",
+    "nome": "Inova Contabilidade Ltda",
+    "email": "administrativo@inovacont.com.br",
+    "cidade": "Registro",
+    "uf": "SP",
+    "segmento": "empresa"
+  },
+  {
+    "codigo": "CLI010",
+    "nome": "Joao Victor Moreira",
+    "email": "joao.moreira@email.com",
+    "cidade": "Cananeia",
+    "uf": "SP",
+    "segmento": "pessoa fisica"
+  },
+  {
+    "codigo": "CLI011",
+    "nome": "Katia Oliveira Santos",
+    "email": "katia.santos@email.com",
+    "cidade": "Iguape",
+    "uf": "SP",
+    "segmento": "pessoa fisica"
+  },
+  {
+    "codigo": "CLI012",
+    "nome": "Litoral Sul Assistencia Tecnica",
+    "email": "compras@litoralsultech.com.br",
+    "cidade": "Registro",
+    "uf": "SP",
+    "segmento": "empresa"
+  }
+]

@@ -14,6 +14,8 @@
   // BETTER_AUTH_TRUSTED_ORIGINS, PASSKEY_RP_ID, GITHUB_CLIENT_ID,
   // GITHUB_CLIENT_SECRET, ADMIN_GITHUB_USER_ID, GITHUB_TOKEN,
   // GITHUB_REPOSITORY, TUTOR_SUBJECT_SECRET, GROQ_API_KEY,
+  // GROQ_ADMIN_API_KEY (separate credential for administrative
+  // classification; never the public GROQ_API_KEY),
   // TURNSTILE_SECRET_KEY. TURNSTILE_SITE_KEY is the *public* widget sitekey
   // (a plain [vars] value, not a secret). Preview uses a separate Neon
   // branch and RP ID. No payment method is attached to the Groq account

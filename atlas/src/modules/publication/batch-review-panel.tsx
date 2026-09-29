@@ -31,6 +31,29 @@ type BatchSummary = Readonly<{
   baseCommitSha: string;
 }>;
 
+type SuggestionConfidence = Readonly<Record<"semester" | "discipline" | "path" | "title" | "kind", number>>;
+
+type ClassificationSuggestion = Readonly<{
+  blobSha: string;
+  destination: string;
+  semesterCode: string | null;
+  disciplineCode: string | null;
+  relativePath: string | null;
+  title: string;
+  kind: string;
+  confidence: SuggestionConfidence;
+  warning?: string;
+}>;
+
+type ClassifyPayload = Readonly<{
+  batchId: string;
+  suggestions: readonly ClassificationSuggestion[];
+}>;
+
+function confidenceLabel(value: number): string {
+  return `${Math.round(value * 100)}%`;
+}
+
 export function BatchReviewPanel({ batchId }: { batchId: string }) {
   const [review, setReview] = useState<ReviewPayload | null>(null);
   const [confirmation, setConfirmation] = useState("");
@@ -40,6 +63,9 @@ export function BatchReviewPanel({ batchId }: { batchId: string }) {
   const [revisions, setRevisions] = useState<ReadonlyArray<{ destination: string; newDestination: string }>>([]);
   const [revisionFrom, setRevisionFrom] = useState("");
   const [revisionTo, setRevisionTo] = useState("");
+  const [suggestions, setSuggestions] = useState<readonly ClassificationSuggestion[]>([]);
+  const [classifyError, setClassifyError] = useState<string | null>(null);
+  const [classifyBusy, setClassifyBusy] = useState(false);
 
   const loadReview = useCallback(
     async (pendingRevisions: ReadonlyArray<{ destination: string; newDestination: string }> = []) => {
@@ -93,6 +119,34 @@ export function BatchReviewPanel({ batchId }: { batchId: string }) {
     setRevisionTo("");
     void loadReview(next);
   }, [revisionFrom, revisionTo, revisions, loadReview]);
+
+  // Suggestions are advisory only: they render next to the manual review and
+  // are applied through the same destination-revision path, never by
+  // confirming or publishing the batch.
+  const suggestClassification = useCallback(async () => {
+    setClassifyError(null);
+    setClassifyBusy(true);
+    try {
+      const response = await fetch(`/api/admin/batches/${batchId}/classify`, { method: "POST" });
+      if (!response.ok) {
+        setClassifyError("Falha ao sugerir a classificação.");
+        return;
+      }
+      const payload = (await response.json()) as ClassifyPayload;
+      setSuggestions(payload.suggestions);
+    } finally {
+      setClassifyBusy(false);
+    }
+  }, [batchId]);
+
+  const applySuggestion = useCallback(
+    (destination: string, newDestination: string) => {
+      const next = [...revisions, { destination, newDestination }];
+      setRevisions(next);
+      void loadReview(next);
+    },
+    [revisions, loadReview],
+  );
 
   return (
     <section aria-label="Revisão e publicação">
@@ -148,6 +202,41 @@ export function BatchReviewPanel({ batchId }: { batchId: string }) {
           <button type="button" onClick={() => void publish()} disabled={confirmation.length === 0}>
             Publicar lote
           </button>
+          <fieldset>
+            <legend>Sugestões de classificação</legend>
+            <button type="button" onClick={() => void suggestClassification()} disabled={classifyBusy}>
+              Sugerir classificação
+            </button>
+            {classifyError ? <p role="alert">{classifyError}</p> : null}
+            {suggestions.length > 0 ? (
+              <ul>
+                {suggestions.map((suggestion) => (
+                  <li key={suggestion.blobSha || suggestion.destination}>
+                    <p>
+                      <strong>{suggestion.title}</strong> · {suggestion.destination} · {suggestion.kind}
+                    </p>
+                    <p>
+                      Semestre {suggestion.semesterCode ?? "—"} ({confidenceLabel(suggestion.confidence.semester)}) ·
+                      Disciplina {suggestion.disciplineCode ?? "—"} ({confidenceLabel(suggestion.confidence.discipline)}) ·
+                      Destino {suggestion.relativePath ?? "—"} ({confidenceLabel(suggestion.confidence.path)}) ·
+                      Título ({confidenceLabel(suggestion.confidence.title)}) ·
+                      Tipo ({confidenceLabel(suggestion.confidence.kind)})
+                    </p>
+                    {suggestion.warning ? <p>{suggestion.warning}</p> : null}
+                    <button
+                      type="button"
+                      disabled={suggestion.relativePath === null}
+                      onClick={() => {
+                        if (suggestion.relativePath !== null) applySuggestion(suggestion.destination, suggestion.relativePath);
+                      }}
+                    >
+                      Usar destino sugerido
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            ) : null}
+          </fieldset>
         </>
       ) : null}
       {conflict ? (

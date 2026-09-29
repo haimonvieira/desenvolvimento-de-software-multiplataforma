@@ -272,6 +272,68 @@ describe("BatchReviewPanel", () => {
     expect(alertsWith("Falha ao carregar a revisão do lote")).toHaveLength(1);
     expect(container.querySelector("select")).toBeNull();
   });
+
+  it("renders suggestions with per-field confidence and applies a destination through the manual revision path", async () => {
+    let reviews = 0;
+    stubFetch((url, method) => {
+      if (url.endsWith("/api/admin/batches/batch-1") && method === "POST") {
+        reviews += 1;
+        return jsonResponse(200, reviewPayload(reviews, false));
+      }
+      if (url.endsWith("/api/admin/batches/batch-1/classify")) {
+        return jsonResponse(200, {
+          batchId: "batch-1",
+          suggestions: [
+            {
+              blobSha: "blob-a",
+              destination: "DSM1/ALP/novo-a.pdf",
+              semesterCode: "DSM1",
+              disciplineCode: "ALP",
+              relativePath: "DSM1/ALP/apostila.pdf",
+              title: "Apostila",
+              kind: "document",
+              confidence: { semester: 0.9, discipline: 0.8, path: 0.7, title: 0.6, kind: 0.95 },
+            },
+            {
+              blobSha: "blob-b",
+              destination: "DSM1/ALP/pacote.zip",
+              semesterCode: null,
+              disciplineCode: null,
+              relativePath: null,
+              title: "Pacote",
+              kind: "archive",
+              confidence: { semester: 0, discipline: 0, path: 0, title: 0, kind: 0 },
+              warning: "conteúdo não legível; classificação manual necessária",
+            },
+          ],
+        });
+      }
+      throw new Error(`unexpected fetch ${method} ${url}`);
+    });
+
+    await render(<BatchReviewPanel batchId="batch-1" />);
+    await click(button("Revisar lote"));
+    await click(button("Sugerir classificação"));
+
+    expect(container.textContent).toContain("Apostila");
+    expect(container.textContent).toContain("90%");
+    expect(container.textContent).toContain("conteúdo não legível; classificação manual necessária");
+    const suggestionButtons = [...container.querySelectorAll("button")].filter((candidate) =>
+      candidate.textContent?.includes("Usar destino sugerido"),
+    ) as HTMLButtonElement[];
+    expect(suggestionButtons).toHaveLength(2);
+    // The unreadable archive has no suggested destination and cannot be applied.
+    expect(suggestionButtons[1]!.disabled).toBe(true);
+
+    await click(suggestionButtons[0]!);
+
+    expect(reviews).toBe(2);
+    expect(calls.at(-1)?.body).toEqual({
+      revisions: [{ destination: "DSM1/ALP/novo-a.pdf", newDestination: "DSM1/ALP/apostila.pdf" }],
+    });
+    // Suggestions never publish: no request reaches the publish endpoint.
+    expect(calls.some((call) => call.url.endsWith("/publish"))).toBe(false);
+  });
 });
 
 describe("AdminBatchSelector", () => {

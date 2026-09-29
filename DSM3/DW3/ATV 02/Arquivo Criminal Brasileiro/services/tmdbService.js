@@ -7,22 +7,16 @@ const GENERO_DOCUMENTARIO = 99;
 
 // Função para buscar produções no TMDB
 async function buscar(query) {
-    const token = process.env.TMDB_API_TOKEN;
-
-    // O TMDB aceita duas credenciais, com o mesmo nível de acesso:
-    //  - API Key (v3): 32 caracteres hexadecimais, enviada em ?api_key=
-    //  - Read Access Token (v4): JWT que começa com "eyJ", enviado em Authorization: Bearer
-    const ehReadAccessToken = Boolean(token) && token.startsWith('eyJ');
-    const apiKey = ehReadAccessToken ? '' : `&api_key=${encodeURIComponent(token)}`;
-    const autorizacao = ehReadAccessToken ? { 'Authorization': `Bearer ${token}` } : {};
-
-    // Chamando o endpoint Search Multi do TMDB
-    const resposta = await fetch(`https://api.themoviedb.org/3/search/multi?query=${encodeURIComponent(query)}&language=pt-BR${apiKey}`, {
-        headers: {
-            ...autorizacao,
+    const token = process.env.TMDB_READ_READ_ACCESS_TOKEN;
+    const options = {
+        method: 'GET',
+        'headers':
+        {
+            'Authorization': `Bearer ${token}`,
             'accept': 'application/json'
-        }
-    });
+        }  
+    }
+    const resposta = await fetch(`https://api.themoviedb.org/3/search/multi?query=${encodeURIComponent(query)}&language=pt-BR`, options);
 
     // Sem esta checagem um token inválido/limite excedido viraria "nenhum resultado".
     if (!resposta.ok) {

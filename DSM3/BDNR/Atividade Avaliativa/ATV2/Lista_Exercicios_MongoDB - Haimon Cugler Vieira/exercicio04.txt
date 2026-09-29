@@ -23,29 +23,17 @@ db.produtos.find(
   { _id: 0, codigo: 1, nome: 1, categoria: 1, preco: 1 }
 ).explain("executionStats")
 
-Resultado: winningPlan usa o estagio IXSCAN com o índice categoria_1_preco_1
-(sem COLLSCAN), com indexBounds categoria = ["armazenamento"] e preco = [100, inf].
-executionStats mostra totalKeysExamined: 2, totalDocsExamined: 2 e nReturned: 2,
-ou seja, o banco leu somente as entradas necessárias do índice e os documentos
-correspondentes, provando o ganho do índice composto.
-
 //4.5 - Crie um índice de texto em um ou mais campos textuais adequados da coleção produtos.
 
 db.produtos.createIndex({ nome: "text", descricao: "text", tags: "text" })
 
 //4.6 - Faça uma pesquisa utilizando $text e $search.
 
-db.produtos.find(
-  { $text: { $search: "ssd wireless" } },
-  { _id: 0, codigo: 1, nome: 1, score: { $meta: "textScore" } }
-).sort({ score: { $meta: "textScore" } })
+db.produtos.find({ $text: { $search: "ssd wireless" } })
 
 //4.7 - Escreva entre 3 e 5 linhas explicando por que não é recomendado criar índices em todos os campos de uma coleção.
 
-Não é recomendado criar índices em todos os campos porque cada índice ocupa
-espaço em disco e em memoria RAM, e quanto maior o volume de dados, mais
-recursos são consumidos. Além disso, todo insert, update ou delete precisa
-atualizar todos os índices existentes da coleção, o que torna as operações
-de escrita mais lentas, e muitos desses índices raramente seriam usados pelas
-consultas. O correto e indexar apenas os campos realmente usados em filtros,
-ordenações e joins frequentes, observando o plano de execução com explain.
+Cada índice ocupa espaço em disco e memória RAM, e todo insert, update ou
+delete precisa mantê-los atualizados, o que deixa a escrita mais lenta.
+Muitos índices nunca são usados por consulta alguma. O certo é indexar só os
+campos realmente filtrados, ordenados ou usados em join, conferindo com explain.

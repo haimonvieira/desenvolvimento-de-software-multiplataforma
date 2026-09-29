@@ -13,7 +13,7 @@ db.pedidos.aggregate([
   { $limit: 3 }
 ])
 
-// Exemplo em JSON do formato esperado do resultado:
+Exemplo em JSON do formato esperado do resultado:
 [
   { "_id": "Cabo HDMI 2m",          "quantidadeTotal": 30 },
   { "_id": "Cabo de Rede Cat6 3m",  "quantidadeTotal": 29 },
@@ -41,7 +41,7 @@ db.pedidos.aggregate([
   { $limit: 2 }
 ])
 
-// Exemplo em JSON do formato esperado do resultado:
+Exemplo em JSON do formato esperado do resultado:
 [
   {
     "codigo": "PED001",

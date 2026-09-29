@@ -2,15 +2,11 @@ EXERCÍCIO 2 – Modelagem (referencing vs embedding) e validação de esquema
 
 // 2.7 - Justificativa da modelagem (cliente referenciado, itens incorporados)
 
-O cliente foi referenciado porque seus dados cadastrais podem mudar com o tempo
-(email, telefone, cidade) e, com a referencia, a atualização acontece em um único
-documento, sem precisar alterar todos os pedidos em que ele aparece. Isso também
-evita duplicar os mesmos dados do cliente em cada pedido, economizando espaço e
-mantendo a consistência. Já os itens foram incorporados (embedding) porque
-pertencem exclusivamente a um único pedido: não fazem sentido fora dele, nunca
-são reutilizados por outros documentos e sempre são lidos junto com o pedido, então
-uma única leitura já traz o pedido completo, sem join. Resumindo: referencing para
-dados compartilhados e mutáveis, embedding para dados exclusivos do documento.
+O cliente foi referenciado porque seus dados cadastrais mudam com o tempo
+(email, telefone), então a atualização fica em um único documento, sem alterar
+todos os pedidos do cliente e sem duplicar cadastro. Já os itens foram
+incorporados porque pertencem a um único pedido e sempre são lidos junto com
+ele, assim uma leitura já traz o pedido completo, sem join.
 
 // 2.8 - Comando usado para a validação de esquema da coleção pedidos
 // (exige, no mínimo, os campos cliente_id, data e itens)

@@ -35,7 +35,8 @@ function ledgerWith(decision: BudgetDecision): UsageLedger {
     readQuota: async () => ({
       scope: "public", requestsThisHour: 0, requestsPerHour: 5,
       requestsToday: 0, requestsPerDay: 15, globalTurnsToday: 0,
-      globalTurnsPerDay: 300, resetsAt: "2026-09-29T00:00:00.000Z",
+      globalTurnsPerDay: 30, globalTokensToday: 0, globalTokensPerDay: 150_000,
+      resetsAt: "2026-09-29T00:00:00.000Z",
     }),
     hasSponsoredHistory: async () => true,
   };

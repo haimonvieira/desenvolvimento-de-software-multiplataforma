@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
-import { readByokKey, redactSecret } from "./byok";
+import { TutorProviderError } from "../../integrations/ai/public-tutor-ai";
+import { readByokKey } from "./byok";
 
 const KEY = "sk-visitor-secret-key";
 
@@ -30,9 +31,12 @@ describe("BYOK key handling", () => {
     expect(readByokKey(new Request("https://atlas.test/api/tutor/turn", { headers: { authorization: "Bearer   " } }))).toBeNull();
   });
 
-  it("strips the key from any string before it could be logged", () => {
-    expect(redactSecret(`falha ao usar ${KEY} no provedor`, KEY)).toBe("falha ao usar [redigido] no provedor");
-    expect(redactSecret("mensagem sem segredo", KEY)).toBe("mensagem sem segredo");
-    expect(redactSecret(`falha ${KEY}`, null)).toBe(`falha ${KEY}`);
+  it("never puts the key into a provider failure message", () => {
+    // The redaction helper was deleted as dead code: no sink logs provider text,
+    // and every failure the adapter raises carries a fixed message, so there is
+    // nothing to redact. This pins that structural guarantee instead.
+    const failure = new TutorProviderError({ kind: "auth" });
+    expect(failure.message).not.toContain(KEY);
+    expect(failure.message).not.toContain("sk-");
   });
 });

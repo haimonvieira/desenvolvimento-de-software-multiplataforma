@@ -11,7 +11,7 @@ Aplicação mínima App Router/TypeScript para validar o runtime do DSM Atlas no
 
 ## Configuração
 
-Defina `DATABASE_URL`, `GITHUB_TOKEN` e `TUTOR_SUBJECT_SECRET` (32+ bytes, usado para derivar a chave anônima da cota de IA) como secrets do Worker (`wrangler secret put ...`). Defina `GITHUB_REPOSITORY` como `owner/repository` em configuração de ambiente. Nenhum desses valores pertence ao bundle cliente ou ao repositório.
+Defina `DATABASE_URL`, `GITHUB_TOKEN`, `TUTOR_SUBJECT_SECRET` (32+ bytes, usado para derivar a chave anônima da cota de IA), `GROQ_API_KEY` (chave do tutor público patrocinado) e `TURNSTILE_SECRET_KEY` (verificação do primeiro uso patrocinado) como secrets do Worker (`wrangler secret put ...`). Defina `GITHUB_REPOSITORY` como `owner/repository` em configuração de ambiente. Nenhum desses valores pertence ao bundle cliente ou ao repositório. Nenhuma forma de pagamento é associada à conta do Groq (especificação do provedor §3): a proteção real é o teto interno (150.000 tokens/dia, 30 turnos/dia, 1 turno por vez), que falha fechado.
 
 ## Comandos
 

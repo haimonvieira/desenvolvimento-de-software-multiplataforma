@@ -29,6 +29,14 @@ const ALLOWED_TOOLS: Readonly<Record<string, true>> = Object.freeze(
 /** The only answer the tutor gives when nothing it retrieved supports the claim. */
 export const UNSUPPORTED_ANSWER = "Não encontrei isso nos materiais.";
 
+/**
+ * The one bound on how many materials a turn may carry. The turn route's schema
+ * and the tutor page both use it, so the page can never post a context the route
+ * rejects — the previous mismatch (every DSM1 material versus a cap of 10) made
+ * the tutor unusable from its own page.
+ */
+export const TUTOR_CONTEXT_LIMIT = 10;
+
 const DEFAULT_RETRIEVAL_LIMIT = 6;
 
 export type TutorTurnMode =

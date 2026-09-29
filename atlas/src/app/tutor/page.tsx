@@ -2,6 +2,7 @@ import catalog from "../../generated/catalog.json";
 import { createCatalogQuery } from "../../modules/catalog/catalog-query";
 import type { CatalogData } from "../../modules/catalog/model";
 import { TutorPanel } from "../../modules/study/tutor-panel";
+import { tutorCandidates } from "../../modules/study/tutor-context";
 
 const data = catalog as CatalogData;
 const catalogQuery = createCatalogQuery(data);
@@ -11,18 +12,19 @@ type TutorPageProps = Readonly<{
 }>;
 
 /**
- * The public tutor page. The context is the visitor's studied materials when
- * known, otherwise the published catalog: the orchestrator never retrieves
- * outside the refs named here, and the page itself holds no provider, key or
- * notebook write — those live in the route, the session state and the explicit
- * save action.
+ * The public tutor page. It offers the semester's indexable materials as
+ * candidates; the panel narrows them to what the visitor is actually studying
+ * and caps the turn to the turn route's `TUTOR_CONTEXT_LIMIT`, so the context
+ * this page produces is always one the route accepts. The page itself holds no
+ * provider, key or notebook write — those live in the route, the session state
+ * and the explicit save action.
  */
 export default async function TutorPage({ searchParams }: TutorPageProps) {
   const requested = await searchParams;
   const semesterValue = typeof requested?.semester === "string" ? requested.semester : undefined;
   const knownSemesters = data.semesters.map(({ code }) => code);
   const semester = knownSemesters.includes(semesterValue ?? "") ? semesterValue! : "DSM1";
-  const context = catalogQuery.browse({ semester }).map((material) => material.ref);
+  const candidates = tutorCandidates(catalogQuery.browse({ semester }));
 
   return (
     <>
@@ -35,9 +37,9 @@ export default async function TutorPage({ searchParams }: TutorPageProps) {
         <main className="public-page" id="conteudo">
           <header className="public-heading">
             <h1>Tutor de estudo</h1>
-            <p>Respostas citam os materiais em estudo. Nenhum provedor está vinculado ainda.</p>
+            <p>Respostas citam os materiais em estudo. O modo patrocinado usa a cota do portal; com sua chave, o uso é por sua conta.</p>
           </header>
-          <TutorPanel context={context} />
+          <TutorPanel candidates={candidates} />
         </main>
       </div>
     </>

@@ -58,8 +58,15 @@ DECLARE
   per_hour integer := COALESCE((p_policy->>'requestsPerHour')::integer, 0);
   per_day integer := COALESCE((p_policy->>'requestsPerDay')::integer, 0);
   global_per_day integer := COALESCE((p_policy->>'globalTurnsPerDay')::integer, 0);
-  expires_at timestamptz := p_now + make_interval(secs => deadline_seconds::double precision);
+  -- The organization-level token ceiling (Groq free tier: 200.000 TPD). Every
+  -- turn reserves its worst-case tokens, so the global day row always knows
+  -- the committed spend; a turn that would push it past the ceiling is denied
+  -- before any provider call. 0/absent disables the ceiling (legacy policies).
+  global_tokens_per_day bigint := COALESCE((p_policy->>'globalTokensPerDay')::bigint, 0);
+  max_concurrent integer := COALESCE((p_policy->>'maxConcurrentTurns')::integer, 0);
+  v_expires_at timestamptz := p_now + make_interval(secs => deadline_seconds::double precision);
   changed integer;
+  in_flight integer;
 BEGIN
   IF p_scope NOT IN ('public', 'admin') THEN
     RAISE EXCEPTION 'invalid scope' USING ERRCODE = '22023';
@@ -78,6 +85,16 @@ BEGIN
   -- the ceiling under the row lock it takes, so two concurrent final-slot
   -- requests cannot both win.
   BEGIN
+    -- Sponsored concurrency: at most maxConcurrentTurns live reservations per
+    -- scope. The count runs inside this function's implicit transaction, so two
+    -- concurrent first turns serialize on the ai_reservation rows they read and
+    -- only one passes. 0/absent disables the check (legacy policies).
+    IF max_concurrent >= 1 THEN
+      SELECT count(*) INTO in_flight FROM ai_reservation
+        WHERE scope = p_scope AND status IN ('reserved', 'unknown') AND ai_reservation.expires_at > p_now;
+      IF in_flight >= max_concurrent THEN RAISE EXCEPTION 'concurrent' USING ERRCODE = 'AT004'; END IF;
+    END IF;
+
     INSERT INTO ai_usage_window (scope, subject_key, window_kind, window_start, requests, reserved_input_tokens, reserved_output_tokens, updated_at)
     SELECT p_scope, p_subject_key, 'hour', hour_start, 1, max_input, max_output, p_now
     WHERE per_hour >= 1
@@ -102,25 +119,45 @@ BEGIN
     GET DIAGNOSTICS changed = ROW_COUNT;
     IF changed = 0 THEN RAISE EXCEPTION 'daily' USING ERRCODE = 'AT002'; END IF;
 
+    -- The token ceiling is enforced on the global day row: the row holds the
+    -- worst-case reservation of every live turn plus the actual spend of every
+    -- settled turn, so refusing when reserved + actual + this turn would exceed
+    -- the ceiling keeps the organization under its daily token budget. The
+    -- predicate re-evaluates under the row lock, so concurrent turns cannot
+    -- both slip past the last free tokens.
     INSERT INTO ai_usage_window (scope, subject_key, window_kind, window_start, requests, reserved_input_tokens, reserved_output_tokens, updated_at)
     SELECT p_scope, '*', 'global', day_start, 1, max_input, max_output, p_now
     WHERE global_per_day >= 1
+      AND (global_tokens_per_day IS NULL OR global_tokens_per_day < 1
+        OR (max_input::bigint + max_output::bigint) > global_tokens_per_day
+        OR NOT EXISTS (
+          SELECT 1 FROM ai_usage_window existing
+          WHERE existing.scope = p_scope AND existing.subject_key = '*'
+            AND existing.window_kind = 'global' AND existing.window_start = day_start
+            AND (existing.reserved_input_tokens + existing.reserved_output_tokens
+              + existing.input_tokens + existing.output_tokens
+              + max_input::bigint + max_output::bigint) > global_tokens_per_day
+        ))
     ON CONFLICT (scope, subject_key, window_kind, window_start) DO UPDATE
       SET requests = ai_usage_window.requests + 1,
           reserved_input_tokens = ai_usage_window.reserved_input_tokens + EXCLUDED.reserved_input_tokens,
           reserved_output_tokens = ai_usage_window.reserved_output_tokens + EXCLUDED.reserved_output_tokens,
           updated_at = EXCLUDED.updated_at
-      WHERE ai_usage_window.requests < global_per_day;
+      WHERE ai_usage_window.requests < global_per_day
+        AND (global_tokens_per_day IS NULL OR global_tokens_per_day < 1
+          OR (ai_usage_window.reserved_input_tokens + ai_usage_window.reserved_output_tokens
+            + ai_usage_window.input_tokens + ai_usage_window.output_tokens
+            + EXCLUDED.reserved_input_tokens + EXCLUDED.reserved_output_tokens) <= global_tokens_per_day);
     GET DIAGNOSTICS changed = ROW_COUNT;
     IF changed = 0 THEN RAISE EXCEPTION 'global' USING ERRCODE = 'AT003'; END IF;
 
     INSERT INTO ai_reservation (id, scope, subject_key, status, max_input_tokens, max_output_tokens, max_tool_calls, created_at, expires_at)
-    VALUES (p_reservation_id, p_scope, p_subject_key, 'reserved', max_input, max_output, max_tools, p_now, expires_at);
+    VALUES (p_reservation_id, p_scope, p_subject_key, 'reserved', max_input, max_output, max_tools, p_now, v_expires_at);
 
     RETURN jsonb_build_object('type', 'reserved', 'reservationId', p_reservation_id,
       'maxInputTokens', max_input, 'maxOutputTokens', max_output, 'maxToolCalls', max_tools,
-      'expiresAt', to_char(expires_at AT TIME ZONE 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS.MS"Z"'));
-  -- Only the three tagged window denials are caught here, so an unexpected
+      'expiresAt', to_char(v_expires_at AT TIME ZONE 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS.MS"Z"'));
+  -- Only the four tagged denials are caught here, so an unexpected
   -- error (for example a duplicate reservation id) surfaces as an error instead
   -- of being reported as an exhausted quota.
   EXCEPTION
@@ -133,6 +170,9 @@ BEGIN
     WHEN SQLSTATE 'AT003' THEN
       RETURN jsonb_build_object('type', 'denied', 'reason', 'global',
         'resetsAt', to_char((day_start + interval '1 day') AT TIME ZONE 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS.MS"Z"'));
+    WHEN SQLSTATE 'AT004' THEN
+      RETURN jsonb_build_object('type', 'denied', 'reason', 'global',
+        'resetsAt', to_char((hour_start + interval '1 hour') AT TIME ZONE 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS.MS"Z"'));
   END;
 END;
 $$;
@@ -201,7 +241,7 @@ DECLARE
   expired integer := 0;
 BEGIN
   FOR reservation IN
-    SELECT * FROM ai_reservation WHERE status IN ('reserved', 'unknown') AND expires_at <= p_now FOR UPDATE
+    SELECT * FROM ai_reservation WHERE status IN ('reserved', 'unknown') AND ai_reservation.expires_at <= p_now FOR UPDATE
   LOOP
     UPDATE ai_usage_window w
       SET reserved_input_tokens = GREATEST(0, w.reserved_input_tokens - reservation.max_input_tokens),
@@ -232,12 +272,16 @@ DECLARE
   used_hour integer := 0;
   used_day integer := 0;
   used_global integer := 0;
+  used_global_tokens bigint := 0;
 BEGIN
   SELECT COALESCE(sum(requests), 0) INTO used_hour FROM ai_usage_window
     WHERE scope = p_scope AND subject_key = p_subject_key AND window_kind = 'hour' AND window_start = hour_start;
   SELECT COALESCE(sum(requests), 0) INTO used_day FROM ai_usage_window
     WHERE scope = p_scope AND subject_key = p_subject_key AND window_kind = 'day' AND window_start = day_start;
   SELECT COALESCE(sum(requests), 0) INTO used_global FROM ai_usage_window
+    WHERE scope = p_scope AND window_kind = 'global' AND window_start = day_start;
+  SELECT COALESCE(sum(reserved_input_tokens + reserved_output_tokens + input_tokens + output_tokens), 0)
+    INTO used_global_tokens FROM ai_usage_window
     WHERE scope = p_scope AND window_kind = 'global' AND window_start = day_start;
 
   RETURN jsonb_build_object(
@@ -248,6 +292,8 @@ BEGIN
     'requestsPerDay', COALESCE((p_policy->>'requestsPerDay')::integer, 0),
     'globalTurnsToday', used_global,
     'globalTurnsPerDay', COALESCE((p_policy->>'globalTurnsPerDay')::integer, 0),
+    'globalTokensToday', used_global_tokens,
+    'globalTokensPerDay', COALESCE((p_policy->>'globalTokensPerDay')::bigint, 0),
     'resetsAt', to_char((hour_start + interval '1 hour') AT TIME ZONE 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS.MS"Z"')
   );
 END;

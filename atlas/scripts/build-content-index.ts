@@ -5,35 +5,10 @@ import { fileURLToPath } from "node:url";
 
 import type { MaterialRef } from "../src/modules/catalog/model";
 import type { ContentChunk, IndexedFormat, IndexManifest, LineLocator, MaterialIndex } from "../src/modules/tutor/model";
-import { chunkHash, materialHash } from "../src/modules/tutor/model.ts";
+import { chunkHash, indexFormatFor, materialHash } from "../src/modules/tutor/model.ts";
 import { isExcludedPath, listGitTree, resolveCommitSha, SECRET_MARKER } from "./build-catalog.ts";
 
-/**
- * Only plain UTF-8 study text is indexed: Markdown, TXT, SQL and source code.
- * Binary Office/PDF files stay metadata-only (citable by preview, never as
- * retrievable text). JSON/XML/properties are deliberately excluded because they
- * are configuration-shaped and carry no study prose.
- */
-const INDEXABLE_FORMATS: Record<string, IndexedFormat> = {
-  ".md": "markdown",
-  ".markdown": "markdown",
-  ".txt": "text",
-  ".text": "text",
-  ".sql": "sql",
-  ".c": "code",
-  ".cpp": "code",
-  ".cs": "code",
-  ".css": "code",
-  ".htm": "code",
-  ".html": "code",
-  ".java": "code",
-  ".js": "code",
-  ".jsx": "code",
-  ".php": "code",
-  ".py": "code",
-  ".ts": "code",
-  ".tsx": "code",
-};
+export { indexFormatFor };
 
 const MAX_INDEX_BYTES = 400_000;
 const MAX_CHUNK_LINES = 40;
@@ -50,10 +25,6 @@ export type ContentIndexBuild = Readonly<{
   manifest: IndexManifest;
   assets: readonly ContentIndexAsset[];
 }>;
-
-export function indexFormatFor(extension: string): IndexedFormat | null {
-  return INDEXABLE_FORMATS[extension] ?? null;
-}
 
 function isBlank(line: string | undefined): boolean {
   return line === undefined || line.trim().length === 0;

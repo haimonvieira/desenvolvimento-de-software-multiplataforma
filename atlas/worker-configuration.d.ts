@@ -10,5 +10,8 @@ declare module "cloudflare:workers" {
     GITHUB_CLIENT_ID?: string;
     GITHUB_CLIENT_SECRET?: string;
     ADMIN_GITHUB_USER_ID?: string;
+    TUTOR_SUBJECT_SECRET?: string;
+    GROQ_API_KEY?: string;
+    TURNSTILE_SECRET_KEY?: string;
   };
 }

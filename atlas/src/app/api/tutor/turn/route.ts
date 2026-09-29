@@ -1,18 +1,22 @@
 import { env } from "cloudflare:workers";
 import { z } from "zod";
 
+import { turnstileGateFromEnv } from "../../../../integrations/cloudflare/turnstile-gate";
 import type { PublicTutorAi } from "../../../../integrations/ai/public-tutor-ai";
+import { TutorProviderError } from "../../../../integrations/ai/public-tutor-ai";
+import { createByokGroqPublicTutorAi, createGroqPublicTutorAi } from "../../../../integrations/ai/groq-public-tutor-ai";
 import { createSqlExecutor } from "../../../../integrations/neon/db";
 import { readByokKey } from "../../../../modules/tutor/byok";
 import { createContentRetriever } from "../../../../modules/tutor/content-retriever";
 import type { ContentRetriever } from "../../../../modules/tutor/model";
-import { createStudyTutor, type StudyTutor, type TutorTurnRequest } from "../../../../modules/tutor/study-tutor";
+import { createStudyTutor, TUTOR_CONTEXT_LIMIT, type StudyTutor, type TutorTurnRequest } from "../../../../modules/tutor/study-tutor";
 import { createUsageLedger, deriveSubjectKey, readClientIp, type UsageLedger } from "../../../../modules/tutor/usage-ledger";
 
 export const tutorTurnSchema = z.object({
   question: z.string().trim().min(1).max(500),
-  context: z.array(z.object({ path: z.string().min(1).max(500), commitSha: z.string().min(1).max(160) })).min(1).max(10),
+  context: z.array(z.object({ path: z.string().min(1).max(500), commitSha: z.string().min(1).max(160) })).min(1).max(TUTOR_CONTEXT_LIMIT),
   mode: z.enum(["sponsored", "byok"]).default("sponsored"),
+  turnstileToken: z.string().max(2048).optional(),
 }).strict();
 
 export type TutorTurnDependencies = Readonly<{
@@ -20,6 +24,11 @@ export type TutorTurnDependencies = Readonly<{
   /** Sponsored mode only: the quota ledger and the anonymous subject derivation. */
   ledger?: UsageLedger;
   subjectKey?(request: Request): Promise<string>;
+  /**
+   * Gates the first sponsored turn with Turnstile. Absent means the turn fails
+   * closed for subjects without sponsored history.
+   */
+  firstUseGate?(input: Readonly<{ request: Request; turnstileToken: string | null }>): Promise<boolean>;
   /**
    * The provider bindings. Both stay unbound until the provider decision, and
    * the route reports `PROVIDER_UNBOUND` while they are absent — it never
@@ -69,11 +78,26 @@ export function createTutorTurnHandler(dependencies: TutorTurnDependencies) {
       if (!dependencies.sponsoredAi || !dependencies.ledger || !subjectKey) {
         return error("PROVIDER_UNBOUND", "Provedor patrocinado ainda não configurado.", 503);
       }
-      const tutor = createStudyTutor({ retriever: dependencies.retriever, ai: dependencies.sponsoredAi, ledger: dependencies.ledger });
-      return await respond(tutor, { question, context, mode: { type: "sponsored", subjectKey: await subjectKey(request) } });
-    } catch {
+      const ledger = dependencies.ledger;
+      const key = await subjectKey(request);
+      if (ledger.policy("public").enabled && !(await ledger.hasSponsoredHistory({ scope: "public", subjectKey: key }))) {
+        const verified = dependencies.firstUseGate
+          ? await dependencies.firstUseGate({ request, turnstileToken: parsed.data.turnstileToken ?? null })
+          : false;
+        if (!verified) return error("TURNSTILE_REQUIRED", "Verificação necessária.", 403);
+      }
+      const tutor = createStudyTutor({ retriever: dependencies.retriever, ai: dependencies.sponsoredAi, ledger });
+      return await respond(tutor, { question, context, mode: { type: "sponsored", subjectKey: key } });
+    } catch (failure) {
       // Provider failures are never echoed: a BYOK key can appear inside a
-      // provider message, and this route neither returns nor logs it.
+      // provider message, and this route neither returns nor logs it. A 429 is
+      // a spent quota with a retry hint; everything else fails closed.
+      if (failure instanceof TutorProviderError && failure.failure.kind === "rate_limited") {
+        return Response.json(
+          { error: { code: "PROVIDER_QUOTA", message: failure.message }, retryAfterSeconds: failure.failure.retryAfterSeconds },
+          { status: 429, headers: failure.failure.retryAfterSeconds !== null ? { "retry-after": String(failure.failure.retryAfterSeconds) } : {} },
+        );
+      }
       return error("TUTOR_TURN_FAILED", "Não foi possível responder agora.", 502);
     }
   };
@@ -82,18 +106,22 @@ export function createTutorTurnHandler(dependencies: TutorTurnDependencies) {
 type TutorTurnEnv = {
   DATABASE_URL?: string;
   TUTOR_SUBJECT_SECRET?: string;
+  GROQ_API_KEY?: string;
+  TURNSTILE_SECRET_KEY?: string;
 };
 
 const MINIMUM_SECRET_BYTES = 32;
 
 /**
- * Sponsored mode needs the ledger and the subject secret. The provider bindings
- * are deliberately absent here: until the provider decision they are unbound and
- * every sponsored turn answers `PROVIDER_UNBOUND`.
+ * Sponsored mode needs the ledger, the subject secret and the Groq key. BYOK
+ * needs nothing from env: the visitor's key arrives per request in the
+ * `Authorization` header and is bound to a Groq adapter for that request only.
  */
 function handler(): ((request: Request) => Promise<Response>) | null {
-  const { DATABASE_URL: databaseUrl, TUTOR_SUBJECT_SECRET: secret } = env as TutorTurnEnv;
+  const { DATABASE_URL: databaseUrl, TUTOR_SUBJECT_SECRET: secret, GROQ_API_KEY: groqKey } = env as TutorTurnEnv;
   if (!databaseUrl || !secret || new TextEncoder().encode(secret).byteLength < MINIMUM_SECRET_BYTES) return null;
+  if (!groqKey) return null;
+  const sponsoredAi = createGroqPublicTutorAi({ apiKey: groqKey });
   return createTutorTurnHandler({
     retriever: createContentRetriever(),
     ledger: createUsageLedger({ query: createSqlExecutor(databaseUrl).query }),
@@ -102,6 +130,9 @@ function handler(): ((request: Request) => Promise<Response>) | null {
         clientIp: readClientIp(request),
         deviceToken: request.headers.get("x-device-token"),
       }),
+    firstUseGate: turnstileGateFromEnv(),
+    sponsoredAi,
+    byokAi: (key) => createByokGroqPublicTutorAi(key),
   });
 }
 

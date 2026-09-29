@@ -1,5 +1,6 @@
 import { env } from "cloudflare:workers";
 
+import { turnstileGateFromEnv } from "../../../../integrations/cloudflare/turnstile-gate";
 import { createSqlExecutor } from "../../../../integrations/neon/db";
 import { createTutorQuotaHandler, createUsageLedger, deriveSubjectKey, readClientIp, type TutorQuotaHandler } from "../../../../modules/tutor/usage-ledger";
 
@@ -29,6 +30,7 @@ function handler(): TutorQuotaHandler | null {
         clientIp: readClientIp(request),
         deviceToken: request.headers.get("x-device-token"),
       }),
+    firstUseGate: turnstileGateFromEnv(),
   });
 }
 

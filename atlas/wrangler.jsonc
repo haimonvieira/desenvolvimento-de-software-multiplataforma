@@ -13,6 +13,8 @@
   // DATABASE_URL, BETTER_AUTH_SECRET, BETTER_AUTH_URL,
   // BETTER_AUTH_TRUSTED_ORIGINS, PASSKEY_RP_ID, GITHUB_CLIENT_ID,
   // GITHUB_CLIENT_SECRET, ADMIN_GITHUB_USER_ID, GITHUB_TOKEN,
-  // GITHUB_REPOSITORY, TUTOR_SUBJECT_SECRET. Preview uses a separate Neon
-  // branch and RP ID.
+  // GITHUB_REPOSITORY, TUTOR_SUBJECT_SECRET, GROQ_API_KEY,
+  // TURNSTILE_SECRET_KEY. Preview uses a separate Neon
+  // branch and RP ID. No payment method is attached to the Groq account
+  // (provider spec §3): the internal ceilings are the spend protection.
 }

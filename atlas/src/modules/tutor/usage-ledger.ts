@@ -24,6 +24,8 @@ export type QuotaSnapshot = Readonly<{
   requestsPerDay: number;
   globalTurnsToday: number;
   globalTurnsPerDay: number;
+  globalTokensToday: number;
+  globalTokensPerDay: number;
   resetsAt: string;
 }>;
 
@@ -124,6 +126,8 @@ export function createUsageLedger(dependencies: UsageLedgerDependencies): UsageL
         requestsPerDay: Number(raw.requestsPerDay ?? 0),
         globalTurnsToday: Number(raw.globalTurnsToday ?? 0),
         globalTurnsPerDay: Number(raw.globalTurnsPerDay ?? 0),
+        globalTokensToday: Number(raw.globalTokensToday ?? 0),
+        globalTokensPerDay: Number(raw.globalTokensPerDay ?? 0),
         resetsAt: String(raw.resetsAt ?? ""),
       };
     },

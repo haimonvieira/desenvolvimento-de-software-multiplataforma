@@ -24,6 +24,38 @@ export type ContentChunk = Readonly<{
 
 export type IndexedFormat = "markdown" | "sql" | "text" | "code";
 
+/**
+ * The one definition of what the build-time indexer turns into retrievable
+ * text: plain UTF-8 study prose and source code. Binary Office/PDF files stay
+ * metadata-only, and JSON/XML/properties are configuration-shaped, so neither
+ * is retrievable. The build script and the tutor page share this table, so a
+ * material the page offers as context is one the retriever can actually load.
+ */
+export const INDEXABLE_FORMATS: Readonly<Record<string, IndexedFormat>> = Object.freeze({
+  ".md": "markdown",
+  ".markdown": "markdown",
+  ".txt": "text",
+  ".text": "text",
+  ".sql": "sql",
+  ".c": "code",
+  ".cpp": "code",
+  ".cs": "code",
+  ".css": "code",
+  ".htm": "code",
+  ".html": "code",
+  ".java": "code",
+  ".js": "code",
+  ".jsx": "code",
+  ".php": "code",
+  ".py": "code",
+  ".ts": "code",
+  ".tsx": "code",
+});
+
+export function indexFormatFor(extension: string): IndexedFormat | null {
+  return INDEXABLE_FORMATS[extension.toLowerCase()] ?? null;
+}
+
 export type MaterialIndex = Readonly<{
   material: MaterialRef;
   format: IndexedFormat;

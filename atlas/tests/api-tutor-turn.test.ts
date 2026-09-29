@@ -1,10 +1,17 @@
 import { describe, expect, it } from "vitest";
 
+import catalog from "../src/generated/catalog.json";
 import { createTutorTurnHandler, type TutorTurnDependencies } from "../src/app/api/tutor/turn/route";
-import { createFakePublicTutorAi } from "../src/integrations/ai/public-tutor-ai";
+import { createFakePublicTutorAi, TutorProviderError, type PublicTutorAi } from "../src/integrations/ai/public-tutor-ai";
+import { createCatalogQuery } from "../src/modules/catalog/catalog-query";
+import type { CatalogData } from "../src/modules/catalog/model";
+import { selectTutorContext, tutorCandidates } from "../src/modules/study/tutor-context";
+import { TUTOR_CONTEXT_LIMIT } from "../src/modules/tutor/study-tutor";
 import type { ContentRetriever, RetrievedExcerpt } from "../src/modules/tutor/model";
 import { policyFor } from "../src/modules/tutor/usage-policy";
 import type { BudgetDecision, UsageLedger } from "../src/modules/tutor/usage-ledger";
+
+const catalogQuery = createCatalogQuery(catalog as CatalogData);
 
 const KEY = "sk-visitor-secret-key";
 const material = { path: "DSM1/ALP/introducao.md", commitSha: "a".repeat(40) };
@@ -22,7 +29,8 @@ function ledgerWith(decision: BudgetDecision): UsageLedger {
     expireStaleReservations: async () => 0,
     readQuota: async () => ({
       scope: "public", requestsThisHour: 0, requestsPerHour: 5, requestsToday: 0,
-      requestsPerDay: 15, globalTurnsToday: 0, globalTurnsPerDay: 300, resetsAt: "2026-09-29T00:00:00.000Z",
+      requestsPerDay: 15, globalTurnsToday: 0, globalTurnsPerDay: 30,
+      globalTokensToday: 0, globalTokensPerDay: 150_000, resetsAt: "2026-09-29T00:00:00.000Z",
     }),
     hasSponsoredHistory: async () => true,
   };
@@ -41,6 +49,100 @@ const turn = { question: "o que é lógica?", context: [material], mode: "sponso
 describe("POST /api/tutor/turn", () => {
   it("rejects an invalid turn with a stable error", async () => {
     const response = await post({ retriever }, { question: "", context: [] });
+
+    expect(response.status).toBe(400);
+    expect(await response.json()).toEqual({ error: { code: "INVALID_TUTOR_TURN", message: "Pergunta inválida." } });
+  });
+
+  it("maps a provider rate limit to 429 with the retry hint and no auto-retry", async () => {
+    let calls = 0;
+    const ai: PublicTutorAi = {
+      async answer() {
+        calls += 1;
+        throw new TutorProviderError({ kind: "rate_limited", retryAfterSeconds: 9 });
+      },
+    };
+    const response = await post({
+      retriever,
+      ledger: ledgerWith({ type: "reserved", reservationId: "r1", maxInputTokens: 4_000, maxOutputTokens: 1_000, maxToolCalls: 4 }),
+      subjectKey: async () => "s1",
+      sponsoredAi: ai,
+    }, turn);
+
+    expect(response.status).toBe(429);
+    expect(response.headers.get("retry-after")).toBe("9");
+    expect(await response.json()).toEqual({
+      error: { code: "PROVIDER_QUOTA", message: "A cota do provedor de IA está esgotada." },
+      retryAfterSeconds: 9,
+    });
+    expect(calls).toBe(1);
+  });
+
+  it("fails a provider timeout closed as an unknown outcome without echoing the body", async () => {
+    const ai: PublicTutorAi = {
+      async answer() {
+        throw new TutorProviderError({ kind: "timeout" });
+      },
+    };
+    const response = await post({
+      retriever,
+      ledger: ledgerWith({ type: "reserved", reservationId: "r1", maxInputTokens: 4_000, maxOutputTokens: 1_000, maxToolCalls: 4 }),
+      subjectKey: async () => "s1",
+      sponsoredAi: ai,
+    }, turn);
+
+    expect(response.status).toBe(502);
+    expect(await response.json()).toEqual({ error: { code: "TUTOR_TURN_FAILED", message: "Não foi possível responder agora." } });
+  });
+
+  it("fails closed on a provider auth failure without leaking the key", async () => {
+    const ai: PublicTutorAi = {
+      async answer() {
+        throw new TutorProviderError({ kind: "auth" });
+      },
+    };
+    const response = await post({
+      retriever,
+      ledger: ledgerWith({ type: "reserved", reservationId: "r1", maxInputTokens: 4_000, maxOutputTokens: 1_000, maxToolCalls: 4 }),
+      subjectKey: async () => "s1",
+      sponsoredAi: ai,
+    }, turn);
+
+    expect(response.status).toBe(502);
+    const body = JSON.stringify(await response.json());
+    expect(body).not.toContain(KEY);
+    expect(body).not.toContain("credencial");
+  });
+
+  it("accepts the context the tutor page actually produces", async () => {
+    // The page's own path: semester catalog -> indexable candidates -> the
+    // visitor's studied subset, capped to the route's limit. This is what a real
+    // turn carries, so a mismatch between page and route shows up here.
+    const pageCandidates = tutorCandidates(catalogQuery.browse({ semester: "DSM1" }));
+    const pageContext = selectTutorContext(pageCandidates, null);
+    expect(pageContext.length).toBe(TUTOR_CONTEXT_LIMIT);
+    expect(pageContext.length).toBeGreaterThan(1);
+
+    const ai = createFakePublicTutorAi([{ answer: "A lógica estuda o raciocínio.", citations: [], proposedNotebookActions: [] }]);
+    const response = await post({
+      retriever,
+      ledger: ledgerWith({ type: "reserved", reservationId: "r1", maxInputTokens: 4_000, maxOutputTokens: 1_000, maxToolCalls: 4 }),
+      subjectKey: async () => "s1",
+      sponsoredAi: ai,
+    }, { question: "o que é lógica?", context: pageContext, mode: "sponsored" });
+
+    expect(response.status).toBe(200);
+    expect(ai.calls).toHaveLength(1);
+    expect(ai.calls[0]!.excerpts).toEqual([found]);
+  });
+
+  it("rejects the unbounded semester context the page used to send", async () => {
+    // Every DSM1 material is over a thousand refs; posting them is exactly the
+    // defect the page fix removed, and the schema must keep rejecting it.
+    const unbounded = catalogQuery.browse({ semester: "DSM1" }).map((material) => material.ref);
+    expect(unbounded.length).toBeGreaterThan(TUTOR_CONTEXT_LIMIT);
+
+    const response = await post({ retriever }, { question: "o que é lógica?", context: unbounded, mode: "sponsored" });
 
     expect(response.status).toBe(400);
     expect(await response.json()).toEqual({ error: { code: "INVALID_TUTOR_TURN", message: "Pergunta inválida." } });
@@ -93,5 +195,85 @@ describe("POST /api/tutor/turn", () => {
       decision: { reason: "global", resetsAt: "2026-09-29T00:00:00.000Z" },
     });
     expect(ai.calls).toHaveLength(0);
+  });
+
+  it("fails a first sponsored turn closed without a verified Turnstile token", async () => {
+    const ai = createFakePublicTutorAi([{ answer: "nunca", citations: [], proposedNotebookActions: [] }]);
+    const ledger = ledgerWith({ type: "reserved", reservationId: "r1", maxInputTokens: 4_000, maxOutputTokens: 1_000, maxToolCalls: 4 });
+    const gated: typeof ledger = { ...ledger, hasSponsoredHistory: async () => false };
+
+    const response = await post({
+      retriever,
+      ledger: gated,
+      subjectKey: async () => "first-timer",
+      sponsoredAi: ai,
+    }, turn);
+
+    expect(response.status).toBe(403);
+    expect(await response.json()).toEqual({ error: { code: "TURNSTILE_REQUIRED", message: "Verificação necessária." } });
+    expect(ai.calls).toHaveLength(0);
+  });
+
+  it("answers a first sponsored turn after the Turnstile gate verifies it", async () => {
+    const ai = createFakePublicTutorAi([{ answer: "A lógica estuda o raciocínio.", citations: [found], proposedNotebookActions: [] }]);
+    const ledger = ledgerWith({ type: "reserved", reservationId: "r1", maxInputTokens: 4_000, maxOutputTokens: 1_000, maxToolCalls: 4 });
+    const gated: typeof ledger = { ...ledger, hasSponsoredHistory: async () => false };
+    const seen: (string | null)[] = [];
+
+    const response = await post({
+      retriever,
+      ledger: gated,
+      subjectKey: async () => "first-timer",
+      sponsoredAi: ai,
+      firstUseGate: async ({ turnstileToken }) => {
+        seen.push(turnstileToken);
+        return turnstileToken === "token-abc";
+      },
+    }, { ...turn, turnstileToken: "token-abc" });
+
+    expect(response.status).toBe(200);
+    expect(seen).toEqual(["token-abc"]);
+    expect(ai.calls).toHaveLength(1);
+  });
+
+  it("skips the Turnstile gate for returning sponsored subjects", async () => {
+    const ai = createFakePublicTutorAi([{ answer: "A lógica estuda o raciocínio.", citations: [found], proposedNotebookActions: [] }]);
+    let gateCalls = 0;
+
+    const response = await post({
+      retriever,
+      ledger: ledgerWith({ type: "reserved", reservationId: "r1", maxInputTokens: 4_000, maxOutputTokens: 1_000, maxToolCalls: 4 }),
+      subjectKey: async () => "returning",
+      sponsoredAi: ai,
+      firstUseGate: async () => {
+        gateCalls += 1;
+        return true;
+      },
+    }, turn);
+
+    expect(response.status).toBe(200);
+    expect(gateCalls).toBe(0);
+  });
+
+  it("answers a BYOK turn through the per-request adapter without touching the ledger", async () => {
+    const ai = createFakePublicTutorAi([{ answer: "A lógica estuda o raciocínio.", citations: [found], proposedNotebookActions: [] }]);
+    let reservations = 0;
+    const ledger = ledgerWith({ type: "reserved", reservationId: "r1", maxInputTokens: 4_000, maxOutputTokens: 1_000, maxToolCalls: 4 });
+    const counting: typeof ledger = { ...ledger, reserve: async (input) => { reservations += 1; return ledger.reserve(input); } };
+    const seenKeys: string[] = [];
+
+    const response = await post({
+      retriever,
+      ledger: counting,
+      byokAi: (key) => {
+        seenKeys.push(key);
+        return ai;
+      },
+    }, { ...turn, mode: "byok" }, { authorization: `Bearer ${KEY}` });
+
+    expect(response.status).toBe(200);
+    expect(seenKeys).toEqual([KEY]);
+    expect(reservations).toBe(0);
+    expect(JSON.stringify(await response.clone().json())).not.toContain(KEY);
   });
 });

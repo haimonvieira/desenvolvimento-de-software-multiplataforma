@@ -1,11 +1,13 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { FormEvent } from "react";
 import type { MaterialRef } from "../catalog/model";
 import type { ProposedNotebookAction } from "../../integrations/ai/public-tutor-ai";
 import type { RetrievedExcerpt } from "../tutor/model";
+import { TUTOR_CONTEXT_LIMIT } from "../tutor/study-tutor";
 import { applyProposedNotebookAction } from "../tutor/notebook";
+import { selectTutorContext } from "./tutor-context";
 import { createIndexedDbStudyWorkspace } from "./indexed-db-study-store";
 
 type TurnState =
@@ -24,6 +26,7 @@ type ApiBody = Readonly<{
   question: string;
   context: readonly MaterialRef[];
   mode: "sponsored" | "byok";
+  turnstileToken?: string;
 }>;
 
 function proposalLabel(proposal: ProposedNotebookAction): string {
@@ -31,28 +34,52 @@ function proposalLabel(proposal: ProposedNotebookAction): string {
 }
 
 /**
- * The visitor-facing tutor. Every turn posts the question, the studied
- * materials and the key (BYOK only, from memory) to `/api/tutor/turn`; the
- * response is an answer with citations plus inert proposals. Saving a proposal
- * is a separate explicit `StudyWorkspace.apply` call made here, never by the
- * model — and a BYOK key is kept in a state variable for the session only, so
- * it is never persisted, logged or synchronised.
+ * The visitor-facing tutor. The page hands it every indexable material of the
+ * semester as candidates; the panel narrows them to what the visitor is actually
+ * studying (open material, progress, favorites, notes, flashcards) and caps the
+ * turn to `TUTOR_CONTEXT_LIMIT`, the same bound the turn route validates. Every
+ * turn posts the question, that context and the key (BYOK only, from memory) to
+ * `/api/tutor/turn`; the response is an answer with citations plus inert
+ * proposals. Saving a proposal is a separate explicit `StudyWorkspace.apply`
+ * call made here, never by the model — and a BYOK key is kept in a state
+ * variable for the session only, so it is never persisted, logged or
+ * synchronised.
  */
-export function TutorPanel({ context }: Readonly<{ context: readonly MaterialRef[] }>) {
+export function TutorPanel({ candidates }: Readonly<{ candidates: readonly MaterialRef[] }>) {
   const workspace = useMemo(() => createIndexedDbStudyWorkspace(), []);
+  const [context, setContext] = useState<readonly MaterialRef[]>(() => selectTutorContext(candidates, null));
   const [question, setQuestion] = useState("");
   const [mode, setMode] = useState<"sponsored" | "byok">("sponsored");
   const [byokKey, setByokKey] = useState("");
+  const [turnstileToken, setTurnstileToken] = useState("");
   const [state, setState] = useState<TurnState>({ type: "idle" });
   const [notice, setNotice] = useState("");
+
+  useEffect(() => {
+    let active = true;
+    workspace.load()
+      .then((snapshot) => {
+        if (active) setContext(selectTutorContext(candidates, snapshot));
+      })
+      .catch(() => {
+        // A study store that cannot be read must not block the tutor: the
+        // fallback context (the first candidates) is already in place.
+      });
+    return () => { active = false; };
+  }, [candidates, workspace]);
 
   async function ask(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const trimmed = question.trim();
-    if (!trimmed || state.type === "pending") return;
+    if (!trimmed || state.type === "pending" || context.length === 0) return;
     setNotice("");
     setState({ type: "pending" });
-    const body: ApiBody = { question: trimmed, context, mode };
+    const body: ApiBody = {
+      question: trimmed,
+      context,
+      mode,
+      ...(mode === "sponsored" && turnstileToken.trim() ? { turnstileToken: turnstileToken.trim() } : {}),
+    };
     try {
       const response = await fetch("/api/tutor/turn", {
         method: "POST",
@@ -99,6 +126,11 @@ export function TutorPanel({ context }: Readonly<{ context: readonly MaterialRef
     <section className="tutor-panel" aria-labelledby="tutor-title" aria-busy={state.type === "pending"}>
       <h2 id="tutor-title">Tutor de estudo</h2>
       <p className="tutor-hint">Pergunte sobre os materiais em estudo. As respostas citam os trechos usados.</p>
+      <p className="tutor-hint" data-testid="tutor-context">
+        {context.length === 0
+          ? "Nenhum material indexado neste semestre."
+          : `Materiais no contexto: ${context.length} de no máximo ${TUTOR_CONTEXT_LIMIT}.`}
+      </p>
       <form onSubmit={ask}>
         <label htmlFor="tutor-question">Pergunta</label>
         <textarea
@@ -128,6 +160,20 @@ export function TutorPanel({ context }: Readonly<{ context: readonly MaterialRef
             Minha chave (BYOK)
           </label>
         </fieldset>
+        {mode === "sponsored" && (
+          <>
+            <label htmlFor="tutor-turnstile">Verificação (primeiro uso)</label>
+            <input
+              id="tutor-turnstile"
+              name="turnstileToken"
+              type="text"
+              autoComplete="off"
+              value={turnstileToken}
+              onChange={(event) => setTurnstileToken(event.target.value)}
+              placeholder="Token do desafio, quando exibido"
+            />
+          </>
+        )}
         {mode === "byok" && (
           <>
             <label htmlFor="tutor-byok-key">Sua chave de API</label>
@@ -140,9 +186,10 @@ export function TutorPanel({ context }: Readonly<{ context: readonly MaterialRef
               onChange={(event) => setByokKey(event.target.value)}
               placeholder="Mantida só nesta sessão, nunca salva"
             />
+            <p className="tutor-hint">Sua chave trafega só no cabeçalho desta requisição, pelo proxy do portal. Não é salva nem registrada.</p>
           </>
         )}
-        <button type="submit" disabled={state.type === "pending" || question.trim().length === 0}>Perguntar</button>
+        <button type="submit" disabled={state.type === "pending" || question.trim().length === 0 || context.length === 0}>Perguntar</button>
       </form>
       {state.type === "pending" && <p role="status">Buscando nos materiais…</p>}
       {state.type === "denied" && <p role="alert">{state.message}</p>}

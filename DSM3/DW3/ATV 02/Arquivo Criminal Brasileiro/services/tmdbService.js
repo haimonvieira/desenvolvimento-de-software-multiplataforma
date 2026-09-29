@@ -16,7 +16,7 @@ async function buscar(query) {
             'accept': 'application/json'
         }  
     }
-    const resposta = await fetch(`https://api.themoviedb.org/3/search/multi?query=${encodeURIComponent(query)}&language=pt-BR`, options);
+    const resposta = await fetch(`https://api.themoviedb.org/3/search/multi?query=${encodeURIComponent(query)}&language=pt-BR&page=1`, options);
 
     // Sem esta checagem um token inválido/limite excedido viraria "nenhum resultado".
     if (!resposta.ok) {

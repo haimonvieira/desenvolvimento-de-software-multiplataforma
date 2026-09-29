@@ -11,6 +11,7 @@ import { TutorProviderError } from "../../integrations/ai/public-tutor-ai";
 import { AdminAuthorizationError } from "../identity/admin-authorizer";
 import type { UsageLedger } from "../tutor/usage-ledger";
 import { policyFor } from "../tutor/usage-policy";
+import type { UsageScope } from "../tutor/usage-policy";
 import {
   buildClassificationInput,
   createClassifyBatchHandler,
@@ -209,8 +210,8 @@ function fakeLedger(reserves: Array<{ scope: string; subjectKey: string }>): Usa
   // are inert doubles.
   return {
     policy: policyFor,
-    reserve: async ({ scope, subjectKey }) => {
-      reserves.push({ scope, subjectKey });
+    reserve: async (input: Readonly<{ scope: UsageScope; subjectKey: string }>) => {
+      reserves.push({ scope: input.scope, subjectKey: input.subjectKey });
       return { type: "reserved", reservationId: "r1", maxInputTokens: 8_000, maxOutputTokens: 2_000, maxToolCalls: 8 };
     },
     reconcile: async () => undefined,

@@ -1,15 +1,18 @@
 import { neon } from "@neondatabase/serverless";
 import { env } from "cloudflare:workers";
 
+import {
+  createGitHubInstallationTransport,
+  githubAppConfigured,
+  repositoryFromEnv,
+  type GitHubAppEnv,
+} from "../../../integrations/github/github-material-source";
+
 type Check = () => Promise<void>;
 type HealthAdapters = { database?: Check; github?: Check };
 type HealthState = "ok" | "unconfigured" | "error";
 
-type RuntimeEnv = {
-  DATABASE_URL?: string;
-  GITHUB_TOKEN?: string;
-  GITHUB_REPOSITORY?: string;
-};
+type RuntimeEnv = GitHubAppEnv & { DATABASE_URL?: string };
 
 const runtimeEnv = env as RuntimeEnv;
 
@@ -18,21 +21,18 @@ async function checkDatabase() {
   await sql`SELECT 1`;
 }
 
+/**
+ * Health must exercise the same authentication production uses, so it mints a
+ * real installation token instead of a bare token: an App credential that has
+ * been revoked turns the check red rather than reporting a false "ok".
+ */
 async function checkGitHub() {
-  const response = await fetch(
-    `https://api.github.com/repos/${runtimeEnv.GITHUB_REPOSITORY}/commits/HEAD`,
-    {
-      headers: {
-        Accept: "application/vnd.github+json",
-        Authorization: `Bearer ${runtimeEnv.GITHUB_TOKEN}`,
-        "User-Agent": "dsm-atlas-health",
-        "X-GitHub-Api-Version": "2022-11-28",
-      },
-    },
+  const response = await createGitHubInstallationTransport(runtimeEnv)(
+    `/repos/${repositoryFromEnv(runtimeEnv)}/commits/HEAD`,
+    { method: "GET" },
   );
 
-  if (!response.ok) throw new Error(`GitHub returned ${response.status}`);
-  await response.body?.cancel();
+  if (response.status >= 400) throw new Error(`GitHub returned ${response.status}`);
 }
 
 export function createHealthHandler(adapters: HealthAdapters) {
@@ -69,8 +69,5 @@ function combine(database: HealthState, github: HealthState): HealthState {
 
 export const GET = createHealthHandler({
   database: runtimeEnv.DATABASE_URL ? checkDatabase : undefined,
-  github:
-    runtimeEnv.GITHUB_TOKEN && runtimeEnv.GITHUB_REPOSITORY
-      ? checkGitHub
-      : undefined,
+  github: githubAppConfigured(runtimeEnv) ? checkGitHub : undefined,
 });

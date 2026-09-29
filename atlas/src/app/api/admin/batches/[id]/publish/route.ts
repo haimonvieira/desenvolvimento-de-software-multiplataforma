@@ -2,14 +2,16 @@ import { env } from "cloudflare:workers";
 
 import { serverAdmin } from "../../../../../../modules/identity/server-admin";
 import { createSqlExecutor } from "../../../../../../integrations/neon/db";
-import { createGitHubMaterialSource } from "../../../../../../integrations/github/github-material-source";
+import {
+  createGitHubInstallationTransport,
+  createGitHubMaterialSource,
+  githubAppConfigured,
+  repositoryFromEnv,
+  type GitHubAppEnv,
+} from "../../../../../../integrations/github/github-material-source";
 import { createPublishHandler } from "../../../../../../modules/publication/publication-workflow";
 
-type PublishEnv = {
-  DATABASE_URL?: string;
-  GITHUB_INSTALLATION_TOKEN?: string;
-  GITHUB_REPOSITORY?: string;
-};
+type PublishEnv = GitHubAppEnv & { DATABASE_URL?: string };
 
 export const POST = async (
   request: Request,
@@ -20,29 +22,14 @@ export const POST = async (
   if (!runtime.DATABASE_URL) {
     return Response.json({ error: "unconfigured" }, { status: 503 });
   }
-  if (!runtime.GITHUB_INSTALLATION_TOKEN || !runtime.GITHUB_REPOSITORY) {
+  if (!githubAppConfigured(runtime)) {
     return Response.json({ error: "github-unconfigured" }, { status: 503 });
   }
-  const installationToken = runtime.GITHUB_INSTALLATION_TOKEN;
-  const repository = runtime.GITHUB_REPOSITORY;
   const databaseUrl = runtime.DATABASE_URL;
+  // The installation token is minted server-side on first use.
   const source = createGitHubMaterialSource(
-    async (path, init) => {
-      const response = await fetch(`https://api.github.com${path}`, {
-        method: init.method,
-        headers: {
-          authorization: `Bearer ${installationToken}`,
-          accept: "application/vnd.github+json",
-          "content-type": "application/json",
-        },
-        body: init.body,
-      });
-      return {
-        status: response.status,
-        json: () => response.json() as Promise<unknown>,
-      };
-    },
-    repository,
+    createGitHubInstallationTransport(runtime),
+    repositoryFromEnv(runtime),
   );
   return createPublishHandler({
     requireAdmin: (req) => serverAdmin.requireAdmin(req),

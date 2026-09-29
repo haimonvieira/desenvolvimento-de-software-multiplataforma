@@ -1,3 +1,5 @@
+import { createPrivateKey, createSign } from "node:crypto";
+
 export type GitHubTransport = (
   path: string,
   init: { method: string; body?: string },
@@ -176,21 +178,167 @@ export function createGitHubMaterialSource(
   };
 }
 
+const GITHUB_API_BASE_URL = "https://api.github.com";
+const GITHUB_API_VERSION = "2022-11-28";
+
+/** App JWTs are short-lived: GitHub rejects an `exp` beyond 10 minutes. */
+const JWT_LIFETIME_SECONDS = 540;
+/** `iat` is backdated so a clock slightly behind GitHub's still validates. */
+const JWT_CLOCK_SKEW_SECONDS = 60;
+/** Re-mint this long before `expires_at` so a request never races the expiry. */
+const TOKEN_EXPIRY_MARGIN_MS = 60_000;
+
+export type GitHubAppJwtClaims = Readonly<{ iat: number; exp: number; iss: string }>;
+
+export function githubAppJwtClaims(appId: string, nowMs: number): GitHubAppJwtClaims {
+  const now = Math.floor(nowMs / 1000);
+  return { iat: now - JWT_CLOCK_SKEW_SECONDS, exp: now + JWT_LIFETIME_SECONDS, iss: appId };
+}
+
+export type GitHubJwtSigner = (claims: GitHubAppJwtClaims, privateKeyPem: string) => string;
+
+function base64UrlOf(value: string | Uint8Array): string {
+  const bytes = typeof value === "string" ? new TextEncoder().encode(value) : value;
+  let binary = "";
+  for (const byte of bytes) binary += String.fromCharCode(byte);
+  return btoa(binary).replaceAll("+", "-").replaceAll("/", "_").replace(/=+$/, "");
+}
+
+/**
+ * RS256 signature over the App claims. `createPrivateKey` accepts both the
+ * PKCS#1 and the PKCS#8 PEM GitHub hands out, and a key pasted through a shell
+ * variable keeps its escaped newlines.
+ */
+export const signGitHubAppJwt: GitHubJwtSigner = (claims, privateKeyPem) => {
+  const header = base64UrlOf(JSON.stringify({ alg: "RS256", typ: "JWT" }));
+  const payload = base64UrlOf(JSON.stringify(claims));
+  const signingInput = `${header}.${payload}`;
+  // An RSA key with the SHA-256 digest is RSASSA-PKCS1-v1_5/SHA-256, i.e. RS256.
+  const signer = createSign("sha256");
+  signer.update(signingInput);
+  signer.end();
+  const signature = signer.sign(createPrivateKey(privateKeyPem.replaceAll("\\n", "\n")));
+  return `${signingInput}.${base64UrlOf(new Uint8Array(signature))}`;
+};
+
+export type GitHubFetch = (url: string, init: RequestInit) => Promise<Response>;
+
+export type InstallationTokenCache = Map<
+  string,
+  Readonly<{ token: string; expiresAtMs: number }>
+>;
+
+export type GitHubAppDeps = Readonly<{
+  fetchImpl?: GitHubFetch;
+  sign?: GitHubJwtSigner;
+  now?: () => number;
+  cache?: InstallationTokenCache;
+  config?: GitHubAppConfig;
+}>;
+
+/**
+ * Isolate-local token cache. One minted token serves every request handled by
+ * the isolate until it nears expiry; it is never persisted and never logged.
+ */
+const installationTokenCache: InstallationTokenCache = new Map();
+
+/**
+ * Mints (and caches) an installation access token from the App credentials.
+ * The JWT and the private key never leave this function, and a provider failure
+ * reports the status only, so no secret can reach a caller or a log.
+ */
 export function createInstallationTokenProvider(
   env: RuntimeEnv,
-  config: GitHubAppConfig = DEFAULT_GITHUB_APP_CONFIG,
+  deps: GitHubAppDeps = {},
 ): () => Promise<string> {
+  const fetchImpl = deps.fetchImpl ?? ((url, init) => fetch(url, init));
+  const sign = deps.sign ?? signGitHubAppJwt;
+  const now = deps.now ?? (() => Date.now());
+  const cache = deps.cache ?? installationTokenCache;
+  const config = deps.config ?? DEFAULT_GITHUB_APP_CONFIG;
+
   return async () => {
     const appId = requiredEnv(env, config.appIdEnv);
     const privateKey = requiredEnv(env, config.privateKeyEnv);
     const installationId = requiredEnv(env, config.installationIdEnv);
-    void appId;
-    void privateKey;
-    void installationId;
-    throw new Error(
-      "GitHub App installation token minting is not configured in this environment",
+    const cacheKey = `${appId}:${installationId}`;
+    const cached = cache.get(cacheKey);
+    if (cached && cached.expiresAtMs - TOKEN_EXPIRY_MARGIN_MS > now()) return cached.token;
+
+    const jwt = sign(githubAppJwtClaims(appId, now()), privateKey);
+    const response = await fetchImpl(
+      `${GITHUB_API_BASE_URL}/app/installations/${installationId}/access_tokens`,
+      {
+        method: "POST",
+        headers: {
+          authorization: `Bearer ${jwt}`,
+          accept: "application/vnd.github+json",
+          "x-github-api-version": GITHUB_API_VERSION,
+        },
+      },
     );
+    if (response.status >= 400) {
+      await response.body?.cancel().catch(() => undefined);
+      throw new Error(`GitHub installation token request failed: ${response.status}`);
+    }
+    const payload = (await response.json().catch(() => null)) as {
+      token?: unknown;
+      expires_at?: unknown;
+    } | null;
+    const token = typeof payload?.token === "string" ? payload.token : "";
+    const expiresAtMs =
+      typeof payload?.expires_at === "string" ? Date.parse(payload.expires_at) : Number.NaN;
+    if (!token || !Number.isFinite(expiresAtMs)) {
+      throw new Error("GitHub installation token response is unusable");
+    }
+    cache.set(cacheKey, { token, expiresAtMs });
+    return token;
   };
+}
+
+/**
+ * The material transport every route uses: it mints the installation token on
+ * demand and sends it, never the App JWT, to the Git Data API.
+ */
+export function createGitHubInstallationTransport(
+  env: RuntimeEnv,
+  deps: GitHubAppDeps = {},
+): GitHubTransport {
+  const fetchImpl = deps.fetchImpl ?? ((url, init) => fetch(url, init));
+  const token = createInstallationTokenProvider(env, { ...deps, fetchImpl });
+  return async (path, init) => {
+    const response = await fetchImpl(`${GITHUB_API_BASE_URL}${path}`, {
+      method: init.method,
+      headers: {
+        authorization: `Bearer ${await token()}`,
+        accept: "application/vnd.github+json",
+        "content-type": "application/json",
+        "x-github-api-version": GITHUB_API_VERSION,
+      },
+      body: init.body,
+    });
+    return { status: response.status, json: () => response.json() as Promise<unknown> };
+  };
+}
+
+/** The GitHub App credentials a route needs; no pre-minted token exists. */
+export type GitHubAppEnv = Readonly<{
+  GITHUB_APP_ID?: string;
+  GITHUB_APP_PRIVATE_KEY?: string;
+  GITHUB_INSTALLATION_ID?: string;
+  GITHUB_REPOSITORY?: string;
+}>;
+
+export function githubAppConfigured(
+  env: RuntimeEnv,
+  config: GitHubAppConfig = DEFAULT_GITHUB_APP_CONFIG,
+): boolean {
+  return Boolean(
+    env[config.appIdEnv] &&
+      env[config.privateKeyEnv] &&
+      env[config.installationIdEnv] &&
+      env[config.repositoryEnv],
+  );
 }
 
 export function repositoryFromEnv(

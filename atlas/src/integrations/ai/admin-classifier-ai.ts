@@ -30,7 +30,9 @@ import { TutorProviderError } from "./public-tutor-ai";
  * Untrusted input: filenames and extracted file text are evidence, never
  * instructions. The catalog is the allowlist; file content is fenced between
  * explicit markers in the user message so a payload inside a file cannot
- * masquerade as a system rule.
+ * masquerade as a system rule. The closing marker carries a per-request random
+ * nonce, so a filename or a file body cannot predict it and therefore cannot
+ * close the evidence block early.
  */
 
 export const GROQ_ADMIN_BASE_URL = "https://api.groq.com/openai/v1";
@@ -45,12 +47,16 @@ const GROQ_ADMIN_TIMEOUT_MS = 55_000;
 
 export type AdminClassifierFetch = (url: string, init: RequestInit) => Promise<Response>;
 
+export type FenceNonceFactory = () => string;
+
 export type AdminClassifierOptions = Readonly<{
   apiKey: string;
   model?: string;
   fetchImpl?: AdminClassifierFetch;
   /** Per-request override; the reserved deadline is the ceiling. */
   timeoutMs?: number;
+  /** Injectable only so a test can pin the evidence delimiter. */
+  fenceNonce?: FenceNonceFactory;
 }>;
 
 export type ClassificationCatalog = Readonly<{
@@ -156,26 +162,43 @@ function classificationSchema(): Record<string, unknown> {
 const CHARS_PER_TOKEN_FLOOR = 3;
 
 /**
+ * Draws the per-request fence delimiter: 128 random bits the file content
+ * cannot predict. Both markers carry it, so a filename or a payload containing
+ * the literal `<<<FIM EVIDENCIA>>>` cannot close the block early.
+ */
+export function randomFenceNonce(): string {
+  const bytes = new Uint8Array(16);
+  crypto.getRandomValues(bytes);
+  let nonce = "";
+  for (const byte of bytes) nonce += byte.toString(16).padStart(2, "0");
+  return nonce;
+}
+
+/**
  * Renders the evidence blocks within `limit` characters, always closing every
  * opened fence so the model can never read a truncated block as an instruction.
  */
-function renderEvidence(files: readonly AdminClassificationFile[], limit: number): string {
+function renderEvidence(
+  files: readonly AdminClassificationFile[],
+  limit: number,
+  nonce: string,
+): string {
+  const close = `<<<FIM EVIDENCIA:${nonce}>>>`;
   let out = "";
   for (const file of files) {
-    const header = `<<<EVIDENCIA blobSha="${file.blobSha}" arquivo="${file.filename}" tipo="${file.mimeType}" bytes=${file.size}>>>`;
-    const footer = "<<<FIM EVIDENCIA>>>";
+    const header = `<<<EVIDENCIA:${nonce} blobSha="${file.blobSha}" arquivo="${file.filename}" tipo="${file.mimeType}" bytes=${file.size}>>>`;
     const body = file.text === null ? "(conteúdo não disponível: formato não legível)" : file.text;
     const separator = out === "" ? "" : "\n\n";
-    const overhead = separator.length + header.length + footer.length + 2;
+    const overhead = separator.length + header.length + close.length + 2;
     const room = limit - out.length - overhead;
     if (room < 0) break;
-    out += `${separator}${header}\n${body.slice(0, room)}\n${footer}`;
+    out += `${separator}${header}\n${body.slice(0, room)}\n${close}`;
     if (room < body.length) break;
   }
   return out;
 }
 
-function buildMessages(input: AdminClassificationInput): readonly Readonly<{ role: "system" | "user"; content: string }>[] {
+function buildMessages(input: AdminClassificationInput, nonce: string): readonly Readonly<{ role: "system" | "user"; content: string }>[] {
   const semesters = input.catalog.semesters.map((semester) => `${semester.code} = ${semester.name}`).join("; ");
   const disciplines = input.catalog.disciplines
     .map((discipline) => `${discipline.semesterCode}/${discipline.code} = ${discipline.name}`)
@@ -197,7 +220,7 @@ function buildMessages(input: AdminClassificationInput): readonly Readonly<{ rol
   );
   return [
     { role: "system", content: system },
-    { role: "user", content: `${prefix}${renderEvidence(input.files, room)}` },
+    { role: "user", content: `${prefix}${renderEvidence(input.files, room, nonce)}` },
   ];
 }
 
@@ -284,6 +307,7 @@ export function createGroqAdminClassifierAi(options: AdminClassifierOptions): Ad
   if (!apiKey) throw new Error("A Groq admin API key is required");
   const model = options.model ?? GROQ_ADMIN_MODEL;
   const fetchImpl = options.fetchImpl ?? ((url, init) => fetch(url, init));
+  const fenceNonce = options.fenceNonce ?? randomFenceNonce;
 
   return Object.freeze({
     async suggestBatch(input: AdminClassificationInput): Promise<AdminClassificationResult> {
@@ -297,7 +321,7 @@ export function createGroqAdminClassifierAi(options: AdminClassifierOptions): Ad
           headers: { "content-type": "application/json", authorization: `Bearer ${apiKey}` },
           body: JSON.stringify({
             model,
-            messages: buildMessages(input),
+            messages: buildMessages(input, fenceNonce()),
             response_format: {
               type: "json_schema",
               json_schema: { name: "batch_classification", strict: true, schema: classificationSchema() },

@@ -1,7 +1,13 @@
 declare module "cloudflare:workers" {
   export const env: {
     DATABASE_URL?: string;
-    GITHUB_TOKEN?: string;
+    /**
+     * GitHub App credentials. The installation access token is minted from
+     * these server-side and never stored in configuration.
+     */
+    GITHUB_APP_ID?: string;
+    GITHUB_APP_PRIVATE_KEY?: string;
+    GITHUB_INSTALLATION_ID?: string;
     GITHUB_REPOSITORY?: string;
     BETTER_AUTH_SECRET?: string;
     BETTER_AUTH_URL?: string;

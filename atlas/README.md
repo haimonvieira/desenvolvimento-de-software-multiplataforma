@@ -11,7 +11,9 @@ Aplicação mínima App Router/TypeScript para validar o runtime do DSM Atlas no
 
 ## Configuração
 
-Defina `DATABASE_URL`, `GITHUB_TOKEN`, `TUTOR_SUBJECT_SECRET` (32+ bytes, usado para derivar a chave anônima da cota de IA), `GROQ_API_KEY` (chave do tutor público patrocinado) e `TURNSTILE_SECRET_KEY` (verificação do primeiro uso patrocinado) como secrets do Worker (`wrangler secret put ...`). Defina `GITHUB_REPOSITORY` como `owner/repository` em configuração de ambiente. Nenhum desses valores pertence ao bundle cliente ou ao repositório. Nenhuma forma de pagamento é associada à conta do Groq (especificação do provedor §3): a proteção real é o teto interno (150.000 tokens/dia, 30 turnos/dia, 1 turno por vez), que falha fechado.
+Defina `DATABASE_URL`, `TUTOR_SUBJECT_SECRET` (32+ bytes, usado para derivar a chave anônima da cota de IA), `GROQ_API_KEY` (chave do tutor público patrocinado) e `TURNSTILE_SECRET_KEY` (verificação do primeiro uso patrocinado) como secrets do Worker (`wrangler secret put ...`). Defina `GITHUB_REPOSITORY` como `owner/repository` em configuração de ambiente.
+
+A autenticação no GitHub usa um **GitHub App**, não um token pré-emitido: `GITHUB_APP_ID`, `GITHUB_APP_PRIVATE_KEY` (chave privada em PEM, aceita PKCS#1 e PKCS#8) e `GITHUB_INSTALLATION_ID` são secrets do Worker; o token de instalação é assinado (`RS256`) e trocado no endpoint `/app/installations/{id}/access_tokens` a cada requisição, mantido apenas em memória do isolate até pouco antes de `expires_at` e nunca persistido, registrado em log ou devolvido ao cliente. O App precisa das permissões **Contents: read and write** no repositório de `GITHUB_REPOSITORY`. Nenhum desses valores pertence ao bundle cliente ou ao repositório. Nenhuma forma de pagamento é associada à conta do Groq (especificação do provedor §3): a proteção real é o teto interno (150.000 tokens/dia, 30 turnos/dia, 1 turno por vez), que falha fechado.
 
 ## Comandos
 

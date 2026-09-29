@@ -1,4 +1,8 @@
-import { describe, expect, it } from "vitest";
+import { fileURLToPath } from "node:url";
+import { PGlite } from "@electric-sql/pglite";
+import { drizzle } from "drizzle-orm/pglite";
+import { migrate } from "drizzle-orm/pglite/migrator";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
 import type { CatalogData } from "../catalog/model";
 import type {
@@ -9,9 +13,8 @@ import type {
 import { createFakeAdminClassifierAi } from "../../integrations/ai/admin-classifier-ai";
 import { TutorProviderError } from "../../integrations/ai/public-tutor-ai";
 import { AdminAuthorizationError } from "../identity/admin-authorizer";
-import type { UsageLedger } from "../tutor/usage-ledger";
-import { policyFor } from "../tutor/usage-policy";
-import type { UsageScope } from "../tutor/usage-policy";
+import { createUsageLedger, type UsageLedger } from "../tutor/usage-ledger";
+import { policyFor, type UsageScope } from "../tutor/usage-policy";
 import {
   buildClassificationInput,
   createClassifyBatchHandler,
@@ -19,6 +22,10 @@ import {
   inferMaterialKind,
   validateSuggestions,
 } from "./classify-batch";
+
+const migrationsFolder = fileURLToPath(
+  new URL("../../../drizzle/migrations", import.meta.url),
+);
 
 const CATALOG: CatalogData = {
   commitSha: "a".repeat(40),
@@ -183,6 +190,20 @@ describe("suggestion validation", () => {
     expect(reviewed!.warning).toContain("não legível");
     expect(reviewed!.confidence).toEqual({ semester: 0, discipline: 0, path: 0, title: 0, kind: 0 });
   });
+
+  it("zeroes title confidence when the filename replaces a blank model title", () => {
+    const [blank] = validateSuggestions([suggestion({ title: "   ", confidence: { semester: 0.9, discipline: 0.8, path: 0.7, title: 0.95, kind: 0.9 } })], {
+      catalog: CATALOG,
+      files: [file()],
+    });
+
+    expect(blank!.title).toBe("lista.ts");
+    expect(blank!.confidence.title).toBe(0);
+    expect(blank!.warning).toContain("title");
+
+    const [named] = validateSuggestions([suggestion()], { catalog: CATALOG, files: [file()] });
+    expect(named!.confidence.title).toBe(0.6);
+  });
 });
 
 type StagedRow = Record<string, unknown>;
@@ -346,5 +367,92 @@ describe("classify batch handler", () => {
 
     expect(response.status).toBe(429);
     expect(await response.json()).toEqual({ error: "rate-limited", retryAfterSeconds: 30 });
+  });
+});
+
+describe("admin token accounting", () => {
+  let database: PGlite;
+
+  beforeEach(async () => {
+    database = new PGlite();
+    await migrate(drizzle(database), { migrationsFolder });
+    await database.exec(`
+      INSERT INTO "user" (id, name, email) VALUES ('owner', 'Owner', 'owner@example.test');
+      INSERT INTO admin_identity (admin_id, github_user_id) VALUES ('owner', '12345678');
+    `);
+  });
+
+  afterEach(async () => {
+    await database.close();
+  });
+
+  function ledgerQuery(text: string, params: readonly unknown[]) {
+    return database.query(text, [...params]).then((result) => result.rows as Record<string, unknown>[]);
+  }
+
+  async function seed() {
+    await database.exec(`
+      INSERT INTO upload_batch (id, base_commit_sha, owner_admin_id, status, total_bytes, expires_at)
+      VALUES ('batch-1', '${"a".repeat(40)}', 'owner', 'draft', 1, now() + interval '1 hour');
+      INSERT INTO staged_upload_file (batch_id, destination, mime_type, size, blob_sha)
+      VALUES ('batch-1', 'DSM1/ALP/a.ts', 'text/typescript', 1, 'blob-a');
+    `);
+  }
+
+  it("accumulates measured usage in the admin global window and denies once the ceiling is reached", async () => {
+    await seed();
+    // The token ceilings keep their shipped values; only the request counters
+    // are widened so this test isolates the token ceiling instead of stopping
+    // at requestsPerHour (10).
+    const ledger = createUsageLedger({
+      query: ledgerQuery,
+      policies: { admin: { ...policyFor("admin"), requestsPerHour: 1_000, requestsPerDay: 1_000 } },
+    });
+    // Every settled turn reports the worst-case spend, so the global window
+    // measures real tokens instead of only holding reservations.
+    const ai = createFakeAdminClassifierAi([[]], { inputTokens: 8_000, outputTokens: 2_000 });
+    const classify = createClassifyBatchHandler({
+      requireAdmin: async () => ({ adminId: "owner" }),
+      query: ledgerQuery,
+      source: { readBlob: async () => encoder.encode("x") },
+      catalog: CATALOG,
+      ai,
+      ledger,
+    });
+
+    const statuses: number[] = [];
+    for (let turn = 0; turn < 60; turn += 1) {
+      statuses.push((await classify(request(), "batch-1")).status);
+    }
+
+    const deniedAt = statuses.indexOf(429);
+    expect(deniedAt).toBeGreaterThan(0);
+    // 50 turns of 10.000 measured tokens fill the 500.000 ceiling exactly; the
+    // 51st reservation would exceed it and is denied before any provider call.
+    // The request ceilings are widened, so the token ceiling is what binds.
+    expect(deniedAt).toBe(50);
+    expect(ai.calls).toHaveLength(50);
+
+    // The measured tokens are what accumulated: a settle with no usage would
+    // have returned the window to zero and the ceiling could never bind.
+    const [window] = await ledgerQuery(
+      `SELECT input_tokens, output_tokens, reserved_input_tokens, reserved_output_tokens
+         FROM ai_usage_window
+        WHERE scope = 'admin' AND subject_key = '*' AND window_kind = 'global'`,
+      [],
+    );
+    expect(Number(window!["input_tokens"])).toBe(50 * 8_000);
+    expect(Number(window!["output_tokens"])).toBe(50 * 2_000);
+    expect(Number(window!["reserved_input_tokens"])).toBe(0);
+    expect(Number(window!["reserved_output_tokens"])).toBe(0);
+
+    const quota = await ledger.readQuota({ scope: "admin", subjectKey: "owner" });
+    expect(quota.globalTokensToday).toBe(500_000);
+    expect(quota.globalTokensToday).toBeLessThanOrEqual(quota.globalTokensPerDay);
+
+    const final = await classify(request(), "batch-1");
+    expect(final.status).toBe(429);
+    expect(await final.json()).toMatchObject({ error: "quota", reason: "global" });
+    expect(ai.calls).toHaveLength(50);
   });
 });

@@ -254,11 +254,16 @@ export function validateSuggestions(
     const kind = KIND_BY_NAME[candidate.kind] ? candidate.kind : inferredKind;
     if (!KIND_BY_NAME[candidate.kind]) discarded.push("kind");
 
-    const title = typeof candidate.title === "string" && candidate.title.trim() ? candidate.title.trim().slice(0, 200) : file.filename;
+    // A blank model title falls back to the trusted filename; that title was
+    // not the model's claim, so it must not inherit the model's confidence.
+    const modelTitle = typeof candidate.title === "string" ? candidate.title.trim() : "";
+    const title = modelTitle ? modelTitle.slice(0, 200) : file.filename;
+    if (!modelTitle) discarded.push("title");
 
     if (semesterCode === null) confidence.semester = 0;
     if (disciplineCode === null) confidence.discipline = 0;
     if (relativePath === null) confidence.path = 0;
+    if (!modelTitle) confidence.title = 0;
     if (!KIND_BY_NAME[candidate.kind]) confidence.kind = 0;
 
     const dropped = [...new Set(discarded)].sort().join(", ");
@@ -356,7 +361,10 @@ export function createClassifyBatchHandler(
     if (asString(batch["owner_admin_id"]) !== adminId) return json(403, { error: "not-owner" });
     const status = asString(batch["status"]) ?? "";
     if (status !== "draft" && status !== "ready") return json(409, { error: "batch-not-draft" });
-    const expiresAt = Date.parse(asString(batch["expires_at"]) ?? "");
+    // The driver may hand back a Date or an ISO string (the publication
+    // workflow accepts both); a value that parses to neither is expired.
+    const rawExpiry = batch["expires_at"];
+    const expiresAt = rawExpiry instanceof Date ? rawExpiry.getTime() : Date.parse(asString(rawExpiry) ?? "");
     if (!Number.isFinite(expiresAt) || expiresAt <= now()) return json(410, { error: "batch-expired" });
 
     const stagedRows = await dependencies.query(
@@ -393,9 +401,14 @@ export function createClassifyBatchHandler(
       outcome = await runSponsoredTurn(
         dependencies.ledger,
         { scope: "admin", subjectKey: adminId },
-        async (budget) => ({
-          output: await dependencies.ai.suggestBatch(buildClassificationInput(batchId, files, dependencies.catalog, budget)),
-        }),
+        async (budget) => {
+          // The provider's real token usage is reported so `reconcile` settles
+          // the reservation with measured spend; without it the global window
+          // would only ever hold reservations and the token ceiling could not
+          // bind (requestsPerDay × reserved would overshoot it).
+          const result = await dependencies.ai.suggestBatch(buildClassificationInput(batchId, files, dependencies.catalog, budget));
+          return { output: result.suggestions, usage: result.usage };
+        },
       );
     } catch (error) {
       return providerFailure(error);

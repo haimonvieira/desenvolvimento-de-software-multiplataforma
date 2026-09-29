@@ -91,7 +91,7 @@ describe("Groq admin classifier adapter", () => {
     const { calls, fetchImpl } = recordedFetch(() => chatResponse(suggestionBody()));
     const ai = createGroqAdminClassifierAi({ apiKey: "gsk-admin-secret", fetchImpl });
 
-    const suggestions = await ai.suggestBatch(input);
+    const result = await ai.suggestBatch(input);
 
     expect(calls).toHaveLength(1);
     expect(calls[0]!.url).toBe(`${GROQ_ADMIN_BASE_URL}/chat/completions`);
@@ -136,7 +136,7 @@ describe("Groq admin classifier adapter", () => {
       type: "string",
       enum: ["document", "code", "image", "archive", "other"],
     });
-    expect(suggestions).toEqual([
+    expect(result.suggestions).toEqual([
       {
         blobSha: "blob-a",
         semesterCode: "DSM1",
@@ -147,6 +147,41 @@ describe("Groq admin classifier adapter", () => {
         confidence: { semester: 0.9, discipline: 0.8, path: 0.7, title: 0.6, kind: 0.95 },
       },
     ]);
+    // Real usage travels with the suggestions so the admin ledger measures the
+    // spend instead of only reserving it.
+    expect(result.usage).toEqual({ inputTokens: 200, outputTokens: 80 });
+  });
+
+  it("bounds the prompt so the reserved per-turn input ceiling cannot be exceeded", async () => {
+    const { calls, fetchImpl } = recordedFetch(() => chatResponse(JSON.stringify({ suggestions: [] })));
+    const ai = createGroqAdminClassifierAi({ apiKey: "gsk-admin", fetchImpl });
+
+    await ai.suggestBatch({
+      ...input,
+      files: [{ ...input.files[0]!, text: "x".repeat(200_000) }],
+    });
+
+    const messages = sentBody(calls[0]!.init).messages as readonly { role: string; content: string }[];
+    const chars = messages.reduce((total, message) => total + message.content.length, 0);
+    // The prompt is sized at a 3-chars-per-token floor, so it cannot exceed the
+    // reserved per-turn input ceiling even under pessimistic tokenization.
+    expect(chars).toBeLessThanOrEqual(input.budget.maxInputTokens * 3);
+    const user = messages.find((message) => message.role === "user")?.content ?? "";
+    expect(user).toContain("<<<EVIDENCIA");
+    expect(user).toContain("<<<FIM EVIDENCIA>>>");
+  });
+
+  it("reports zero usage when the provider omits the usage object", async () => {
+    const { fetchImpl } = recordedFetch(
+      () =>
+        new Response(
+          JSON.stringify({ choices: [{ message: { content: JSON.stringify({ suggestions: [] }) } }] }),
+          { status: 200, headers: { "content-type": "application/json" } },
+        ),
+    );
+    const ai = createGroqAdminClassifierAi({ apiKey: "gsk-admin", fetchImpl });
+
+    expect((await ai.suggestBatch(input)).usage).toEqual({ inputTokens: 0, outputTokens: 0 });
   });
 
   it("delimits untrusted file text as evidence, never as instructions", async () => {
@@ -258,11 +293,15 @@ describe("Groq admin classifier adapter", () => {
   });
 
   it("replays a scripted fake and records every input", async () => {
-    const fake = createFakeAdminClassifierAi([[{ blobSha: "b", semesterCode: null, disciplineCode: null, relativePath: null, title: "t", kind: "other", confidence: { semester: 0, discipline: 0, path: 0, title: 0, kind: 0 } }]]);
+    const fake = createFakeAdminClassifierAi(
+      [[{ blobSha: "b", semesterCode: null, disciplineCode: null, relativePath: null, title: "t", kind: "other", confidence: { semester: 0, discipline: 0, path: 0, title: 0, kind: 0 } }]],
+      { inputTokens: 120, outputTokens: 30 },
+    );
 
     const output = await fake.suggestBatch(input);
 
-    expect(output).toHaveLength(1);
+    expect(output.suggestions).toHaveLength(1);
+    expect(output.usage).toEqual({ inputTokens: 120, outputTokens: 30 });
     expect(fake.calls).toHaveLength(1);
     expect(fake.calls[0]!.batchId).toBe("batch-1");
   });

@@ -95,7 +95,7 @@ function scriptedLedger(limit: number) {
     async expireStaleReservations() { return 0; },
     async readQuota() {
       return {
-        scope: "public", requestsThisHour: reservations.length, requestsPerHour: 5,
+        scope: "public", enabled: true, requestsThisHour: reservations.length, requestsPerHour: 5,
         requestsToday: reservations.length, requestsPerDay: 15, globalTurnsToday: reservations.length,
         globalTurnsPerDay: 30, globalTokensToday: reservations.length * 5_000, globalTokensPerDay: 150_000,
         resetsAt: "2026-09-29T00:00:00.000Z",

@@ -108,14 +108,11 @@ describe("Groq public tutor adapter", () => {
     expect(parsed.toolCalls).toEqual([{ name: "retrieve", query: "mais contexto" }]);
   });
 
-  it("degrades to the fallback model once on 429 or 5xx, then surfaces quota without retry", async () => {
+  it("degrades to the fallback model once when the primary is unavailable (5xx)", async () => {
     const { calls, fetchImpl } = recordedFetch((url, init) => {
       const sent = JSON.parse(init.body as string) as { model: string };
       if (sent.model === GROQ_PRIMARY_MODEL) {
-        return new Response(JSON.stringify({ error: { message: "Rate limit reached", type: "rate_limit_error" } }), {
-          status: 429,
-          headers: { "retry-after": "7" },
-        });
+        return new Response(JSON.stringify({ error: { message: "engine down", type: "server_error" } }), { status: 503 });
       }
       return chatResponse(jsonBody("Resposta do modelo menor."));
     });
@@ -128,12 +125,31 @@ describe("Groq public tutor adapter", () => {
     expect(output.answer).toBe("Resposta do modelo menor.");
   });
 
+  it("never degrades on 429: the quota ends the turn on the primary with retry-after", async () => {
+    // The default primary/fallback pair: a 429 must not produce a second
+    // provider call, because the fallback shares the same organization limits.
+    const { calls, fetchImpl } = recordedFetch(() => new Response(
+      JSON.stringify({ error: { message: "Rate limit reached", type: "rate_limit_error" } }),
+      { status: 429, headers: { "retry-after": "12" } },
+    ));
+    const ai = createGroqPublicTutorAi({ apiKey: "gsk-sponsored", fetchImpl });
+
+    const error = await ai.answer(input, budget).catch((failure: unknown) => failure);
+
+    expect(error).toBeInstanceOf(TutorProviderError);
+    expect((error as TutorProviderError).failure).toEqual({ kind: "rate_limited", retryAfterSeconds: 12 });
+    expect(calls).toHaveLength(1);
+    expect(JSON.parse(calls[0]!.init.body as string)).toMatchObject({ model: GROQ_PRIMARY_MODEL });
+  });
+
   it("reports quota exhaustion with retry-after and never auto-retries", async () => {
     const { calls, fetchImpl } = recordedFetch(() => new Response(
       JSON.stringify({ error: { message: "Rate limit reached", type: "rate_limit_error" } }),
       { status: 429, headers: { "retry-after": "12" } },
     ));
-    const ai = createGroqPublicTutorAi({ apiKey: "gsk-sponsored", fetchImpl, fallbackModel: GROQ_PRIMARY_MODEL });
+    // The default primary/fallback pair: the no-retry rule is proven on the
+    // real configuration, not on a test override that disables degradation.
+    const ai = createGroqPublicTutorAi({ apiKey: "gsk-sponsored", fetchImpl });
 
     const error = await ai.answer(input, budget).catch((failure: unknown) => failure);
 

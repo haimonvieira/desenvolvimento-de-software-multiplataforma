@@ -86,10 +86,13 @@ BEGIN
   -- requests cannot both win.
   BEGIN
     -- Sponsored concurrency: at most maxConcurrentTurns live reservations per
-    -- scope. The count runs inside this function's implicit transaction, so two
-    -- concurrent first turns serialize on the ai_reservation rows they read and
-    -- only one passes. 0/absent disables the check (legacy policies).
+    -- scope. Counting is not enough on its own — two concurrent calls could both
+    -- read zero before either commits. A transaction-scoped advisory lock per
+    -- scope serializes the admission decision, so the second caller re-reads
+    -- after the first commits (or rolls back) and sees its reservation. The lock
+    -- is released automatically at the end of the transaction.
     IF max_concurrent >= 1 THEN
+      PERFORM pg_advisory_xact_lock(hashtext('atlas_ai_reserve:' || p_scope));
       SELECT count(*) INTO in_flight FROM ai_reservation
         WHERE scope = p_scope AND status IN ('reserved', 'unknown') AND ai_reservation.expires_at > p_now;
       IF in_flight >= max_concurrent THEN RAISE EXCEPTION 'concurrent' USING ERRCODE = 'AT004'; END IF;

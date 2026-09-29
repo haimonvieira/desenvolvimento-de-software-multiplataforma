@@ -18,6 +18,8 @@ export type ReservationOutcome = "settled" | "unknown";
 
 export type QuotaSnapshot = Readonly<{
   scope: UsageScope;
+  /** Whether the scope may spend at all; a disabled scope reports its limits. */
+  enabled: boolean;
   requestsThisHour: number;
   requestsPerHour: number;
   requestsToday: number;
@@ -120,6 +122,7 @@ export function createUsageLedger(dependencies: UsageLedgerDependencies): UsageL
       const raw = asRecord(rows[0]?.quota);
       return {
         scope,
+        enabled: policy(scope).enabled,
         requestsThisHour: Number(raw.requestsThisHour ?? 0),
         requestsPerHour: Number(raw.requestsPerHour ?? 0),
         requestsToday: Number(raw.requestsToday ?? 0),
@@ -310,15 +313,26 @@ export function createTutorQuotaHandler(dependencies: TutorQuotaDependencies): T
       }
     },
 
+    /**
+     * A read-only quota check. It reports the same snapshot as GET; POST exists
+     * only because the abuse gate needs a body to carry the Turnstile token.
+     *
+     * It deliberately does **not** reserve. Reserving here would spend a global
+     * daily turn and mint sponsored history without ever calling the provider,
+     * and — with sponsored concurrency 1 — would hold the single scope-wide slot
+     * for up to 30 seconds, denying every real turn in the meantime. The
+     * reservation belongs to the turn route, which is the only caller that then
+     * invokes the provider.
+     */
     async POST(request: Request): Promise<Response> {
       try {
         const subject = await subjectFor(request);
         const body = (await request.json().catch(() => null)) as { turnstileToken?: unknown } | null;
         const turnstileToken = typeof body?.turnstileToken === "string" ? body.turnstileToken : null;
 
-        // A disabled scope is denied outright: there is no point asking the abuse
-        // gate to verify a turn that cannot be granted, and the ledger stays the
-        // single source of the denial and its reset time.
+        // The gate runs here so a visitor can verify before asking, but a
+        // successful check writes nothing: without a reservation there is no
+        // sponsored history, so the turn route still enforces the gate itself.
         if (dependencies.ledger.policy(subject.scope).enabled && !(await dependencies.ledger.hasSponsoredHistory(subject))) {
           const verified = dependencies.firstUseGate ? await dependencies.firstUseGate({ request, turnstileToken }) : false;
           // No gate configured means sponsored turns stay closed: the abuse
@@ -327,10 +341,9 @@ export function createTutorQuotaHandler(dependencies: TutorQuotaDependencies): T
           if (!verified) return Response.json({ error: "Verificação necessária" }, { status: 403 });
         }
 
-        const decision = await dependencies.ledger.reserve(subject);
-        return Response.json({ decision }, { status: decision.type === "reserved" ? 200 : 429 });
+        return Response.json({ quota: await dependencies.ledger.readQuota(subject) });
       } catch {
-        return Response.json({ error: "Não foi possível reservar a cota" }, { status: 500 });
+        return Response.json({ error: "Não foi possível ler a cota" }, { status: 500 });
       }
     },
   };

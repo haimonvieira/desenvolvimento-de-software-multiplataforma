@@ -27,6 +27,11 @@ import type { ReservedBudget } from "../../modules/tutor/usage-ledger";
  * /docs/text-chat (SSE streaming, `stream_options.include_usage`),
  * /docs/errors (`{"error":{"message","type"}}`), groq-typescript README
  * (default retries/timeouts, Workers support).
+ *
+ * Degradation: `openai/gpt-oss-20b` is tried once, and only when the primary is
+ * *unavailable* (5xx or a transport failure). A 429 is never repeated — the
+ * fallback shares the same organization limits, and spec §6 requires the quota
+ * message with `retry-after` instead of a second provider call.
  */
 
 export const GROQ_BASE_URL = "https://api.groq.com/openai/v1";
@@ -416,15 +421,14 @@ export function createGroqPublicTutorAi(options: GroqAdapterOptions): PublicTuto
     try {
       return await complete(input, budget, primary);
     } catch (error) {
-      // Degradation only: a spent quota (429) or an unavailable primary gets
-      // one attempt on the smaller model, which shares the same org limits but
-      // may still have headroom on per-model counters. Auth, invalid-shape and
-      // timeout errors never fall through — a timeout must stay unknown.
-      if (
-        error instanceof TutorProviderError
-        && (error.failure.kind === "rate_limited" || error.failure.kind === "unavailable")
-        && fallback !== primary
-      ) {
+      // Degradation is for availability only: an unavailable primary (5xx or a
+      // transport failure) gets one attempt on the smaller model, which shares
+      // the same organization limits but may still have headroom. A 429 must
+      // NOT be repeated (spec §6) — the fallback shares the same limits, so a
+      // second call would spend quota the visitor was just told is gone. Auth,
+      // invalid-shape and timeout errors never fall through either; a timeout
+      // stays an unknown outcome.
+      if (error instanceof TutorProviderError && error.failure.kind === "unavailable" && fallback !== primary) {
         return await complete(input, budget, fallback);
       }
       throw error;

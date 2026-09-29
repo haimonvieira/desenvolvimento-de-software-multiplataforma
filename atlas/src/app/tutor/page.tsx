@@ -1,3 +1,5 @@
+import { env } from "cloudflare:workers";
+
 import catalog from "../../generated/catalog.json";
 import { createCatalogQuery } from "../../modules/catalog/catalog-query";
 import type { CatalogData } from "../../modules/catalog/model";
@@ -6,6 +8,8 @@ import { tutorCandidates } from "../../modules/study/tutor-context";
 
 const data = catalog as CatalogData;
 const catalogQuery = createCatalogQuery(data);
+
+type TutorPageEnv = { TURNSTILE_SITE_KEY?: string };
 
 type TutorPageProps = Readonly<{
   searchParams?: Promise<Record<string, string | string[] | undefined>>;
@@ -25,6 +29,9 @@ export default async function TutorPage({ searchParams }: TutorPageProps) {
   const knownSemesters = data.semesters.map(({ code }) => code);
   const semester = knownSemesters.includes(semesterValue ?? "") ? semesterValue! : "DSM1";
   const candidates = tutorCandidates(catalogQuery.browse({ semester }));
+  // The sitekey is public configuration, not a secret: the matching secret
+  // (`TURNSTILE_SECRET_KEY`) is used only by the server-side siteverify call.
+  const turnstileSiteKey = (env as TutorPageEnv).TURNSTILE_SITE_KEY ?? null;
 
   return (
     <>
@@ -39,7 +46,7 @@ export default async function TutorPage({ searchParams }: TutorPageProps) {
             <h1>Tutor de estudo</h1>
             <p>Respostas citam os materiais em estudo. O modo patrocinado usa a cota do portal; com sua chave, o uso é por sua conta.</p>
           </header>
-          <TutorPanel candidates={candidates} />
+          <TutorPanel candidates={candidates} turnstileSiteKey={turnstileSiteKey} />
         </main>
       </div>
     </>

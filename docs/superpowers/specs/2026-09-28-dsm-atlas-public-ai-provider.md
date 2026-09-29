@@ -12,7 +12,12 @@ O tutor público usa a API do Groq, compatível com o formato [OI], em
 `Authorization: Bearer`.
 
 - **Modelo primário:** `openai/gpt-oss-120b`
-- **Modelo de degradação:** `openai/gpt-oss-20b`
+- **Modelo de degradação:** `openai/gpt-oss-20b`, usado **somente quando o
+  modelo primário está indisponível** (erro 5xx ou falha de transporte). Uma
+  resposta `429` **não** é repetida no modelo de degradação: os dois modelos
+  compartilham os mesmos limites de organização, então repetir consumiria cota
+  que o visitante acabou de ser informado como esgotada. Um `429` encerra o
+  turno no modelo primário com a mensagem de cota e `retry-after` (§6).
 - **SDK:** cliente TypeScript oficial do Groq quando compatível com o runtime
   Cloudflare Workers; caso contrário, `fetch` nativo contra o mesmo endpoint.
   Verificar na implementação qual caminho o runtime aceita e registrar a
@@ -98,13 +103,18 @@ caminho documentado. Portanto:
 
 ## 6. Política de falhas
 
-- **429 / limite do provedor:** não repetir automaticamente. Informar o
-  visitante que a cota está esgotada e quando ela reinicia, usando
-  `retry-after` quando presente. O estudo sem IA continua funcionando.
+- **429 / limite do provedor:** não repetir automaticamente, **nem no modelo de
+  degradação** — os dois modelos compartilham os mesmos limites de organização
+  (§2). O turno termina no modelo primário e o visitante é informado de que a
+  cota está esgotada e de quando ela reinicia, usando `retry-after` quando
+  presente. O estudo sem IA continua funcionando.
 - **Timeout:** resultado **desconhecido**, não permissão para repetir. A reserva
-  permanece consumida até a expiração/reconciliação já implementada.
-- **Erro 5xx do provedor:** falhar fechado; nenhuma cota é devolvida
-  automaticamente sem reconciliação.
+  permanece consumida até a expiração/reconciliação já implementada. Também não
+  há degradação para o modelo menor: uma resposta que pode ter sido processada
+  não deve gerar uma segunda chamada paga.
+- **Erro 5xx do provedor:** tentar **uma vez** o modelo de degradação; se ele
+  também falhar, falhar fechado. Nenhuma cota é devolvida automaticamente sem
+  reconciliação.
 - **Erro de autenticação:** falhar fechado e não expor a chave nem o corpo do
   erro do provedor ao visitante.
 - **Resposta sem citações válidas:** a afirmação é marcada como não sustentada

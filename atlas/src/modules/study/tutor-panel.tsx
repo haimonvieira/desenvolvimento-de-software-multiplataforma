@@ -9,6 +9,7 @@ import { TUTOR_CONTEXT_LIMIT } from "../tutor/study-tutor";
 import { applyProposedNotebookAction } from "../tutor/notebook";
 import { selectTutorContext } from "./tutor-context";
 import { createIndexedDbStudyWorkspace } from "./indexed-db-study-store";
+import { TurnstileWidget } from "./turnstile-widget";
 
 type TurnState =
   | Readonly<{ type: "idle" }>
@@ -44,8 +45,15 @@ function proposalLabel(proposal: ProposedNotebookAction): string {
  * call made here, never by the model — and a BYOK key is kept in a state
  * variable for the session only, so it is never persisted, logged or
  * synchronised.
+ *
+ * `turnstileSiteKey` is the public sitekey; when it is absent the widget cannot
+ * render and the panel says the first-use gate is closed instead of offering an
+ * input the visitor could never satisfy.
  */
-export function TutorPanel({ candidates }: Readonly<{ candidates: readonly MaterialRef[] }>) {
+export function TutorPanel({ candidates, turnstileSiteKey }: Readonly<{
+  candidates: readonly MaterialRef[];
+  turnstileSiteKey: string | null;
+}>) {
   const workspace = useMemo(() => createIndexedDbStudyWorkspace(), []);
   const [context, setContext] = useState<readonly MaterialRef[]>(() => selectTutorContext(candidates, null));
   const [question, setQuestion] = useState("");
@@ -160,20 +168,7 @@ export function TutorPanel({ candidates }: Readonly<{ candidates: readonly Mater
             Minha chave (BYOK)
           </label>
         </fieldset>
-        {mode === "sponsored" && (
-          <>
-            <label htmlFor="tutor-turnstile">Verificação (primeiro uso)</label>
-            <input
-              id="tutor-turnstile"
-              name="turnstileToken"
-              type="text"
-              autoComplete="off"
-              value={turnstileToken}
-              onChange={(event) => setTurnstileToken(event.target.value)}
-              placeholder="Token do desafio, quando exibido"
-            />
-          </>
-        )}
+        {mode === "sponsored" && <TurnstileWidget siteKey={turnstileSiteKey} onToken={setTurnstileToken} />}
         {mode === "byok" && (
           <>
             <label htmlFor="tutor-byok-key">Sua chave de API</label>

@@ -247,6 +247,39 @@ describe("atomic budget reservation", () => {
     expect((await windowRows("public", "device-b", "day"))).toHaveLength(0);
   });
 
+  it("admits exactly one of two simultaneous turns while sponsored concurrency is 1", async () => {
+    const clock = clockAt("2026-09-28T10:15:00.000Z");
+    const ledger = ledgerWith(clock, {
+      public: { ...policyFor("public"), requestsPerHour: 100, requestsPerDay: 100, globalTurnsPerDay: 100, maxConcurrentTurns: 1 },
+    });
+
+    const decisions = await Promise.all([
+      ledger.reserve({ scope: "public", subjectKey: "device-a" }),
+      ledger.reserve({ scope: "public", subjectKey: "device-b" }),
+    ]);
+
+    expect(decisions.filter((decision) => decision.type === "reserved")).toHaveLength(1);
+    expect(await executor.query(`SELECT count(*)::int AS total FROM ai_reservation WHERE scope = 'public'`, [])).toEqual([{ total: 1 }]);
+  });
+
+  it("decides the concurrency admission under a lock taken before the in-flight count", async () => {
+    // PGlite runs on a single connection, so this suite cannot produce real
+    // cross-connection contention: two `Promise.all` reserves are serialized by
+    // the connection and the second sees the first's committed row. What can be
+    // proven here is the mechanism — the function must take a transaction-scoped
+    // advisory lock *before* it counts live reservations, so on a real
+    // multi-connection Postgres two concurrent calls cannot both read zero and
+    // both commit. The pre-fix body has no lock at all, so this fails RED.
+    const rows = await executor.query(`SELECT prosrc FROM pg_proc WHERE proname = 'reserve_ai_budget'`, []);
+    const body = String(rows[0]?.prosrc ?? "");
+    const lockAt = body.indexOf("pg_advisory_xact_lock");
+    const countAt = body.indexOf("count(*) INTO in_flight");
+
+    expect(countAt).toBeGreaterThan(-1);
+    expect(lockAt).toBeGreaterThan(-1);
+    expect(lockAt).toBeLessThan(countAt);
+  });
+
   it("admits the next turn once the live one settles", async () => {
     const clock = clockAt("2026-09-28T10:15:00.000Z");
     const ledger = ledgerWith(clock, {
@@ -516,21 +549,29 @@ describe("sponsored quota endpoint", () => {
 
     expect(response.status).toBe(200);
     expect(await response.json()).toMatchObject({
-      quota: { scope: "public", requestsThisHour: 1, requestsPerHour: 5, requestsToday: 1, requestsPerDay: 15, globalTurnsToday: 1, globalTurnsPerDay: 30, globalTokensToday: 5_000, globalTokensPerDay: 150_000 },
+      quota: { scope: "public", enabled: true, requestsThisHour: 1, requestsPerHour: 5, requestsToday: 1, requestsPerDay: 15, globalTurnsToday: 1, globalTurnsPerDay: 30, globalTokensToday: 5_000, globalTokensPerDay: 150_000 },
     });
   });
 
-  it("answers a denied reservation with 429 and the decision", async () => {
+  it("reports the snapshot without reserving any budget", async () => {
     const clock = clockAt("2026-09-28T10:15:00.000Z");
-    const ledger = ledgerWith(clock, { public: { ...policyFor("public"), enabled: false } });
+    const ledger = ledgerWith(clock);
 
-    const response = await handlerWith(ledger).POST(new Request("https://atlas.example/api/tutor/quota", { method: "POST", body: "{}" }));
+    const response = await handlerWith(ledger, async () => true).POST(new Request("https://atlas.example/api/tutor/quota", { method: "POST", body: "{}" }));
 
-    expect(response.status).toBe(429);
-    expect(await response.json()).toEqual({ decision: { type: "denied", reason: "disabled", resetsAt: "2026-09-29T00:00:00.000Z" } });
+    expect(response.status).toBe(200);
+    expect(await response.json()).toMatchObject({
+      quota: { scope: "public", enabled: true, requestsThisHour: 0, requestsToday: 0, globalTurnsToday: 0 },
+    });
+    // A quota check must not spend a global turn, hold the concurrency slot or
+    // mint sponsored history: the reservation belongs to the turn that will
+    // actually call the provider.
+    expect(await executor.query(`SELECT count(*)::int AS total FROM ai_reservation`, [])).toEqual([{ total: 0 }]);
+    expect(await windowRows("public", "unkeyed", "hour")).toHaveLength(0);
+    expect(await windowRows("public", "*", "global")).toHaveLength(0);
   });
 
-  it("fails closed on the first sponsored turn until the abuse gate verifies it", async () => {
+  it("fails closed on a first sponsored check until the abuse gate verifies it", async () => {
     const clock = clockAt("2026-09-28T10:15:00.000Z");
     const ledger = ledgerWith(clock);
     const requests: (string | null)[] = [];
@@ -544,20 +585,29 @@ describe("sponsored quota endpoint", () => {
       requests.push(turnstileToken);
       return turnstileToken === "token";
     });
-    const first = await gated.POST(new Request("https://atlas.example/api/tutor/quota", { method: "POST", body: JSON.stringify({ turnstileToken: "token" }) }));
-    expect(first.status).toBe(200);
-    expect((await first.json()).decision.type).toBe("reserved");
-    const firstDecision = ((await ledger.readQuota({ scope: "public", subjectKey: "unkeyed" }))) as { requestsToday: number };
-    expect(firstDecision.requestsToday).toBe(1);
+    const verified = await gated.POST(new Request("https://atlas.example/api/tutor/quota", { method: "POST", body: JSON.stringify({ turnstileToken: "token" }) }));
 
-    // The first turn settles before the second starts: concurrency 1 only
-    // denies overlapping turns, and returning subjects skip the gate anyway.
-    const reservations = await executor.query(`SELECT id FROM ai_reservation WHERE scope = 'public' ORDER BY created_at LIMIT 1`, []);
-    await ledger.reconcile({ reservationId: String(reservations[0]?.id ?? ""), outcome: "settled", usage: { inputTokens: 100, outputTokens: 20 } });
-
-    const second = await gated.POST(new Request("https://atlas.example/api/tutor/quota", { method: "POST", body: "{}" }));
-    expect(second.status).toBe(200);
+    expect(verified.status).toBe(200);
+    expect((await verified.json()).quota.requestsToday).toBe(0);
     expect(requests).toEqual(["token"]);
+    expect(await executor.query(`SELECT count(*)::int AS total FROM ai_reservation`, [])).toEqual([{ total: 0 }]);
+  });
+
+  it("a quota check neither blocks a turn nor exempts the subject from the first-use gate", async () => {
+    const clock = clockAt("2026-09-28T10:15:00.000Z");
+    const ledger = ledgerWith(clock);
+    const gated = handlerWith(ledger, async () => true);
+
+    const checked = await gated.POST(new Request("https://atlas.example/api/tutor/quota", { method: "POST", body: "{}" }));
+    expect(checked.status).toBe(200);
+
+    // The check minted no sponsored history, so the first-use gate still applies.
+    expect(await ledger.hasSponsoredHistory({ scope: "public", subjectKey: "unkeyed" })).toBe(false);
+    // And it left the single sponsored concurrency slot free: the next real turn
+    // reserves immediately instead of being denied for 30 seconds.
+    const decision = await ledger.reserve({ scope: "public", subjectKey: "unkeyed" });
+    expect(decision.type).toBe("reserved");
+    expect((await windowRows("public", "unkeyed", "hour"))[0]).toMatchObject({ requests: 1 });
   });
 
   it("ignores a client-selected scope", async () => {
@@ -570,9 +620,10 @@ describe("sponsored quota endpoint", () => {
     );
 
     expect(response.status).toBe(200);
-    expect((await response.json()).decision.type).toBe("reserved");
+    expect((await response.json()).quota.scope).toBe("public");
     expect((await windowRows("admin", "unkeyed", "hour"))).toHaveLength(0);
     expect((await windowRows("admin", "*", "global"))).toHaveLength(0);
+    expect(await executor.query(`SELECT count(*)::int AS total FROM ai_reservation`, [])).toEqual([{ total: 0 }]);
   });
 
   it("reports unconfigured instead of granting sponsored budget without credentials", async () => {

@@ -13,5 +13,7 @@ declare module "cloudflare:workers" {
     TUTOR_SUBJECT_SECRET?: string;
     GROQ_API_KEY?: string;
     TURNSTILE_SECRET_KEY?: string;
+    /** Public widget sitekey; safe in the client bundle, unlike the secret. */
+    TURNSTILE_SITE_KEY?: string;
   };
 }

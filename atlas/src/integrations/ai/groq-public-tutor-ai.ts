@@ -370,8 +370,10 @@ function usageOf(response: GroqChatResponse): { inputTokens: number; outputToken
 /**
  * The bound public provider. One `answer` call maps to one non-streaming Groq
  * chat completion on the primary model, with a single degradation attempt on
- * the fallback model when the primary is rate-limited (429) or unavailable
- * (5xx). The orchestrator's tool allowlist stays in code: `retrieve` is the
+ * the fallback model only when the primary is unavailable (5xx or transport
+ * failure). A 429 is never repeated — not even on the fallback — and ends the
+ * turn on the primary with `retry-after` so the visitor sees the quota state.
+ * The orchestrator's tool allowlist stays in code: `retrieve` is the
  * only function definition sent, and anything else the model returns is
  * dropped by `parseToolCalls`. Citations and proposals travel inside the
  * model's JSON answer; `validateCitations` in the orchestrator still decides

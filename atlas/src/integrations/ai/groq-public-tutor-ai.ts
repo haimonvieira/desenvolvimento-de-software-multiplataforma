@@ -9,7 +9,7 @@ import type {
 } from "./public-tutor-ai";
 import { TutorProviderError } from "./provider-failure";
 import { postGroqChatCompletions, throwForGroqStatus, type GroqFetch } from "./groq-transport";
-import { createAnswerExtractor } from "../../modules/tutor/answer-stream";
+import { createTutorFieldExtractor } from "../../modules/tutor/answer-stream";
 import type { ReservedBudget } from "../../modules/tutor/usage-ledger";
 import { promptCharBudget, TRUNCATION_MARKER } from "./prompt-budget";
 
@@ -150,7 +150,8 @@ function buildMessages(input: TutorModelInput, budget: ReservedBudget): GroqMess
   const system = [
     "Você é o tutor de estudo do DSM Atlas. Responda em português.",
     "Use APENAS os trechos recuperados abaixo. Se eles não sustentarem a resposta, diga exatamente: Não encontrei isso nos materiais.",
-    "Responda sempre em JSON com o formato: {\"answer\": string, \"citations\": [{\"path\": string, \"commitSha\": string, \"locator\": {\"type\": \"lines\", \"start\": number, \"end\": number} | {\"type\": \"page\", \"page\": number} | {\"type\": \"excerpt\", \"hash\": string}, \"quote\": string}], \"proposedNotebookActions\": [{\"type\": \"note\", \"title\": string, \"body\": string, \"source\": {\"path\": string, \"commitSha\": string}} | {\"type\": \"flashcard\", \"front\": string, \"back\": string, \"source\": {\"path\": string, \"commitSha\": string}}], \"toolCalls\": [{\"name\": \"retrieve\", \"query\": string}]}.",
+    "Responda sempre em JSON com o formato: {\"status\": string, \"answer\": string, \"citations\": [{\"path\": string, \"commitSha\": string, \"locator\": {\"type\": \"lines\", \"start\": number, \"end\": number} | {\"type\": \"page\", \"page\": number} | {\"type\": \"excerpt\", \"hash\": string}, \"quote\": string}], \"proposedNotebookActions\": [{\"type\": \"note\", \"title\": string, \"body\": string, \"source\": {\"path\": string, \"commitSha\": string}} | {\"type\": \"flashcard\", \"front\": string, \"back\": string, \"source\": {\"path\": string, \"commitSha\": string}}], \"toolCalls\": [{\"name\": \"retrieve\", \"query\": string}]}.",
+    "O campo status, primeiro do JSON, é uma frase curta em português, no gerúndio, dizendo o que você está fazendo com o material (ex.: \"analisando o algoritmo\", \"comparando as duas listas\"). Não repita a pergunta nem a resposta.",
     "Cada citação deve copiar um trecho recuperado palavra por palavra no campo quote, com path/commitSha/locator iguais aos do trecho. toolCalls só pode pedir a ferramenta \"retrieve\" com uma pergunta de busca; no máximo o número restante informado.",
     `Chamadas de ferramenta restantes: ${input.remainingToolCalls}.`,
   ].join("\n");
@@ -228,6 +229,12 @@ const wireActionSchema = z.discriminatedUnion("type", [
  * not refused: an extra field is not lost evidence, a dropped citation is.
  */
 const wireAnswerSchema = z.object({
+  // Optional on purpose: a model that omits `status` must not lose the whole
+  // answer. The nicety is a bonus; absence means "no status event", nothing
+  // more. Required here, a missing status would make `validateGroqAnswer`
+  // refuse an otherwise correct answer — the exact failure this project already
+  // paid for once.
+  status: z.string().optional(),
   answer: z.string(),
   citations: z.array(wireCitationSchema),
   proposedNotebookActions: z.array(wireActionSchema),
@@ -402,7 +409,7 @@ function usageOf(response: GroqChatResponse): { inputTokens: number; outputToken
  */
 export function createGroqPublicTutorAi(options: GroqAdapterOptions): PublicTutorAi & Readonly<{
   answerWithUsage(input: TutorModelInput, budget: ReservedBudget): Promise<{ output: TutorModelOutput; usage: { inputTokens: number; outputTokens: number } }>;
-  answerStream(input: TutorModelInput, budget: ReservedBudget, onToken: (token: string) => void): Promise<{ output: TutorModelOutput; usage: { inputTokens: number; outputTokens: number } }>;
+  answerStream(input: TutorModelInput, budget: ReservedBudget, onToken: (token: string) => void, onStatus?: (status: string) => void): Promise<{ output: TutorModelOutput; usage: { inputTokens: number; outputTokens: number } }>;
 }> {
   const { apiKey } = options;
   if (!apiKey) throw new Error("A Groq API key is required");
@@ -462,17 +469,19 @@ export function createGroqPublicTutorAi(options: GroqAdapterOptions): PublicTuto
     }
   }
 
-  async function answerStream(input: TutorModelInput, budget: ReservedBudget, onToken: (token: string) => void) {
+  async function answerStream(input: TutorModelInput, budget: ReservedBudget, onToken: (token: string) => void, onStatus?: (status: string) => void) {
     const response = await postGroqChatCompletions({ baseUrl: GROQ_BASE_URL, apiKey, body: requestBody(input, budget, primary, true), fetchImpl, timeoutMs });
     if (!response.ok) await throwForGroqStatus(response);
     // The raw deltas are fragments of the answer JSON, not the answer: the
-    // extractor decodes the top-level `"answer"` string so the caller forwards
-    // readable text to the student. A document that never closes just stops
-    // emitting; the validated output is still built from the full content.
-    const extractor = createAnswerExtractor();
+    // extractor decodes the top-level `"status"` and `"answer"` strings so the
+    // caller forwards readable text to the student — status first, then answer.
+    // A document that never closes just stops emitting; the validated output is
+    // still built from the full content.
+    const extractor = createTutorFieldExtractor();
     const { content, toolCalls, usage } = await readGroqStream(response, (delta) => {
       const readable = extractor.push(delta);
-      if (readable) onToken(readable);
+      if (readable.status) onStatus?.(readable.status);
+      if (readable.answer) onToken(readable.answer);
     });
     const measured = usageOf({ usage });
     const validation = validateGroqAnswer(content, toolCalls);

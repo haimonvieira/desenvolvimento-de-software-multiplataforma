@@ -76,6 +76,7 @@ export type TutorDenialReason = "minute" | "daily" | "global" | "disabled";
 
 export type TutorStreamEvent =
   | Readonly<{ type: "denied"; reason: TutorDenialReason; resetsAt: string }>
+  | Readonly<{ type: "status"; status: string }>
   | Readonly<{ type: "answer"; delta: string }>
   | Readonly<{ type: "result"; result: TutorTurnResult }>;
 
@@ -152,18 +153,19 @@ export function createStudyTutor(dependencies: StudyTutorDependencies): StudyTut
     request: TutorTurnRequest,
     budget: ReservedBudget,
     onAnswer?: (delta: string) => void,
+    onStatus?: (status: string) => void,
   ): Promise<SponsoredTurnResult<TutorTurnResult>> {
     const excerpts: RetrievedExcerpt[] = [...await retriever.retrieve(request.context, request.question, retrievalLimit)];
     const toolResults: TutorToolResult[] = [];
     let used = 0;
     let usage: TokenUsage | undefined;
-    // A streaming turn reads readable answer text from the provider as it
+    // A streaming turn reads readable status/answer text from the provider as it
     // arrives; anything without `answerStream` (the deterministic double, a
     // BYOK adapter that does not stream) falls back to the one-shot call, which
     // yields the same validated output.
     const ask = async (input: TutorModelInput): Promise<TutorModelOutput> => {
       if (!onAnswer || !ai.answerStream) return ai.answer(input, budget);
-      const streamed = await ai.answerStream(input, budget, onAnswer);
+      const streamed = await ai.answerStream(input, budget, onAnswer, onStatus);
       usage = streamed.usage;
       return streamed.output;
     };
@@ -195,8 +197,18 @@ export function createStudyTutor(dependencies: StudyTutorDependencies): StudyTut
     const pending: string[] = [];
     let wake: (() => void) | null = null;
     let finished = false;
+    // The model writes `status` before `answer`, so the accumulated status is
+    // complete by the time the first answer delta arrives. It is held back and
+    // emitted once, immediately before the answer deltas — a partial status is
+    // worse than none. Absent status stays empty and yields nothing.
+    let statusText = "";
+    let statusEmitted = false;
     const onAnswer = (delta: string) => {
       pending.push(delta);
+      wake?.();
+    };
+    const onStatus = (status: string) => {
+      statusText += status;
       wake?.();
     };
 
@@ -204,7 +216,7 @@ export function createStudyTutor(dependencies: StudyTutorDependencies): StudyTut
     let result: TutorTurnResult | null = null;
     const run = (async () => {
       if (request.mode.type === "byok") {
-        result = (await runTurn(request, byokBudget(), onAnswer)).output;
+        result = (await runTurn(request, byokBudget(), onAnswer, onStatus)).output;
         return;
       }
       const ledger = dependencies.ledger;
@@ -212,7 +224,7 @@ export function createStudyTutor(dependencies: StudyTutorDependencies): StudyTut
       const outcome = await runSponsoredTurn(
         ledger,
         { scope: "public", subjectKey: request.mode.subjectKey },
-        (budget) => runTurn(request, budget, onAnswer),
+        (budget) => runTurn(request, budget, onAnswer, onStatus),
       );
       if (outcome.decision.type === "denied") {
         denied = { reason: outcome.decision.reason, resetsAt: outcome.decision.resetsAt };
@@ -228,6 +240,10 @@ export function createStudyTutor(dependencies: StudyTutorDependencies): StudyTut
     });
 
     for (;;) {
+      if (!statusEmitted && (pending.length > 0 || finished)) {
+        statusEmitted = true;
+        if (statusText) yield { type: "status", status: statusText };
+      }
       while (pending.length > 0) yield { type: "answer", delta: pending.shift()! };
       if (finished) break;
       await new Promise<void>((resolve) => {

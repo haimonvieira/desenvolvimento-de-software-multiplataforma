@@ -48,15 +48,18 @@ async function readEvents(response: Response): Promise<{ event: string; data: un
   });
 }
 
-/** A streaming double: emits readable answer text, then resolves with the validated output. */
-function streamingAi(onStream?: (onToken: (token: string) => void) => void): PublicTutorAi & { streams: number } {
+/** A streaming double: emits a status line and readable answer text, then resolves with the validated output. */
+function streamingAi(onStream?: (onToken: (token: string) => void, onStatus?: (status: string) => void) => void): PublicTutorAi & { streams: number } {
   const ai = {
     streams: 0,
     async answer() { return output; },
-    async answerStream(_input: unknown, _budget: unknown, onToken: (token: string) => void) {
+    async answerStream(_input: unknown, _budget: unknown, onToken: (token: string) => void, onStatus?: (status: string) => void) {
       ai.streams += 1;
-      if (onStream) onStream(onToken);
-      else for (const delta of ["A ló", "gica estuda ", "o raciocínio."]) onToken(delta);
+      if (onStream) onStream(onToken, onStatus);
+      else {
+        onStatus?.("analisando a lógica");
+        for (const delta of ["A ló", "gica estuda ", "o raciocínio."]) onToken(delta);
+      }
       return { output, usage: { inputTokens: 10, outputTokens: 5 } };
     },
   };
@@ -78,9 +81,25 @@ describe("POST /api/tutor/turn (streaming)", () => {
     expect(response.status).toBe(200);
     expect(response.headers.get("content-type")).toContain("text/event-stream");
     expect(await readEvents(response)).toEqual([
+      { event: "status", data: { status: "analisando a lógica" } },
       { event: "answer", data: { delta: "A ló" } },
       { event: "answer", data: { delta: "gica estuda " } },
       { event: "answer", data: { delta: "o raciocínio." } },
+      { event: "done", data: { result: output } },
+    ]);
+  });
+
+  it("emits no status event when the model sends no status", async () => {
+    const ai = streamingAi((onToken) => { onToken("resposta sem status"); });
+    const response = await postStream({
+      retriever,
+      ledger: ledgerWith({ type: "reserved", reservationId: "r1", maxInputTokens: 4_000, maxOutputTokens: 1_000, maxToolCalls: 4 }),
+      subjectKey: async () => "s1",
+      sponsoredAi: ai,
+    }, turn);
+
+    expect(await readEvents(response)).toEqual([
+      { event: "answer", data: { delta: "resposta sem status" } },
       { event: "done", data: { result: output } },
     ]);
   });

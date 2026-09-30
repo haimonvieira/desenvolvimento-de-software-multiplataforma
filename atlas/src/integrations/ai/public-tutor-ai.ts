@@ -55,14 +55,17 @@ export interface PublicTutorAi {
   answer(input: TutorModelInput, budget: ReservedBudget): Promise<TutorModelOutput>;
   /**
    * Optional streaming variant: `onToken` receives readable answer text as it
-   * becomes available. The resolved output is exactly what `answer` returns, so
-   * a streamed turn and a plain turn cannot disagree about what the model said.
-   * A double that omits it simply never streams.
+   * becomes available, and `onStatus` receives the model's short status line
+   * (the first field of the JSON document) before the answer deltas. The
+   * resolved output is exactly what `answer` returns, so a streamed turn and a
+   * plain turn cannot disagree about what the model said. A double that omits
+   * it simply never streams.
    */
   answerStream?(
     input: TutorModelInput,
     budget: ReservedBudget,
     onToken: (token: string) => void,
+    onStatus?: (status: string) => void,
   ): Promise<Readonly<{ output: TutorModelOutput; usage: TokenUsage }>>;
 }
 

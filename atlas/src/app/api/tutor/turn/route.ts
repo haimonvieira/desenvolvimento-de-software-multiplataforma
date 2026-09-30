@@ -88,7 +88,8 @@ async function respondStream(tutor: StudyTutor, request: TutorTurnRequest): Prom
       try {
         let step = first;
         while (!step.done) {
-          if (step.value.type === "answer") controller.enqueue(sseEvent("answer", { delta: step.value.delta }));
+          if (step.value.type === "status") controller.enqueue(sseEvent("status", { status: step.value.status }));
+          else if (step.value.type === "answer") controller.enqueue(sseEvent("answer", { delta: step.value.delta }));
           else if (step.value.type === "result") controller.enqueue(sseEvent("done", { result: step.value.result }));
           step = await events.next();
         }

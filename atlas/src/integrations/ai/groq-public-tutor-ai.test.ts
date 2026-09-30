@@ -114,7 +114,8 @@ describe("Groq public tutor adapter", () => {
       content: [
         "Você é o tutor de estudo do DSM Atlas. Responda em português.",
         "Use APENAS os trechos recuperados abaixo. Se eles não sustentarem a resposta, diga exatamente: Não encontrei isso nos materiais.",
-        "Responda sempre em JSON com o formato: {\"answer\": string, \"citations\": [{\"path\": string, \"commitSha\": string, \"locator\": {\"type\": \"lines\", \"start\": number, \"end\": number} | {\"type\": \"page\", \"page\": number} | {\"type\": \"excerpt\", \"hash\": string}, \"quote\": string}], \"proposedNotebookActions\": [{\"type\": \"note\", \"title\": string, \"body\": string, \"source\": {\"path\": string, \"commitSha\": string}} | {\"type\": \"flashcard\", \"front\": string, \"back\": string, \"source\": {\"path\": string, \"commitSha\": string}}], \"toolCalls\": [{\"name\": \"retrieve\", \"query\": string}]}.",
+        "Responda sempre em JSON com o formato: {\"status\": string, \"answer\": string, \"citations\": [{\"path\": string, \"commitSha\": string, \"locator\": {\"type\": \"lines\", \"start\": number, \"end\": number} | {\"type\": \"page\", \"page\": number} | {\"type\": \"excerpt\", \"hash\": string}, \"quote\": string}], \"proposedNotebookActions\": [{\"type\": \"note\", \"title\": string, \"body\": string, \"source\": {\"path\": string, \"commitSha\": string}} | {\"type\": \"flashcard\", \"front\": string, \"back\": string, \"source\": {\"path\": string, \"commitSha\": string}}], \"toolCalls\": [{\"name\": \"retrieve\", \"query\": string}]}.",
+        "O campo status, primeiro do JSON, é uma frase curta em português, no gerúndio, dizendo o que você está fazendo com o material (ex.: \"analisando o algoritmo\", \"comparando as duas listas\"). Não repita a pergunta nem a resposta.",
         "Cada citação deve copiar um trecho recuperado palavra por palavra no campo quote, com path/commitSha/locator iguais aos do trecho. toolCalls só pode pedir a ferramenta \"retrieve\" com uma pergunta de busca; no máximo o número restante informado.",
         "Chamadas de ferramenta restantes: 4.",
       ].join("\n"),
@@ -338,6 +339,74 @@ describe("Groq public tutor adapter", () => {
     expect(error).toBeInstanceOf(TutorProviderError);
     expect((error as TutorProviderError).failure.kind).toBe("unusable");
     expect((error as TutorProviderError).usage).toEqual({ inputTokens: 120, outputTokens: 40 });
+  });
+
+  it("does not require status and never refuses an answer that omits it", () => {
+    // The hard requirement: status is optional in the wire schema. If it were
+    // required, a model that omitted the nicety would lose the whole answer.
+    const withoutStatus = validateGroqAnswer(jsonBody("A lógica estuda o raciocínio."));
+    expect(withoutStatus.ok).toBe(true);
+    if (!withoutStatus.ok) return;
+    expect(withoutStatus.output.answer).toBe("A lógica estuda o raciocínio.");
+
+    expect(validateGroqAnswer(JSON.stringify({
+      status: "analisando o algoritmo",
+      answer: "x",
+      citations: [],
+      proposedNotebookActions: [],
+    })).ok).toBe(true);
+  });
+
+  it("streams the model's status before the answer and keeps the two apart", async () => {
+    const content = JSON.stringify({
+      status: "analisando o algoritmo",
+      answer: "A lógica estuda o raciocínio.",
+      citations: [{
+        path: "DSM1/ALP/introducao.md",
+        commitSha: "a".repeat(40),
+        locator: { type: "lines", start: 1, end: 2 },
+        quote: "linha dois",
+      }],
+      proposedNotebookActions: [],
+    });
+    const frames = `data: ${JSON.stringify({ choices: [{ delta: { content } }] })}\n\ndata: [DONE]`;
+    const stream = new ReadableStream({
+      start(controller) {
+        controller.enqueue(new TextEncoder().encode(frames));
+        controller.close();
+      },
+    });
+    const { fetchImpl } = recordedFetch(() => new Response(stream, { status: 200, headers: { "content-type": "text/event-stream" } }));
+    const ai = createGroqPublicTutorAi({ apiKey: "k", fetchImpl });
+
+    const statuses: string[] = [];
+    const tokens: string[] = [];
+    const streamed = await ai.answerStream(input, budget, (token) => tokens.push(token), (status) => statuses.push(status));
+
+    expect(statuses.join("")).toBe("analisando o algoritmo");
+    expect(tokens.join("")).toBe("A lógica estuda o raciocínio.");
+    expect(streamed.output.answer).toBe("A lógica estuda o raciocínio.");
+  });
+
+  it("yields no status and a valid answer when the model omits status", async () => {
+    const content = jsonBody("A lógica estuda o raciocínio.");
+    const frames = `data: ${JSON.stringify({ choices: [{ delta: { content } }] })}\n\ndata: [DONE]`;
+    const stream = new ReadableStream({
+      start(controller) {
+        controller.enqueue(new TextEncoder().encode(frames));
+        controller.close();
+      },
+    });
+    const { fetchImpl } = recordedFetch(() => new Response(stream, { status: 200, headers: { "content-type": "text/event-stream" } }));
+    const ai = createGroqPublicTutorAi({ apiKey: "k", fetchImpl });
+
+    const statuses: string[] = [];
+    const tokens: string[] = [];
+    const streamed = await ai.answerStream(input, budget, (token) => tokens.push(token), (status) => statuses.push(status));
+
+    expect(statuses).toEqual([]);
+    expect(tokens.join("")).toBe("A lógica estuda o raciocínio.");
+    expect(streamed.output.answer).toBe("A lógica estuda o raciocínio.");
   });
 
   it("keeps the BYOK key header-only and out of errors", async () => {

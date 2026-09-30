@@ -1,7 +1,7 @@
 # DSM Atlas — Uso de IA (eixo 2)
 
-**Status:** diagnóstico completo; §4 e §5 cobrem o que não depende de decisão; as fatias
-condicionais aguardam D1–D3
+**Status:** diagnóstico e desenho das fatias 1–3 completos; §4.4 revelou-se acoplada a D3;
+fatias condicionais aguardam D1–D3
 **Data:** 30 de setembro de 2026
 **Escopo:** tutor público e classificação administrativa — custo, qualidade, confiabilidade e latência
 **Fora de escopo:** eixo 1 (visualização de materiais), já entregue e verificado
@@ -185,7 +185,17 @@ em fases. A evidência (§1.1, §1.2) aponta (a) como o que tem efeito garantido
 **D3 — Streaming.** (a) streamar só a rodada final; (b) SSE em todas as rodadas; (c) largar o
 streaming e deletar o `answerStream` morto, mantendo o foco em cota.
 
-## 4. Desenho do que não depende de D1–D3
+**D3 está acoplada à §4.4, e isso não é óbvio pela pergunta.** O provedor documenta que
+*"streaming and tool use are not currently supported with Structured Outputs"*. Escolher
+streaming implica abrir mão da decodificação restrita no tutor público (§4.4, desenho A);
+escolher restrição implica abrir mão do streaming (desenho B). Não são decisões independentes
+e devem ser tomadas juntas.
+
+## 4. Desenho
+
+§4.1 a §4.3 não dependem de D1–D3. §4.4 começou como independente e **deixou de ser** quando
+a documentação do provedor mostrou que restrição de schema e streaming se excluem; ela agora
+é uma consequência de D3, e está escrita para ser lida junto dele.
 
 ### 4.1 Fechar o vazamento de reservas
 
@@ -238,17 +248,42 @@ Consequência deliberada: qualquer edição de prompt passa a exigir uma altera�
 visível no diff — que é o ponto. Não entra versionamento semântico de prompt nesta fatia; se
 a §1.3 for adiante, um `PROMPT_VERSION` entra junto com ela.
 
-### 4.4 Contrato estrito no tutor público
+### 4.4 Contrato de saída no tutor público — e por que não é só trocar uma linha
 
 O público usa `response_format: { type: "json_object" }` (`:444`) enquanto o administrativo
-usa `json_schema` estrito (`:326`), e o parse do público é tolerante (`parseGroqAnswer`
-devolve objeto vazio quando não entende). Trocar para `json_schema` estrito com o mesmo
-formato que o prompt já descreve em texto, e **descartar** a resposta que não conforma em vez
-de completá-la por suposição, alinhando com o princípio já escrito para o lado administrativo
-("resposta sem schema válido: descartar a sugestão").
+usa `json_schema` estrito (`:326`), e o parse do público é tolerante: `parseGroqAnswer`
+devolve objeto vazio quando não entende, em vez de recusar.
 
-Risco a verificar, não a supor: um schema estrito pode recusar saídas que o modelo produz
-hoje. Isso se resolve na verificação contra o modelo real (§6), não por leitura de código.
+A leitura ingênua seria igualar ao administrativo. **A documentação do provedor proíbe:**
+
+> *"Streaming and tool use are not currently supported with Structured Outputs."*
+
+E o tutor público depende de tool use: ele envia
+`tools: [retrieveToolSchema()]`, `tool_choice: "auto"` (`:442-443`) **junto** com o
+`response_format`. Trocar para `json_schema` estrito mantendo as ferramentas violaria a
+incompatibilidade documentada e derrubaria a recuperação de trechos — que é o que ancora a
+resposta no material.
+
+Além disso, o modo estrito exige que **todos** os campos sejam `required` e que todo objeto
+tenha `additionalProperties: false`. O contrato do tutor tem `citations`, `proposedNotebookActions`
+e `toolCalls` que legitimamente vêm vazios, e uniões aninhadas (locator `lines | page | excerpt`;
+ação `note | flashcard`) cujo suporte a `oneOf`/`anyOf` não está documentado.
+
+**Consequência dura: D3 e esta fatia não podem ser ambas satisfeitas neste provedor.**
+Escolher streaming é abrir mão da decodificação restrita no tutor público; escolher restrição
+é abrir mão do streaming.
+
+Três desenhos possíveis, a decidir junto com D3:
+
+| | Desenho | Garantia | Custo |
+|---|---|---|---|
+| A | Manter `tools`, manter `json_object`, **validar em casa** com zod (já é dependência) e **descartar** a resposta que não conforma | Adesão verificada por nós, não pelo decodificador | Uma validação; nenhum ganho de garantia na geração |
+| B | Largar o `tools` nativo e usar `json_schema` estrito, confiando no `toolCalls` **inline** que o prompt já descreve e o código já lê (`:275-280`) | Decodificação restrita de verdade | Reverte o desenho de ferramentas; inviabiliza streaming |
+| C | Manter como está e só endurecer o parse (recusar em vez de devolver vazio) | Mínima | Não resolve o contrato frouxo na origem |
+
+O caminho que preserva as duas ambições é **A** quando D3 = streaming, e **B** quando D3 =
+sem streaming. O que não se pode ter é o texto atual da fatia, que promete restrição no
+provedor e ao mesmo tempo manteria as duas coisas.
 
 ## 5. Fatiamento
 
@@ -259,7 +294,7 @@ Independentes entre si e de D1–D3:
 | 1 | Varredura antes da reserva | Com uma reserva `unknown` vencida segurando 5.000 tokens, um turno que seria recusado passa a ser admitido; a devolução cai na janela que foi cobrada |
 | 2 | Transporte compartilhado | Testes de falha existentes passam **sem edição**; nenhum comportamento de política muda |
 | 3 | Prompts ancorados | Editar o prompt sem editar o teste falha a suíte |
-| 4 | Contrato estrito público | Saída fora do schema é descartada; verificado contra o modelo real |
+| 4 | Contrato de saída do público | A resposta fora do contrato é descartada, nunca completada por suposição. O desenho (A/B/C da §4.4) sai de D3 — a fatia não começa antes disso |
 
 Dependentes de decisão: prefixo estável para cache (§1.3, depende de D2), streaming
 (depende de D3), harness de avaliação (depende de D2 — se o eixo for cota, o harness é

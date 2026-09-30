@@ -23,8 +23,8 @@ Scripts disponíveis em `atlas/package.json`:
 - `pnpm dev`: desenvolvimento com vinext/Vite; o hook `predev` regenera catálogo e índice de conteúdo antes de subir.
 - `pnpm build`: `vite build`; o hook `prebuild` regenera catálogo e índice antes do build e grava o Worker em `dist/`.
 - `pnpm preview`: executa o Worker gerado localmente com `wrangler dev --config dist/server/wrangler.json`.
-- `pnpm test`: `vitest run`.
-- `pnpm test:e2e`: `playwright test`; o hook `pretest:e2e` regenera catálogo e índice antes.
+- `pnpm test`: `vitest run`; o hook `pretest` executa `pnpm build` antes, porque a verificação de vazamento de segredos no bundle lê `dist/server` — sem o build o teste falharia por artefato ausente.
+- `pnpm test:e2e`: `playwright test`; o hook `pretest:e2e` executa `pnpm build` antes, porque o servidor de preview do e2e (`pnpm preview`) precisa de `dist/server/wrangler.json`.
 - `pnpm typecheck`: `tsc --noEmit`.
 - `pnpm lint`: `eslint .`.
 - `pnpm catalog:build`: gera `src/generated/catalog.json` a partir da árvore Git.

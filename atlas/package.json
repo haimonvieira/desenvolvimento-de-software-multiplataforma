@@ -15,8 +15,9 @@
     "deploy": "vinext-cloudflare deploy --config dist/server/wrangler.json",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
+    "pretest": "corepack pnpm build",
     "test": "vitest run",
-    "pretest:e2e": "node --experimental-strip-types scripts/build-catalog.ts && node --experimental-strip-types scripts/build-content-index.ts",
+    "pretest:e2e": "corepack pnpm build",
     "test:e2e": "playwright test"
   },
   "dependencies": {

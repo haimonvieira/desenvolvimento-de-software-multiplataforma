@@ -126,6 +126,44 @@ describe("StudyTutor.answerTurn", () => {
     expect(outcome.result.citations).toEqual([found]);
   });
 
+  it("keeps a citation whose commitSha the model omitted, and stamps ours", async () => {
+    // A real provider answered with `"commitSha":""` — an opaque identifier it had
+    // no reason to echo. Requiring it discarded a correct answer, correctly
+    // quoted, and replaced it with the unsupported message.
+    const found = excerpt("linha um\nlinha dois");
+    const withoutSha: RetrievedExcerpt = { ...found, material: { path: material.path, commitSha: "" } };
+    const { retriever } = retrieverReturning([[found]]);
+    const ai = createFakePublicTutorAi([output({ answer: "resposta", citations: [withoutSha] })]);
+    const tutor = createStudyTutor({ retriever, ai });
+
+    const outcome = await tutor.answerTurn({ question: "pergunta", context: [material], mode: { type: "byok" } });
+
+    expect(outcome.type).toBe("answered");
+    if (outcome.type !== "answered") return;
+    expect(outcome.result.answer).toBe("resposta");
+    expect(outcome.result.citations).toEqual([found]);
+  });
+
+  it("stamps a notebook proposal's source from the excerpt when the model omits the sha", async () => {
+    const found = excerpt("linha um\nlinha dois");
+    const { retriever } = retrieverReturning([[found]]);
+    const ai = createFakePublicTutorAi([output({
+      citations: [found],
+      proposedNotebookActions: [
+        { type: "flashcard", front: "O que é lógica?", back: "Estudo do raciocínio.", source: { path: material.path, commitSha: "" } },
+      ],
+    })]);
+    const tutor = createStudyTutor({ retriever, ai });
+
+    const outcome = await tutor.answerTurn({ question: "pergunta", context: [material], mode: { type: "byok" } });
+
+    expect(outcome.type).toBe("answered");
+    if (outcome.type !== "answered") return;
+    expect(outcome.result.proposedNotebookActions).toEqual([
+      { type: "flashcard", front: "O que é lógica?", back: "Estudo do raciocínio.", source: material },
+    ]);
+  });
+
   it("surfaces notebook actions as proposals and drops ones sourced outside the context", async () => {
     const found = excerpt("linha um\nlinha dois");
     const { retriever } = retrieverReturning([[found]]);

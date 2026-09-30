@@ -213,7 +213,11 @@ const wireLocatorSchema = z.discriminatedUnion("type", [
 
 const wireCitationSchema = z.object({
   path: z.string(),
-  commitSha: z.string(),
+  // Not required from the model: the commit sha is an opaque identifier it has
+  // no reason to echo, and a model that omits it used to lose every citation to
+  // the equality check downstream. We already know the sha — it is on the
+  // excerpt we handed over — so the validator stamps it back in.
+  commitSha: z.string().optional(),
   locator: wireLocatorSchema,
   quote: z.string(),
 });
@@ -223,13 +227,13 @@ const wireActionSchema = z.discriminatedUnion("type", [
     type: z.literal("note"),
     title: z.string(),
     body: z.string(),
-    source: z.object({ path: z.string(), commitSha: z.string() }),
+    source: z.object({ path: z.string(), commitSha: z.string().optional() }),
   }),
   z.object({
     type: z.literal("flashcard"),
     front: z.string(),
     back: z.string(),
-    source: z.object({ path: z.string(), commitSha: z.string() }),
+    source: z.object({ path: z.string(), commitSha: z.string().optional() }),
   }),
 ]);
 
@@ -253,7 +257,10 @@ type WireAction = z.infer<typeof wireActionSchema>;
 function toExcerpt(citation: WireCitation): TutorModelOutput["citations"][number] {
   const locator = citation.locator;
   return {
-    material: { path: citation.path, commitSha: citation.commitSha },
+    // The sha here is whatever the model echoed, possibly nothing. It is
+    // provisional: `validateCitations` replaces the whole entry with the excerpt
+    // that actually matched, so the sha that survives is ours.
+    material: { path: citation.path, commitSha: citation.commitSha ?? "" },
     locator: locator.type === "lines"
       ? { type: "lines", start: locator.start, end: locator.end }
       : locator.type === "page"
@@ -265,7 +272,7 @@ function toExcerpt(citation: WireCitation): TutorModelOutput["citations"][number
 }
 
 function toProposal(action: WireAction): ProposedNotebookAction {
-  const source = { path: action.source.path, commitSha: action.source.commitSha };
+  const source = { path: action.source.path, commitSha: action.source.commitSha ?? "" };
   return action.type === "note"
     ? { type: "note", title: action.title, body: action.body, source }
     : { type: "flashcard", front: action.front, back: action.back, source };

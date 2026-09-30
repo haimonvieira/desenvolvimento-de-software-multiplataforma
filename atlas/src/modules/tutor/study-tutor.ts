@@ -97,9 +97,14 @@ function finalize(output: TutorModelOutput, excerpts: readonly RetrievedExcerpt[
   if (!check.supported) {
     return Object.freeze({ answer: UNSUPPORTED_ANSWER, citations: Object.freeze([]), proposedNotebookActions: Object.freeze([]) });
   }
-  const proposals = output.proposedNotebookActions.filter((proposal) =>
-    excerpts.some((excerpt) =>
-      excerpt.material.path === proposal.source.path && excerpt.material.commitSha === proposal.source.commitSha));
+  // Same rule as the citations: the model's `source.commitSha` is not
+  // trustworthy, so the path decides whether an excerpt in this turn backs the
+  // proposal, and the material is stamped from that excerpt — the sha that
+  // reaches the notebook is ours, not the model's guess.
+  const proposals = output.proposedNotebookActions.flatMap((proposal) => {
+    const source = excerpts.find((excerpt) => excerpt.material.path === proposal.source.path);
+    return source ? [Object.freeze({ ...proposal, source: source.material })] : [];
+  });
   return Object.freeze({
     answer: output.answer,
     citations: check.citations,

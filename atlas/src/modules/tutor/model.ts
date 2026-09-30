@@ -116,9 +116,17 @@ function sameLocator(left: Locator, right: Locator): boolean {
 }
 
 /**
- * Accepts a model citation only when its material, locator and quoted text all
- * match a excerpt retrieved during the current turn. Anything else is discarded;
- * when nothing survives the answer is marked unsupported.
+ * Accepts a model citation only when its material path, locator and quoted text
+ * all match an excerpt retrieved during the current turn. Anything else is
+ * discarded; when nothing survives the answer is marked unsupported.
+ *
+ * The commit sha is deliberately **not** compared. It is an opaque identifier
+ * the model has no reason to echo, and requiring it meant one that omitted the
+ * field lost every citation — a correct answer, correctly quoted, replaced by
+ * the unsupported message. We already know the sha: it is on the excerpt being
+ * matched, and the returned citation is that excerpt, not the model's copy. The
+ * guard that matters is the quote being contained in retrieved text, and it is
+ * untouched.
  */
 export function validateCitations(
   candidates: readonly RetrievedExcerpt[],
@@ -130,7 +138,6 @@ export function validateCitations(
     if (quote.length === 0) continue;
     const match = excerpts.find((excerpt) =>
       excerpt.material.path === candidate.material.path
-      && excerpt.material.commitSha === candidate.material.commitSha
       && sameLocator(excerpt.locator, candidate.locator)
       && normalizeText(excerpt.text).includes(quote),
     );

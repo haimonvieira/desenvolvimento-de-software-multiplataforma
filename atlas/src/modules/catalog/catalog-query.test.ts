@@ -61,6 +61,27 @@ describe("catalog builder", () => {
     ]);
   });
 
+  it("orders accented paths by code unit so the catalog bytes never depend on the host locale", async () => {
+    const root = await fixture({
+      "DSM1/ALP/zeta.md": "z",
+      "DSM1/ALP/álgebra.md": "a",
+      "DSM1/ALP/aula.md": "a",
+    });
+    const sha = commitFixture(root);
+    const catalog = await buildCatalog(root, sha);
+
+    // pt-BR collation and the ICU default both put "álgebra" next to "aula";
+    // code-unit order puts the accented path last because U+00E1 > U+007A. A
+    // localeCompare sort here would reorder the git tree and change the bytes.
+    expect(catalog.materials.map(({ ref }) => ref.path)).toEqual([
+      "DSM1/ALP/aula.md",
+      "DSM1/ALP/zeta.md",
+      "DSM1/ALP/álgebra.md",
+    ]);
+    expect(["álgebra", "aula"].sort((left, right) => left.localeCompare(right, "pt-BR")))
+      .toEqual(["álgebra", "aula"]);
+  });
+
   it("reads blobs and sizes from the exact commit instead of the working tree", async () => {
     const root = await fixture({ "DSM1/ALP/aula.md": "committed" });
     const sha = commitFixture(root);

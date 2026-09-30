@@ -11,6 +11,7 @@ import type {
   PreviewKind,
   Semester,
 } from "../src/modules/catalog/model";
+import { compareCodeUnits } from "./compare-code-units.ts";
 
 const REPOSITORY_URL = "https://github.com/haimonvieira/desenvolvimento-de-software-multiplataforma";
 const SEMESTER_NAMES: Readonly<Record<string, string>> = {
@@ -194,7 +195,7 @@ async function writeTextPreviews(repositoryRoot: string, outputRoot: string, cat
 }
 
 export async function buildCatalog(repositoryRoot: string, commitSha: string): Promise<CatalogData> {
-  const entries = listGitTree(repositoryRoot, commitSha).sort((left, right) => left.path.localeCompare(right.path));
+  const entries = listGitTree(repositoryRoot, commitSha).sort((left, right) => compareCodeUnits(left.path, right.path));
   const roots = new Set<string>();
   const disciplineKeys = new Set<string>();
   const materials: Material[] = [];

@@ -7,6 +7,7 @@ import type { MaterialRef } from "../src/modules/catalog/model";
 import type { ContentChunk, IndexedFormat, IndexManifest, LineLocator, MaterialIndex } from "../src/modules/tutor/model";
 import { chunkHash, indexFormatFor, materialHash } from "../src/modules/tutor/model.ts";
 import { isExcludedPath, listGitTree, resolveCommitSha, SECRET_MARKER } from "./build-catalog.ts";
+import { compareCodeUnits } from "./compare-code-units.ts";
 
 export { indexFormatFor };
 
@@ -159,9 +160,7 @@ async function readBlobs(repositoryRoot: string, oids: readonly string[]): Promi
 }
 
 export async function buildContentIndex(repositoryRoot: string, commitSha: string): Promise<ContentIndexBuild> {
-  const entries = listGitTree(repositoryRoot, commitSha).sort((left, right) =>
-    left.path < right.path ? -1 : left.path > right.path ? 1 : 0,
-  );
+  const entries = listGitTree(repositoryRoot, commitSha).sort((left, right) => compareCodeUnits(left.path, right.path));
   const candidates = entries.filter((entry) => {
     const semesterCode = entry.path.split("/")[0];
     return /^DSM[1-6]$/.test(semesterCode)

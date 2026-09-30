@@ -166,6 +166,9 @@ describe("GitHub App installation tokens", () => {
     expect(calls[0]!.init.headers).toMatchObject({
       authorization: "Bearer signed.app.jwt",
       accept: "application/vnd.github+json",
+      // GitHub rejects any request without a User-Agent with a 403, and the
+      // Workers runtime's fetch does not add one.
+      "user-agent": "dsm-atlas-admin",
     });
     // Least privilege: the token covers only the repository the routes use,
     // never every repository the installation was granted.
@@ -353,7 +356,11 @@ describe("GitHub App installation tokens", () => {
       "https://api.github.com/repos/owner/repo/commits/HEAD",
       "https://api.github.com/repos/owner/repo/commits/HEAD",
     ]);
-    expect(calls[1]!.init.headers).toMatchObject({ authorization: "Bearer ghs_installation" });
+    expect(calls[1]!.init.headers).toMatchObject({
+      authorization: "Bearer ghs_installation",
+      // Every Git Data request needs the header too, not just the exchange.
+      "user-agent": "dsm-atlas-admin",
+    });
     expect(JSON.stringify(calls.slice(1))).not.toContain("signed.app.jwt");
   });
 

@@ -92,6 +92,20 @@ describe("GET /api/health", () => {
     });
   });
 
+  it("logs why a check failed so an operator can tell 403 from a timeout", async () => {
+    const spy = vi.spyOn(console, "error").mockImplementation(() => {});
+    try {
+      const response = await createHealthHandler({
+        github: vi.fn().mockRejectedValue(new Error("GitHub returned 403")),
+      })();
+
+      expect(response.status).toBe(503);
+      expect(spy).toHaveBeenCalledWith(expect.stringContaining("GitHub returned 403"));
+    } finally {
+      spy.mockRestore();
+    }
+  });
+
   it("reports missing configuration honestly", async () => {
     const response = await createHealthHandler({})();
 

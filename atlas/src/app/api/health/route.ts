@@ -61,7 +61,12 @@ async function runCheck(check?: Check): Promise<HealthState> {
   try {
     await check();
     return "ok";
-  } catch {
+  } catch (error) {
+    // The response body stays opaque, but swallow nothing: an operator needs
+    // the message to tell a 403 (bad credentials/header) from a timeout. These
+    // paths build their errors from status codes, so no provider body leaks.
+    const detail = error instanceof Error ? error.message : String(error);
+    console.error(`health check failed: ${detail}`);
     return "error";
   }
 }

@@ -185,6 +185,13 @@ export function createGitHubMaterialSource(
 
 const GITHUB_API_BASE_URL = "https://api.github.com";
 const GITHUB_API_VERSION = "2022-11-28";
+/**
+ * GitHub's REST API rejects any request without a `User-Agent` with a 403
+ * ("Request forbidden by administrative rules"). Node's undici adds one
+ * automatically, so this only ever bites in the Workers runtime, whose `fetch`
+ * does not: every GitHub request from the Worker must set it explicitly.
+ */
+export const GITHUB_USER_AGENT = "dsm-atlas-admin";
 
 /** App JWTs are short-lived: GitHub rejects an `exp` beyond 10 minutes. */
 const JWT_LIFETIME_SECONDS = 540;
@@ -296,6 +303,7 @@ export function createInstallationTokenProvider(
           authorization: `Bearer ${jwt}`,
           accept: "application/vnd.github+json",
           "content-type": "application/json",
+          "user-agent": GITHUB_USER_AGENT,
           "x-github-api-version": GITHUB_API_VERSION,
         },
         // Least privilege: the token covers only the repository the routes use,
@@ -340,6 +348,7 @@ export function createGitHubInstallationTransport(
         authorization: `Bearer ${await token()}`,
         accept: "application/vnd.github+json",
         "content-type": "application/json",
+        "user-agent": GITHUB_USER_AGENT,
         "x-github-api-version": GITHUB_API_VERSION,
       },
       body: init.body,

@@ -71,11 +71,6 @@ function ledgerWith(decision: BudgetDecision): UsageLedger {
 }
 
 describe("GitHub unavailable", () => {
-  it("keeps the generated catalogue readable", () => {
-    expect(catalogQuery.browse({ semester: "DSM1" }).length).toBeGreaterThan(0);
-    expect(catalogQuery.search("logica").items.length).toBeGreaterThan(0);
-  });
-
   it("blocks publication and leaves the batch in draft without touching the database", async () => {
     const { query, statements } = draftBatchQuery();
     const workflow = createPublicationWorkflow({ query, source: unreachableGitHub, branch: "main" });
@@ -88,6 +83,11 @@ describe("GitHub unavailable", () => {
     // The batch row is only ever flipped to published after the ref moves; a
     // GitHub outage must not reach that statement.
     expect(statements.some((statement) => statement.startsWith("UPDATE upload_batch"))).toBe(false);
+    // The catalogue is served from the generated snapshot and never calls
+    // GitHub, so the same outage that blocks publication leaves browsing
+    // intact: the failure is confined to the publication surface.
+    expect(catalogQuery.browse({ semester: "DSM1" }).length).toBeGreaterThan(0);
+    expect(catalogQuery.search("logica").items.length).toBeGreaterThan(0);
   });
 });
 
@@ -184,7 +184,5 @@ describe("AI unavailable or out of quota", () => {
     expect(response.status).toBe(429);
     expect(await response.json()).toMatchObject({ error: "quota", reason: "global" });
     expect(statements.some((statement) => /^(UPDATE|INSERT|DELETE)/.test(statement))).toBe(false);
-    // Traditional study does not depend on the AI provider.
-    expect(catalogQuery.browse({ semester: "DSM1" }).length).toBeGreaterThan(0);
   });
 });

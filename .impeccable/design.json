@@ -1,0 +1,60 @@
+{
+  "schemaVersion": 1,
+  "name": "Atlas Guiado",
+  "mode": "operate",
+  "concept": {
+    "semester": "territory",
+    "discipline": "named line",
+    "material": "station",
+    "currentPosition": "filled station",
+    "equivalence": "Every map relationship has a text or list equivalent"
+  },
+  "colors": {
+    "ink": "#18211a",
+    "inkSoft": "#596259",
+    "paper": "#f5f1e5",
+    "paperRaised": "#fffdf7",
+    "paperMuted": "#e9e5d9",
+    "grid": "#d6d2c6",
+    "route": "#4f66e8",
+    "progress": "#d8ff57",
+    "recent": "#ff7550",
+    "crossing": "#ffd85a",
+    "language": "#8dc3b0",
+    "focus": "#4f66e8"
+  },
+  "typography": {
+    "display": { "family": "Archivo", "source": "self-hosted", "trackingMin": "-0.04em" },
+    "body": { "family": "IBM Plex Sans", "source": "self-hosted", "measure": "65-75ch" },
+    "data": { "family": "IBM Plex Mono", "source": "self-hosted" }
+  },
+  "layout": {
+    "grid": "32px",
+    "desktop": "map plus detail rail",
+    "mobile": "map followed by detail rail",
+    "breakpoint": "896px"
+  },
+  "borders": { "hairline": "1px solid #18211a", "strong": "2px solid #18211a", "controlRadius": "2px" },
+  "motion": {
+    "fast": "140ms",
+    "route": "820ms",
+    "easing": "cubic-bezier(0.16, 1, 0.3, 1)",
+    "reducedMotion": "No animated displacement; feedback remains instant"
+  },
+  "browserSurfaces": {
+    "focus": "3px solid #4f66e8 with 3px offset",
+    "selection": "#f5f1e5 on #18211a",
+    "caret": "#4f66e8",
+    "scrollbar": "#4f66e8 on #e9e5d9"
+  },
+  "forbidden": [
+    "eyebrows above headings",
+    "generic dashboard card grids",
+    "gradient text",
+    "decorative blur",
+    "block shadows",
+    "emoji or Unicode icons",
+    "map-only navigation",
+    "invented Fatec endorsement"
+  ]
+}

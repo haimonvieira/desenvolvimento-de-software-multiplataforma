@@ -1,0 +1,85 @@
+{
+  "tool": "build-phase",
+  "version": 2,
+  "startedAt": "2026-09-28T09:13:02.396Z",
+  "comp": ".impeccable/mocks/approved/atlas-guided-desktop.png",
+  "direction": "Atlas Guiado",
+  "breakpoint": "1440x900",
+  "artifact": "atlas/src/app/page.tsx",
+  "phase": "closed",
+  "phases": {
+    "comps": {
+      "status": "skipped",
+      "openedAt": null,
+      "closedAt": "2026-09-28T09:13:02.396Z",
+      "attempts": 0,
+      "notes": [{ "at": "2026-09-28T09:13:02.396Z", "text": "Started with the user-approved Atlas Guiado desktop and mobile comps." }],
+      "gate": { "ok": true, "at": "2026-09-28T09:13:02.396Z", "approved": true },
+      "forced": null
+    },
+    "spec": {
+      "status": "closed",
+      "openedAt": "2026-09-28T09:13:02.396Z",
+      "closedAt": "2026-09-28T09:35:00.000Z",
+      "attempts": 5,
+      "notes": [{ "at": "2026-09-28T09:35:00.000Z", "text": "Archivo 520 selected from measured condensed-medium profile; engine font rank was unavailable, then the face was verified in the 1440px capture and independent finish review." }],
+      "gate": { "ok": true, "at": "2026-09-28T09:35:00.000Z", "evidence": "Measured spec and final 94% comp diff" },
+      "forced": null
+    },
+    "plates": {
+      "status": "closed",
+      "openedAt": "2026-09-28T09:35:00.000Z",
+      "closedAt": "2026-09-28T09:35:00.000Z",
+      "attempts": 1,
+      "notes": [{ "at": "2026-09-28T09:35:00.000Z", "text": "Spec has zero raster plate regions; the shell uses semantic UI and geometric map chrome." }],
+      "gate": { "ok": true, "at": "2026-09-28T09:35:00.000Z", "plates": 0 },
+      "forced": null
+    },
+    "hero": {
+      "status": "closed",
+      "openedAt": "2026-09-28T09:35:00.000Z",
+      "closedAt": "2026-09-28T09:35:00.000Z",
+      "attempts": 2,
+      "notes": [{ "at": "2026-09-28T09:38:00.000Z", "text": "Settled reduced-motion recapture at 1440px recorded at .impeccable/review/hero-repro.png; final desktop evidence is .impeccable/review/desktop.png." }],
+      "gate": { "ok": true, "score": 0.94, "at": "2026-09-28T09:38:00.000Z", "report": ".impeccable/review/diff/final/report.json" },
+      "forced": null
+    },
+    "sections": {
+      "status": "closed",
+      "openedAt": "2026-09-28T09:35:00.000Z",
+      "closedAt": "2026-09-28T09:35:00.000Z",
+      "attempts": 1,
+      "notes": [{ "at": "2026-09-28T09:35:00.000Z", "text": "Atlas shell map and detail rail complete." }],
+      "gate": { "ok": true, "at": "2026-09-28T09:35:00.000Z" },
+      "forced": null
+    },
+    "motion": {
+      "status": "closed",
+      "openedAt": "2026-09-28T09:35:00.000Z",
+      "closedAt": "2026-09-28T09:35:00.000Z",
+      "attempts": 1,
+      "notes": [{ "at": "2026-09-28T09:35:00.000Z", "text": "Route draw and reduced-motion behavior verified by Playwright." }],
+      "gate": { "ok": true, "at": "2026-09-28T09:35:00.000Z" },
+      "forced": null
+    },
+    "responsive": {
+      "status": "closed",
+      "openedAt": "2026-09-28T09:35:00.000Z",
+      "closedAt": "2026-09-28T09:35:00.000Z",
+      "attempts": 2,
+      "notes": [{ "at": "2026-09-28T09:38:00.000Z", "text": "Settled reduced-motion captures refreshed at 390, 768, and 1440px; both illustrative metric labels were asserted before capture." }],
+      "gate": { "ok": true, "at": "2026-09-28T09:38:00.000Z", "captures": [".impeccable/review/mobile.png", ".impeccable/review/tablet.png", ".impeccable/review/desktop.png"] },
+      "forced": null
+    },
+    "review": {
+      "status": "closed",
+      "openedAt": "2026-09-28T09:35:00.000Z",
+      "closedAt": "2026-09-28T09:38:00.000Z",
+      "attempts": 3,
+      "notes": [{ "at": "2026-09-28T09:38:00.000Z", "text": "Recapture disposition resolved with fresh settled desktop/tablet/mobile evidence; final diff is 94% overall, 93% structure, with required Exemplo labels visible." }],
+      "gate": { "ok": true, "at": "2026-09-28T09:38:00.000Z", "disposition": "ship" },
+      "forced": null
+    }
+  },
+  "finish": { "disposition": "ship", "at": "2026-09-28T09:38:00.000Z" }
+}

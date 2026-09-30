@@ -1,0 +1,24 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "dsm-atlas",
+  "compatibility_date": "2026-09-27",
+  "compatibility_flags": ["nodejs_compat"],
+  "main": "vinext/server/fetch-handler",
+  "assets": {
+    "directory": "dist/client",
+    "not_found_handling": "none",
+    "binding": "ASSETS"
+  }
+  // Production secrets/configuration (values are never committed):
+  // DATABASE_URL, BETTER_AUTH_SECRET, BETTER_AUTH_URL,
+  // BETTER_AUTH_TRUSTED_ORIGINS, PASSKEY_RP_ID, GITHUB_CLIENT_ID,
+  // GITHUB_CLIENT_SECRET, ADMIN_GITHUB_USER_ID, GITHUB_APP_ID,
+  // GITHUB_APP_PRIVATE_KEY, GITHUB_INSTALLATION_ID,
+  // GITHUB_REPOSITORY, TUTOR_SUBJECT_SECRET, GROQ_API_KEY,
+  // GROQ_ADMIN_API_KEY (separate credential for administrative
+  // classification; never the public GROQ_API_KEY),
+  // TURNSTILE_SECRET_KEY. TURNSTILE_SITE_KEY is the *public* widget sitekey
+  // (a plain [vars] value, not a secret). Preview uses a separate Neon
+  // branch and RP ID. No payment method is attached to the Groq account
+  // (provider spec §3): the internal ceilings are the spend protection.
+}

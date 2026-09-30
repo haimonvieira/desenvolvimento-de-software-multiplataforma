@@ -1,0 +1,332 @@
+{
+  "tool": "comp-diff",
+  "version": 1,
+  "createdAt": "2026-09-28T09:46:10.678Z",
+  "label": "desktop",
+  "comp": ".impeccable/mocks/approved/atlas-guided-desktop.png",
+  "build": ".impeccable/review/desktop.png",
+  "spec": ".impeccable/build/spec.json",
+  "compSize": "1440x900",
+  "buildSize": "1440x949",
+  "align": "top",
+  "overall": 0.9408,
+  "verdict": "match",
+  "scores": {
+    "overall": 0.9408,
+    "structure": 0.9273,
+    "color": 0.9735,
+    "colorIntersection": 0.9491,
+    "paletteMatch": 0.9866,
+    "detail": 0.9129,
+    "detailRaw": 0.9129,
+    "detailAdded": 0,
+    "bands": 0.9647
+  },
+  "palette": {
+    "comp": [
+      {
+        "hex": "#f4f4e9",
+        "coverage": 0.9216
+      },
+      {
+        "hex": "#182818",
+        "coverage": 0.0606
+      },
+      {
+        "hex": "#4868e8",
+        "coverage": 0.0085
+      },
+      {
+        "hex": "#d8f858",
+        "coverage": 0.0049
+      },
+      {
+        "hex": "#f87858",
+        "coverage": 0.0026
+      },
+      {
+        "hex": "#f8d858",
+        "coverage": 0.0018
+      }
+    ],
+    "build": [
+      {
+        "hex": "#f5f5e9",
+        "coverage": 0.914
+      },
+      {
+        "hex": "#182818",
+        "coverage": 0.0674
+      },
+      {
+        "hex": "#4868e8",
+        "coverage": 0.0079
+      },
+      {
+        "hex": "#d8f858",
+        "coverage": 0.0059
+      },
+      {
+        "hex": "#f87858",
+        "coverage": 0.0026
+      },
+      {
+        "hex": "#bbbbab",
+        "coverage": 0.0022
+      }
+    ]
+  },
+  "regions": [
+    {
+      "id": "topbar",
+      "x": 0,
+      "y": 0,
+      "w": 1,
+      "h": 0.1,
+      "kind": "chrome",
+      "score": {
+        "overall": 0.9587,
+        "structure": 0.989,
+        "color": 0.9901,
+        "colorIntersection": 0.9815,
+        "paletteMatch": 0.9947,
+        "detail": 0.9082,
+        "detailRaw": 0.9186,
+        "detailAdded": 0.0208,
+        "bands": 0.92
+      },
+      "verdict": "match",
+      "inkBox": {
+        "comp": {
+          "x": 24,
+          "y": 24,
+          "w": 1392,
+          "h": 66
+        },
+        "build": {
+          "x": 24,
+          "y": 24,
+          "w": 1392,
+          "h": 66
+        }
+      }
+    },
+    {
+      "id": "semester-rail",
+      "x": 0,
+      "y": 0.1,
+      "w": 1,
+      "h": 0.1,
+      "kind": "control",
+      "score": {
+        "overall": 0.9515,
+        "structure": 0.9653,
+        "color": 0.9771,
+        "colorIntersection": 0.9515,
+        "paletteMatch": 0.9909,
+        "detail": 0.8754,
+        "detailRaw": 0.9275,
+        "detailAdded": 0.1042,
+        "bands": 1
+      },
+      "verdict": "match",
+      "inkBox": {
+        "comp": {
+          "x": 24,
+          "y": 0,
+          "w": 1392,
+          "h": 90
+        },
+        "build": {
+          "x": 24,
+          "y": 0,
+          "w": 1392,
+          "h": 90
+        }
+      }
+    },
+    {
+      "id": "headline",
+      "x": 0.0333,
+      "y": 0.18,
+      "w": 0.5208,
+      "h": 0.12,
+      "kind": "text",
+      "score": {
+        "overall": 0.8492,
+        "structure": 0.7898,
+        "color": 0.9513,
+        "colorIntersection": 0.9076,
+        "paletteMatch": 0.9749,
+        "detail": 0.8652,
+        "detailRaw": 0.9277,
+        "detailAdded": 0.125,
+        "bands": 0.8667
+      },
+      "verdict": "match",
+      "inkBox": {
+        "comp": {
+          "x": 9,
+          "y": 10,
+          "w": 732,
+          "h": 98
+        },
+        "build": {
+          "x": 9,
+          "y": 10,
+          "w": 729,
+          "h": 98
+        }
+      }
+    },
+    {
+      "id": "view-toggle",
+      "x": 0.875,
+      "y": 0.26,
+      "w": 0.0917,
+      "h": 0.04,
+      "kind": "control",
+      "score": {
+        "overall": 0.8037,
+        "structure": 0.7284,
+        "color": 0.9548,
+        "colorIntersection": 0.9047,
+        "paletteMatch": 0.9818,
+        "detail": 0.7087,
+        "detailRaw": 0.8076,
+        "detailAdded": 0.1979,
+        "bands": 0.2571
+      },
+      "verdict": "match",
+      "inkBox": {
+        "comp": {
+          "x": 10,
+          "y": 17,
+          "w": 115,
+          "h": 30
+        },
+        "build": {
+          "x": 15,
+          "y": 14,
+          "w": 110,
+          "h": 33
+        }
+      }
+    },
+    {
+      "id": "legend",
+      "x": 0.0292,
+      "y": 0.34,
+      "w": 0.2458,
+      "h": 0.0533,
+      "kind": "control",
+      "score": {
+        "overall": 0.7441,
+        "structure": 0.6865,
+        "color": 0.9288,
+        "colorIntersection": 0.9021,
+        "paletteMatch": 0.9431,
+        "detail": 0.5503,
+        "detailRaw": 0.6649,
+        "detailAdded": 0.2292,
+        "bands": 0.95
+      },
+      "verdict": "drift",
+      "inkBox": {
+        "comp": {
+          "x": 11,
+          "y": 7,
+          "w": 337,
+          "h": 30
+        },
+        "build": {
+          "x": 9,
+          "y": 5,
+          "w": 345,
+          "h": 32
+        }
+      }
+    },
+    {
+      "id": "map",
+      "x": 0,
+      "y": 0.3,
+      "w": 0.8,
+      "h": 0.7,
+      "kind": "chrome",
+      "score": {
+        "overall": 0.9166,
+        "structure": 0.9341,
+        "color": 0.9655,
+        "colorIntersection": 0.9351,
+        "paletteMatch": 0.9819,
+        "detail": 0.9031,
+        "detailRaw": 0.9083,
+        "detailAdded": 0.0104,
+        "bands": 0.8169
+      },
+      "verdict": "match",
+      "inkBox": {
+        "comp": {
+          "x": 24,
+          "y": 0,
+          "w": 1128,
+          "h": 606
+        },
+        "build": {
+          "x": 24,
+          "y": 0,
+          "w": 1128,
+          "h": 630
+        }
+      }
+    },
+    {
+      "id": "detail-rail",
+      "x": 0.7,
+      "y": 0.3,
+      "w": 0.3,
+      "h": 0.7,
+      "kind": "chrome",
+      "score": {
+        "overall": 0.8241,
+        "structure": 0.6855,
+        "color": 0.9635,
+        "colorIntersection": 0.9369,
+        "paletteMatch": 0.9779,
+        "detail": 0.8043,
+        "detailRaw": 0.8304,
+        "detailAdded": 0.0521,
+        "bands": 0.9478
+      },
+      "verdict": "match",
+      "inkBox": {
+        "comp": {
+          "x": 0,
+          "y": 0,
+          "w": 408,
+          "h": 606
+        },
+        "build": {
+          "x": 0,
+          "y": 0,
+          "w": 408,
+          "h": 630
+        }
+      }
+    }
+  ],
+  "files": {
+    "sideBySide": "D:/Fatec/desenvolvimento-de-software-multiplataforma/.worktrees/dsm-atlas/.impeccable/review/diff/final/side-by-side.png",
+    "heatmap": "D:/Fatec/desenvolvimento-de-software-multiplataforma/.worktrees/dsm-atlas/.impeccable/review/diff/final/heatmap.png",
+    "regionFiles": [
+      "D:/Fatec/desenvolvimento-de-software-multiplataforma/.worktrees/dsm-atlas/.impeccable/review/diff/final/regions/topbar.png",
+      "D:/Fatec/desenvolvimento-de-software-multiplataforma/.worktrees/dsm-atlas/.impeccable/review/diff/final/regions/semester-rail.png",
+      "D:/Fatec/desenvolvimento-de-software-multiplataforma/.worktrees/dsm-atlas/.impeccable/review/diff/final/regions/headline.png",
+      "D:/Fatec/desenvolvimento-de-software-multiplataforma/.worktrees/dsm-atlas/.impeccable/review/diff/final/regions/view-toggle.png",
+      "D:/Fatec/desenvolvimento-de-software-multiplataforma/.worktrees/dsm-atlas/.impeccable/review/diff/final/regions/legend.png",
+      "D:/Fatec/desenvolvimento-de-software-multiplataforma/.worktrees/dsm-atlas/.impeccable/review/diff/final/regions/map.png",
+      "D:/Fatec/desenvolvimento-de-software-multiplataforma/.worktrees/dsm-atlas/.impeccable/review/diff/final/regions/detail-rail.png"
+    ]
+  }
+}

@@ -1,0 +1,43 @@
+:root {
+  color-scheme: light;
+
+  --color-ink: #18211a;
+  --color-ink-soft: #596259;
+  --color-paper: #f5f1e5;
+  --color-paper-raised: #fffdf7;
+  --color-paper-muted: #e9e5d9;
+  --color-grid: #d6d2c6;
+  --color-line: #a7ada5;
+  --color-route: #4f66e8;
+  --color-progress: #d8ff57;
+  --color-recent: #ff7550;
+  --color-crossing: #ffd85a;
+  --color-language: #8dc3b0;
+  --color-focus: #4f66e8;
+  --color-selection: #18211a;
+  --color-selection-text: #f5f1e5;
+
+  --font-display: "Archivo", sans-serif;
+  --font-body: "IBM Plex Sans", sans-serif;
+  --font-data: "IBM Plex Mono", monospace;
+
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 3rem;
+
+  --radius-control: 0.125rem;
+  --radius-station: 999px;
+  --border-hairline: 1px solid var(--color-ink);
+  --border-strong: 2px solid var(--color-ink);
+
+  --duration-fast: 140ms;
+  --duration-route: 820ms;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+
+  --page-max: 90rem;
+  --body-measure: 70ch;
+}

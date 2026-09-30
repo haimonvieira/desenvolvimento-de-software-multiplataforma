@@ -1,0 +1,10 @@
+node_modules
+.env*
+.next
+next-env.d.ts
+/dist/
+.vinext/
+.wrangler/
+*.tsbuildinfo
+/public/material-previews/
+/public/_index/

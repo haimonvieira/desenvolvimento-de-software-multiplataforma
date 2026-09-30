@@ -1,0 +1,55 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1790597980423,
+      "tag": "0000_identity_and_study",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1790604000000,
+      "tag": "0001_atomic_study_sync",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1790611200000,
+      "tag": "0002_admin_identity",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1790697600000,
+      "tag": "0003_upload_batch",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1790784000000,
+      "tag": "0004_atomic_upload_batch",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1790870400000,
+      "tag": "0005_published_batch",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1790956800000,
+      "tag": "0006_ai_usage",
+      "breakpoints": true
+    }
+  ]
+}

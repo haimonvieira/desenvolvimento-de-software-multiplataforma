@@ -73,3 +73,22 @@ npm start
 ```
 
 Consulte o `package.json` de cada projeto para verificar os scripts disponíveis.
+
+## DSM Atlas
+
+O [DSM Atlas](atlas/) é uma aplicação Next.js no Cloudflare Workers que transforma a
+árvore de semestres e disciplinas deste repositório em um catálogo de estudo navegável,
+com busca, preview e um tutor de IA ancorado nos materiais. O repositório Git continua
+sendo a fonte de verdade dos materiais.
+
+Para executar localmente:
+
+```bash
+cd atlas
+pnpm install
+pnpm dev
+```
+
+Consulte [atlas/README.md](atlas/README.md) para as variáveis de ambiente, os comandos de
+build, preview e teste, o fluxo de branches do Neon, o deploy no Cloudflare e as permissões
+do GitHub App.

@@ -333,7 +333,11 @@ it("accepts each locator variant and each notebook action variant", …);
 
 - [ ] **Step 5: Implement the schema and validate in the adapter**
 
-Define the zod schema mirroring the contract the prompt already states (`answer: string`; `citations: {path, commitSha, locator: lines | page | excerpt, quote}[]`; `proposedNotebookActions: (note | flashcard)[]`; `toolCalls: {name: "retrieve", query: string}[]`). In `createGroqPublicTutorAi`, after `parseGroqAnswer`, validate; on failure throw `new TutorProviderError({ kind: "unusable", usage })` carrying the usage already parsed from the payload. Replace the silent-empty behavior at the throw site only — `parseGroqAnswer` keeps its current signature so its own tests stay valid.
+The wire shape the prompt states is what gets validated, because that is what the provider is contractually answering: `answer: string`; `citations: { path: string, commitSha: string, locator: lines | page | excerpt, quote: string }[]`; `proposedNotebookActions: (note | flashcard)[]` with a `source: { path, commitSha }`; `toolCalls: { name: string, query: string }[]`. Note the mismatch that makes this worth writing down: the *wire* citation carries `path`/`commitSha`/`quote`, while the internal `RetrievedExcerpt` carries `material`/`text`/`score`. Validate what arrives, then map.
+
+**This changes behavior deliberately.** `parseGroqAnswer` today drops a malformed citation or notebook action silently (`flatMap(candidate => toProposal(candidate) ? [proposal] : [])`) and returns the rest. Dropping a citation is worse than refusing the answer: the answer's claim may rest on exactly the evidence that was dropped, and nothing downstream can tell. So a violation now refuses the whole turn as `unusable`.
+
+In `createGroqPublicTutorAi`, after reading the payload, validate the raw parsed object; on failure throw `new TutorProviderError({ kind: "unusable", usage })` carrying the usage already parsed from the payload. Leave `parseGroqAnswer`'s own signature and behavior alone so its existing tests stay valid — the validation wraps it, it does not replace it.
 
 - [ ] **Step 6: Run everything, typecheck, commit**
 

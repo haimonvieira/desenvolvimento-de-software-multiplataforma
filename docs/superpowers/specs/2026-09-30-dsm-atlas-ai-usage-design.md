@@ -283,6 +283,16 @@ O que a fatia entrega:
   `{answer: "", citations: []}` quando não entende, e um turno assim é indistinguível de um
   turno que respondeu "nada" — o aluno recebe silêncio e o orçamento foi gasto.
 
+**Uma mudança de comportamento deliberada, que vale registrar.** Hoje uma citação ou ação de
+caderno malformada é **descartada em silêncio** e o resto da resposta é devolvido. Descartar
+uma citação é pior do que recusar a resposta: a afirmação pode se apoiar exatamente na
+evidência que sumiu, e nada rio abaixo consegue perceber. Com o schema, a violação recusa o
+turno inteiro.
+
+O contrato do schema é a forma **de fio**, não a interna: a citação que chega carrega
+`path`/`commitSha`/`quote`, enquanto `RetrievedExcerpt` carrega `material`/`text`/`score`.
+Valida-se o que chega, depois se mapeia.
+
 **A consequência contábil, que é a parte fácil de errar.** Uma violação de schema acontece
 **depois** de o provedor responder: o gasto é real e o `usage` é conhecido. Reconciliar isso
 como `unknown` (que é o que `runSponsoredTurn` faz com qualquer erro) seguraria o **pior caso**

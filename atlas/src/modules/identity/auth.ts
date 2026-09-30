@@ -124,13 +124,21 @@ function assertProductionAuthConfig(config: AuthRuntimeConfig) {
   if (new TextEncoder().encode(config.secret).byteLength < 32) {
     throw new Error("BETTER_AUTH_SECRET must contain at least 32 bytes");
   }
-  if (new URL(config.baseUrl).protocol !== "https:") {
+  const baseUrl = new URL(config.baseUrl);
+  // WebAuthn ceremonies work on http://localhost / 127.0.0.1 (browser treats loopback as
+  // a secure context), so a loopback base URL cannot mean a misconfigured production deploy.
+  const loopback = baseUrl.hostname === "localhost" || baseUrl.hostname === "127.0.0.1" || baseUrl.hostname === "[::1]";
+  if (baseUrl.protocol !== "https:" && !loopback) {
     throw new Error("BETTER_AUTH_URL must use HTTPS");
   }
   if (!config.rpId || config.rpId.includes(":") || config.rpId.includes("/")) {
     throw new Error("PASSKEY_RP_ID must be a hostname");
   }
-  if (config.trustedOrigins.length === 0 || config.trustedOrigins.some((origin) => new URL(origin).protocol !== "https:")) {
+  if (config.trustedOrigins.length === 0 || config.trustedOrigins.some((origin) => {
+    const url = new URL(origin);
+    const originLoopback = url.hostname === "localhost" || url.hostname === "127.0.0.1" || url.hostname === "[::1]";
+    return url.protocol !== "https:" && !originLoopback;
+  })) {
     throw new Error("BETTER_AUTH_TRUSTED_ORIGINS must contain explicit HTTPS origins");
   }
 }

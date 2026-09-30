@@ -10,7 +10,12 @@ export default defineConfig({
   workers: 2,
   webServer: {
     command: "corepack pnpm preview --port 8787",
-    port: 8787,
+    // `url` (not `port`) is what makes readiness meaningful: the port alone only
+    // proves the socket is open, and Wrangler opens it before the Worker module
+    // finishes initialising, so the earliest specs used to fail with ERR_ABORTED
+    // or "Request context disposed". Waiting for a real 200 means the Worker
+    // actually answered a request.
+    url: "http://127.0.0.1:8787/",
     reuseExistingServer: false,
     timeout: 120_000,
   },

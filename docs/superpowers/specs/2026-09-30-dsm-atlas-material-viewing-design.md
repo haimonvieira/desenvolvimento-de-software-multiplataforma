@@ -163,6 +163,32 @@ do material, que já é público. Se o serviço não responder, o fallback mant�
 Custo: 1026 previews, 5,9 MiB no total, em `public/material-previews/` (já ignorado pelo git).
 Cabe nos limites de static assets do Workers.
 
+### 3.4.1 Duas correções que a implementação exigiu
+
+Tornar o scanner o único portão expôs dois defeitos que a allowlist manual mascarava. Ambos
+foram corrigidos junto, porque publicar 934 arquivos com qualquer um deles ativo seria pior do
+que publicar dois.
+
+**O scanner tinha um furo com aspas.** O padrão exigia o separador imediatamente depois da
+palavra, então `{"password":"secret"}` passava — a aspa quebrava o casamento. O `config.json`
+do próprio teste só era recusado porque a allowlist barrava tudo. O padrão foi reescrito em
+dois níveis, deliberadamente: nome que **é** segredo (`JWT_SECRET`, `client_secret`,
+`private_key`) é pego solto, porque prosa e crases o cercam tanto quanto uma atribuição; nome
+que apenas **designa** um (`password`, `secret`, `token`, `senha`, `authorization`) exige `:`
+ou `=`, agora aceitando aspas antes do separador. A primeira tentativa de reescrita afrouxou o
+primeiro nível e deixou `` `JWT_SECRET` `` passar num arquivo real de DSM3 — pego pela própria
+verificação, que hoje importa o padrão em vez de duplicá-lo.
+
+**Arquivo legado em CP1252 não é arquivo binário.** O VisuAlg gravou os 73 exercícios de ALP em
+CP1252 (`\363` = ó, `\347` = ç). Recusar tudo que não decodifica como UTF-8 estrito descartava
+73 arquivos legítimos do curso. O discriminador de binário passou a ser o byte NUL; o que é
+NUL-livre e não é UTF-8 válido é decodificado como windows-1252, preservando os acentos.
+
+Resultado medido no catálogo real: **934 dos 1025 materiais de texto com preview** (antes: 2),
+6 MiB, 91 recusados — 22 binários sem extensão e 69 arquivos que de fato contêm material
+sensível (`.js` 34, `.java` 15, `.properties` 7, `.json` 6, `.md` 6, `.yaml` 1) como
+credenciais, consultas com `password =` e documentos que citam `JWT_SECRET`.
+
 ### 3.5 Agrupamento aninhado
 
 `study-discipline-materials.tsx` deixa de agrupar por um nível e passa a montar uma árvore a

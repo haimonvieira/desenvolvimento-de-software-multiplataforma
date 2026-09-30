@@ -4,14 +4,14 @@ import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
 
-import { buildCatalog, writeCatalog } from "../../../scripts/build-catalog";
+import { buildCatalog, writeCatalog, SECRET_MARKER } from "../../../scripts/build-catalog";
 import { createCatalogQuery } from "./catalog-query";
 import type { CatalogData } from "./model";
 
 const roots: string[] = [];
 const commitSha = "0123456789abcdef";
 
-async function fixture(files: Record<string, string>): Promise<string> {
+async function fixture(files: Record<string, string | Uint8Array>): Promise<string> {
   const root = await mkdtemp(join(tmpdir(), "dsm-atlas-catalog-"));
   roots.push(root);
   await Promise.all(
@@ -199,12 +199,37 @@ describe("catalog builder", () => {
     const approvedPath = "DSM2/DW2/dw2-nodejs-express/exercicios-js/arrays-e-objetos/script.js";
     expect((await readFile(join(previewRoot, `${approvedPath}.txt`))).byteLength).toBe(200_000);
     expect(catalog.materials.find((material) => material.ref.path === approvedPath)?.previewUrl).toBe(`/material-previews/${approvedPath}.txt`);
-    for (const name of ["unreviewed.js", "session.js", "senha.js", "private.js", "config.json"]) {
+    // 210_000 bytes is over PREVIEW_LIMIT, so the preview is cut and says so.
+    expect(catalog.materials.find((material) => material.ref.path === approvedPath)?.previewTruncated).toBe(true);
+    // The gate is the secret scanner, not a hand-reviewed list: an ordinary
+    // file gets its preview even though nobody looked at it.
+    expect(catalog.materials.find((material) => material.name === "unreviewed.js")?.previewUrl).toBe("/material-previews/DSM1/ALP/unreviewed.js.txt");
+    for (const name of ["session.js", "senha.js", "private.js", "config.json"]) {
       expect(catalog.materials.find((material) => material.name === name)?.previewUrl).toBeUndefined();
     }
-    const previewFiles = await readdir(previewRoot, { recursive: true });
-    expect(previewFiles.some((path) => /(?:unreviewed|session|senha|private|config)/i.test(path))).toBe(false);
+    const previewFiles = (await readdir(previewRoot, { recursive: true })).map((path) => path.replaceAll("\\", "/"));
+    expect(previewFiles).toContain("DSM1/ALP/unreviewed.js.txt");
+    for (const name of ["session.js", "senha.js", "private.js", "config.json"]) {
+      expect(previewFiles.some((path) => path.endsWith(`${name}.txt`))).toBe(false);
+    }
     await expect(readFile(join(dirname(output), "material-text.json"))).rejects.toThrow();
+  });
+
+  it("previews legacy course encoding with its accents, and still refuses a binary file", async () => {
+    const root = await fixture({
+      // VisuAlg wrote CP1252 long before this repository standardised on UTF-8.
+      "DSM1/ALP/legado.alg": Buffer.from("// Lógica de programaçao\n", "latin1"),
+      "DSM1/ALP/binario.alg": new Uint8Array([0x41, 0x00, 0xFF, 0xFE]),
+    });
+    const sha = commitFixture(root);
+    const output = join(root, "generated/catalog.json");
+
+    await writeCatalog(root, output, sha);
+
+    const catalog = JSON.parse(await readFile(output, "utf8")) as CatalogData;
+    const previewRoot = resolve(dirname(output), "../../public/material-previews");
+    expect(await readFile(join(previewRoot, "DSM1/ALP/legado.alg.txt"), "utf8")).toBe("// Lógica de programaçao\n");
+    expect(catalog.materials.find((material) => material.name === "binario.alg")?.previewUrl).toBeUndefined();
   });
 
   it("contains no credential markers in generated preview assets", async () => {
@@ -212,7 +237,7 @@ describe("catalog builder", () => {
     const files = await readdir(previewRoot, { recursive: true });
     const content = (await Promise.all(files.filter((path) => path.endsWith(".txt")).map((path) => readFile(join(previewRoot, path), "utf8")))).join("\n");
 
-    expect(content).not.toMatch(/(?:api[_-]?key|jwt[_-]?secret|mongodb(?:\+srv)?:\/\/|password\s*[:=]|private[_-]?key|secret\s*[:=]|senha\s*[:=]|token\s*[:=])/i);
+    expect(content).not.toMatch(SECRET_MARKER);
   });
 
   it("keeps secret markers and monolithic preview data out of deployed bundles", async () => {
@@ -274,6 +299,7 @@ describe("CatalogQuery", () => {
         semesterCode: "DSM1",
         kind: "document",
         downloadUrl: "https://example.test/file",
+        assetUrl: "https://example.test/file",
         previewKind: "text",
       }],
     });
@@ -293,6 +319,7 @@ describe("CatalogQuery", () => {
       semesterCode: "DSM1",
       kind: "document" as const,
       downloadUrl: `https://example.test/${index}`,
+      assetUrl: `https://example.test/${index}`,
       previewKind: "text" as const,
     }));
     const query = createCatalogQuery({

@@ -12,6 +12,7 @@ const item: Material = {
   semesterCode: "DSM1",
   kind: "document",
   downloadUrl: "https://example.test/abc123/DSM1/ALP/introducao.md",
+  assetUrl: "https://example.test/abc123/DSM1/ALP/introducao.md",
   previewKind: "text",
 };
 

@@ -11,9 +11,13 @@ import type {
   PreviewKind,
   Semester,
 } from "../src/modules/catalog/model";
+import {
+  materialAssetPath,
+  OFFICE_PREVIEW_EXTENSIONS,
+  TEXT_PREVIEW_EXTENSIONS,
+} from "../src/modules/catalog/material-asset.ts";
 import { compareCodeUnits } from "./compare-code-units.ts";
 
-const REPOSITORY_URL = "https://github.com/haimonvieira/desenvolvimento-de-software-multiplataforma";
 const SEMESTER_NAMES: Readonly<Record<string, string>> = {
   DSM1: "1º semestre",
   DSM2: "2º semestre",
@@ -80,16 +84,28 @@ const DOCUMENT_EXTENSIONS = new Set([".csv", ".doc", ".docx", ".md", ".odt", ".p
 const IMAGE_EXTENSIONS = new Set([".gif", ".jpeg", ".jpg", ".png", ".svg", ".webp"]);
 const ARCHIVE_EXTENSIONS = new Set([".7z", ".gz", ".rar", ".tar", ".zip"]);
 const PREVIEW_LIMIT = 200_000;
-const REVIEWED_PREVIEW_PATHS = new Set([
-  "DSM1/ALP/PROGRAMAS/visualg3.0.7/visualg3.0.7/help/telaprin.html",
-  "DSM2/DW2/dw2-nodejs-express/exercicios-js/arrays-e-objetos/script.js",
-]);
-export const SECRET_MARKER = /(?:api[_-]?key|authorization\s*[:=]|client[_-]?secret|jwt[_-]?secret|jwtsecret|mongodb(?:\+srv)?:\/\/|password\s*[:=]|private[_ -]?key|secret\s*[:=]|senha\s*[:=]|session[_-]?secret|token\s*[:=])/i;
+/**
+ * The only gate between a repository file and a generated text preview, and
+ * the same gate over the tutor's content index.
+ *
+ * Two tiers, deliberately. A name that *is* a secret — `JWT_SECRET`,
+ * `client_secret`, `private_key` — is caught bare, because prose and backticks
+ * surround it as often as an assignment does. A name that merely *names* one —
+ * `password`, `secret`, `token`, `senha`, `authorization` — needs a `:` or an
+ * `=` after it, optionally behind a closing quote: JSON writes
+ * `"password": "…"`, and demanding the separator immediately after the word
+ * let every quoted key through.
+ *
+ * Over-matching is the intended failure: a refused file keeps its listing and
+ * its download, it only loses the in-page preview.
+ */
+export const SECRET_MARKER = /(?:api[_-]?key|client[_-]?secret|jwt[_-]?secret|jwtsecret|private[_ -]?key|session[_-]?secret|authorization["']?\s*[:=]|password["']?\s*[:=]|secret["']?\s*[:=]|senha["']?\s*[:=]|token["']?\s*[:=]|mongodb(?:\+srv)?:\/\/)/i;
 
 function classify(extension: string): { kind: MaterialKind; previewKind: PreviewKind } {
   if (IMAGE_EXTENSIONS.has(extension)) return { kind: "image", previewKind: "image" };
   if (extension === ".pdf") return { kind: "document", previewKind: "pdf" };
-  if (CODE_EXTENSIONS.has(extension) || extension === ".md" || extension === ".txt") {
+  if (OFFICE_PREVIEW_EXTENSIONS[extension]) return { kind: "document", previewKind: "office" };
+  if (TEXT_PREVIEW_EXTENSIONS[extension]) {
     return { kind: CODE_EXTENSIONS.has(extension) ? "code" : "document", previewKind: "text" };
   }
   if (DOCUMENT_EXTENSIONS.has(extension)) return { kind: "document", previewKind: "none" };
@@ -169,27 +185,44 @@ function readBlobPrefix(repositoryRoot: string, oid: string): Promise<Buffer> {
   return promise;
 }
 
+/**
+ * A NUL byte means binary — an extensionless executable, a `.form` that is
+ * really something else — and it gets no preview at all.
+ *
+ * Anything NUL-free that is not valid UTF-8 is legacy course material: VisuAlg
+ * writes CP1252, and every byte has a CP1252 character, so decoding there keeps
+ * the accents instead of leaving replacement characters in a text preview.
+ */
+function decodeInertText(content: Buffer): string | null {
+  if (content.includes(0)) return null;
+  try {
+    return new TextDecoder("utf-8", { fatal: true }).decode(content);
+  } catch {
+    return new TextDecoder("windows-1252").decode(content);
+  }
+}
+
 async function writeTextPreviews(repositoryRoot: string, outputRoot: string, catalog: CatalogData, oidByPath: ReadonlyMap<string, string>): Promise<CatalogData> {
   await rm(outputRoot, { recursive: true, force: true });
   const materials: Material[] = [];
   for (const material of catalog.materials) {
-    const canPreview = material.previewKind === "text" && REVIEWED_PREVIEW_PATHS.has(material.ref.path);
-    if (!canPreview) {
+    if (material.previewKind !== "text") {
       materials.push(material);
       continue;
     }
     const oid = oidByPath.get(material.ref.path);
     if (!oid) throw new Error(`Missing Git blob for ${material.ref.path}`);
     const content = await readBlobPrefix(repositoryRoot, oid);
-    if (SECRET_MARKER.test(content.toString("utf8"))) {
+    const text = decodeInertText(content);
+    if (text === null || SECRET_MARKER.test(text)) {
       materials.push(material);
       continue;
     }
     const previewUrl = `/material-previews/${material.ref.path.split("/").map(encodeURIComponent).join("/")}.txt`;
     const outputPath = resolve(outputRoot, ...material.ref.path.split("/").slice(0, -1), `${basename(material.ref.path)}.txt`);
     await mkdir(dirname(outputPath), { recursive: true });
-    await writeFile(outputPath, content);
-    materials.push({ ...material, previewUrl });
+    await writeFile(outputPath, text);
+    materials.push(material.size > PREVIEW_LIMIT ? { ...material, previewUrl, previewTruncated: true } : { ...material, previewUrl });
   }
   return { ...catalog, materials };
 }
@@ -217,7 +250,8 @@ export async function buildCatalog(repositoryRoot: string, commitSha: string): P
       disciplineCode,
       semesterCode,
       ...classification,
-      downloadUrl: `${REPOSITORY_URL}/raw/${encodeURIComponent(commitSha)}/${entry.path.split("/").map(encodeURIComponent).join("/")}`,
+      downloadUrl: materialAssetPath(entry.path, "attachment"),
+      assetUrl: materialAssetPath(entry.path, "inline"),
     });
   }
 

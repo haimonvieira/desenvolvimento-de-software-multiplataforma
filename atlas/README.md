@@ -88,6 +88,18 @@ Nenhum desses valores pertence ao bundle cliente ou ao repositório.
 - **Desenvolvimento/preview:** usa uma branch de banco dedicada. As migrações são aplicadas nessa branch de desenvolvimento, o esquema é inspecionado, os testes de integração rodam, e então a branch é resetada e reaplicada para provar que as migrações são reprodutíveis. O preview usa `DATABASE_URL` e `PASSKEY_RP_ID` próprios — não são tratados como credenciais de produção. (`wrangler.jsonc`; plano de implementação, Tarefa 7 §5.)
 - **Produção:** usa `DATABASE_URL` próprio, configurado como secret do Worker de produção.
 
+### Migrações
+
+As migrações em `drizzle/migrations/` são **escritas à mão**. Elas definem funções plpgsql (`sync_study`, `reserve_ai_budget`), comentários e constraints que `drizzle-kit generate` não reproduz. Por isso o repositório **não usa `drizzle-kit generate`** contra este journal: os snapshots em `drizzle/migrations/meta/` cobrem apenas a migração `0000`, então um `generate` re-emitiria `0001`–`0006` como uma migração nova e o `apply` falharia por duplicidade.
+
+Regra: qualquer alteração de esquema é uma nova migração SQL escrita à mão, numerada na sequência, seguida da declaração correspondente em `src/integrations/neon/schema.ts`. O guard é `npx drizzle-kit check` (verifica journal/snapshots) mais `tests/schema-migration-parity.test.ts` (exige que todo `CHECK` do SQL aplicado exista em `schema.ts`, e vice-versa).
+
+```bash
+cd atlas
+npx drizzle-kit check   # journal e snapshots consistentes
+pnpm test -- schema-migration-parity
+```
+
 ## Deploy no Cloudflare
 
 1. `pnpm build` gera o Worker em `dist/` (o `prebuild` regenera catálogo e índice de conteúdo).

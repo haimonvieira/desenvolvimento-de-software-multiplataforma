@@ -282,6 +282,7 @@ export const aiUsageWindow = pgTable("ai_usage_window", {
   check("ai_usage_window_scope_check", sql`${table.scope} in ('public', 'admin')`),
   check("ai_usage_window_kind_check", sql`${table.windowKind} in ('hour', 'day', 'global')`),
   check("ai_usage_window_global_subject_check", sql`(${table.windowKind} = 'global') = (${table.subjectKey} = '*')`),
+  check("ai_usage_window_counts_check", sql`${table.requests} >= 0 and ${table.reservedInputTokens} >= 0 and ${table.reservedOutputTokens} >= 0 and ${table.inputTokens} >= 0 and ${table.outputTokens} >= 0`),
 ]);
 
 export const aiReservation = pgTable("ai_reservation", {
@@ -302,6 +303,7 @@ export const aiReservation = pgTable("ai_reservation", {
   index("ai_reservation_expiry_idx").on(table.status, table.expiresAt),
   check("ai_reservation_scope_check", sql`${table.scope} in ('public', 'admin')`),
   check("ai_reservation_status_check", sql`${table.status} in ('reserved', 'settled', 'unknown', 'expired')`),
+  check("ai_reservation_limits_check", sql`${table.maxInputTokens} >= 0 and ${table.maxOutputTokens} >= 0 and ${table.maxToolCalls} >= 0`),
 ]);
 
 export const authSchema = { user, session, account, verification, rateLimit, passkey };

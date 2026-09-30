@@ -35,9 +35,11 @@ falha que o ledger deste projeto existe para impedir.
 
 ## 2. Decisões de desenho
 
-**D-a — O registro declara a forma da cota, não só o número.** Cada provedor traz
-`quotaShape: recurring | budget`, com janela e limite no primeiro caso e saldo inicial no
-segundo. Sem isso, o orçamento é desconhecido e o provedor não entra.
+**D-a — O registro declara a forma da cota, por `(provedor, modelo)`.** Não por provedor:
+um mesmo provedor pode ter formas diferentes para modelos diferentes, e foi exatamente o que
+encontrei no primeiro provedor real (§8). Cada entrada traz `quotaShape: recurring | budget`,
+com janela e limite no primeiro caso e saldo inicial no segundo. Sem isso, o orçamento é
+desconhecido e a entrada não entra.
 
 **D-b — A contabilidade ganha a dimensão provedor.** O teto global por escopo continua
 existindo (é a proteção contra um bug gastar tudo), e **por baixo** dele cada provedor tem o
@@ -148,10 +150,52 @@ intactos e nenhum provedor novo toca neles.
 
 ## 7. O que eu preciso saber antes de configurar
 
-1. **As cotas de 10M e 1M são recorrentes ou bolsa única?** Decide se elas renovam. Se forem
-   bolsa, entram como orçamento decrescente e a mensagem de recusa tem de ser diferente.
-2. **Quais provedores, e o formato é compatível com OpenAI?** Se sim, entram só pelo registro.
-3. **A cota é por conta ou por chave?** Se for por chave, várias chaves do mesmo provedor
+1. **Quais provedores, e o formato é compatível com OpenAI?** Se for, entram só pelo registro.
+2. **A cota é por conta ou por chave?** Se for por chave, várias chaves do mesmo provedor
    multiplicam — e o registro precisa de uma entrada por chave, não por provedor.
 
 Nada disso muda as decisões D-a a D-g; muda só o preenchimento do registro.
+
+## 8. Estado verificado do provedor `top-tools-ai`
+
+Lido da documentação do próprio provedor, não de memória. Ele expõe **duas formas de cota que
+se parecem**, e a diferença entre elas é a diferença entre um tutor gratuito para sempre e um
+orçamento que acaba:
+
+| Modelo | Forma | Limite |
+|---|---|---|
+| **`Top-Tools-Ai`** | **recorrente, diária** | 10M tokens/dia |
+| Step 5 Preview, Qwen-3.8-Max, GLM-5.2, GLM-5.3, GLM-5.3-Flash, MiMo-V2.5(-Pro), DeepSeek-V4(-Pro), DeepSeek-V4.1-Flash, MiniMax-M3, MiniMax-M2.7, Kimi-K2.7-Code, Kimi-K2.6 | **bolsa única, compartilhada** | 10M tokens de boas-vindas, **uma vez**, divididos entre todos |
+| DeepSeek-V4-Flash-Vision-Exp, gpt-5.6-sol, claude-opus-5 | PAYG | exigem saldo pago |
+
+A frase do provedor: *"New accounts receive a one-time 10 million-token welcome balance for
+non-PAYG models except Top-Tools-Ai. Top-Tools-Ai has a separate 10 million-token daily
+allowance."*
+
+**As duas leituras estavam certas sobre coisas diferentes.** O "10M por dia" existe — mas só
+para o modelo chamado literalmente `Top-Tools-Ai`. Os modelos bons (GLM, DeepSeek, Kimi) saem
+da bolsa compartilhada de boas-vindas, e é por isso que os agentes desta sessão morreram com
+`welcome_tokens_exhausted`: eles usavam `glm-5.3-flash`. Ou seja, **o acesso grátis aos
+modelos bons deste provedor já foi consumido nesta conta**; o que resta grátis e recorrente é
+o modelo `Top-Tools-Ai`.
+
+Consequência direta: uma entrada recorrente de 10M/dia equivale a cerca de **2.000 turnos por
+dia** no orçamento atual (5.000 tokens de pior caso), contra os ~30–100 de hoje. É o maior
+ganho isolado disponível — e ele não depende de nenhum outro provedor.
+
+**D-h — O mapeamento de status é do provedor, não do transporte.** A documentação dele
+mostra um caso que o transporte atual mapeia errado:
+
+| Status | Groq | top-tools-ai |
+|---|---|---|
+| 403 | credencial recusada | **"Model access denied — you don't have an active subscription for the requested model"** |
+
+Hoje 403 vira `auth`, e o roteador desligaria o provedor inteiro por causa de **um modelo**.
+São coisas diferentes: credencial inválida desliga o provedor; modelo não assinado desliga
+**aquela entrada do registro** e passa para a próxima. O mapeamento de status precisa ser
+declarável por entrada.
+
+Outros limites dele que o registro tem de carregar: **45 requisições/minuto** (podendo cair
+para 30 sob demanda alta) e **5 requisições simultâneas por usuário**, com 429
+`concurrency_limit_exceeded`. O teto de concorrência do escopo público já é 1, então isso não
+aperta hoje — mas é um teto por entrada, não global.

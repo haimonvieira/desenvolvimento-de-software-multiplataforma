@@ -279,7 +279,11 @@ export function createInstallationTokenProvider(
     const privateKey = requiredEnv(env, config.privateKeyEnv);
     const installationId = requiredEnv(env, config.installationIdEnv);
     const repositoryName = repositoryNameOf(requiredEnv(env, config.repositoryEnv));
-    const cacheKey = `${appId}:${installationId}`;
+    // The minted token is scoped to this repository, so the cache key must name
+    // it too: one installation can serve several repositories, and a key of
+    // `appId:installationId` alone would hand the second repository the first
+    // repository's token.
+    const cacheKey = `${appId}:${installationId}:${repositoryName}`;
     const cached = cache.get(cacheKey);
     if (cached && cached.expiresAtMs - TOKEN_EXPIRY_MARGIN_MS > nowMs) return cached.token;
 

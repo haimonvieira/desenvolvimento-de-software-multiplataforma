@@ -356,4 +356,38 @@ describe("GitHub App installation tokens", () => {
     expect(calls[1]!.init.headers).toMatchObject({ authorization: "Bearer ghs_installation" });
     expect(JSON.stringify(calls.slice(1))).not.toContain("signed.app.jwt");
   });
+
+  it("keys the cached token by repository so one installation never serves another repository's token", async () => {
+    const calls: { url: string; init: RequestInit }[] = [];
+    const cache = new Map();
+    const fetchImpl = async (url: string, init: RequestInit): Promise<Response> => {
+      calls.push({ url, init });
+      const body = JSON.parse(init.body as string) as { repositories: string[] };
+      // A real installation token is repository-scoped: hand back one that
+      // names the repository it was minted for so a cache leak is visible.
+      return jsonResponse({
+        token: `ghs_${body.repositories[0]}`,
+        expires_at: new Date(1_700_000_000_000 + 3_600_000).toISOString(),
+      });
+    };
+    const deps = {
+      fetchImpl,
+      sign: () => "signed.app.jwt",
+      now: () => 1_700_000_000_000,
+      cache,
+    };
+    const first = createInstallationTokenProvider({ ...appEnv, GITHUB_REPOSITORY: "owner/repo-a" }, deps);
+    const second = createInstallationTokenProvider({ ...appEnv, GITHUB_REPOSITORY: "owner/repo-b" }, deps);
+
+    await expect(first()).resolves.toBe("ghs_repo-a");
+    await expect(second()).resolves.toBe("ghs_repo-b");
+
+    // One installation, two repositories: two exchanges, each scoped to its own
+    // repository. A cache keyed only by `appId:installationId` would serve the
+    // second repository the first repository's token.
+    expect(calls.map((call) => JSON.parse(call.init.body as string))).toEqual([
+      { repositories: ["repo-a"] },
+      { repositories: ["repo-b"] },
+    ]);
+  });
 });

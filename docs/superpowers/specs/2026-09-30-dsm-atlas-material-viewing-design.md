@@ -202,6 +202,30 @@ partir de `path.split("/").slice(2)` — o caminho abaixo da disciplina.
 - Nomes de pasta e de arquivo preservados como texto real; a árvore continua sendo uma `<ul>`
   com nome acessível por pasta, e não depende de JavaScript para ser lida.
 
+### 3.6 A origem absoluta não pode custar o auth
+
+O embed do Office precisa de URL absoluta, então a página do material precisa da origem do
+deployment. A implementação inicial a obteve de `requiredRuntimeEnv("BETTER_AUTH_URL")`, e isso
+derrubou a página **em todo ambiente local**:
+
+```
+$ curl -s 'http://127.0.0.1:8787/materiais/.../Lista 01 - Pseudocódigo.docx.pdf?semester=DSM1'
+HTTP/1.1 500 Internal Server Error
+Error: BETTER_AUTH_URL must use HTTPS
+```
+
+A causa não é o valor da variável — é o import. `modules/identity/server-auth.ts` executa
+`createAuth(...)` no escopo do módulo (`server-auth.ts:26`), e `auth.ts:128` rejeita base URL
+sem HTTPS. Com `BETTER_AUTH_URL=http://127.0.0.1:8787` no `.dev.vars` (correto para dev), qualquer
+módulo que importe `server-auth` passa a exigir auth configurado e HTTPS para funcionar. Uma
+página pública de leitura não pode herdar essa exigência.
+
+A origem passa a vir do próprio pedido (`host` e `x-forwarded-proto`). Isso também é mais correto
+em preview: o embed aponta para a origem que está servindo a página, não para o que o auth usa.
+
+O teste `src/app/materiais/[...path]/page.test.ts` é a trava: ele renderiza a página sem nenhuma
+variável de auth definida, então reintroduzir aquele import falha antes da asserção.
+
 ## 4. Fluxo de dados
 
 ```
@@ -226,6 +250,7 @@ classify(ext)  ──► previewKind ──► MaterialPreview ──► assetUr
 | Caminho fora do catálogo | `404`, sem fetch upstream |
 | `commitSha` fora do publicado | `404` |
 | GitHub indisponível ou `5xx` | `502` com mensagem própria; nunca repassa corpo do upstream |
+| Commit do catálogo ainda não publicado | `502` — o CDN do GitHub não serve um sha que só existe localmente. Verificado: `raw.githubusercontent.com` devolve `404` para o HEAD local e `200` para `origin/main` |
 | Arquivo ausente no commit | `404` |
 | Preview não suportado | `PreviewFallback` com "Baixar arquivo" e "Ver no GitHub" |
 | Office Online não responde | fallback assume |
@@ -256,6 +281,28 @@ do GitHub em `downloadUrl` serão reescritos, porque a decisão muda.
 5. Office por embed.
 
 Cada passo é independente e verificável sozinho; 1 e 2 juntos já corrigem o PDF.
+
+### 7.1 Verificação executada
+
+Medido contra um Worker real, com o catálogo fixado num commit publicado (`d32b8c8`):
+
+| Verificação | Resultado |
+|---|---|
+| `GET` do PDF pela rota própria | `200`, `Content-Type: application/pdf`, `Content-Disposition: inline`, `nosniff`, `ETag` |
+| Mesma rota com `Range: bytes=0-1023` | `206 Partial Content`, `Content-Range: bytes 0-1023/150311` |
+| Mesma rota com `?disposition=attachment` | `Content-Disposition: attachment` |
+| Nome com acento | `filename*=UTF-8''Lista%2001%20-%20Pseudoc%C3%B3digo.docx.pdf` |
+| Imagem | `image/png` |
+| Preview `.alg` (CP1252) | `text/plain; charset=utf-8`, acentos corretos |
+| Caminho fora do catálogo | `404` sem nenhum fetch upstream |
+| **Página do PDF em Chromium com janela** | `downloadsFired: []`, `fallbackShown: false`, **3 frames do plugin de PDF** dentro da página |
+| Árvore em ALP | 10 pastas, profundidades 1–5 |
+| Árvore em TPI (pior caso) | **628 pastas, profundidade máxima 11**, raiz em `Materiais gerais` |
+
+Suíte de unidade: 40 arquivos / 369 testes. O Chromium headless não substitui essa última
+verificação — ele não carrega o plugin de PDF e mostra o fallback mesmo para um documento que
+uma janela real exibe. A prova do requisito "abre na página em vez de baixar" só existe com
+janela.
 
 ## 8. Decomposição dos outros eixos
 

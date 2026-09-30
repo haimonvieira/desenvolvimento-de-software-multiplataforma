@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { headers } from "next/headers";
 
 import catalog from "../../../generated/catalog.json";
 import { createCatalogQuery } from "../../../modules/catalog/catalog-query";
@@ -20,8 +21,20 @@ function formatBytes(size: number): string {
   return `${(size / 1_048_576).toFixed(1)} MB`;
 }
 
+/**
+ * The Office embed needs an absolute URL, so it needs the deployment origin.
+ * It comes from the request rather than `BETTER_AUTH_URL`: importing the auth
+ * module runs `createAuth` at module scope, which rejects a non-HTTPS base URL,
+ * and that would take down a public reading page in every local run.
+ */
+function requestOrigin(requestHeaders: Headers): string {
+  const host = requestHeaders.get("host") ?? "localhost";
+  return `${requestHeaders.get("x-forwarded-proto") ?? "https"}://${host}`;
+}
+
 export default async function MaterialPage({ params }: PageProps) {
   const segments = (await params).path;
+  const origin = requestOrigin(await headers());
   const material = materialPathCandidates(segments)
     .map((path) => query.getMaterial({ path, commitSha: data.commitSha }))
     .find((candidate) => candidate !== null) ?? null;
@@ -62,7 +75,7 @@ export default async function MaterialPage({ params }: PageProps) {
               <div><dt>Tamanho</dt><dd>{formatBytes(material.size)}</dd></div>
             </dl>
           </header>
-          <MaterialPreview material={material} />
+          <MaterialPreview material={material} origin={origin} />
           <MaterialStudyControls material={material.ref} />
         </main>
       </div>

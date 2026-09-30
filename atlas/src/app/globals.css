@@ -327,7 +327,9 @@ main {
 .atlas-material-routes { position: absolute; inset: 6.5rem 1.5rem 1rem; display: grid; grid-template-rows: repeat(var(--discipline-count), minmax(0, 1fr)); pointer-events: none; }
 .atlas-materials { position: relative; z-index: 3; height: 100%; margin: 0 6%; padding: 0; list-style: none; pointer-events: none; }
 .atlas-materials li { position: absolute; top: calc(50% + 1.35rem); translate: -50% -50%; pointer-events: auto; }
-.atlas-station { display: block; width: 0.8rem; height: 0.8rem; overflow: hidden; border: 3px solid var(--color-ink); border-radius: var(--radius-station); background: var(--color-paper); color: transparent; font-size: 0; transition: scale var(--duration-fast) var(--ease-out), background-color var(--duration-fast) var(--ease-out); }
+.atlas-station { position: relative; display: block; width: 0.8rem; height: 0.8rem; overflow: hidden; border: 3px solid var(--color-ink); border-radius: var(--radius-station); background: var(--color-paper); color: transparent; font-size: 0; transition: scale var(--duration-fast) var(--ease-out), background-color var(--duration-fast) var(--ease-out); }
+.atlas-station::after { content: ""; position: absolute; inset: -0.55rem; border-radius: var(--radius-station); }
+/* ponytail: hit-area 1.9rem abaixo dos 24px WCAG 2.5.8; subir inset p/ -0.7rem se audit apontar */
 .atlas-station:hover, .atlas-station:focus-visible { scale: 1.3; background: var(--color-paper-raised); }
 .discipline-code, .discipline-count { font-family: var(--font-data); font-size: 0.62rem; font-weight: 600; text-transform: uppercase; }.discipline-name { font-size: 0.76rem; font-weight: 600; }.discipline-count { color: var(--color-ink-soft); white-space: nowrap; }
 .catalog-list { padding: 1.5rem; overflow: visible; }
@@ -335,7 +337,7 @@ main {
 .catalog-list-header h2 { margin: 0; font-family: var(--font-display); font-size: clamp(1.6rem, 3vw, 2.5rem); }.catalog-list-header p { margin: 0; font-family: var(--font-data); font-size: 0.65rem; text-transform: uppercase; }
 .catalog-list ul { margin: 0; padding: 0; list-style: none; }.catalog-disciplines-list > li { border-bottom: 1px solid var(--color-line); }.catalog-list .discipline-link { min-height: 4.5rem; border: 0; background: transparent; }
 .catalog-materials { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr)); gap: 0 var(--space-3); padding: 0 var(--space-3) var(--space-3) !important; }
-.catalog-materials a { display: block; overflow: hidden; padding: 0.4rem 0; color: var(--color-ink-soft); font-size: 0.68rem; text-overflow: ellipsis; white-space: nowrap; }
+.catalog-materials a { display: block; overflow: hidden; padding: 0.4rem 0; color: var(--color-ink); font-size: 0.75rem; text-overflow: ellipsis; white-space: nowrap; }
 .catalog-summary { margin: 0; }.catalog-summary div { display: flex; justify-content: space-between; padding: 0.7rem 0; border-top: 1px solid var(--color-line); }.catalog-summary dt, .catalog-summary dd { margin: 0; }.catalog-summary dd { font-family: var(--font-data); font-weight: 600; }
 
 .discipline-detail { display: flex; flex-direction: column; min-width: 0; padding: 1.5rem; background: rgba(255,253,247,.95); }
@@ -382,15 +384,24 @@ main {
 .material-heading dt { color: var(--color-ink-soft); font-family: var(--font-data); font-size: .58rem; text-transform: uppercase; }
 .material-heading dd { margin: var(--space-1) 0 0; font-weight: 600; }
 .material-groups { display: grid; gap: var(--space-6); }
+/* Indent a folder by its depth from the discipline root, clamped at six steps
+   so the deepest catalogue path — eleven levels in TPI — still fits a 390px
+   viewport instead of pushing the material names off screen. */
+.material-group { padding-inline-start: calc(min(var(--depth, 0), 6) * 0.75rem); }
 .material-group ul { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr)); }
 .material-group li { display: grid; grid-template-columns: 2.25rem minmax(0, 1fr); gap: 0 var(--space-3); min-height: 4.5rem; padding: var(--space-3) 0; border-bottom: 1px solid var(--color-line); }
 .material-group .file-type { grid-row: 1 / 3; }
 .material-group a { align-self: end; overflow-wrap: anywhere; font-weight: 600; text-underline-offset: .2rem; }
 .material-group small { color: var(--color-ink-soft); overflow-wrap: anywhere; }
 .native-preview, .text-preview, .preview-fallback { margin: 0; border: var(--border-hairline); background: var(--color-paper-raised); }
-.native-preview { display: grid; place-items: center; min-height: 34rem; overflow: hidden; }
-.native-preview img { display: block; max-width: 100%; max-height: 75vh; object-fit: contain; }
-.native-preview object { width: 100%; min-height: 70vh; border: 0; }
+/* The frame follows its content: a small image is not floated in a fixed
+   34rem void, and nothing is ever scaled past its natural size. */
+.native-preview { display: flex; flex-direction: column; gap: var(--space-4); padding: var(--space-5); }
+.native-preview img { align-self: start; display: block; width: auto; height: auto; max-width: 100%; max-height: 75vh; }
+.native-preview object, .native-preview iframe { display: block; width: 100%; min-height: 70vh; border: 0; }
+.native-preview > .material-actions { margin-top: 0; padding-top: var(--space-4); border-top: var(--border-hairline); }
+.image-open { align-self: start; font-family: var(--font-data); font-size: .65rem; font-weight: 600; text-transform: uppercase; }
+.preview-truncated { max-width: var(--body-measure); margin: 0 0 var(--space-3); padding: var(--space-3) var(--space-4); border: var(--border-hairline); background: var(--color-paper-muted); font-weight: 600; }
 .text-preview h2, .preview-fallback { padding: var(--space-5); }
 .text-preview h2, .preview-fallback h2 { margin: 0; font-family: var(--font-display); font-size: 1.5rem; }
 .text-preview > p, .preview-fallback p { max-width: var(--body-measure); color: var(--color-ink-soft); }
@@ -439,6 +450,7 @@ main {
 .profile-controls article { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-3); border-top: var(--border-hairline); }
 
 .tutor-panel { margin-top: var(--space-6); border: var(--border-strong); background: var(--color-paper-raised); }
+.tutor-panel > .tutor-hint { margin-top: var(--space-5); }
 .tutor-panel > h2 { margin: 0; padding: var(--space-5) var(--space-5) 0; font-family: var(--font-display); font-size: clamp(1.5rem, 3vw, 2.4rem); }
 .tutor-hint { margin: var(--space-2) 0 0; padding: 0 var(--space-5); color: var(--color-ink-soft); }
 .tutor-panel form { display: grid; gap: var(--space-3); padding: var(--space-5); border-top: var(--border-hairline); margin-top: var(--space-4); }
@@ -467,7 +479,7 @@ main {
   .atlas-map, .catalog-list { border-right: 0; border-bottom: var(--border-hairline); }
   .discipline-detail { min-height: 27rem; }
   .public-heading, .material-heading { align-items: start; flex-direction: column; }
-  .native-preview { min-height: 24rem; }
+  .native-preview object, .native-preview iframe { min-height: 60vh; }
   .study-editors { grid-template-columns: 1fr; }
   .study-editors form + form { border-top: var(--border-hairline); border-left: 0; }
 }
@@ -505,8 +517,7 @@ main {
   .profile-controls { margin: var(--space-4); }
   .profile-controls article { grid-template-columns: 1fr; }
   .material-group header { align-items: start; flex-direction: column; gap: 0; }
-  .native-preview { min-height: 20rem; }
-  .native-preview object { min-height: 65vh; }
+  .native-preview object, .native-preview iframe { min-height: 55vh; }
   .text-preview pre { padding: var(--space-4); font-size: .7rem; }
   .search-results { padding: var(--space-4); }
   .search-results header { align-items: start; flex-direction: column; gap: 0; }

@@ -61,12 +61,14 @@ test("previews real PDF and raster image with native passive elements", async ({
   await open(pdf, page);
   const pdfPreview = page.locator("object[data-material-preview='pdf']");
   await expect(pdfPreview).toBeVisible();
-  await expect(pdfPreview).toHaveAttribute("data", /\/raw\/[0-9a-f]{40}\//);
+  // Our own route, inline disposition: GitHub's endpoint answers
+  // application/octet-stream with nosniff and the browser downloads instead.
+  await expect(pdfPreview).toHaveAttribute("data", /^\/api\/material\/.*\?disposition=inline$/);
 
   await open(image, page);
   const imagePreview = page.locator("img[data-material-preview='image']");
   await expect(imagePreview).toBeVisible();
-  await expect(imagePreview).toHaveAttribute("src", /\/raw\/[0-9a-f]{40}\//);
+  await expect(imagePreview).toHaveAttribute("src", /^\/api\/material\/.*\?disposition=inline$/);
 });
 
 test("renders source and repository HTML as escaped inert text", async ({ page }) => {
@@ -82,7 +84,7 @@ test("unsupported ZIP explains fallback and links exact-commit download and GitH
 
   await expect(page.getByText("Pré-visualização indisponível para este formato.")).toBeVisible();
   const download = page.getByRole("link", { name: "Baixar arquivo" });
-  await expect(download).toHaveAttribute("href", /\/raw\/[0-9a-f]{40}\/.*Exemplos\.zip$/);
+  await expect(download).toHaveAttribute("href", /^\/api\/material\/.*Exemplos\.zip\?disposition=attachment$/);
   await expect(page.getByRole("link", { name: "Ver no GitHub" })).toHaveAttribute("href", /\/blob\/[0-9a-f]{40}\/.*Exemplos\.zip$/);
 });
 

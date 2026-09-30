@@ -1,6 +1,7 @@
 # DSM Atlas — Uso de IA (eixo 2)
 
-**Status:** diagnóstico completo; seções 4+ aguardam as decisões D1–D3
+**Status:** diagnóstico completo; §4 e §5 cobrem o que não depende de decisão; as fatias
+condicionais aguardam D1–D3
 **Data:** 30 de setembro de 2026
 **Escopo:** tutor público e classificação administrativa — custo, qualidade, confiabilidade e latência
 **Fora de escopo:** eixo 1 (visualização de materiais), já entregue e verificado
@@ -40,6 +41,24 @@ status é `reserved` ou `unknown`. **Ela não tem chamador:** não existe `trigg
 
 Com 5.000 tokens reservados por turno e teto global de 150.000, **30 reservas presas fecham
 o dia**, e os alunos são recusados pelo resto dele com a mensagem de cota esgotada.
+
+**O que exatamente apodrece, e o que se cura sozinho.** A reserva nasce com prazo curto:
+`v_expires_at := p_now + make_interval(secs => deadline_seconds)`, e o prazo do escopo
+público é 30 segundos (`usage-policy.ts`). Isso divide o dano em dois:
+
+| Portão | Fonte do `reserved_*` | Expira sozinho? |
+|---|---|---|
+| Concorrência (`maxConcurrentTurns`) | conta linhas com `expires_at > p_now` | **sim** — 30 s e a linha deixa de bloquear |
+| Teto de tokens do dia | soma `reserved_input + reserved_output + input + output` da janela global | **não** — só `expire_ai_reservations` devolve |
+
+`read_ai_quota` soma os `reserved_*` da janela global do dia, então uma reserva presa
+**infla o consumo até o fim do dia** mesmo tendo expirado há horas. O portão de concorrência
+se recupera sozinho; o de tokens não. É por isso que o defeito é grave mesmo com prazo de
+30 segundos: o prazo existe, o que não existe é quem o leia.
+
+Detalhe que uma reimplementação ingênua erraria: a função credita a janela derivada de
+`reservation.created_at`, não de `p_now` — uma reserva criada 23h59 UTC precisa ser devolvida
+ao balde daquele dia, não ao de hoje.
 
 **Medição honesta:** consultei o banco real apontado pelo `.dev.vars`, e as duas tabelas do
 ledger estão **vazias** — 0 reservas, 0 janelas. O tutor ainda não serviu um turno real
@@ -165,3 +184,97 @@ em fases. A evidência (§1.1, §1.2) aponta (a) como o que tem efeito garantido
 
 **D3 — Streaming.** (a) streamar só a rodada final; (b) SSE em todas as rodadas; (c) largar o
 streaming e deletar o `answerStream` morto, mantendo o foco em cota.
+
+## 4. Desenho do que não depende de D1–D3
+
+### 4.1 Fechar o vazamento de reservas
+
+**Onde chamar.** `runSponsoredTurn` (`usage-ledger.ts:154`) é descrito pelo próprio código
+como "the one seam that decides whether inference may happen at all". A varredura entra
+**imediatamente antes** de `ledger.reserve(input)`:
+
+```ts
+// Liberar reservas vencidas antes de pedir orçamento: uma reserva de timeout
+// continua inflando a janela global do dia, e é esta a hora em que isso importa.
+await ledger.expireStaleReservations().catch(() => undefined);
+const decision = await ledger.reserve(input);
+```
+
+- **Antes, não depois:** a liberação precisa acontecer na mesma requisição que avalia o teto,
+  senão o primeiro turno após uma falha ainda é recusado.
+- **Falha engolida:** um erro na varredura não pode negar um turno. O pior caso é repetir o
+  vazamento por mais uma requisição; o outro caminho derruba o tutor inteiro.
+- **Por que não um cron:** o `wrangler.jsonc` não declara `triggers.crons` e o `main` do
+  Worker é o `fetch-handler` do vinext, que não expõe um `scheduled` evidente. Um cron seria
+  infra nova sobre um gancho não comprovado, e a varredura preguiçosa não precisa de nenhuma
+  — ela roda exatamente quando há capacidade em jogo.
+- **Custo:** uma consulta indexada por requisição. O índice `ai_reservation_expiry_idx`
+  (`status`, `expires_at`) cobre o filtro, e com as tabelas em dia ela não encontra nada.
+
+**Invariantes do comportamento a preservar:** a devolução credita a janela derivada de
+`created_at` (§1.2), soma `GREATEST(0, …)` (nunca negativo) e marca `status = 'expired'`.
+Nada disso é reimplementado no TypeScript — a função SQL já está certa; falta o chamador.
+
+### 4.2 Unificar só o transporte, nunca a política
+
+O que sai duplicado de `groq-public-tutor-ai.ts` e `admin-classifier-ai.ts` para um módulo
+comum: montagem da requisição HTTP, `fetch` com prazo, mapeamento status→falha
+(`429`/`401`/`403`/`400`/`422`/`5xx`), AbortError→`timeout`, descarte do corpo do upstream e
+leitura do JSON de resposta.
+
+O que **fica** em cada adaptador, explícito: a tabela de política da §1.5. Um adaptador
+genérico de provedor que apagasse as diferenças seria retrocesso, e a aceitação desta fatia
+é justamente a prova de que não mudaram: **os testes de caminho de falha existentes passam
+sem alteração** (`groq-public-tutor-ai.test.ts`, `admin-classifier-ai.test.ts`). Se um deles
+precisar ser editado, a fatia errou.
+
+### 4.3 Ancorar os prompts em teste
+
+Hoje nenhum teste afirma o texto do prompt, então uma edição silenciosa muda o comportamento
+sem falhar nada. A fatia adiciona, nos dois adaptadores, uma asserção do **conjunto completo
+de mensagens montado** (system + user), não de um trecho.
+
+Consequência deliberada: qualquer edição de prompt passa a exigir uma alteração de teste
+visível no diff — que é o ponto. Não entra versionamento semântico de prompt nesta fatia; se
+a §1.3 for adiante, um `PROMPT_VERSION` entra junto com ela.
+
+### 4.4 Contrato estrito no tutor público
+
+O público usa `response_format: { type: "json_object" }` (`:444`) enquanto o administrativo
+usa `json_schema` estrito (`:326`), e o parse do público é tolerante (`parseGroqAnswer`
+devolve objeto vazio quando não entende). Trocar para `json_schema` estrito com o mesmo
+formato que o prompt já descreve em texto, e **descartar** a resposta que não conforma em vez
+de completá-la por suposição, alinhando com o princípio já escrito para o lado administrativo
+("resposta sem schema válido: descartar a sugestão").
+
+Risco a verificar, não a supor: um schema estrito pode recusar saídas que o modelo produz
+hoje. Isso se resolve na verificação contra o modelo real (§6), não por leitura de código.
+
+## 5. Fatiamento
+
+Independentes entre si e de D1–D3:
+
+| Fatia | Entrega | Aceitação |
+|---|---|---|
+| 1 | Varredura antes da reserva | Com uma reserva `unknown` vencida segurando 5.000 tokens, um turno que seria recusado passa a ser admitido; a devolução cai na janela que foi cobrada |
+| 2 | Transporte compartilhado | Testes de falha existentes passam **sem edição**; nenhum comportamento de política muda |
+| 3 | Prompts ancorados | Editar o prompt sem editar o teste falha a suíte |
+| 4 | Contrato estrito público | Saída fora do schema é descartada; verificado contra o modelo real |
+
+Dependentes de decisão: prefixo estável para cache (§1.3, depende de D2), streaming
+(depende de D3), harness de avaliação (depende de D2 — se o eixo for cota, o harness é
+instrumento de medição e não uma suíte de qualidade), embeddings (depende de D1).
+
+## 6. Verificação
+
+Nada aqui se prova só por leitura. O que cada fatia exige:
+
+- **Fatias 1–3:** suíte de unidade, contra o banco quando a fatia toca o ledger. A fatia 1
+  precisa de um teste que **falhe antes** da correção — reserva presa, turno recusado — porque
+  é a única prova de que o vazamento era real e não teórico.
+- **Fatia 4 e o harness:** exigem o provedor real e portanto **consomem cota**, que é o recurso
+  escasso desta spec. Têm de rodar fora do orçamento patrocinado — chave e escopo próprios,
+  nunca `GROQ_API_KEY` — e ser opt-in, nunca em CI.
+- **Fim a fim:** o turno real do tutor contra o Worker, com uma reserva vencida plantada, para
+  provar que o aluno deixa de ser recusado. É a mesma verificação que a §1.2 pede: medir o
+  `read_ai_quota` antes e depois.

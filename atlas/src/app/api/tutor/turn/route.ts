@@ -30,8 +30,8 @@ export type TutorTurnDependencies = Readonly<{
    */
   firstUseGate?(input: Readonly<{ request: Request; turnstileToken: string | null }>): Promise<boolean>;
   /**
-   * The provider bindings. Both stay unbound until the provider decision, and
-   * the route reports `PROVIDER_UNBOUND` while they are absent — it never
+   * The provider bindings. Production supplies both (the Groq adapters); while
+   * either is absent the route fails closed with `PROVIDER_UNBOUND` and never
    * silently substitutes a provider.
    */
   sponsoredAi?: PublicTutorAi;

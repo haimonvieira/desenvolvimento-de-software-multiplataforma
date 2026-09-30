@@ -45,9 +45,11 @@ export type TutorModelOutput = Readonly<{
 }>;
 
 /**
- * The provider seam. Task 14 ships only this interface, a deterministic fake and
- * an unbound stub; the concrete provider (SDK, model name, credential and
- * streaming policy) is bound in a follow-up step and must not be chosen here.
+ * The provider seam. Production binds the Groq adapters
+ * (`createGroqPublicTutorAi` for sponsored turns, `createByokGroqPublicTutorAi`
+ * for a visitor's own key); the deterministic fake is only for tests. The route
+ * fails closed with `PROVIDER_UNBOUND` when no binding is supplied — it never
+ * silently substitutes a provider.
  */
 export interface PublicTutorAi {
   answer(input: TutorModelInput, budget: ReservedBudget): Promise<TutorModelOutput>;

@@ -95,10 +95,12 @@ describe("POST /api/tutor/turn", () => {
     expect(await response.json()).toEqual({ error: { code: "TUTOR_TURN_FAILED", message: "Não foi possível responder agora." } });
   });
 
-  it("fails closed on a provider auth failure without leaking the key", async () => {
+  it("fails closed on a provider failure that carries the key without echoing it", async () => {
     const ai: PublicTutorAi = {
       async answer() {
-        throw new TutorProviderError({ kind: "auth" });
+        // A real provider can put the credential in its error text; the route
+        // must map it to a fixed failure instead of passing the message through.
+        throw new Error(`provider rejected the credential ${KEY}`);
       },
     };
     const response = await post({

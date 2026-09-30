@@ -148,13 +148,27 @@ function boundedHistory(toolResults: readonly TutorToolResult[], budgetChars: nu
   return parts.join("");
 }
 
+/**
+ * The key order in the JSON contract is load-bearing, not stylistic. `citations`
+ * precedes `answer` so the streaming extractor can close the citations field —
+ * and the orchestrator can run `validateCitations` against the turn's excerpts —
+ * before a single character of the answer is emitted. The student therefore
+ * never reads a sentence the turn would have to retract as unsupported.
+ *
+ * The quote instruction says to copy the source "sem corrigir nem reescrever":
+ * a model that silently fixed the material's own typo ("aritimética" ->
+ * "aritmética") failed the verbatim-containment check in `validateCitations`
+ * and lost an otherwise correct answer. The instruction has to forbid the
+ * correction explicitly because the model considers it helpful.
+ */
 function buildMessages(input: TutorModelInput, budget: ReservedBudget): GroqMessage[] {
   const system = [
     "Você é o tutor de estudo do DSM Atlas. Responda em português.",
     "Use APENAS os trechos recuperados abaixo. Se eles não sustentarem a resposta, diga exatamente: Não encontrei isso nos materiais.",
-    "Responda sempre em JSON com o formato: {\"status\": string, \"answer\": string, \"citations\": [{\"path\": string, \"commitSha\": string, \"locator\": {\"type\": \"lines\", \"start\": number, \"end\": number} | {\"type\": \"page\", \"page\": number} | {\"type\": \"excerpt\", \"hash\": string}, \"quote\": string}], \"proposedNotebookActions\": [{\"type\": \"note\", \"title\": string, \"body\": string, \"source\": {\"path\": string, \"commitSha\": string}} | {\"type\": \"flashcard\", \"front\": string, \"back\": string, \"source\": {\"path\": string, \"commitSha\": string}}], \"toolCalls\": [{\"name\": \"retrieve\", \"query\": string}]}.",
+    "Responda sempre em JSON, nesta ordem de chaves: {\"status\": string, \"citations\": [{\"path\": string, \"commitSha\": string, \"locator\": {\"type\": \"lines\", \"start\": number, \"end\": number} | {\"type\": \"page\", \"page\": number} | {\"type\": \"excerpt\", \"hash\": string}, \"quote\": string}], \"answer\": string, \"proposedNotebookActions\": [{\"type\": \"note\", \"title\": string, \"body\": string, \"source\": {\"path\": string, \"commitSha\": string}} | {\"type\": \"flashcard\", \"front\": string, \"back\": string, \"source\": {\"path\": string, \"commitSha\": string}}], \"toolCalls\": [{\"name\": \"retrieve\", \"query\": string}]}.",
     "O campo status, primeiro do JSON, é uma frase curta em português, no gerúndio, dizendo o que você está fazendo com o material (ex.: \"analisando o algoritmo\", \"comparando as duas listas\"). Não repita a pergunta nem a resposta.",
-    "Cada citação deve copiar um trecho recuperado palavra por palavra no campo quote, com path/commitSha/locator iguais aos do trecho. toolCalls só pode pedir a ferramenta \"retrieve\" com uma pergunta de busca; no máximo o número restante informado.",
+    "Escolha as citações ANTES de escrever a resposta: decida em quais trechos a resposta se apoia e preencha o campo citations primeiro; só então escreva o campo answer.",
+    "Cada citação deve copiar um trecho recuperado palavra por palavra no campo quote, sem corrigir nem reescrever nada — inclusive erros de digitação, acentuação e pontuação do original —, com path/commitSha/locator iguais aos do trecho. toolCalls só pode pedir a ferramenta \"retrieve\" com uma pergunta de busca; no máximo o número restante informado.",
     `Chamadas de ferramenta restantes: ${input.remainingToolCalls}.`,
   ].join("\n");
   const questionLead = `Pergunta: ${input.question}\n\nTrechos recuperados:\n`;
@@ -261,6 +275,24 @@ function toExcerpt(citation: WireCitation): TutorModelOutput["citations"][number
     text: citation.quote,
     score: 1,
   };
+}
+
+/**
+ * The citations the model wrote, parsed from the raw JSON text the streaming
+ * extractor captured the moment the `citations` field closed, and mapped onto
+ * the internal excerpt shape the orchestrator's `validateCitations` expects.
+ * Malformed text yields no candidates — the final `validateGroqAnswer` still
+ * refuses the whole turn — but never throws mid-stream.
+ */
+function parseCitationCandidates(raw: string): readonly TutorModelOutput["citations"][number][] {
+  let parsedJson: unknown;
+  try {
+    parsedJson = JSON.parse(raw);
+  } catch {
+    return [];
+  }
+  const candidates = z.array(wireCitationSchema).safeParse(parsedJson);
+  return candidates.success ? candidates.data.map(toExcerpt) : [];
 }
 
 function toProposal(action: WireAction): ProposedNotebookAction {
@@ -411,7 +443,7 @@ function usageOf(response: GroqChatResponse): { inputTokens: number; outputToken
  */
 export function createGroqPublicTutorAi(options: GroqAdapterOptions): PublicTutorAi & Readonly<{
   answerWithUsage(input: TutorModelInput, budget: ReservedBudget): Promise<{ output: TutorModelOutput; usage: { inputTokens: number; outputTokens: number } }>;
-  answerStream(input: TutorModelInput, budget: ReservedBudget, onToken: (token: string) => void, onStatus?: (status: string) => void): Promise<{ output: TutorModelOutput; usage: { inputTokens: number; outputTokens: number } }>;
+  answerStream(input: TutorModelInput, budget: ReservedBudget, onToken: (token: string) => void, onStatus?: (status: string) => void, onCitations?: (citations: readonly TutorModelOutput["citations"][number][]) => void): Promise<{ output: TutorModelOutput; usage: { inputTokens: number; outputTokens: number } }>;
 }> {
   const { apiKey } = options;
   if (!apiKey) throw new Error("A Groq API key is required");
@@ -472,18 +504,22 @@ export function createGroqPublicTutorAi(options: GroqAdapterOptions): PublicTuto
     }
   }
 
-  async function answerStream(input: TutorModelInput, budget: ReservedBudget, onToken: (token: string) => void, onStatus?: (status: string) => void) {
+  async function answerStream(input: TutorModelInput, budget: ReservedBudget, onToken: (token: string) => void, onStatus?: (status: string) => void, onCitations?: (citations: readonly TutorModelOutput["citations"][number][]) => void) {
     const response = await postGroqChatCompletions({ baseUrl, apiKey, body: requestBody(input, budget, primary, true), fetchImpl, timeoutMs });
     if (!response.ok) await throwForGroqStatus(response);
     // The raw deltas are fragments of the answer JSON, not the answer: the
     // extractor decodes the top-level `"status"` and `"answer"` strings so the
-    // caller forwards readable text to the student — status first, then answer.
-    // A document that never closes just stops emitting; the validated output is
-    // still built from the full content.
+    // caller forwards readable text to the student, and captures the raw
+    // `"citations"` text so the caller can validate it before releasing the
+    // answer. Citations are reported before answer text in the same chunk: the
+    // prompt puts the citations field first for exactly this reason. A document
+    // that never closes just stops emitting; the validated output is still
+    // built from the full content.
     const extractor = createTutorFieldExtractor();
     const { content, toolCalls, usage } = await readGroqStream(response, (delta) => {
       const readable = extractor.push(delta);
       if (readable.status) onStatus?.(readable.status);
+      if (readable.citations !== undefined) onCitations?.(parseCitationCandidates(readable.citations));
       if (readable.answer) onToken(readable.answer);
     });
     const measured = usageOf({ usage });

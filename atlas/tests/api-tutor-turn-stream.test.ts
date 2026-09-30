@@ -49,15 +49,26 @@ async function readEvents(response: Response): Promise<{ event: string; data: un
 }
 
 /** A streaming double: emits a status line and readable answer text, then resolves with the validated output. */
-function streamingAi(onStream?: (onToken: (token: string) => void, onStatus?: (status: string) => void) => void): PublicTutorAi & { streams: number } {
+function streamingAi(onStream?: (callbacks: {
+  token: (token: string) => void;
+  status?: (status: string) => void;
+  citations?: (citations: readonly RetrievedExcerpt[]) => void;
+}) => void): PublicTutorAi & { streams: number } {
   const ai = {
     streams: 0,
     async answer() { return output; },
-    async answerStream(_input: unknown, _budget: unknown, onToken: (token: string) => void, onStatus?: (status: string) => void) {
+    async answerStream(
+      _input: unknown,
+      _budget: unknown,
+      onToken: (token: string) => void,
+      onStatus?: (status: string) => void,
+      onCitations?: (citations: readonly RetrievedExcerpt[]) => void,
+    ) {
       ai.streams += 1;
-      if (onStream) onStream(onToken, onStatus);
+      if (onStream) onStream({ token: onToken, status: onStatus, citations: onCitations });
       else {
         onStatus?.("analisando a lógica");
+        onCitations?.([found]);
         for (const delta of ["A ló", "gica estuda ", "o raciocínio."]) onToken(delta);
       }
       return { output, usage: { inputTokens: 10, outputTokens: 5 } };
@@ -90,7 +101,7 @@ describe("POST /api/tutor/turn (streaming)", () => {
   });
 
   it("emits no status event when the model sends no status", async () => {
-    const ai = streamingAi((onToken) => { onToken("resposta sem status"); });
+    const ai = streamingAi(({ token, citations }) => { citations?.([found]); token("resposta sem status"); });
     const response = await postStream({
       retriever,
       ledger: ledgerWith({ type: "reserved", reservationId: "r1", maxInputTokens: 4_000, maxOutputTokens: 1_000, maxToolCalls: 4 }),
@@ -123,8 +134,8 @@ describe("POST /api/tutor/turn (streaming)", () => {
   });
 
   it("delivers a provider failure after the first event as an error event, not a broken socket", async () => {
-    const ai = streamingAi((onToken) => {
-      onToken("oi");
+    const ai = streamingAi(({ status }) => {
+      status?.("buscando");
       throw new TutorProviderError({ kind: "rate_limited", retryAfterSeconds: 7 });
     });
     const response = await postStream({
@@ -136,7 +147,7 @@ describe("POST /api/tutor/turn (streaming)", () => {
 
     expect(response.status).toBe(200);
     expect(await readEvents(response)).toEqual([
-      { event: "answer", data: { delta: "oi" } },
+      { event: "status", data: { status: "buscando" } },
       { event: "error", data: { error: { code: "PROVIDER_QUOTA", message: "A cota do provedor de IA está esgotada." } } },
     ]);
   });

@@ -124,4 +124,45 @@ describe("createTutorFieldExtractor", () => {
   it("emits nothing when a tracked value is not a string", () => {
     expect(extract([`{"status": 42, "answer": null, "citations": []}`])).toEqual({ status: "", answer: "" });
   });
+
+  it("reports the citations field closing and its raw JSON text", () => {
+    const extractor = createTutorFieldExtractor();
+    expect(extractor.citationsClosed).toBe(false);
+    expect(extractor.citations).toBe("");
+
+    const delta = extractor.push(`{"status": "buscando", "citations": [{"path": "p.md", "quote": "linha"}], "answer": "ok"}`);
+
+    expect(delta.citations).toBe(`[{"path": "p.md", "quote": "linha"}]`);
+    expect(delta.answer).toBe("ok");
+    expect(extractor.citations).toBe(`[{"path": "p.md", "quote": "linha"}]`);
+    expect(extractor.citationsClosed).toBe(true);
+  });
+
+  it("reports the citations close once, with its text, across chunk boundaries", () => {
+    const extractor = createTutorFieldExtractor();
+    expect(extractor.push(`{"citations": [{"path": "p.md"`).citations).toBeUndefined();
+    expect(extractor.citationsClosed).toBe(false);
+
+    const delta = extractor.push(`, "quote": "a]b"}], "answer": "x"}`);
+
+    // The `]` inside the quoted text must not close the array early; the raw
+    // text is the whole value, verbatim.
+    expect(delta.citations).toBe(`[{"path": "p.md", "quote": "a]b"}]`);
+    expect(delta.answer).toBe("x");
+    expect(extractor.citationsClosed).toBe(true);
+    expect(extractor.push("")).toEqual({});
+  });
+
+  it("never reports a citations close for a document that ends first", () => {
+    const extractor = createTutorFieldExtractor();
+    extractor.push(`{"citations": [{"path": "p.md"`);
+    expect(extractor.citationsClosed).toBe(false);
+    expect(extractor.citations).toBe("");
+  });
+
+  it("reports an empty citations array as closed", () => {
+    const extractor = createTutorFieldExtractor();
+    expect(extractor.push(`{"citations": []}`).citations).toBe("[]");
+    expect(extractor.citationsClosed).toBe(true);
+  });
 });

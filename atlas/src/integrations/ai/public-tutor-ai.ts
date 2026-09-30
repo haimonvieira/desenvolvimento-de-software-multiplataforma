@@ -56,7 +56,10 @@ export interface PublicTutorAi {
   /**
    * Optional streaming variant: `onToken` receives readable answer text as it
    * becomes available, and `onStatus` receives the model's short status line
-   * (the first field of the JSON document) before the answer deltas. The
+   * (the first field of the JSON document). `onCitations` receives the turn's
+   * citation candidates mapped to the internal excerpt shape the moment the
+   * `citations` field closes — before any answer text — so the caller can run
+   * `validateCitations` and only then release the answer to the student. The
    * resolved output is exactly what `answer` returns, so a streamed turn and a
    * plain turn cannot disagree about what the model said. A double that omits
    * it simply never streams.
@@ -66,6 +69,7 @@ export interface PublicTutorAi {
     budget: ReservedBudget,
     onToken: (token: string) => void,
     onStatus?: (status: string) => void,
+    onCitations?: (citations: readonly RetrievedExcerpt[]) => void,
   ): Promise<Readonly<{ output: TutorModelOutput; usage: TokenUsage }>>;
 }
 

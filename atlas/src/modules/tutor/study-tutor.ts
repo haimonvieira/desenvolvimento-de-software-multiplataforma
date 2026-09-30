@@ -80,6 +80,18 @@ export type TutorStreamEvent =
   | Readonly<{ type: "answer"; delta: string }>
   | Readonly<{ type: "result"; result: TutorTurnResult }>;
 
+/**
+ * The streaming channels a turn exposes to its caller. `onVerdict` carries the
+ * citations verdict once the provider closes the citations field; the caller
+ * must not release answer text before it is `true`.
+ */
+type TutorStreamHooks = Readonly<{
+  onStreamStart(): void;
+  onStatus(status: string): void;
+  onAnswer(delta: string): void;
+  onVerdict(supported: boolean): void;
+}>;
+
 export type StudyTutorDependencies = Readonly<{
   retriever: ContentRetriever;
   ai: PublicTutorAi;
@@ -152,8 +164,7 @@ export function createStudyTutor(dependencies: StudyTutorDependencies): StudyTut
   async function runTurn(
     request: TutorTurnRequest,
     budget: ReservedBudget,
-    onAnswer?: (delta: string) => void,
-    onStatus?: (status: string) => void,
+    hooks?: TutorStreamHooks,
   ): Promise<SponsoredTurnResult<TutorTurnResult>> {
     const excerpts: RetrievedExcerpt[] = [...await retriever.retrieve(request.context, request.question, retrievalLimit)];
     const toolResults: TutorToolResult[] = [];
@@ -162,10 +173,20 @@ export function createStudyTutor(dependencies: StudyTutorDependencies): StudyTut
     // A streaming turn reads readable status/answer text from the provider as it
     // arrives; anything without `answerStream` (the deterministic double, a
     // BYOK adapter that does not stream) falls back to the one-shot call, which
-    // yields the same validated output.
+    // yields the same validated output. The provider hands over the citations
+    // candidates the moment that field closes, so the verdict is decided here,
+    // against the excerpts retrieved this turn, before any answer text is
+    // released downstream.
     const ask = async (input: TutorModelInput): Promise<TutorModelOutput> => {
-      if (!onAnswer || !ai.answerStream) return ai.answer(input, budget);
-      const streamed = await ai.answerStream(input, budget, onAnswer, onStatus);
+      if (!hooks || !ai.answerStream) return ai.answer(input, budget);
+      hooks.onStreamStart();
+      const streamed = await ai.answerStream(
+        input,
+        budget,
+        hooks.onAnswer,
+        hooks.onStatus,
+        (citations) => hooks.onVerdict(validateCitations(citations, excerpts).supported),
+      );
       usage = streamed.usage;
       return streamed.output;
     };
@@ -195,28 +216,61 @@ export function createStudyTutor(dependencies: StudyTutorDependencies): StudyTut
    */
   async function* answerTurnStream(request: TutorTurnRequest): AsyncGenerator<TutorStreamEvent> {
     const pending: string[] = [];
+    // Answer text the model wrote before the `citations` field closed. It is
+    // held here and never emitted until the citations are validated: showing it
+    // and then retracting it is exactly the contradiction the document's key
+    // order removes. If the document ends without a positive verdict the held
+    // text is dropped and the turn ends with the ordinary result — the
+    // unsupported answer when no citation survived — so the student saw no
+    // answer text, a normal end of turn, never a retraction of something
+    // already read.
+    const held: string[] = [];
+    let answerReleased = false;
     let wake: (() => void) | null = null;
     let finished = false;
-    // The model writes `status` before `answer`, so the accumulated status is
-    // complete by the time the first answer delta arrives. It is held back and
-    // emitted once, immediately before the answer deltas — a partial status is
-    // worse than none. Absent status stays empty and yields nothing.
+    // The model writes `status` before `citations` and `answer`, so the
+    // accumulated status is complete by the time the first answer delta is
+    // released. It is held back and emitted once, immediately before the answer
+    // deltas — a partial status is worse than none. Absent status stays empty
+    // and yields nothing.
     let statusText = "";
     let statusEmitted = false;
-    const onAnswer = (delta: string) => {
-      pending.push(delta);
-      wake?.();
-    };
-    const onStatus = (status: string) => {
-      statusText += status;
-      wake?.();
+    // Set once the citations field has closed, so the status can be shown while
+    // the answer is still being validated instead of waiting for the first
+    // answer delta.
+    let verdictSeen = false;
+    const hooks: TutorStreamHooks = {
+      onStreamStart() {
+        // Each provider stream gets its own verdict: the previous stream's
+        // released gate must not let this one's answer text through early.
+        answerReleased = false;
+        held.length = 0;
+      },
+      onStatus(status) {
+        statusText += status;
+        wake?.();
+      },
+      onAnswer(delta) {
+        if (answerReleased) pending.push(delta);
+        else held.push(delta);
+        wake?.();
+      },
+      onVerdict(supported) {
+        verdictSeen = true;
+        if (supported && !answerReleased) {
+          answerReleased = true;
+          pending.push(...held);
+          held.length = 0;
+        }
+        wake?.();
+      },
     };
 
     let denied: Readonly<{ reason: TutorDenialReason; resetsAt: string }> | null = null;
     let result: TutorTurnResult | null = null;
     const run = (async () => {
       if (request.mode.type === "byok") {
-        result = (await runTurn(request, byokBudget(), onAnswer, onStatus)).output;
+        result = (await runTurn(request, byokBudget(), hooks)).output;
         return;
       }
       const ledger = dependencies.ledger;
@@ -224,7 +278,7 @@ export function createStudyTutor(dependencies: StudyTutorDependencies): StudyTut
       const outcome = await runSponsoredTurn(
         ledger,
         { scope: "public", subjectKey: request.mode.subjectKey },
-        (budget) => runTurn(request, budget, onAnswer, onStatus),
+        (budget) => runTurn(request, budget, hooks),
       );
       if (outcome.decision.type === "denied") {
         denied = { reason: outcome.decision.reason, resetsAt: outcome.decision.resetsAt };
@@ -240,7 +294,7 @@ export function createStudyTutor(dependencies: StudyTutorDependencies): StudyTut
     });
 
     for (;;) {
-      if (!statusEmitted && (pending.length > 0 || finished)) {
+      if (!statusEmitted && (pending.length > 0 || verdictSeen || finished)) {
         statusEmitted = true;
         if (statusText) yield { type: "status", status: statusText };
       }
@@ -248,7 +302,7 @@ export function createStudyTutor(dependencies: StudyTutorDependencies): StudyTut
       if (finished) break;
       await new Promise<void>((resolve) => {
         wake = resolve;
-        if (pending.length > 0 || finished) resolve();
+        if (pending.length > 0 || verdictSeen || finished) resolve();
       });
     }
     await settled;

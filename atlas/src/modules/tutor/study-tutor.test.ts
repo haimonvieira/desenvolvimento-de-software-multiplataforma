@@ -1,11 +1,11 @@
 import { describe, expect, it } from "vitest";
 
-import { createFakePublicTutorAi, type TutorModelOutput } from "../../integrations/ai/public-tutor-ai";
+import { createFakePublicTutorAi, type PublicTutorAi, type TutorModelOutput } from "../../integrations/ai/public-tutor-ai";
 import type { MaterialRef } from "../catalog/model";
 import { policyFor } from "./usage-policy";
 import type { BudgetDecision, UsageLedger } from "./usage-ledger";
 import type { ContentRetriever, RetrievedExcerpt } from "./model";
-import { createStudyTutor, TUTOR_TOOL_ALLOWLIST, UNSUPPORTED_ANSWER } from "./study-tutor";
+import { createStudyTutor, TUTOR_TOOL_ALLOWLIST, UNSUPPORTED_ANSWER, type TutorStreamEvent } from "./study-tutor";
 
 const material: MaterialRef = { path: "DSM1/ALP/introducao.md", commitSha: "a".repeat(40) };
 const foreign: MaterialRef = { path: "DSM2/BD/segredo.md", commitSha: "b".repeat(40) };
@@ -227,5 +227,96 @@ describe("StudyTutor.answerTurn", () => {
 
     await expect(tutor.answerTurn({ question: "pergunta", context: [material], mode: { type: "sponsored", subjectKey: "s1" } }))
       .rejects.toThrow(/ledger/i);
+  });
+});
+
+describe("StudyTutor.answerTurnStream", () => {
+  /** A provider double that replays a scripted stream in the given order. */
+  function scriptedStream(
+    script: Readonly<{ status?: string; citations?: readonly RetrievedExcerpt[]; tokens?: readonly string[] }>,
+    streamed: TutorModelOutput,
+  ): PublicTutorAi {
+    return {
+      async answer() {
+        return streamed;
+      },
+      async answerStream(_input, _budget, onToken, onStatus, onCitations) {
+        if (script.status) onStatus?.(script.status);
+        if (script.citations) onCitations?.(script.citations);
+        for (const token of script.tokens ?? []) onToken(token);
+        return { output: streamed, usage: { inputTokens: 1, outputTokens: 1 } };
+      },
+    };
+  }
+
+  async function collect(generator: AsyncGenerator<TutorStreamEvent>): Promise<TutorStreamEvent[]> {
+    const events: TutorStreamEvent[] = [];
+    for await (const event of generator) events.push(event);
+    return events;
+  }
+
+  const byok = { type: "byok" as const };
+
+  it("streams the answer only after the citations close and validate", async () => {
+    const found = excerpt("linha um\nlinha dois");
+    const { retriever } = retrieverReturning([[found]]);
+    const ai = scriptedStream({ status: "buscando", citations: [found], tokens: ["A res", "posta"] }, output({ answer: "A resposta", citations: [found] }));
+    const tutor = createStudyTutor({ retriever, ai });
+
+    const events = await collect(tutor.answerTurnStream({ question: "pergunta", context: [material], mode: byok }));
+
+    expect(events).toEqual([
+      { type: "status", status: "buscando" },
+      { type: "answer", delta: "A res" },
+      { type: "answer", delta: "posta" },
+      { type: "result", result: { answer: "A resposta", citations: [found], proposedNotebookActions: [] } },
+    ]);
+  });
+
+  it("buffers answer text written before the citations close and releases it once the verdict is positive", async () => {
+    const found = excerpt("linha um\nlinha dois");
+    const { retriever } = retrieverReturning([[found]]);
+    // The model disobeys the order: the answer arrives first, the citations
+    // later. Nothing is emitted until the citations close and validate, then
+    // the buffered text flushes in order.
+    const ai = scriptedStream({ tokens: ["antes", " depois"], citations: [found] }, output({ answer: "antes depois", citations: [found] }));
+    const tutor = createStudyTutor({ retriever, ai });
+
+    const events = await collect(tutor.answerTurnStream({ question: "pergunta", context: [material], mode: byok }));
+
+    expect(events).toEqual([
+      { type: "answer", delta: "antes" },
+      { type: "answer", delta: " depois" },
+      { type: "result", result: { answer: "antes depois", citations: [found], proposedNotebookActions: [] } },
+    ]);
+  });
+
+  it("emits no answer text and degrades to the result alone when the citations never close", async () => {
+    const found = excerpt("linha um\nlinha dois");
+    const { retriever } = retrieverReturning([[found]]);
+    const ai = scriptedStream({ tokens: ["adiantada"] }, output({ answer: "adiantada", citations: [found] }));
+    const tutor = createStudyTutor({ retriever, ai });
+
+    const events = await collect(tutor.answerTurnStream({ question: "pergunta", context: [material], mode: byok }));
+
+    expect(events.filter((event) => event.type === "answer")).toEqual([]);
+    expect(events).toEqual([
+      { type: "result", result: { answer: "adiantada", citations: [found], proposedNotebookActions: [] } },
+    ]);
+  });
+
+  it("emits no answer text and the unsupported result when the citations do not match the excerpts", async () => {
+    const found = excerpt("linha um\nlinha dois");
+    const tampered = excerpt("outra coisa completamente diferente");
+    const { retriever } = retrieverReturning([[found]]);
+    const ai = scriptedStream({ citations: [tampered], tokens: ["resposta inventada"] }, output({ answer: "resposta inventada", citations: [tampered] }));
+    const tutor = createStudyTutor({ retriever, ai });
+
+    const events = await collect(tutor.answerTurnStream({ question: "pergunta", context: [material], mode: byok }));
+
+    expect(events.filter((event) => event.type === "answer")).toEqual([]);
+    expect(events).toEqual([
+      { type: "result", result: { answer: UNSUPPORTED_ANSWER, citations: [], proposedNotebookActions: [] } },
+    ]);
   });
 });

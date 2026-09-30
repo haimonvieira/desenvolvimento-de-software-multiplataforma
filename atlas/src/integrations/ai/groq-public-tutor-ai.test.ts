@@ -99,6 +99,30 @@ describe("Groq public tutor adapter", () => {
     expect(output.citations).toHaveLength(1);
   });
 
+  it("bounds the assembled prompt within the reserved input budget across accumulated excerpts", async () => {
+    const { calls, fetchImpl } = recordedFetch(() => chatResponse(jsonBody("ok")));
+    const ai = createGroqPublicTutorAi({ apiKey: "gsk-sponsored", fetchImpl });
+    const huge = {
+      material: { path: "DSM1/ALP/gigante.md", commitSha: "a".repeat(40) },
+      locator: { type: "lines" as const, start: 1, end: 1 },
+      text: "x".repeat(400_000),
+      score: 1,
+    };
+    const history = Array.from({ length: 4 }, (_, index) => ({
+      name: "retrieve",
+      query: `consulta ${index}`,
+      excerpts: [{ ...huge, material: { path: `DSM1/ALP/g-${index}.md`, commitSha: "a".repeat(40) } }],
+    }));
+
+    await ai.answer({ ...input, excerpts: [huge, huge], toolResults: history, remainingToolCalls: 0 }, budget);
+
+    const sent = JSON.parse(calls[0]!.init.body as string) as { messages: readonly { content: string }[] };
+    const chars = sent.messages.reduce((total, message) => total + message.content.length, 0);
+    // The prompt is assembled at the pessimistic 3-chars-per-token floor, so it
+    // cannot exceed the reserved per-turn input ceiling.
+    expect(chars).toBeLessThanOrEqual(budget.maxInputTokens * 3);
+  });
+
   it("maps wire tool_calls onto the orchestrator contract and drops anything else", () => {
     const parsed = parseGroqAnswer(jsonBody("x"), [
       { id: "call_1", type: "function", function: { name: "retrieve", arguments: "{\"query\": \"mais contexto\"}" } },

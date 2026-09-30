@@ -7,6 +7,7 @@ import type {
 } from "./public-tutor-ai";
 import { TutorProviderError } from "./public-tutor-ai";
 import type { ReservedBudget } from "../../modules/tutor/usage-ledger";
+import { promptCharBudget, TRUNCATION_MARKER } from "./prompt-budget";
 
 /**
  * Groq binding for the public study tutor (`https://api.groq.com/openai/v1`,
@@ -102,30 +103,70 @@ function excerptLine(excerpt: TutorModelInput["excerpts"][number]): string {
   return `[${excerpt.material.path} · ${where}]\n${excerpt.text}`;
 }
 
-function buildMessages(input: TutorModelInput): GroqMessage[] {
-  const context = input.excerpts.length > 0
-    ? input.excerpts.map(excerptLine).join("\n\n---\n\n")
-    : "(nenhum trecho recuperado)";
+/**
+ * Renders excerpt lines within `budgetChars`, ending with a marker when the
+ * overflow is dropped instead of sent. A retrieval chunk is bounded by lines,
+ * not characters, so one long line can carry most of a 400 KB file; without this
+ * the accumulated excerpts would blow past the reserved per-turn input budget.
+ */
+function boundedExcerpts(
+  excerpts: readonly TutorModelInput["excerpts"][number][],
+  budgetChars: number,
+): string {
+  const separator = "\n\n---\n\n";
+  let out = "";
+  for (const excerpt of excerpts) {
+    const lead = out.length > 0 ? separator : "";
+    const line = excerptLine(excerpt);
+    if (out.length + lead.length + line.length <= budgetChars) {
+      out += `${lead}${line}`;
+      continue;
+    }
+    const room = budgetChars - out.length - lead.length - TRUNCATION_MARKER.length;
+    if (room > 0) out += `${lead}${line.slice(0, room)}${TRUNCATION_MARKER}`;
+    break;
+  }
+  return out;
+}
+
+function boundedHistory(toolResults: readonly TutorToolResult[], budgetChars: number): string {
+  const parts: string[] = [];
+  let remaining = budgetChars;
+  for (const [index, result] of toolResults.entries()) {
+    if (remaining <= 0) break;
+    const share = Math.floor(remaining / (toolResults.length - index));
+    const label = `Busca "${result.query.slice(0, 200)}" retornou:\n`;
+    const body = boundedExcerpts(result.excerpts, Math.max(0, share - label.length - (parts.length > 0 ? 2 : 0))) || "(nada)";
+    const block = `${parts.length > 0 ? "\n\n" : ""}${label}${body}`;
+    remaining -= block.length;
+    parts.push(block);
+  }
+  return parts.join("");
+}
+
+function buildMessages(input: TutorModelInput, budget: ReservedBudget): GroqMessage[] {
+  const system = [
+    "Você é o tutor de estudo do DSM Atlas. Responda em português.",
+    "Use APENAS os trechos recuperados abaixo. Se eles não sustentarem a resposta, diga exatamente: Não encontrei isso nos materiais.",
+    "Responda sempre em JSON com o formato: {\"answer\": string, \"citations\": [{\"path\": string, \"commitSha\": string, \"locator\": {\"type\": \"lines\", \"start\": number, \"end\": number} | {\"type\": \"page\", \"page\": number} | {\"type\": \"excerpt\", \"hash\": string}, \"quote\": string}], \"proposedNotebookActions\": [{\"type\": \"note\", \"title\": string, \"body\": string, \"source\": {\"path\": string, \"commitSha\": string}} | {\"type\": \"flashcard\", \"front\": string, \"back\": string, \"source\": {\"path\": string, \"commitSha\": string}}], \"toolCalls\": [{\"name\": \"retrieve\", \"query\": string}]}.",
+    "Cada citação deve copiar um trecho recuperado palavra por palavra no campo quote, com path/commitSha/locator iguais aos do trecho. toolCalls só pode pedir a ferramenta \"retrieve\" com uma pergunta de busca; no máximo o número restante informado.",
+    `Chamadas de ferramenta restantes: ${input.remainingToolCalls}.`,
+  ].join("\n");
+  const questionLead = `Pergunta: ${input.question}\n\nTrechos recuperados:\n`;
+  const historyLead = "Resultados das buscas anteriores:\n";
+  // Everything except the excerpts is fixed overhead; the excerpts share what
+  // remains of the reserved input budget, across the whole accumulated set.
+  const evidenceBudget = Math.max(0, promptCharBudget(budget) - system.length - questionLead.length);
+  const contextBlock = boundedExcerpts(input.excerpts, evidenceBudget);
+  const context = contextBlock.length > 0 ? contextBlock : "(nenhum trecho recuperado)";
   const history = input.toolResults.length > 0
-    ? input.toolResults
-      .map((result: TutorToolResult) =>
-        `Busca "${result.query}" retornou:\n${result.excerpts.map(excerptLine).join("\n\n") || "(nada)"}`)
-      .join("\n\n")
+    ? boundedHistory(input.toolResults, Math.max(0, evidenceBudget - contextBlock.length - historyLead.length))
     : null;
   const messages: GroqMessage[] = [
-    {
-      role: "system",
-      content: [
-        "Você é o tutor de estudo do DSM Atlas. Responda em português.",
-        "Use APENAS os trechos recuperados abaixo. Se eles não sustentarem a resposta, diga exatamente: Não encontrei isso nos materiais.",
-        "Responda sempre em JSON com o formato: {\"answer\": string, \"citations\": [{\"path\": string, \"commitSha\": string, \"locator\": {\"type\": \"lines\", \"start\": number, \"end\": number} | {\"type\": \"page\", \"page\": number} | {\"type\": \"excerpt\", \"hash\": string}, \"quote\": string}], \"proposedNotebookActions\": [{\"type\": \"note\", \"title\": string, \"body\": string, \"source\": {\"path\": string, \"commitSha\": string}} | {\"type\": \"flashcard\", \"front\": string, \"back\": string, \"source\": {\"path\": string, \"commitSha\": string}}], \"toolCalls\": [{\"name\": \"retrieve\", \"query\": string}]}.",
-        "Cada citação deve copiar um trecho recuperado palavra por palavra no campo quote, com path/commitSha/locator iguais aos do trecho. toolCalls só pode pedir a ferramenta \"retrieve\" com uma pergunta de busca; no máximo o número restante informado.",
-        `Chamadas de ferramenta restantes: ${input.remainingToolCalls}.`,
-      ].join("\n"),
-    },
-    { role: "user", content: `Pergunta: ${input.question}\n\nTrechos recuperados:\n${context}` },
+    { role: "system", content: system },
+    { role: "user", content: `${questionLead}${context}` },
   ];
-  if (history) messages.push({ role: "user", content: `Resultados das buscas anteriores:\n${history}` });
+  if (history) messages.push({ role: "user", content: `${historyLead}${history}` });
   return messages;
 }
 
@@ -397,7 +438,7 @@ export function createGroqPublicTutorAi(options: GroqAdapterOptions): PublicTuto
   function requestBody(input: TutorModelInput, budget: ReservedBudget, model: string, stream: boolean): Record<string, unknown> {
     return {
       model,
-      messages: buildMessages(input),
+      messages: buildMessages(input, budget),
       tools: [retrieveToolSchema()],
       tool_choice: "auto",
       response_format: { type: "json_object" },

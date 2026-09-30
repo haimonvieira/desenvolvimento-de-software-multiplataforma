@@ -1,6 +1,7 @@
 import type { MaterialKind } from "../../modules/catalog/model";
 import type { ReservedBudget } from "../../modules/tutor/usage-ledger";
 import { TutorProviderError } from "./public-tutor-ai";
+import { promptCharBudget } from "./prompt-budget";
 
 /**
  * Groq binding for administrative upload classification
@@ -154,12 +155,12 @@ function classificationSchema(): Record<string, unknown> {
 }
 
 /**
- * Worst-case characters per token. Code and identifiers tokenize at roughly
- * 1–3 characters per token, so a prompt sized at this floor cannot exceed the
- * reserved per-turn input ceiling even under pessimistic tokenization. The
- * reservation therefore bounds the real prompt, not just the accounting.
+ * The evidence budget is measured against the real prompt: the fixed system
+ * text and the user prefix are subtracted from `maxInputTokens` at the shared
+ * pessimistic characters-per-token floor, so the assembled prompt cannot exceed
+ * the reserved per-turn input ceiling. The reservation therefore bounds the
+ * real provider request, not just the accounting.
  */
-const CHARS_PER_TOKEN_FLOOR = 3;
 
 /**
  * Draws the per-request fence delimiter: 128 random bits the file content
@@ -216,7 +217,7 @@ function buildMessages(input: AdminClassificationInput, nonce: string): readonly
   const prefix = "Arquivos para classificar (evidência delimitada):\n";
   const room = Math.max(
     0,
-    Math.min(EVIDENCE_LIMIT, input.budget.maxInputTokens * CHARS_PER_TOKEN_FLOOR - system.length - prefix.length),
+    Math.min(EVIDENCE_LIMIT, promptCharBudget(input.budget) - system.length - prefix.length),
   );
   return [
     { role: "system", content: system },

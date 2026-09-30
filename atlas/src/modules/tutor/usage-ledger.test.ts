@@ -5,6 +5,7 @@ import { migrate } from "drizzle-orm/pglite/migrator";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
 import { GET as quotaRouteGet } from "../../app/api/tutor/quota/route";
+import { TutorProviderError } from "../../integrations/ai/provider-failure";
 import { USAGE_POLICIES, policyFor, type UsagePolicy } from "./usage-policy";
 import {
   createTutorQuotaHandler,
@@ -429,6 +430,37 @@ describe("usage reconciliation", () => {
       expect.objectContaining({ reserved_input_tokens: 0 }),
     ]);
   });
+
+  it("admits a turn that the previous timeout would have denied", async () => {
+    // A ceiling two turns wide, so the first failed reservation alone is enough
+    // to close the door on the second.
+    const tight: UsagePolicy = { ...USAGE_POLICIES.public, globalTokensPerDay: 6_000 };
+    const clock = clockAt("2026-09-28T10:15:00.000Z");
+    const ledger = ledgerWith(clock, { public: tight });
+
+    const failed = await runSponsoredTurn(ledger, { scope: "public", subjectKey: "device-a" }, async () => {
+      throw new Error("provider exploded");
+    }).catch(() => "threw");
+    expect(failed).toBe("threw");
+
+    clock.advance(31);
+
+    const second = await runSponsoredTurn(ledger, { scope: "public", subjectKey: "device-b" }, async () => ({ output: "ok" }));
+
+    expect(second.decision.type).toBe("reserved");
+  });
+
+  it("sweeps expired reservations before reserving, not after", async () => {
+    const clock = clockAt("2026-09-28T10:15:00.000Z");
+    const ledger = ledgerWith(clock, undefined, countingExecutor());
+
+    await runSponsoredTurn(ledger, { scope: "public", subjectKey: "device-a" }, async () => ({ output: "ok" }));
+
+    const sweep = queries.findIndex((text) => text.includes("expire_ai_reservations"));
+    const reserve = queries.findIndex((text) => text.includes("reserve_ai_budget"));
+    expect(sweep).toBeGreaterThanOrEqual(0);
+    expect(sweep).toBeLessThan(reserve);
+  });
 });
 
 describe("anonymous subject keys", () => {
@@ -527,6 +559,38 @@ describe("sponsored turn adapter seam", () => {
     expect(await reservationRow(reservationId)).toMatchObject({ status: "unknown" });
     expect(await windowRows("public", "device-a", "hour")).toEqual([
       expect.objectContaining({ reserved_input_tokens: 4_000 }),
+    ]);
+  });
+
+  it("settles a measured spend when the turn failed after the provider answered", async () => {
+    const clock = clockAt("2026-09-28T10:15:00.000Z");
+    const ledger = seamLedger(clock);
+
+    await expect(
+      runSponsoredTurn(ledger, { scope: "public", subjectKey: "device-a" }, async () => {
+        throw new TutorProviderError({ kind: "unusable" }, { inputTokens: 900, outputTokens: 120 });
+      }),
+    ).rejects.toBeInstanceOf(TutorProviderError);
+
+    expect(await windowRows("public", "device-a", "hour")).toEqual([
+      expect.objectContaining({ reserved_input_tokens: 0, input_tokens: 900, output_tokens: 120 }),
+    ]);
+  });
+
+  it("keeps a provider failure without measured usage as unknown", async () => {
+    // The discriminator is the measured usage, not the error class: a timeout
+    // spends an unknowable amount, so it holds the worst case until it expires.
+    const clock = clockAt("2026-09-28T10:15:00.000Z");
+    const ledger = seamLedger(clock);
+
+    await expect(
+      runSponsoredTurn(ledger, { scope: "public", subjectKey: "device-a" }, async () => {
+        throw new TutorProviderError({ kind: "timeout" });
+      }),
+    ).rejects.toBeInstanceOf(TutorProviderError);
+
+    expect(await windowRows("public", "device-a", "hour")).toEqual([
+      expect.objectContaining({ reserved_input_tokens: 4_000, input_tokens: 0 }),
     ]);
   });
 });

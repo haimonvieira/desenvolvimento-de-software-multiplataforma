@@ -1,6 +1,7 @@
 import type { MaterialKind } from "../../modules/catalog/model";
 import type { ReservedBudget } from "../../modules/tutor/usage-ledger";
-import { TutorProviderError } from "./public-tutor-ai";
+import { GROQ_BASE_URL } from "./groq-public-tutor-ai";
+import { postGroqChatCompletions, throwForGroqStatus } from "./groq-transport";
 import { promptCharBudget } from "./prompt-budget";
 
 /**
@@ -36,7 +37,7 @@ import { promptCharBudget } from "./prompt-budget";
  * close the evidence block early.
  */
 
-export const GROQ_ADMIN_BASE_URL = "https://api.groq.com/openai/v1";
+export const GROQ_ADMIN_BASE_URL = GROQ_BASE_URL;
 export const GROQ_ADMIN_MODEL = "openai/gpt-oss-120b";
 
 /** Admin scope output ceiling (`USAGE_POLICIES.admin.maxOutputTokens`). */
@@ -269,22 +270,6 @@ export function parseAdminSuggestions(content: string | null | undefined): reado
   });
 }
 
-/** Maps a Groq status onto the shared provider failure taxonomy (spec §5). */
-async function throwForAdminStatus(response: Response): Promise<never> {
-  await response.body?.cancel().catch(() => undefined);
-  const retryAfter = response.headers.get("retry-after");
-  const seconds = retryAfter !== null && retryAfter.trim() !== "" ? Number(retryAfter.trim()) : Number.NaN;
-  if (response.status === 429) {
-    throw new TutorProviderError({
-      kind: "rate_limited",
-      retryAfterSeconds: Number.isFinite(seconds) && seconds >= 0 ? Math.floor(seconds) : null,
-    });
-  }
-  if (response.status === 401 || response.status === 403) throw new TutorProviderError({ kind: "auth" });
-  if (response.status === 400 || response.status === 422) throw new TutorProviderError({ kind: "invalid" });
-  throw new TutorProviderError({ kind: "unavailable" });
-}
-
 type GroqAdminResponse = Readonly<{
   choices?: readonly Readonly<{ message?: Readonly<{ content?: string | null }> }>[];
   usage?: Readonly<{ prompt_tokens?: number; completion_tokens?: number }>;
@@ -313,35 +298,25 @@ export function createGroqAdminClassifierAi(options: AdminClassifierOptions): Ad
   return Object.freeze({
     async suggestBatch(input: AdminClassificationInput): Promise<AdminClassificationResult> {
       const timeoutMs = options.timeoutMs ?? Math.min(GROQ_ADMIN_TIMEOUT_MS, Math.max(1, input.budget.deadlineSeconds) * 1000);
-      const controller = new AbortController();
-      const timer = setTimeout(() => controller.abort(), timeoutMs);
-      let response: Response;
-      try {
-        response = await fetchImpl(`${GROQ_ADMIN_BASE_URL}/chat/completions`, {
-          method: "POST",
-          headers: { "content-type": "application/json", authorization: `Bearer ${apiKey}` },
-          body: JSON.stringify({
-            model,
-            messages: buildMessages(input, fenceNonce()),
-            response_format: {
-              type: "json_schema",
-              json_schema: { name: "batch_classification", strict: true, schema: classificationSchema() },
-            },
-            max_completion_tokens: Math.min(GROQ_ADMIN_MAX_OUTPUT_TOKENS, Math.max(1, input.budget.maxOutputTokens)),
-            temperature: 0.2,
-            n: 1,
-            stream: false,
-          }),
-          signal: controller.signal,
-        });
-      } catch (error) {
-        // Abort (our timeout) and transport failures are unknown outcomes.
-        if (error instanceof Error && error.name === "AbortError") throw new TutorProviderError({ kind: "timeout" });
-        throw new TutorProviderError({ kind: "unavailable" });
-      } finally {
-        clearTimeout(timer);
-      }
-      if (!response.ok) await throwForAdminStatus(response);
+      const response = await postGroqChatCompletions({
+        baseUrl: GROQ_ADMIN_BASE_URL,
+        apiKey,
+        fetchImpl,
+        timeoutMs,
+        body: {
+          model,
+          messages: buildMessages(input, fenceNonce()),
+          response_format: {
+            type: "json_schema",
+            json_schema: { name: "batch_classification", strict: true, schema: classificationSchema() },
+          },
+          max_completion_tokens: Math.min(GROQ_ADMIN_MAX_OUTPUT_TOKENS, Math.max(1, input.budget.maxOutputTokens)),
+          temperature: 0.2,
+          n: 1,
+          stream: false,
+        },
+      });
+      if (!response.ok) await throwForGroqStatus(response);
       const payload = (await response.json().catch(() => null)) as GroqAdminResponse | null;
       return {
         suggestions: parseAdminSuggestions(payload?.choices?.[0]?.message?.content ?? null),

@@ -1,3 +1,4 @@
+import { TutorProviderError } from "../../integrations/ai/provider-failure";
 import { policyFor, type UsagePolicy, type UsageScope } from "./usage-policy";
 
 export type BudgetDecision =
@@ -154,6 +155,13 @@ export async function runSponsoredTurn<T>(
   input: Readonly<{ scope: UsageScope; subjectKey: string }>,
   turn: (budget: ReservedBudget) => Promise<SponsoredTurnResult<T>>,
 ): Promise<Readonly<{ decision: BudgetDecision; output?: T }>> {
+  // Release reservations that expired before asking for more budget. A timeout
+  // leaves its worst-case tokens charged until something releases them, and this
+  // is the only moment where that matters: the ceiling is evaluated below.
+  // A failure here must never deny a turn — the worst case is leaking one more
+  // request, while propagating would take the tutor down.
+  await ledger.expireStaleReservations().catch(() => undefined);
+
   const decision = await ledger.reserve(input);
   if (decision.type === "denied") return { decision };
 
@@ -171,9 +179,18 @@ export async function runSponsoredTurn<T>(
     return { decision, output: result.output };
   } catch (error) {
     // A timeout is an unknown outcome: the reservation stays charged until it
-    // expires, so a retry cannot spend twice for the same slot. Reconciliation
-    // failure is not allowed to mask the provider error.
-    await ledger.reconcile({ reservationId: decision.reservationId, outcome: "unknown" }).catch(() => undefined);
+    // expires, so a retry cannot spend twice for the same slot. An error that
+    // carries measured usage is not unknown — the provider answered and we know
+    // what it cost — so the reservation settles at that amount instead of
+    // holding the worst case. Reconciliation itself is idempotent on the DB
+    // side, but this failed path deliberately performs the one and only
+    // reconcile: the outcome is chosen here, not overwritten later.
+    const measured = error instanceof TutorProviderError ? error.usage : undefined;
+    await ledger
+      .reconcile(measured
+        ? { reservationId: decision.reservationId, outcome: "settled", usage: measured }
+        : { reservationId: decision.reservationId, outcome: "unknown" })
+      .catch(() => undefined);
     throw error;
   }
 }

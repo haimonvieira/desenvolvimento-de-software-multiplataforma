@@ -5,7 +5,7 @@ import type {
   AdminClassifierAi,
   ClassificationSuggestion,
 } from "../../integrations/ai/admin-classifier-ai";
-import { TutorProviderError } from "../../integrations/ai/public-tutor-ai";
+import { TutorProviderError } from "../../integrations/ai/provider-failure";
 import { AdminAuthorizationError } from "../identity/admin-authorizer";
 import { runSponsoredTurn, type BudgetDecision, type ReservedBudget, type UsageLedger } from "../tutor/usage-ledger";
 import type { GitHubMaterialSource } from "./model";

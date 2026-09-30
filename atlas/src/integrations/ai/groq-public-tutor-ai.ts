@@ -1,3 +1,5 @@
+import { z } from "zod";
+
 import type {
   ProposedNotebookAction,
   PublicTutorAi,
@@ -5,7 +7,8 @@ import type {
   TutorModelOutput,
   TutorToolResult,
 } from "./public-tutor-ai";
-import { TutorProviderError } from "./public-tutor-ai";
+import { TutorProviderError } from "./provider-failure";
+import { postGroqChatCompletions, throwForGroqStatus, type GroqFetch } from "./groq-transport";
 import type { ReservedBudget } from "../../modules/tutor/usage-ledger";
 import { promptCharBudget, TRUNCATION_MARKER } from "./prompt-budget";
 
@@ -40,8 +43,6 @@ export const GROQ_PRIMARY_MODEL = "openai/gpt-oss-120b";
 export const GROQ_FALLBACK_MODEL = "openai/gpt-oss-20b";
 
 const GROQ_TIMEOUT_MS = 25_000;
-
-export type GroqFetch = (url: string, init: RequestInit) => Promise<Response>;
 
 export type GroqAdapterOptions = Readonly<{
   /** Server-side key (sponsored) or the visitor's key (BYOK, header-only). */
@@ -204,130 +205,109 @@ function parseToolCalls(raw: readonly GroqWireToolCall[] | undefined): TutorMode
   return calls.length > 0 ? calls : undefined;
 }
 
-type ParsedAnswer = {
-  answer: string;
-  citations: TutorModelOutput["citations"];
-  proposedNotebookActions: TutorModelOutput["proposedNotebookActions"];
-  toolCalls?: TutorModelOutput["toolCalls"];
-};
+const wireLocatorSchema = z.discriminatedUnion("type", [
+  z.object({ type: z.literal("lines"), start: z.number(), end: z.number() }),
+  z.object({ type: z.literal("page"), page: z.number() }),
+  z.object({ type: z.literal("excerpt"), hash: z.string() }),
+]);
 
-function toExcerpt(candidate: {
-  path?: unknown; commitSha?: unknown; locator?: unknown; quote?: unknown;
-}): TutorModelOutput["citations"][number] | null {
-  if (typeof candidate.path !== "string" || typeof candidate.commitSha !== "string" || typeof candidate.quote !== "string") return null;
-  const locator = candidate.locator as { type?: unknown; start?: unknown; end?: unknown; page?: unknown; hash?: unknown } | null;
-  if (!locator || typeof locator !== "object") return null;
-  if (locator.type === "lines" && typeof locator.start === "number" && typeof locator.end === "number") {
-    return { material: { path: candidate.path, commitSha: candidate.commitSha }, locator: { type: "lines", start: locator.start, end: locator.end }, text: candidate.quote, score: 1 };
-  }
-  if (locator.type === "page" && typeof locator.page === "number") {
-    return { material: { path: candidate.path, commitSha: candidate.commitSha }, locator: { type: "page", page: locator.page }, text: candidate.quote, score: 1 };
-  }
-  if (locator.type === "excerpt" && typeof locator.hash === "string") {
-    return { material: { path: candidate.path, commitSha: candidate.commitSha }, locator: { type: "excerpt", hash: locator.hash }, text: candidate.quote, score: 1 };
-  }
-  return null;
-}
+const wireCitationSchema = z.object({
+  path: z.string(),
+  commitSha: z.string(),
+  locator: wireLocatorSchema,
+  quote: z.string(),
+});
 
-function toProposal(candidate: {
-  type?: unknown; title?: unknown; body?: unknown; front?: unknown; back?: unknown; source?: unknown;
-}): ProposedNotebookAction | null {
-  const source = candidate.source as { path?: unknown; commitSha?: unknown } | null;
-  if (!source || typeof source.path !== "string" || typeof source.commitSha !== "string") return null;
-  const ref = { path: source.path, commitSha: source.commitSha };
-  if (candidate.type === "note" && typeof candidate.title === "string" && typeof candidate.body === "string") {
-    return { type: "note", title: candidate.title, body: candidate.body, source: ref };
-  }
-  if (candidate.type === "flashcard" && typeof candidate.front === "string" && typeof candidate.back === "string") {
-    return { type: "flashcard", front: candidate.front, back: candidate.back, source: ref };
-  }
-  return null;
-}
+const wireActionSchema = z.discriminatedUnion("type", [
+  z.object({
+    type: z.literal("note"),
+    title: z.string(),
+    body: z.string(),
+    source: z.object({ path: z.string(), commitSha: z.string() }),
+  }),
+  z.object({
+    type: z.literal("flashcard"),
+    front: z.string(),
+    back: z.string(),
+    source: z.object({ path: z.string(), commitSha: z.string() }),
+  }),
+]);
 
 /**
- * Parses the model's JSON answer. Anything unparseable or off-shape becomes an
- * empty answer with no citations — the orchestrator then collapses it to the
- * explicit unsupported message instead of guessing.
+ * The wire shape the system prompt demands, validated as it arrives. `answer`,
+ * `citations` and `proposedNotebookActions` are required because the prompt
+ * mandates them; `toolCalls` is optional because Groq may instead deliver the
+ * calls as native `tool_calls` on the message. Unknown extra keys are stripped,
+ * not refused: an extra field is not lost evidence, a dropped citation is.
  */
-export function parseGroqAnswer(content: string | null | undefined, wireToolCalls?: readonly GroqWireToolCall[]): ParsedAnswer {
-  const empty: ParsedAnswer = { answer: "", citations: [], proposedNotebookActions: [], toolCalls: parseToolCalls(wireToolCalls) };
-  if (!content) return empty;
-  let parsed: { answer?: unknown; citations?: unknown; proposedNotebookActions?: unknown; toolCalls?: unknown };
+const wireAnswerSchema = z.object({
+  answer: z.string(),
+  citations: z.array(wireCitationSchema),
+  proposedNotebookActions: z.array(wireActionSchema),
+  toolCalls: z.array(z.object({ name: z.string(), query: z.string() })).optional(),
+});
+
+type WireCitation = z.infer<typeof wireCitationSchema>;
+type WireAction = z.infer<typeof wireActionSchema>;
+
+function toExcerpt(citation: WireCitation): TutorModelOutput["citations"][number] {
+  const locator = citation.locator;
+  return {
+    material: { path: citation.path, commitSha: citation.commitSha },
+    locator: locator.type === "lines"
+      ? { type: "lines", start: locator.start, end: locator.end }
+      : locator.type === "page"
+        ? { type: "page", page: locator.page }
+        : { type: "excerpt", hash: locator.hash },
+    text: citation.quote,
+    score: 1,
+  };
+}
+
+function toProposal(action: WireAction): ProposedNotebookAction {
+  const source = { path: action.source.path, commitSha: action.source.commitSha };
+  return action.type === "note"
+    ? { type: "note", title: action.title, body: action.body, source }
+    : { type: "flashcard", front: action.front, back: action.back, source };
+}
+
+export type GroqAnswerValidation =
+  | Readonly<{ ok: true; output: TutorModelOutput }>
+  | Readonly<{ ok: false }>;
+
+/**
+ * Validates the model's JSON answer against the documented wire shape and maps
+ * it onto the internal contract. A violation is a refusal, not a filter: a
+ * malformed citation is dropped today while the rest of the answer is returned,
+ * which is worse than refusing because the answer's claim may rest on exactly
+ * the evidence that was dropped and nothing downstream can tell. The caller
+ * turns `ok: false` into an `unusable` failure carrying the measured usage.
+ */
+export function validateGroqAnswer(
+  content: string | null | undefined,
+  wireToolCalls?: readonly GroqWireToolCall[],
+): GroqAnswerValidation {
+  if (!content) return { ok: false };
+  let raw: unknown;
   try {
-    parsed = JSON.parse(content) as typeof parsed;
+    raw = JSON.parse(content);
   } catch {
-    return empty;
+    return { ok: false };
   }
-  if (typeof parsed.answer !== "string") return empty;
-  const citations = Array.isArray(parsed.citations)
-    ? parsed.citations.flatMap((candidate) => {
-      const excerpt = toExcerpt(candidate as Parameters<typeof toExcerpt>[0]);
-      return excerpt ? [excerpt] : [];
-    })
-    : [];
-  const proposedNotebookActions = Array.isArray(parsed.proposedNotebookActions)
-    ? parsed.proposedNotebookActions.flatMap((candidate) => {
-      const proposal = toProposal(candidate as Parameters<typeof toProposal>[0]);
-      return proposal ? [proposal] : [];
-    })
-    : [];
-  const inlineCalls = Array.isArray(parsed.toolCalls)
-    ? (parsed.toolCalls as readonly { name?: unknown; query?: unknown }[]).flatMap((call) =>
-      call?.name === "retrieve" && typeof call.query === "string" && call.query.trim()
-        ? [{ name: "retrieve" as const, query: call.query.trim() }]
-        : [])
-    : [];
+  const parsed = wireAnswerSchema.safeParse(raw);
+  if (!parsed.success) return { ok: false };
+  const inlineCalls = (parsed.data.toolCalls ?? []).flatMap((call) =>
+    call.name === "retrieve" && call.query.trim() ? [{ name: "retrieve" as const, query: call.query.trim() }] : []);
   const toolCalls = inlineCalls.length > 0 ? inlineCalls : parseToolCalls(wireToolCalls);
-  return { answer: parsed.answer, citations, proposedNotebookActions, toolCalls };
-}
-
-/**
- * Maps a Groq failure onto the shared `TutorProviderError` (provider spec §6).
- * Always fail closed: no automatic quota refund, and the message never carries
- * the key or the provider body.
- */
-async function throwForStatus(response: Response): Promise<never> {
-  // The body is consumed (so the socket can be reused) and then discarded:
-  // provider error payloads never reach the visitor and never reach logs.
-  await response.body?.cancel().catch(() => undefined);
-  const retryAfter = response.headers.get("retry-after");
-  const seconds = retryAfter !== null && retryAfter.trim() !== "" ? Number(retryAfter.trim()) : Number.NaN;
-  if (response.status === 429) {
-    // 429 is never retried: the visitor is told the quota is exhausted and when
-    // it resets, using `retry-after` when the provider sent it.
-    throw new TutorProviderError({
-      kind: "rate_limited",
-      retryAfterSeconds: Number.isFinite(seconds) && seconds >= 0 ? Math.floor(seconds) : null,
-    });
-  }
-  if (response.status === 401 || response.status === 403) throw new TutorProviderError({ kind: "auth" });
-  if (response.status === 400 || response.status === 422) throw new TutorProviderError({ kind: "invalid" });
-  throw new TutorProviderError({ kind: "unavailable" });
-}
-
-async function postChatCompletions(options: {
-  apiKey: string;
-  body: Record<string, unknown>;
-  fetchImpl: GroqFetch;
-  timeoutMs: number;
-}): Promise<Response> {
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), options.timeoutMs);
-  try {
-    return await options.fetchImpl(`${GROQ_BASE_URL}/chat/completions`, {
-      method: "POST",
-      headers: { "content-type": "application/json", authorization: `Bearer ${options.apiKey}` },
-      body: JSON.stringify(options.body),
-      signal: controller.signal,
-    });
-  } catch (error) {
-    // Abort (our timeout) and any transport failure are unknown outcomes: the
-    // caller reconciles the reservation as `unknown`, never as a refund.
-    if (error instanceof Error && error.name === "AbortError") throw new TutorProviderError({ kind: "timeout" });
-    throw new TutorProviderError({ kind: "unavailable" });
-  } finally {
-    clearTimeout(timer);
-  }
+  return {
+    ok: true,
+    output: {
+      answer: parsed.data.answer,
+      citations: parsed.data.citations.map(toExcerpt),
+      proposedNotebookActions: parsed.data.proposedNotebookActions.map(toProposal),
+      ...(toolCalls ? { toolCalls } : {}),
+    },
+  };
 }
 
 function accumulateStreamDeltas(): {
@@ -452,12 +432,17 @@ export function createGroqPublicTutorAi(options: GroqAdapterOptions): PublicTuto
   }
 
   async function complete(input: TutorModelInput, budget: ReservedBudget, model: string): Promise<{ output: TutorModelOutput; usage: { inputTokens: number; outputTokens: number } }> {
-    const response = await postChatCompletions({ apiKey, body: requestBody(input, budget, model, false), fetchImpl, timeoutMs });
-    if (!response.ok) await throwForStatus(response);
+    const response = await postGroqChatCompletions({ baseUrl: GROQ_BASE_URL, apiKey, body: requestBody(input, budget, model, false), fetchImpl, timeoutMs });
+    if (!response.ok) await throwForGroqStatus(response);
     const payload = (await response.json()) as GroqChatResponse;
+    const usage = usageOf(payload);
     const message = payload.choices?.[0]?.message;
-    const parsed = parseGroqAnswer(message?.content, message?.tool_calls);
-    return { output: { answer: parsed.answer, citations: parsed.citations, proposedNotebookActions: parsed.proposedNotebookActions, ...(parsed.toolCalls ? { toolCalls: parsed.toolCalls } : {}) }, usage: usageOf(payload) };
+    const validation = validateGroqAnswer(message?.content, message?.tool_calls);
+    // A violation is a refusal that still cost real tokens: throw with the
+    // measured usage so the ledger settles the spend instead of holding the
+    // worst case until the reservation expires.
+    if (!validation.ok) throw new TutorProviderError({ kind: "unusable" }, usage);
+    return { output: validation.output, usage };
   }
 
   async function answerWithUsage(input: TutorModelInput, budget: ReservedBudget) {
@@ -479,15 +464,14 @@ export function createGroqPublicTutorAi(options: GroqAdapterOptions): PublicTuto
   }
 
   async function answerStream(input: TutorModelInput, budget: ReservedBudget, onToken: (token: string) => void) {
-    const response = await postChatCompletions({ apiKey, body: requestBody(input, budget, primary, true), fetchImpl, timeoutMs });
-    if (!response.ok) await throwForStatus(response);
+    const response = await postGroqChatCompletions({ baseUrl: GROQ_BASE_URL, apiKey, body: requestBody(input, budget, primary, true), fetchImpl, timeoutMs });
+    if (!response.ok) await throwForGroqStatus(response);
     const { content, toolCalls, usage } = await readGroqStream(response);
     for (const token of content.match(/\S+\s*/g) ?? []) onToken(token);
-    const parsed = parseGroqAnswer(content, toolCalls);
-    return {
-      output: { answer: parsed.answer, citations: parsed.citations, proposedNotebookActions: parsed.proposedNotebookActions, ...(parsed.toolCalls ? { toolCalls: parsed.toolCalls } : {}) },
-      usage: { inputTokens: Math.max(0, Math.floor(usage?.prompt_tokens ?? 0)), outputTokens: Math.max(0, Math.floor(usage?.completion_tokens ?? 0)) },
-    };
+    const measured = usageOf({ usage });
+    const validation = validateGroqAnswer(content, toolCalls);
+    if (!validation.ok) throw new TutorProviderError({ kind: "unusable" }, measured);
+    return { output: validation.output, usage: measured };
   }
 
   return Object.freeze({

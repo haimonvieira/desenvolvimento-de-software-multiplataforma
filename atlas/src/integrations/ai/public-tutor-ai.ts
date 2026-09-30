@@ -56,43 +56,6 @@ export interface PublicTutorAi {
 }
 
 /**
- * How a provider call failed, per the provider spec §6. The distinction matters
- * to the caller: a `rate_limited` turn is a spent quota with a known reset, a
- * `timeout` is an unknown outcome whose reservation stays charged, and the rest
- * fail closed without refunding anything automatically.
- */
-export type TutorProviderFailure =
-  | Readonly<{ kind: "rate_limited"; retryAfterSeconds: number | null }>
-  | Readonly<{ kind: "timeout" }>
-  | Readonly<{ kind: "auth" }>
-  | Readonly<{ kind: "invalid" }>
-  | Readonly<{ kind: "unavailable" }>;
-
-const FAILURE_MESSAGES: Readonly<Record<TutorProviderFailure["kind"], string>> = {
-  rate_limited: "A cota do provedor de IA está esgotada.",
-  timeout: "O tutor demorou demais para responder.",
-  auth: "A credencial do provedor foi recusada.",
-  invalid: "O provedor recusou a requisição.",
-  unavailable: "O provedor de IA está indisponível.",
-};
-
-/**
- * A provider failure with a message that never contains the API key, the
- * provider's error body or any part of the visitor's question. Every adapter
- * must throw this shape so the route can apply one failure policy without
- * trusting provider text.
- */
-export class TutorProviderError extends Error {
-  readonly failure: TutorProviderFailure;
-
-  constructor(failure: TutorProviderFailure) {
-    super(FAILURE_MESSAGES[failure.kind]);
-    this.name = "TutorProviderError";
-    this.failure = failure;
-  }
-}
-
-/**
  * Deterministic double for tests: replays the script in order, repeating the
  * last entry once the script is exhausted, and records every input it received.
  */

@@ -2,7 +2,8 @@ import { describe, expect, it } from "vitest";
 
 import catalog from "../src/generated/catalog.json";
 import { createTutorTurnHandler, type TutorTurnDependencies } from "../src/app/api/tutor/turn/route";
-import { createFakePublicTutorAi, TutorProviderError, type PublicTutorAi } from "../src/integrations/ai/public-tutor-ai";
+import { createFakePublicTutorAi, type PublicTutorAi } from "../src/integrations/ai/public-tutor-ai";
+import { TutorProviderError } from "../src/integrations/ai/provider-failure";
 import { createCatalogQuery } from "../src/modules/catalog/catalog-query";
 import type { CatalogData } from "../src/modules/catalog/model";
 import { selectTutorContext, tutorCandidates } from "../src/modules/study/tutor-context";
@@ -82,6 +83,23 @@ describe("POST /api/tutor/turn", () => {
     const ai: PublicTutorAi = {
       async answer() {
         throw new TutorProviderError({ kind: "timeout" });
+      },
+    };
+    const response = await post({
+      retriever,
+      ledger: ledgerWith({ type: "reserved", reservationId: "r1", maxInputTokens: 4_000, maxOutputTokens: 1_000, maxToolCalls: 4 }),
+      subjectKey: async () => "s1",
+      sponsoredAi: ai,
+    }, turn);
+
+    expect(response.status).toBe(502);
+    expect(await response.json()).toEqual({ error: { code: "TUTOR_TURN_FAILED", message: "Não foi possível responder agora." } });
+  });
+
+  it("refuses an unusable answer as a failed turn, not as a quota or a success", async () => {
+    const ai: PublicTutorAi = {
+      async answer() {
+        throw new TutorProviderError({ kind: "unusable" }, { inputTokens: 900, outputTokens: 120 });
       },
     };
     const response = await post({

@@ -3,7 +3,7 @@ import { z } from "zod";
 
 import { turnstileGateFromEnv } from "../../../../integrations/cloudflare/turnstile-gate";
 import type { PublicTutorAi } from "../../../../integrations/ai/public-tutor-ai";
-import { TutorProviderError } from "../../../../integrations/ai/public-tutor-ai";
+import { TutorProviderError } from "../../../../integrations/ai/provider-failure";
 import { createByokGroqPublicTutorAi, createGroqPublicTutorAi } from "../../../../integrations/ai/groq-public-tutor-ai";
 import { createSqlExecutor } from "../../../../integrations/neon/db";
 import { readByokKey } from "../../../../modules/tutor/byok";

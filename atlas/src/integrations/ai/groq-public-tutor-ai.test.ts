@@ -6,11 +6,11 @@ import {
   GROQ_BASE_URL,
   GROQ_FALLBACK_MODEL,
   GROQ_PRIMARY_MODEL,
-  parseGroqAnswer,
+  validateGroqAnswer,
   readGroqStream,
-  type GroqFetch,
 } from "./groq-public-tutor-ai";
-import { TutorProviderError } from "./public-tutor-ai";
+import type { GroqFetch } from "./groq-transport";
+import { TutorProviderError } from "./provider-failure";
 import type { ReservedBudget } from "../../modules/tutor/usage-ledger";
 
 const budget: ReservedBudget = Object.freeze({
@@ -99,6 +99,37 @@ describe("Groq public tutor adapter", () => {
     expect(output.citations).toHaveLength(1);
   });
 
+  it("sends exactly this system contract", async () => {
+    const { fetchImpl, calls } = recordedFetch(() => chatResponse(jsonBody("ok")));
+    const ai = createGroqPublicTutorAi({ apiKey: "k", fetchImpl });
+
+    await ai.answer(input, budget);
+
+    const sent = JSON.parse(calls[0]!.init.body as string) as { messages: readonly { role: string; content: string }[] };
+    expect(sent.messages[0]).toEqual({
+      role: "system",
+      content: [
+        "Você é o tutor de estudo do DSM Atlas. Responda em português.",
+        "Use APENAS os trechos recuperados abaixo. Se eles não sustentarem a resposta, diga exatamente: Não encontrei isso nos materiais.",
+        "Responda sempre em JSON com o formato: {\"answer\": string, \"citations\": [{\"path\": string, \"commitSha\": string, \"locator\": {\"type\": \"lines\", \"start\": number, \"end\": number} | {\"type\": \"page\", \"page\": number} | {\"type\": \"excerpt\", \"hash\": string}, \"quote\": string}], \"proposedNotebookActions\": [{\"type\": \"note\", \"title\": string, \"body\": string, \"source\": {\"path\": string, \"commitSha\": string}} | {\"type\": \"flashcard\", \"front\": string, \"back\": string, \"source\": {\"path\": string, \"commitSha\": string}}], \"toolCalls\": [{\"name\": \"retrieve\", \"query\": string}]}.",
+        "Cada citação deve copiar um trecho recuperado palavra por palavra no campo quote, com path/commitSha/locator iguais aos do trecho. toolCalls só pode pedir a ferramenta \"retrieve\" com uma pergunta de busca; no máximo o número restante informado.",
+        "Chamadas de ferramenta restantes: 4.",
+      ].join("\n"),
+    });
+  });
+
+  it("leads the user message with the question and includes the retrieved quote", async () => {
+    const { fetchImpl, calls } = recordedFetch(() => chatResponse(jsonBody("ok")));
+    const ai = createGroqPublicTutorAi({ apiKey: "k", fetchImpl });
+
+    await ai.answer(input, budget);
+
+    const sent = JSON.parse(calls[0]!.init.body as string) as { messages: readonly { content: string }[] };
+    const user = sent.messages[1]!;
+    expect(user.content.startsWith("Pergunta: o que é lógica?\n\nTrechos recuperados:\n")).toBe(true);
+    expect(user.content).toContain("linha dois");
+  });
+
   it("bounds the assembled prompt within the reserved input budget across accumulated excerpts", async () => {
     const { calls, fetchImpl } = recordedFetch(() => chatResponse(jsonBody("ok")));
     const ai = createGroqPublicTutorAi({ apiKey: "gsk-sponsored", fetchImpl });
@@ -124,12 +155,13 @@ describe("Groq public tutor adapter", () => {
   });
 
   it("maps wire tool_calls onto the orchestrator contract and drops anything else", () => {
-    const parsed = parseGroqAnswer(jsonBody("x"), [
+    const validation = validateGroqAnswer(jsonBody("x"), [
       { id: "call_1", type: "function", function: { name: "retrieve", arguments: "{\"query\": \"mais contexto\"}" } },
       { id: "call_2", type: "function", function: { name: "delete_materials", arguments: "{\"query\": \"apague\"}" } },
     ]);
+    if (!validation.ok) throw new Error("the documented shape must validate");
 
-    expect(parsed.toolCalls).toEqual([{ name: "retrieve", query: "mais contexto" }]);
+    expect(validation.output.toolCalls).toEqual([{ name: "retrieve", query: "mais contexto" }]);
   });
 
   it("degrades to the fallback model once when the primary is unavailable (5xx)", async () => {
@@ -249,10 +281,60 @@ describe("Groq public tutor adapter", () => {
     expect(usage).toMatchObject({ prompt_tokens: 90, completion_tokens: 10 });
   });
 
-  it("returns empty citations for unparseable answers so the orchestrator marks them unsupported", () => {
-    expect(parseGroqAnswer("not json at all")).toMatchObject({ answer: "", citations: [] });
-    expect(parseGroqAnswer(null)).toMatchObject({ answer: "", citations: [] });
-    expect(parseGroqAnswer(JSON.stringify({ answer: 42 }))).toMatchObject({ answer: "", citations: [] });
+  it("accepts every documented locator and notebook action variant", () => {
+    const sha = "a".repeat(40);
+    const validation = validateGroqAnswer(JSON.stringify({
+      answer: "A lógica estuda o raciocínio.",
+      citations: [
+        { path: "p.md", commitSha: sha, locator: { type: "lines", start: 1, end: 2 }, quote: "q1" },
+        { path: "p.md", commitSha: sha, locator: { type: "page", page: 3 }, quote: "q2" },
+        { path: "p.md", commitSha: sha, locator: { type: "excerpt", hash: "h" }, quote: "q3" },
+      ],
+      proposedNotebookActions: [
+        { type: "note", title: "t", body: "b", source: { path: "p.md", commitSha: sha } },
+        { type: "flashcard", front: "f", back: "b", source: { path: "p.md", commitSha: sha } },
+      ],
+    }));
+    if (!validation.ok) throw new Error("the documented shape must validate");
+
+    expect(validation.output.answer).toBe("A lógica estuda o raciocínio.");
+    expect(validation.output.citations.map((citation) => citation.locator.type)).toEqual(["lines", "page", "excerpt"]);
+    expect(validation.output.citations.map((citation) => citation.text)).toEqual(["q1", "q2", "q3"]);
+    expect(validation.output.proposedNotebookActions.map((action) => action.type)).toEqual(["note", "flashcard"]);
+    expect(validation.output.citations[0]!.material).toEqual({ path: "p.md", commitSha: sha });
+  });
+
+  it("refuses a documented field that is off-shape", () => {
+    const sha = "a".repeat(40);
+    expect(validateGroqAnswer("not json at all").ok).toBe(false);
+    expect(validateGroqAnswer(null).ok).toBe(false);
+    expect(validateGroqAnswer(JSON.stringify({ answer: 42 })).ok).toBe(false);
+    expect(validateGroqAnswer(JSON.stringify({ answer: "x", citations: [{ path: 1 }], proposedNotebookActions: [] })).ok).toBe(false);
+    expect(validateGroqAnswer(JSON.stringify({
+      answer: "x",
+      citations: [{ path: "p.md", commitSha: sha, locator: { type: "lines", start: 1 }, quote: "q" }],
+      proposedNotebookActions: [],
+    })).ok).toBe(false);
+    expect(validateGroqAnswer(JSON.stringify({ answer: "x", citations: [], proposedNotebookActions: [{ type: "note", title: "t" }] })).ok).toBe(false);
+  });
+
+  it("refuses the whole turn when a citation is off-shape, charging the measured spend", async () => {
+    // The defect this change closes: the old parser dropped the malformed
+    // citation and returned the rest of the answer, hiding that the claim may
+    // have rested on exactly the evidence that was discarded.
+    const malformed = JSON.stringify({
+      answer: "A lógica estuda o raciocínio.",
+      citations: [{ path: "p.md", commitSha: "a".repeat(40), locator: { type: "page" }, quote: "linha dois" }],
+      proposedNotebookActions: [],
+    });
+    const { fetchImpl } = recordedFetch(() => chatResponse(malformed));
+    const ai = createGroqPublicTutorAi({ apiKey: "k", fetchImpl });
+
+    const error = await ai.answer(input, budget).catch((failure: unknown) => failure);
+
+    expect(error).toBeInstanceOf(TutorProviderError);
+    expect((error as TutorProviderError).failure.kind).toBe("unusable");
+    expect((error as TutorProviderError).usage).toEqual({ inputTokens: 120, outputTokens: 40 });
   });
 
   it("keeps the BYOK key header-only and out of errors", async () => {

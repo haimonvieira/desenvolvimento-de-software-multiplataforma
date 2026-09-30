@@ -11,7 +11,7 @@ import type {
   ClassificationSuggestion,
 } from "../../integrations/ai/admin-classifier-ai";
 import { createFakeAdminClassifierAi } from "../../integrations/ai/admin-classifier-ai";
-import { TutorProviderError } from "../../integrations/ai/public-tutor-ai";
+import { TutorProviderError } from "../../integrations/ai/provider-failure";
 import { AdminAuthorizationError } from "../identity/admin-authorizer";
 import { createUsageLedger, type UsageLedger } from "../tutor/usage-ledger";
 import { policyFor, type UsageScope } from "../tutor/usage-policy";

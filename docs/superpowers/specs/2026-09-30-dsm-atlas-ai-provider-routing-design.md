@@ -199,3 +199,115 @@ Outros limites dele que o registro tem de carregar: **45 requisições/minuto** 
 para 30 sob demanda alta) e **5 requisições simultâneas por usuário**, com 429
 `concurrency_limit_exceeded`. O teto de concorrência do escopo público já é 1, então isso não
 aperta hoje — mas é um teto por entrada, não global.
+
+## 9. BYOK como provedor arbitrário
+
+A ideia de deixar o visitante trazer **URL e chave de qualquer provedor compatível** resolve o
+gargalo na raiz, e não por mágica: ela move a cota do seu orçamento para o do visitante. O seu
+teto deixa de ser o teto do produto. Três coisas verificadas nesta sessão moldam o desenho.
+
+**1. Descoberta de modelos funciona sem chave — o que é melhor do que eu esperava.** Contra o
+provedor real:
+
+```
+$ curl -s https://top-tools-ai.com/api/v1/models
+200 application/json  {"object":"list","data":[{"id":"Top-Tools-Ai", … }]}
+```
+
+Sem `Authorization`. Então a validação de uma URL informada pelo visitante pode acontecer
+**antes** de ele colar a chave, e a lista pode popular um seletor de modelo. Isso é mais do que
+a interface precisa e não custa nada.
+
+**2. A lista de modelos NÃO diz se o modelo sabe usar ferramentas.** O `capabilities` deste
+provedor traz `vision`, `image_input`, `file_upload` — e mais nada. Não há `tool_use` nem
+`structured_output`. Como o tutor depende de `tools` + `tool_choice` e de uma saída JSON no
+contrato, **a capacidade não é inferível da lista** e um provedor pode parecer perfeito e
+falhar em toda pergunta.
+
+Consequência de desenho, e é o requisito central desta seção: BYOK precisa de uma **sondagem de
+capacidade**, não só de uma busca de modelos. Uma requisição mínima e descartável que pergunta
+a mesma coisa que o tutor pergunta — saída JSON no formato e uma chamada de ferramenta — e
+aceita o provedor só se as duas voltarem. Sem isso, o visitante cola a chave, recebe erro em
+toda pergunta, e não há como distinguir "provedor sem ferramentas" de "nosso bug".
+
+**3. A validação que já existe torna provedor arbitrário seguro.** O schema zod da §4.4 da spec
+de uso de IA valida a forma de fio antes do mapeamento. Um provedor desconhecido que devolva
+lixo é recusado pelo mesmo caminho que um modelo conhecido — não há caminho novo de confiança
+para um provedor que o visitante escolheu.
+
+**O que NÃO muda com BYOK:** o caminho BYOK continua sem consumir cota patrocinada (já é a
+regra hoje), a chave continua passeando só no cabeçalho da requisição, nunca persistida nem
+registrada, e a chave do visitante nunca é usada para o caminho administrativo.
+
+**Nota operacional.** Para a sondagem, o visitante precisa colar a chave na interface. A
+interface deve dizer, antes do primeiro uso, que a chave é usada em memória e não é
+armazenada — a spec do provedor público §4 já exige esse aviso para o BYOK atual, e ele vale
+igual aqui.
+
+## 10. Resultado do teste de capacidade
+
+Duas chamadas reais contra `Top-Tools-Ai`, com o prompt de sistema verbatim, um trecho no
+formato que o tutor monta, a ferramenta `retrieve` e o contrato de saída. O que passou:
+
+| Verificação | Resultado |
+|---|---|
+| Alcançável e com cota | **HTTP 200** — a cota diária livre funciona, sem 429 |
+| JSON no contrato do topo | `answer`, `citations`, `proposedNotebookActions`, `toolCalls` ✓ |
+| `quote` copiado palavra por palavra | ✓ |
+| `path` igual ao do trecho | ✓ |
+| `locator.type: "lines"` com início e fim | ✓ |
+| Honestidade na pergunta não respondível | devolveu exatamente `Não encontrei isso nos materiais.` com citações vazias ✓ |
+
+### 10.1 O defeito que o teste encontrou — e ele não é deste provedor
+
+O modelo devolveu **`"commitSha":""`**. Uma string vazia. E o validador exige igualdade:
+
+```ts
+excerpt.material.commitSha === candidate.material.commitSha   // "" nunca casa com o sha real
+```
+
+Consequência, seguindo o código: `validateCitations` não encontra par, `supported` fica falso,
+e `study-tutor.ts:97` **substitui a resposta inteira** por `UNRESOLVED` — "Não encontrei isso
+nos materiais.". Ou seja: **o tutor acerta a resposta, cita o material certo com o trecho
+literal, e o app joga tudo fora e diz que não encontrou.**
+
+Isso é um defeito latente que não depende de provedor, e explica um modo de falha que
+pareceria "o tutor está quebrado" e seria diagnosticado como problema de prompt. O Groq
+provavelmente ecoa o sha porque o prompt o mostra no trecho; qualquer modelo que não se
+importe com um identificador opaco de 40 hexadecimais falha igual.
+
+**D-i — Não pedir ao modelo um identificador que nós já temos.** O contrato de citação deixa
+de exigir `commitSha` do modelo. O validador casa por `(path, locator)` e confere que o
+`quote` está contido no trecho — que é a verificação que de fato protege contra citação
+inventada — e **toma o `commitSha` do trecho recuperado**. O sha passa a ser preenchido por
+nós, não conferido contra o que o modelo inventou.
+
+O mesmo vale para `proposedNotebookActions[].source`, que é filtrado por
+`path && commitSha` (`study-tutor.ts:100-102`): com sha vazio, **todo flashcard ou nota
+proposta cai**. A correção é a mesma e tem de cobrir os dois.
+
+Isso **aumenta** a segurança, não diminui: um campo que o modelo pode errar deixa de decidir
+se uma resposta correta sobrevive. A garantia real — "a citação existe nos trechos recuperados
+e o texto é literal" — continua sendo verificada.
+
+### 10.2 O risco que o teste não resolve
+
+**Latência: 11,4 s e 23,6 s** para requisições triviais (715 tokens de entrada, 29 a 154 de
+saída). O prazo do turno público é 30 s (`usage-policy.ts`), então a segunda chamada consumiu
+**79% do prazo** respondendo 29 tokens. Um turno real tem contexto maior.
+
+Isso não invalida o provedor, mas muda a decisão: entra como candidato, não como principal, e
+só depois de um teste com o tamanho real de turno. E lembra que um timeout é desfecho
+desconhecido — segura a reserva até expirar, o que o `expire_ai_reservations` agora resolve.
+
+### 10.3 O que o teste não provou
+
+**Uso de ferramenta continua não verificado.** Nenhuma das duas chamadas emitiu `tool_calls`
+nem usou o campo `toolCalls` do JSON — mas o prompt manda declarar "não encontrei" quando os
+trechos não sustentam, então a segunda resposta está *correta* e não é evidência de falta de
+ferramenta. Prová-lo exige uma pergunta que o modelo queira buscar em vez de recusar.
+
+E o catálogo de modelos do provedor **não publica capacidade de ferramenta**
+(`capabilities` traz só `vision`, `image_input`, `file_upload`), então nem a sondagem de
+modelos resolve isso. É exatamente por isso que §9 exige sondagem de capacidade e não só
+descoberta de modelos.

@@ -8,6 +8,12 @@
     "directory": "dist/client",
     "not_found_handling": "none",
     "binding": "ASSETS"
+  },
+  "vars": {
+    // Public Turnstile widget sitekey. It is shipped to the browser by design,
+    // which is why it belongs here rather than in a secret; the matching
+    // TURNSTILE_SECRET_KEY stays a Worker secret.
+    "TURNSTILE_SITE_KEY": "0x4AAAAAAFKS3O2sSBstKuAb"
   }
   // Production secrets/configuration (values are never committed):
   // DATABASE_URL, BETTER_AUTH_SECRET, BETTER_AUTH_URL,

@@ -183,6 +183,26 @@ describe("content index build", () => {
     expect(await readTree(second)).toEqual(await readTree(first));
   });
 
+  it("leaves exactly one commit tree in the output root across builds at different commits", async () => {
+    const root = await fixture({ "DSM1/ALP/aula.md": "# Aula\n\nconteúdo\n" });
+    const firstSha = commitFixture(root);
+    await writeFile(join(root, "DSM1", "ALP", "extra.md"), "# Extra\n\nmais conteúdo\n");
+    execFileSync("git", ["add", "-f", "."], { cwd: root });
+    execFileSync("git", [
+      "-c", "user.name=Atlas Test", "-c", "user.email=atlas@example.test",
+      "commit", "--quiet", "-m", "second",
+    ], { cwd: root });
+    const secondSha = execFileSync("git", ["rev-parse", "HEAD"], { cwd: root, encoding: "utf8" }).trim();
+    const out = join(root, "index-out");
+
+    await writeContentIndex(root, out, firstSha);
+    await writeContentIndex(root, out, secondSha);
+
+    expect(await readdir(out)).toEqual([secondSha]);
+    const files = (await readdir(join(out, secondSha), { recursive: true })).filter((path) => path.endsWith(".json"));
+    expect(files).toHaveLength(3);
+  });
+
   it("skips secret-marked files and leaves binary formats metadata-only", async () => {
     const root = await fixture({
       "DSM1/ALP/limpo.md": "# Limpo\n\nconteúdo\n",

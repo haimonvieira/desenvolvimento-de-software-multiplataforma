@@ -218,7 +218,7 @@ export async function writeContentIndex(
   if (!/^[0-9a-f]{7,64}$/i.test(commitSha)) throw new Error(`Refusing to write index for suspicious commit sha: ${commitSha}`);
   const build = await buildContentIndex(repositoryRoot, commitSha);
   const commitDirectory = resolve(outputRoot, commitSha);
-  await rm(commitDirectory, { recursive: true, force: true });
+  await rm(outputRoot, { recursive: true, force: true });
   await mkdir(commitDirectory, { recursive: true });
   for (const asset of build.assets) {
     await writeFile(resolve(commitDirectory, asset.file), `${JSON.stringify(asset.index)}\n`);

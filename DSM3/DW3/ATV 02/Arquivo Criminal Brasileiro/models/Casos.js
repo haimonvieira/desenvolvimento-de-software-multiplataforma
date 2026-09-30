@@ -6,10 +6,15 @@ const detalhesSchema = new mongoose.Schema(
     cidade: {
       type: String,
       required: true,
+      trim: true,
     },
     estado: {
       type: String,
-      required: true, // UF
+      required: true,
+      trim: true,
+      uppercase: true, // de brinde: salva "sp" como "SP"
+      minlength: 2,
+      maxlength: 2,
     },
     anoInicio: {
       type: Number,
@@ -22,6 +27,7 @@ const detalhesSchema = new mongoose.Schema(
     situacaoJudicial: {
       type: String,
       required: true,
+      trim: true,
     },
   },
   { _id: false }
@@ -29,17 +35,15 @@ const detalhesSchema = new mongoose.Schema(
 
 const producaoSchema = new mongoose.Schema(
   {
-    tmdbId: {
-      type: Number,
-      required: true,
-    },
     titulo: {
       type: String,
       required: true,
+      trim: true,
     },
     tipo: {
       type: String,
       required: true,
+      trim: true,
       enum: ["filme", "série", "documentário"],
     },
     ano: {
@@ -49,10 +53,12 @@ const producaoSchema = new mongoose.Schema(
     sinopse: {
       type: String,
       required: false,
+      trim: true,
     },
     poster: {
       type: String,
       required: false,
+      trim: true,
       default: null,
     },
   },
@@ -60,17 +66,21 @@ const producaoSchema = new mongoose.Schema(
 );
 
 const casoSchema = new mongoose.Schema({
-  titulo: {
+  caso: {
     type: String,
     required: true,
+    trim: true,
   },
-  resumo: {
+  descricao: {
     type: String,
     required: true,
+    trim: true,
   },
   categorias: {
     type: [String],
     default: [],
+    // trim em cada item do array:
+    set: (arr) => arr.map((s) => (typeof s === "string" ? s.trim() : s)),
   },
   detalhes: {
     type: detalhesSchema,

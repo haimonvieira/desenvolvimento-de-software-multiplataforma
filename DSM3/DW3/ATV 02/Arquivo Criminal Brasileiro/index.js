@@ -14,7 +14,6 @@ import Caso from "./models/Casos.js"
 // Importar as rotas (endpoints)
 import userRoutes from "./routes/userRoutes.js";
 import casoRoutes from "./routes/casoRoutes.js";
-import tmdbRoutes from "./routes/tmdbRoutes.js";
 
 // Carregando Express
 const app = express();
@@ -27,8 +26,6 @@ app.use(express.json());
 app.use('/', userRoutes)
 // Carregando as rotas de casos
 app.use('/', casoRoutes)
-// Carregando as rotas do TMDB
-app.use('/', tmdbRoutes)
 
 // Gerando a documentação Swagger e publicando em /api-docs
 const swaggerDocs = swaggerJsDoc(swaggerOptions);

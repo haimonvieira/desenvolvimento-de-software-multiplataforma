@@ -16,11 +16,11 @@ class casoService {
         }
     }
     // MÉTODO PARA CADASTRAR UM CASO
-    async Create(titulo, resumo, categorias, detalhes, producoes) {
+    async Create(caso, descricao, categorias, detalhes, producoes) {
         try {
             const newCaso = new Caso({
-                titulo,
-                resumo,
+                caso,
+                descricao,
                 categorias,
                 detalhes,
                 producoes
@@ -42,11 +42,11 @@ class casoService {
         }
     }
     // MÉTODO PARA ALTERAR UM CASO
-    async Update(id, titulo, resumo, categorias, detalhes, producoes) {
+    async Update(id, caso, descricao, categorias, detalhes, producoes) {
         try {
             await Caso.findByIdAndUpdate(id, {
-                titulo,
-                resumo,
+                caso,
+                descricao,
                 categorias,
                 detalhes,
                 producoes

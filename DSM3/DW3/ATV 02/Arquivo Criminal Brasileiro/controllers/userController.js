@@ -5,7 +5,7 @@ dotenv.config() // Inicializando dotenv
 import userService from "../services/userService.js";
 // Importando o JSONWEBTOKEN
 import jwt from 'jsonwebtoken';
-// importando argon2 (substitui o bcrypt por decisão do grupo)
+// importando argon2
 import argon2 from "argon2"
 // Criando um segredo para o TOKEN
 const JWTSecret = process.env.JWT_SECRET

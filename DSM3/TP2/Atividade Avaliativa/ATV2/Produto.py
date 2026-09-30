@@ -56,7 +56,6 @@ class Produto:
         print("Código: ", self._codigo)
         print("Nome do produto: ", self._nomeProduto)
         print("Preço: R$ ", self._preco)
-        print("Total: R$ ", self._preco * self._quantidade)
         print()
 
     def calcularVenda(self):

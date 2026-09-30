@@ -25,8 +25,6 @@ tags:
     description: Cadastro e autenticação (rotas públicas)
   - name: Casos
     description: CRUD de casos criminais (rotas protegidas)
-  - name: TMDB
-    description: Busca de produções audiovisuais (rota protegida)
 
 components:
   securitySchemes:
@@ -76,12 +74,8 @@ components:
 
     Producao:
       type: object
-      required: [tmdbId, titulo, tipo]
+      required: [titulo, tipo]
       properties:
-        tmdbId:
-          type: integer
-          description: Identificador da produção no TMDB
-          example: 532321
         titulo:
           type: string
           example: Blindados
@@ -104,16 +98,12 @@ components:
 
     Caso:
       type: object
-      required: [titulo, resumo, detalhes]
+      required: [caso, descricao, detalhes]
       properties:
-        _id:
-          type: string
-          description: Gerado pelo MongoDB; NÃO enviar em POST/PUT
-          example: 6ab08649f602be0d59f7b90c
-        titulo:
+        caso:
           type: string
           example: Caso Tremembé
-        resumo:
+        descricao:
           type: string
           example: Fuga de blinds do complexo de Tremembé em São Paulo.
         categorias:
@@ -394,54 +384,6 @@ paths:
                 $ref: '#/components/schemas/Error'
         '500':
           description: Erro interno do servidor
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-
-  /tmdb/buscar:
-    get:
-      tags: [TMDB]
-      summary: Busca produções no TMDB
-      description: |
-        Proxies o endpoint Search Multi do TMDB e normaliza cada resultado
-        para o formato Producao. Não cria entidade nem persiste nada.
-        A busca não distingue "nada encontrado" de falha: 200 vazio = sem resultados,
-        500 = falha na integração (token, limite, indisponibilidade).
-      parameters:
-        - name: query
-          in: query
-          required: true
-          schema:
-            type: string
-          description: Texto da busca
-          example: Tremembé
-      responses:
-        '200':
-          description: Produções encontradas (possivelmente vazia)
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  producoes:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/Producao'
-        '400':
-          description: Query string "query" ausente ou vazia
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-        '401':
-          description: Token ausente ou inválido
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-        '500':
-          description: Falha na integração com o TMDB (token inválido, limite, indisponibilidade)
           content:
             application/json:
               schema:

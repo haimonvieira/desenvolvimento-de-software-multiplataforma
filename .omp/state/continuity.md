@@ -1,10 +1,10 @@
 # OMP Continuity Checkpoint
 
-- Updated: 2026-09-29T21:22:16.500Z
+- Updated: 2026-09-30T00:54:04.495Z
 - Reason: shutdown
 - Project: D:\Fatec\desenvolvimento-de-software-multiplataforma
-- Turns this session: 48
+- Turns this session: 58
 - Branch: main
-- Last commit: 29bb4b7 fix: corrige a variável de ambiente TMDB_READ_READ_ACCESS_TOKEN no arquivo .env.example
+- Last commit: c8c78fe fix: marca subprojetos como "dirty" nas aulas de React e CSS
 
 <!-- Operational state only. Secrets are redacted; no transcripts, no code. -->

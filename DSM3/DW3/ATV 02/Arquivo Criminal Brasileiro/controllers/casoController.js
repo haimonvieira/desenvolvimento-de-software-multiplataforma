@@ -21,10 +21,10 @@ const getAllCasos = async (req, res) => {
 const createCaso = async (req, res) => {
     try {
         // Coletando dados enviados no Body (estrutura completa de Caso, sem _id)
-        const { titulo, resumo, categorias, detalhes, producoes } = req.body;
+        const { caso, descricao, categorias, detalhes, producoes } = req.body;
 
         // Enviando dados para o Service cadastrar
-        await casoService.Create(titulo, resumo, categorias, detalhes, producoes);
+        await casoService.Create(caso, descricao, categorias, detalhes, producoes);
         res.status(201).json({ message: "Caso cadastrado com sucesso!" })
         // Cod. 201 (CREATED) -> Recurso criado com sucesso no servidor
     } catch (error) {
@@ -61,9 +61,9 @@ const updateCaso = async (req, res) => {
         // Validando o ObjectID
         if (ObjectId.isValid(id)) {
             // Coletando os dados que serão alterados
-            const { titulo, resumo, categorias, detalhes, producoes } = req.body
+            const { caso, descricao, categorias, detalhes, producoes } = req.body
             // Enviando os dados para o service
-            await casoService.Update(id, titulo, resumo, categorias, detalhes, producoes);
+            await casoService.Update(id, caso, descricao, categorias, detalhes, producoes);
             res.status(200).json({ message: 'Caso atualizado com sucesso.' });
         } else {
             res.status(400).json({ error: 'Requisição mal formada, ID inválido.' })

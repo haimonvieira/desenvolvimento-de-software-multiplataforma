@@ -11,6 +11,7 @@ import { createAuthForDatabase } from "../src/modules/identity/auth";
 import { AdminAuthorizationError, createAdminAuthorizer, createAdminBootstrapHandler } from "../src/modules/identity/admin-authorizer";
 import type { CatalogData } from "../src/modules/catalog/model";
 import { createBatchCreateHandler } from "../src/modules/publication/batch-create";
+import { createBatchListHandler } from "../src/modules/publication/batch-list";
 import { createBlobUploadHandler } from "../src/modules/publication/blob-upload";
 import { createClassifyBatchHandler } from "../src/modules/publication/classify-batch";
 import type { GitHubMaterialSource } from "../src/modules/publication/model";
@@ -91,6 +92,7 @@ describe("visitor identity never reaches an administrative endpoint", () => {
       }),
     );
     const batchCreate = createBatchCreateHandler({ requireAdmin: visitor, query });
+    const batchList = createBatchListHandler({ requireAdmin: visitor, query });
     const review = createBatchReviewHandler({ requireAdmin: visitor, query, source });
     const publish = createPublishHandler({ requireAdmin: visitor, query, source });
     const blob = createBlobUploadHandler({ requireAdmin: visitor, query, createBlob: record.never("createBlob") });
@@ -106,13 +108,14 @@ describe("visitor identity never reaches an administrative endpoint", () => {
     const responses = await Promise.all([
       bootstrap(new Request("https://atlas.test/api/admin/bootstrap", { method: "POST" })),
       batchCreate(jsonRequest("https://atlas.test/api/admin/batches", { baseCommitSha: "a".repeat(40), files: [] })),
+      batchList(new Request("https://atlas.test/api/admin/batches", { method: "GET" })),
       review(new Request("https://atlas.test/api/admin/batches/batch-1", { method: "GET" }), "batch-1"),
       publish(jsonRequest("https://atlas.test/api/admin/batches/batch-1/publish", { baseCommitSha: "a".repeat(40), confirmation: "x" }), "batch-1"),
       blob(uploadRequest(), "batch-1"),
       classify(new Request("https://atlas.test/api/admin/batches/batch-1/classify", { method: "POST" }), "batch-1"),
     ]);
 
-    expect(responses.map((response) => response.status)).toEqual([403, 403, 403, 403, 403, 403]);
+    expect(responses.map((response) => response.status)).toEqual([403, 403, 403, 403, 403, 403, 403]);
     expect(record.touched).toEqual([]);
   });
 });

@@ -1,7 +1,7 @@
 # DSM Atlas — Uso de IA (eixo 2)
 
-**Status:** diagnóstico e desenho das fatias 1–3 completos; §4.4 revelou-se acoplada a D3;
-fatias condicionais aguardam D1–D3
+**Status:** D3 decidida (desenho A); diagnóstico e desenho das fatias 1–4 completos;
+D1 e D2 aguardam
 **Data:** 30 de setembro de 2026
 **Escopo:** tutor público e classificação administrativa — custo, qualidade, confiabilidade e latência
 **Fora de escopo:** eixo 1 (visualização de materiais), já entregue e verificado
@@ -182,14 +182,10 @@ ou embeddings: continua fora do primeiro corte."* (a) manter fora; (b) reabrir o
 (b) qualidade e confiança das respostas; (c) latência e a experiência da espera; (d) os três,
 em fases. A evidência (§1.1, §1.2) aponta (a) como o que tem efeito garantido.
 
-**D3 — Streaming.** (a) streamar só a rodada final; (b) SSE em todas as rodadas; (c) largar o
-streaming e deletar o `answerStream` morto, mantendo o foco em cota.
-
-**D3 está acoplada à §4.4, e isso não é óbvio pela pergunta.** O provedor documenta que
-*"streaming and tool use are not currently supported with Structured Outputs"*. Escolher
-streaming implica abrir mão da decodificação restrita no tutor público (§4.4, desenho A);
-escolher restrição implica abrir mão do streaming (desenho B). Não são decisões independentes
-e devem ser tomadas juntas.
+**D3 — Streaming. DECIDIDA: desenho A.** Manter as ferramentas nativas e o
+`response_format: { type: "json_object" }`, e validar a saída em casa com zod, descartando a
+resposta que não conforma. O streaming continua viável (§4.4), o que preserva a opção
+`answerStream` mais adiante; nada é prometido sobre ligá-lo nesta spec.
 
 ## 4. Desenho
 
@@ -269,21 +265,48 @@ tenha `additionalProperties: false`. O contrato do tutor tem `citations`, `propo
 e `toolCalls` que legitimamente vêm vazios, e uniões aninhadas (locator `lines | page | excerpt`;
 ação `note | flashcard`) cujo suporte a `oneOf`/`anyOf` não está documentado.
 
-**Consequência dura: D3 e esta fatia não podem ser ambas satisfeitas neste provedor.**
-Escolher streaming é abrir mão da decodificação restrita no tutor público; escolher restrição
-é abrir mão do streaming.
+**A exclusividade, e como ela foi resolvida.** Decodificação restrita (`strict: true`) e
+streaming não coexistem neste provedor — e o tutor depende de tool use, que também não
+coexiste. Escolher o desenho B significaria abrir mão do streaming **e** das ferramentas;
+o desenho A mantém as duas e move a garantia para o nosso lado, onde ela decide de fato o
+que acontece com a resposta.
 
-Três desenhos possíveis, a decidir junto com D3:
+**Decidido: desenho A.** Mantém-se `tools` + `tool_choice: "auto"` + `json_object`; a
+aderência passa a ser verificada por nós.
 
-| | Desenho | Garantia | Custo |
-|---|---|---|---|
-| A | Manter `tools`, manter `json_object`, **validar em casa** com zod (já é dependência) e **descartar** a resposta que não conforma | Adesão verificada por nós, não pelo decodificador | Uma validação; nenhum ganho de garantia na geração |
-| B | Largar o `tools` nativo e usar `json_schema` estrito, confiando no `toolCalls` **inline** que o prompt já descreve e o código já lê (`:275-280`) | Decodificação restrita de verdade | Reverte o desenho de ferramentas; inviabiliza streaming |
-| C | Manter como está e só endurecer o parse (recusar em vez de devolver vazio) | Mínima | Não resolve o contrato frouxo na origem |
+O que a fatia entrega:
 
-O caminho que preserva as duas ambições é **A** quando D3 = streaming, e **B** quando D3 =
-sem streaming. O que não se pode ter é o texto atual da fatia, que promete restrição no
-provedor e ao mesmo tempo manteria as duas coisas.
+- Um schema zod para a saída do tutor (`answer`, `citations[]` com o locator união,
+  `proposedNotebookActions[]` com a união note/flashcard, `toolCalls[]`), validado **no
+  adaptador**, para que todo consumidor receba a mesma garantia.
+- Saída fora do contrato **não** vira resposta vazia. Hoje `parseGroqAnswer` devolve
+  `{answer: "", citations: []}` quando não entende, e um turno assim é indistinguível de um
+  turno que respondeu "nada" — o aluno recebe silêncio e o orçamento foi gasto.
+
+**A consequência contábil, que é a parte fácil de errar.** Uma violação de schema acontece
+**depois** de o provedor responder: o gasto é real e o `usage` é conhecido. Reconciliar isso
+como `unknown` (que é o que `runSponsoredTurn` faz com qualquer erro) seguraria o **pior caso**
+— 5.000 tokens — em vez do gasto real, punindo o dia mais do que o consumo justifica.
+
+Então `runSponsoredTurn` passa a distinguir: um erro que **carrega `usage` medido** é um
+desfecho conhecido e reconcilia como `settled` com aquele uso; os demais continuam `unknown`,
+e a semântica de timeout (§2) fica intacta, porque um timeout não traz uso nenhum.
+
+Verificado antes de escrever: reconciliar duas vezes **não** corrompe nada. A função SQL
+guarda o estado (`0006_ai_usage.sql:204-208`):
+
+```sql
+-- A reservation is reconciled once. Later calls observe the recorded outcome
+-- instead of moving the counters a second time.
+IF reservation.status <> 'reserved' THEN
+  RETURN jsonb_build_object('status', reservation.status, 'applied', false);
+END IF;
+```
+
+Isso importa porque, com o desenho acima, o `catch` do `runSponsoredTurn` ainda dispara uma
+segunda reconciliação depois de o caminho da violação ter reconciliado — e ela é um no-op.
+Não depender disso seria melhor, mas saber que é seguro remove o risco de uma contabilidade
+subestimada, que é o erro perigoso aqui.
 
 ## 5. Fatiamento
 

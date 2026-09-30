@@ -171,24 +171,6 @@ function buildMessages(input: TutorModelInput, budget: ReservedBudget): GroqMess
   return messages;
 }
 
-function retrieveToolSchema() {
-  return {
-    type: "function",
-    function: {
-      name: "retrieve",
-      description: "Busca trechos dos materiais em estudo para sustentar a resposta.",
-      parameters: {
-        type: "object",
-        properties: {
-          query: { type: "string", description: "Pergunta de busca nos materiais em estudo." },
-        },
-        required: ["query"],
-        additionalProperties: false,
-      },
-    },
-  } as const;
-}
-
 function parseToolCalls(raw: readonly GroqWireToolCall[] | undefined): TutorModelOutput["toolCalls"] {
   if (!raw || raw.length === 0) return undefined;
   const calls = raw.flatMap((call) => {
@@ -426,8 +408,11 @@ export function createGroqPublicTutorAi(options: GroqAdapterOptions): PublicTuto
     return {
       model,
       messages: buildMessages(input, budget),
-      tools: [retrieveToolSchema()],
-      tool_choice: "auto",
+      // No `tools`/`tool_choice`: Groq refuses the combination outright —
+      // "json mode cannot be combined with tool/function calling" — and that
+      // 400 was failing every sponsored turn while every test passed, because
+      // the tests double the transport. Retrieval travels through the inline
+      // `toolCalls` field the prompt already documents and the validator reads.
       response_format: { type: "json_object" },
       max_completion_tokens: Math.min(1_000, Math.max(1, budget.maxOutputTokens)),
       temperature: 0.2,

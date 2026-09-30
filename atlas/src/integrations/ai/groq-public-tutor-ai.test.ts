@@ -85,15 +85,18 @@ describe("Groq public tutor adapter", () => {
     const sent = JSON.parse(calls[0]!.init.body as string) as Record<string, unknown>;
     expect(sent).toMatchObject({
       model: GROQ_PRIMARY_MODEL,
-      tool_choice: "auto",
       response_format: { type: "json_object" },
       max_completion_tokens: 1_000,
       temperature: 0.2,
       n: 1,
       stream: false,
     });
-    const tools = sent.tools as { function: { name: string } }[];
-    expect(tools.map((tool) => tool.function.name)).toEqual(["retrieve"]);
+    // Groq rejects this pairing with a 400 — "json mode cannot be combined with
+    // tool/function calling" — and a transport double can never catch that, so
+    // the absence is asserted here on purpose. Retrieval rides the inline
+    // `toolCalls` field the prompt documents and the validator reads.
+    expect(sent).not.toHaveProperty("tools");
+    expect(sent).not.toHaveProperty("tool_choice");
     expect(calls[0]!.init.headers).toMatchObject({ authorization: "Bearer gsk-sponsored" });
     expect(output.answer).toBe("A lógica estuda o raciocínio.");
     expect(output.citations).toHaveLength(1);

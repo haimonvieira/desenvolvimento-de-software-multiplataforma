@@ -1,7 +1,7 @@
 export type MaterialRef = Readonly<{ path: string; commitSha: string }>;
 
 export type MaterialKind = "document" | "code" | "image" | "archive" | "other";
-export type PreviewKind = "text" | "image" | "pdf" | "none";
+export type PreviewKind = "text" | "image" | "pdf" | "office" | "none";
 
 export type Material = Readonly<{
   ref: MaterialRef;
@@ -11,9 +11,15 @@ export type Material = Readonly<{
   disciplineCode: string;
   semesterCode: string;
   kind: MaterialKind;
+  /** Same-origin, `Content-Disposition: attachment`. Backs "Baixar arquivo". */
   downloadUrl: string;
+  /** Same-origin, `Content-Disposition: inline`. Backs every preview surface. */
+  assetUrl: string;
   previewKind: PreviewKind;
+  /** Generated at build time; absent when the file was refused a text preview. */
   previewUrl?: string;
+  /** Set when the text preview was cut at the build's preview limit. */
+  previewTruncated?: true;
 }>;
 
 export type Semester = Readonly<{ code: string; name: string }>;

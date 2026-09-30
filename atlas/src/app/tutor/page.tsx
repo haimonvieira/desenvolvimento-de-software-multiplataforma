@@ -41,7 +41,7 @@ export default async function TutorPage({ searchParams }: TutorPageProps) {
           <a className="brand" href={`/?semester=${semester}&view=map`} aria-label="DSM Atlas, início"><span className="brand-mark" aria-hidden="true" /><span>DSM ATLAS</span></a>
           <span className="public-context">Tutor · {semester}</span>
         </header>
-        <main className="public-page" id="conteudo">
+        <main className="public-page" id="conteudo" tabIndex={-1}>
           <header className="public-heading">
             <h1>Tutor de estudo</h1>
             <p>Respostas citam os materiais em estudo. O modo patrocinado usa a cota do portal; com sua chave, o uso é por sua conta.</p>

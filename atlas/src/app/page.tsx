@@ -1,7 +1,9 @@
 import catalog from "../generated/catalog.json";
 import { createCatalogQuery } from "../modules/catalog/catalog-query";
+import { ReactiveSearch } from "../modules/catalog/reactive-search";
 import { type CatalogViewMode } from "../modules/catalog/catalog-view";
 import { StudyCatalogView } from "../modules/study/study-catalog-view";
+import { requireAdminPage } from "../modules/identity/server-admin";
 import type { CatalogData } from "../modules/catalog/model";
 import { ProfileControls } from "../modules/identity/profile-controls";
 
@@ -28,6 +30,15 @@ export default async function Home({ searchParams }: HomeProps) {
   const disciplines = data.disciplines
     .filter((discipline) => discipline.semesterCode === semester)
     .map((discipline) => ({ ...discipline, materialCount: counts[discipline.code] ?? 0 }));
+  // Upload is an owner-only flow; a dead "Adicionar materiais" button for visitors
+  // is a promise the page can't keep. Only the verified owner sees it.
+  let isOwner = false;
+  try {
+    await requireAdminPage();
+    isOwner = true;
+  } catch {
+    isOwner = false;
+  }
 
   return (
     <>
@@ -35,14 +46,8 @@ export default async function Home({ searchParams }: HomeProps) {
       <div className="app-frame">
         <header className="topbar">
           <a className="brand" href={`/?semester=${semester}&view=${view}`} aria-label="DSM Atlas, início"><span className="brand-mark" aria-hidden="true" /><span>DSM ATLAS</span></a>
-          <form className="search" role="search" action="/" method="get">
-            <svg aria-hidden="true" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="6" /><path d="m16 16 4 4" /></svg>
-            <label className="sr-only" htmlFor="catalog-search">Buscar no catálogo</label>
-            <input id="catalog-search" name="q" type="search" minLength={1} maxLength={120} defaultValue={searchValue} placeholder="Busque por disciplina, aula ou arquivo" />
-            <input name="semester" type="hidden" value={semester} />
-            <input name="view" type="hidden" value={view} />
-          </form>
-          <button className="add-material" type="button"><span className="plus-icon" aria-hidden="true" /><span className="add-label">Adicionar materiais</span></button>
+          <ReactiveSearch initialQuery={searchValue} semester={semester} view={view} />
+          {isOwner && <button className="add-material" type="button"><span className="plus-icon" aria-hidden="true" /><span className="add-label">Adicionar materiais</span></button>}
         </header>
 
         <nav className="semesters" aria-label="Semestres">
@@ -54,7 +59,7 @@ export default async function Home({ searchParams }: HomeProps) {
           {["DSM4", "DSM5", "DSM6"].filter((code) => !knownSemesters.includes(code)).map((code) => <span className="future" key={code}>{code}</span>)}
         </nav>
 
-        <main id="conteudo">
+        <main id="conteudo" tabIndex={-1}>
           <section className="page-heading" aria-labelledby="atlas-title">
             <h1 id="atlas-title">Seu semestre é um mapa. <span>Cada ponto leva a um material.</span></h1>
             <nav className="view-toggle" aria-label="Visualização do catálogo">
@@ -63,7 +68,7 @@ export default async function Home({ searchParams }: HomeProps) {
             </nav>
           </section>
           {searchResults ? (
-            <section className="search-results" aria-labelledby="search-results-title">
+            <section className="search-results" aria-labelledby="search-results-title" aria-live="polite">
               <header><h2 id="search-results-title">Resultados para “{searchValue}”</h2><span>{searchResults.items.length}{searchResults.nextCursor ? "+" : ""} encontrados</span></header>
               {searchResults.items.length ? (
                 <ul>

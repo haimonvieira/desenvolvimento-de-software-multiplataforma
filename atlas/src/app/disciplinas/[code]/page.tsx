@@ -22,7 +22,7 @@ export default async function DisciplinePage({ params, searchParams }: PageProps
 
   if (!discipline) {
     return (
-      <main className="public-page public-empty" id="conteudo">
+      <main className="public-page public-empty" id="conteudo" tabIndex={-1}>
         <h1>Disciplina não encontrada</h1>
         <p>Confira o semestre e o código informados.</p>
         <Link href="/">Voltar ao atlas</Link>
@@ -40,7 +40,7 @@ export default async function DisciplinePage({ params, searchParams }: PageProps
           <a className="brand" href={`/?semester=${discipline.semesterCode}&view=map`} aria-label="DSM Atlas, início"><span className="brand-mark" aria-hidden="true" /><span>DSM ATLAS</span></a>
           <span className="public-context">{materials.length} materiais catalogados</span>
         </header>
-        <main className="public-page" id="conteudo">
+        <main className="public-page" id="conteudo" tabIndex={-1}>
           <nav className="breadcrumbs" aria-label="Navegação estrutural">
             <a href={`/?semester=${discipline.semesterCode}&view=map`}>{discipline.semesterCode}</a><span>/</span><span aria-current="page">{discipline.code}</span>
           </nav>

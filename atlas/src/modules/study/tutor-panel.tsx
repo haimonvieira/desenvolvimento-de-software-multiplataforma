@@ -131,8 +131,7 @@ export function TutorPanel({ candidates, turnstileSiteKey }: Readonly<{
   }
 
   return (
-    <section className="tutor-panel" aria-labelledby="tutor-title" aria-busy={state.type === "pending"}>
-      <h2 id="tutor-title">Tutor de estudo</h2>
+    <section className="tutor-panel" aria-label="Painel do tutor de estudo" aria-busy={state.type === "pending"}>
       <p className="tutor-hint">Pergunte sobre os materiais em estudo. As respostas citam os trechos usados.</p>
       <p className="tutor-hint" data-testid="tutor-context">
         {context.length === 0

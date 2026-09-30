@@ -41,7 +41,7 @@ export default async function MaterialPage({ params }: PageProps) {
 
   if (!material) {
     return (
-      <main className="public-page public-empty" id="conteudo">
+      <main className="public-page public-empty" id="conteudo" tabIndex={-1}>
         <h1>Material não encontrado</h1>
         <p>O caminho não pertence ao catálogo publicado.</p>
         <Link href="/">Voltar ao atlas</Link>
@@ -59,7 +59,7 @@ export default async function MaterialPage({ params }: PageProps) {
           <a className="brand" href={`/?semester=${material.semesterCode}&view=map`} aria-label="DSM Atlas, início"><span className="brand-mark" aria-hidden="true" /><span>DSM ATLAS</span></a>
           <span className="public-context">Commit {material.ref.commitSha.slice(0, 7)}</span>
         </header>
-        <main className="public-page" id="conteudo">
+        <main className="public-page" id="conteudo" tabIndex={-1}>
           <nav className="breadcrumbs" aria-label="Navegação estrutural">
             <a href={`/?semester=${material.semesterCode}&view=map`}>{material.semesterCode}</a><span>/</span>
             <a href={`/disciplinas/${encodeURIComponent(material.disciplineCode)}?semester=${encodeURIComponent(material.semesterCode)}`}>{material.disciplineCode}</a><span>/</span>

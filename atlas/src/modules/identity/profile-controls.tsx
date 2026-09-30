@@ -6,7 +6,7 @@ import { anonymousClient } from "better-auth/client/plugins";
 import { startAuthentication } from "@simplewebauthn/browser";
 import { useEffect, useMemo, useState } from "react";
 import { createIndexedDbStudyWorkspace } from "../study/indexed-db-study-store";
-import { synchronizeStudy } from "../study/synchronize-study";
+import { synchronizeStudy, SyncCursorMismatchError } from "../study/synchronize-study";
 import type { RemoteStudyStore, SyncResult } from "../study/neon-study-store";
 
 const authClient = createAuthClient({ plugins: [anonymousClient(), passkeyClient()] });
@@ -61,7 +61,7 @@ export function ProfileControls() {
     setPending(true);
     setMessage("");
     try {
-      const result = await synchronizeStudy(workspace, httpStore, { deviceId: deviceId() });
+      const result = await synchronizeStudy(workspace, httpStore, { deviceId: deviceId(), resetDevice: resetDeviceId });
       setConflicts(result.conflicts);
       setMessage(result.conflicts.length ? "Sincronizado com conflitos visíveis abaixo." : "Dados de estudo sincronizados.");
     } catch {
@@ -114,6 +114,10 @@ export function ProfileControls() {
 const httpStore: RemoteStudyStore = {
   async sync(request) {
     const response = await fetch("/api/study/sync", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(request) });
+    // A 409 means the server rejects our cursor: the device lost its IndexedDB
+    // but kept its localStorage id. Surface it as a typed error so the caller
+    // can reset and resync as a new device instead of reporting "offline".
+    if (response.status === 409) throw new SyncCursorMismatchError();
     if (!response.ok) throw new Error("sync failed");
     return response.json() as Promise<SyncResult>;
   },
@@ -123,6 +127,12 @@ function deviceId(): string {
   const key = "dsm-atlas-device-id";
   const existing = localStorage.getItem(key);
   if (existing) return existing;
+  return resetDeviceId();
+}
+
+/** Mints and stores a fresh device id, discarding the rejected one. */
+function resetDeviceId(): string {
+  const key = "dsm-atlas-device-id";
   const created = crypto.randomUUID();
   localStorage.setItem(key, created);
   return created;

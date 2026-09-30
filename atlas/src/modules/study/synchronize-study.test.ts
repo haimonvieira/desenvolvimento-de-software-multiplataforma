@@ -142,4 +142,34 @@ describe("study synchronization", () => {
     expect(attempts).toBe(3);
     expect((await device.load()).outbox).toHaveLength(1);
   });
+
+  it("recovers a device whose IndexedDB cursor was evicted instead of staying wedged", async () => {
+    const server = await createProfileStore("profile-1");
+    const first = local(databases[0]);
+    await first.apply({ type: "note.save", note: note("guardada", "2026-09-28T10:00:00.000Z") });
+    const synced = await synchronizeStudy(first, server, { deviceId: "device-old", retryDelaysMs: [] });
+    expect(synced.cursor).not.toBe("0");
+
+    // The browser evicted IndexedDB but the localStorage device id survived: the
+    // store is empty (cursor 0) while the server still has device-old's cursor,
+    // so the next request would be rejected with `cursor mismatch`.
+    await deleteStudyDatabase(databases[0]);
+    const evicted = local(databases[0]);
+    const minted: string[] = [];
+    const recovered = await synchronizeStudy(evicted, server, {
+      deviceId: "device-old",
+      retryDelaysMs: [],
+      resetDevice: () => {
+        const id = `device-new-${minted.length + 1}`;
+        minted.push(id);
+        return id;
+      },
+    });
+
+    expect(minted).toEqual(["device-new-1"]);
+    // The authoritative full snapshot arrived: the earlier note is reconciled.
+    expect(recovered.snapshot.notes.map((entry) => entry.text)).toEqual(["guardada"]);
+    expect((await evicted.load()).notes.map((entry) => entry.text)).toEqual(["guardada"]);
+    expect(await evicted.cursor()).toBe(recovered.cursor);
+  });
 });

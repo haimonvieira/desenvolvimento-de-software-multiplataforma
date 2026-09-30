@@ -11,6 +11,12 @@ type StoredData = Progress | Favorite | Note | Flashcard | OutboxEntry | StudyRe
 export interface SyncableStudyWorkspace extends StudyWorkspace {
   reconcile(snapshot: StudySnapshot, conflicts: readonly NoteConflict[], acknowledgedIds: readonly string[], cursor: string): Promise<StudySnapshot>;
   cursor(): Promise<string>;
+  /**
+   * Drops the cached pending request and the local cursor, so the next sync is
+   * built from cursor 0 for a (possibly new) device id. Used to recover a device
+   * whose IndexedDB was evicted after the server already advanced its cursor.
+   */
+  resetSync(): Promise<void>;
   clear(): Promise<void>;
   pendingSyncRequest(deviceId: string): Promise<SyncRequest>;
 }
@@ -148,13 +154,26 @@ export function createIndexedDbStudyWorkspace(options: Readonly<{
     return load();
   }
 
+  async function resetSync(): Promise<void> {
+    const db = await open();
+    try {
+      const transaction = db.transaction("meta", "readwrite");
+      const meta = transaction.objectStore("meta");
+      meta.delete("sync-request");
+      meta.delete("sync-cursor");
+      await transactionDone(transaction);
+    } finally {
+      db.close();
+    }
+  }
+
   async function clear(): Promise<void> {
     const db = await open();
     db.close();
     await deleteStudyDatabase(databaseName, factory);
   }
 
-  return { load, apply, reconcile, cursor, pendingSyncRequest, clear };
+  return { load, apply, reconcile, cursor, pendingSyncRequest, resetSync, clear };
 }
 
 function storesFor(change: StudyChange): readonly [StoreName] {

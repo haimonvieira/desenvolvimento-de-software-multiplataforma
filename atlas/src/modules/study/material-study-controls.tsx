@@ -34,7 +34,9 @@ export function MaterialStudyControls({ material }: Readonly<{ material: Materia
     }
   }
 
-  useEffect(() => { void load(); }, []);
+  // Deferred to a microtask: `load` sets the pending flag synchronously, and a
+  // synchronous setState inside the effect body would cause a cascading render.
+  useEffect(() => { queueMicrotask(() => void load()); }, []);
 
   async function mutate(change: Parameters<typeof workspace.apply>[0]): Promise<boolean> {
     setPending(true);

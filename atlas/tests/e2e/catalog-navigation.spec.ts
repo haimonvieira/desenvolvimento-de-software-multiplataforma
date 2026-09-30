@@ -144,10 +144,10 @@ test("Atlas marks only the latest studying material in map and list", async ({ p
   }));
   const commitSha = catalogCommitSha;
   await page.evaluate(async ({ commitSha, references }) => {
-    const request = indexedDB.open("dsm-atlas", 2);
+    const request = indexedDB.open("dsm-atlas", 3);
     await new Promise<void>((resolve, reject) => {
       request.onupgradeneeded = () => {
-        for (const name of ["progress", "favorites", "notes", "flashcards", "meta", "outbox"]) request.result.createObjectStore(name, { keyPath: "id" });
+        for (const name of ["progress", "favorites", "notes", "flashcards", "meta", "outbox", "conflicts"]) request.result.createObjectStore(name, { keyPath: "id" });
       };
       request.onsuccess = () => resolve();
       request.onerror = () => reject(request.error);

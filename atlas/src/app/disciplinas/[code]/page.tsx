@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 import catalog from "../../../generated/catalog.json";
 import { StudyDisciplineMaterials } from "../../../modules/study/study-discipline-materials";
 import { createCatalogQuery } from "../../../modules/catalog/catalog-query";
@@ -23,7 +25,7 @@ export default async function DisciplinePage({ params, searchParams }: PageProps
       <main className="public-page public-empty" id="conteudo">
         <h1>Disciplina não encontrada</h1>
         <p>Confira o semestre e o código informados.</p>
-        <a href="/">Voltar ao atlas</a>
+        <Link href="/">Voltar ao atlas</Link>
       </main>
     );
   }

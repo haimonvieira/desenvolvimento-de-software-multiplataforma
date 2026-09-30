@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 import catalog from "../../../generated/catalog.json";
 import { createCatalogQuery } from "../../../modules/catalog/catalog-query";
 import { materialPathCandidates } from "../../../modules/catalog/material-path";
@@ -29,7 +31,7 @@ export default async function MaterialPage({ params }: PageProps) {
       <main className="public-page public-empty" id="conteudo">
         <h1>Material não encontrado</h1>
         <p>O caminho não pertence ao catálogo publicado.</p>
-        <a href="/">Voltar ao atlas</a>
+        <Link href="/">Voltar ao atlas</Link>
       </main>
     );
   }

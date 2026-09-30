@@ -1,3 +1,4 @@
+import { AdminAuthorizationError } from "../identity/admin-authorizer";
 import {
   BATCH_TTL_MS,
   MAX_BATCH_BYTES,
@@ -51,7 +52,13 @@ export function createBatchCreateHandler(
   const now = dependencies.now ?? Date.now;
   const randomId = dependencies.randomId ?? (() => crypto.randomUUID());
   return async function handleCreateBatch(request: Request): Promise<Response> {
-    const { adminId } = await dependencies.requireAdmin(request);
+    let adminId: string;
+    try {
+      ({ adminId } = await dependencies.requireAdmin(request));
+    } catch (error) {
+      if (error instanceof AdminAuthorizationError) return json(403, { error: "Proibido" });
+      throw error;
+    }
     const body = (await request.json().catch(() => null)) as {
       baseCommitSha?: unknown;
       files?: readonly RawFile[];

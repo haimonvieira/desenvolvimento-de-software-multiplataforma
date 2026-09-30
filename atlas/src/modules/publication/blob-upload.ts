@@ -1,3 +1,4 @@
+import { AdminAuthorizationError } from "../identity/admin-authorizer";
 import {
   MAX_BATCH_BYTES,
   MAX_FILE_BYTES,
@@ -36,7 +37,13 @@ export function createBlobUploadHandler(
     request: Request,
     batchId: string,
   ): Promise<Response> {
-    const { adminId } = await dependencies.requireAdmin(request);
+    let adminId: string;
+    try {
+      ({ adminId } = await dependencies.requireAdmin(request));
+    } catch (error) {
+      if (error instanceof AdminAuthorizationError) return json(403, { error: "Proibido" });
+      throw error;
+    }
     const form = await request.formData().catch(() => null);
     const destination = form?.get("destination");
     const file = form?.get("file");

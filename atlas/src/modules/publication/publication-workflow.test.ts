@@ -41,6 +41,7 @@ type FakeGit = GitHubMaterialSource & {
   failTree: boolean;
   failCommit: boolean;
   concurrentOnCommit: boolean;
+  throwAfterUpdateRef: boolean;
   head: () => string;
   blobSha: (bytes: Uint8Array) => Promise<string>;
 };
@@ -86,6 +87,7 @@ function createFakeGit(
     failTree: false,
     failCommit: false,
     concurrentOnCommit: false,
+    throwAfterUpdateRef: false,
     head: () => refs.get(REF) as string,
     blobSha: async (bytes) => fake.createBlob(bytes),
     async readHead() {
@@ -152,6 +154,7 @@ function createFakeGit(
       const commit = commits.get(sha);
       if (!commit || !current || commit.parents[0] !== current) return false;
       refs.set(ref, sha);
+      if (fake.throwAfterUpdateRef) throw new Error("ref response lost");
       return true;
     },
   };
@@ -357,6 +360,43 @@ describe("atomic batch publication", () => {
     expect(git.updateRefCalls).toHaveLength(1);
     expect(git.updateRefCalls[0].sha).not.toBe(concurrent);
     expect(git.commits.get(concurrent)?.message).toBe("concurrent");
+  });
+
+  it("publishes and audits when the ref PATCH applies but its response is lost", async () => {
+    const git = createFakeGit();
+    await seedBatch(git, { files: [await staged(git, "DSM1/ALP/novo.pdf")] });
+    git.throwAfterUpdateRef = true;
+    const audits: string[] = [];
+    const handler = createPublishHandler({
+      requireAdmin: async () => ({ adminId: "owner" }),
+      query,
+      source: git,
+      branch: BRANCH,
+      audit: async () => {
+        audits.push("published");
+      },
+    });
+    const review = await createPublicationWorkflow({ query, source: git, branch: BRANCH }).reviseBatch("batch-1", []);
+    expect(review.errors).toEqual([]);
+
+    const published = await handler(
+      new Request("https://atlas.example/api/admin/batches/batch-1", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ baseCommitSha: review.baseCommitSha, confirmation: review.confirmationPhrase }),
+      }),
+      "batch-1",
+    );
+
+    expect(published.status).toBe(200);
+    const body = await published.json() as { type: string; commitSha: string };
+    expect(body.type).toBe("published");
+    // The commit is live on the branch; a re-read confirms it and the batch is
+    // marked published instead of staying draft with a duplicate on retry.
+    expect(git.refs.get(REF)).toBe(body.commitSha);
+    expect(audits).toEqual(["published"]);
+    expect((await query(`SELECT status FROM upload_batch WHERE id = $1`, ["batch-1"]))[0]?.status).toBe("published");
+    expect(git.createCommitCalls).toHaveLength(1);
   });
 
   it("leaves the branch ref untouched when tree creation fails", async () => {

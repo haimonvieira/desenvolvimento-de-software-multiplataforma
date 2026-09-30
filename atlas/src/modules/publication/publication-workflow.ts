@@ -425,7 +425,16 @@ export function createPublicationWorkflow(
         return { type: "conflict", currentHead };
       }
     } catch {
-      return { type: "rejected", errors: [failure("", "github-failure")] };
+      // The ref PATCH may have applied while its response was lost. Re-read the
+      // ref before declaring failure: a retry would otherwise create a duplicate
+      // commit while this one is already live and the batch stays unpublished.
+      const currentHead = await source.readRef(ref).catch(() => null);
+      if (currentHead !== commit.sha) {
+        return currentHead !== null && currentHead !== head
+          ? { type: "conflict", currentHead }
+          : { type: "rejected", errors: [failure("", "github-failure")] };
+      }
+      // The ref already points at our commit: fall through to the guarded UPDATE.
     }
 
     const updated = await query(

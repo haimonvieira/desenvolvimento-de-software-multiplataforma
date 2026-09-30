@@ -48,6 +48,8 @@ const GROQ_TIMEOUT_MS = 25_000;
 export type GroqAdapterOptions = Readonly<{
   /** Server-side key (sponsored) or the visitor's key (BYOK, header-only). */
   apiKey: string;
+  /** Endpoint override; BYOK points it at the visitor's provider. Defaults to Groq. */
+  baseUrl?: string;
   model?: string;
   fallbackModel?: string;
   fetchImpl?: GroqFetch;
@@ -413,6 +415,7 @@ export function createGroqPublicTutorAi(options: GroqAdapterOptions): PublicTuto
 }> {
   const { apiKey } = options;
   if (!apiKey) throw new Error("A Groq API key is required");
+  const baseUrl = options.baseUrl ?? GROQ_BASE_URL;
   const primary = options.model ?? GROQ_PRIMARY_MODEL;
   const fallback = options.fallbackModel ?? GROQ_FALLBACK_MODEL;
   const fetchImpl = options.fetchImpl ?? ((url, init) => fetch(url, init));
@@ -438,7 +441,7 @@ export function createGroqPublicTutorAi(options: GroqAdapterOptions): PublicTuto
   }
 
   async function complete(input: TutorModelInput, budget: ReservedBudget, model: string): Promise<{ output: TutorModelOutput; usage: { inputTokens: number; outputTokens: number } }> {
-    const response = await postGroqChatCompletions({ baseUrl: GROQ_BASE_URL, apiKey, body: requestBody(input, budget, model, false), fetchImpl, timeoutMs });
+    const response = await postGroqChatCompletions({ baseUrl, apiKey, body: requestBody(input, budget, model, false), fetchImpl, timeoutMs });
     if (!response.ok) await throwForGroqStatus(response);
     const payload = (await response.json()) as GroqChatResponse;
     const usage = usageOf(payload);
@@ -470,7 +473,7 @@ export function createGroqPublicTutorAi(options: GroqAdapterOptions): PublicTuto
   }
 
   async function answerStream(input: TutorModelInput, budget: ReservedBudget, onToken: (token: string) => void, onStatus?: (status: string) => void) {
-    const response = await postGroqChatCompletions({ baseUrl: GROQ_BASE_URL, apiKey, body: requestBody(input, budget, primary, true), fetchImpl, timeoutMs });
+    const response = await postGroqChatCompletions({ baseUrl, apiKey, body: requestBody(input, budget, primary, true), fetchImpl, timeoutMs });
     if (!response.ok) await throwForGroqStatus(response);
     // The raw deltas are fragments of the answer JSON, not the answer: the
     // extractor decodes the top-level `"status"` and `"answer"` strings so the
@@ -504,6 +507,10 @@ export function createGroqPublicTutorAi(options: GroqAdapterOptions): PublicTuto
  * it is never persisted, logged, synchronized, cached or echoed. BYOK turns
  * skip the sponsored ledger (the visitor spends their own key) but keep the
  * same retrieval/citation/proposal discipline via the shared orchestrator.
+ *
+ * A visitor's provider serves one model, so degradation is disabled for it: the
+ * default fallback names a Groq model the provider does not have. The key-only
+ * Groq path keeps today's fallback untouched.
  */
 export function createByokGroqPublicTutorAi(
   key: string,
@@ -511,5 +518,10 @@ export function createByokGroqPublicTutorAi(
 ): PublicTutorAi {
   const trimmed = key.trim();
   if (!trimmed) throw new Error("A BYOK key is required");
-  return createGroqPublicTutorAi({ ...options, apiKey: trimmed });
+  const providerModel = options.baseUrl !== undefined && options.fallbackModel === undefined ? options.model : undefined;
+  return createGroqPublicTutorAi({
+    ...options,
+    ...(providerModel !== undefined ? { fallbackModel: providerModel } : {}),
+    apiKey: trimmed,
+  });
 }

@@ -6,7 +6,7 @@ import type { PublicTutorAi } from "../../../../integrations/ai/public-tutor-ai"
 import { TutorProviderError } from "../../../../integrations/ai/provider-failure";
 import { createByokGroqPublicTutorAi, createGroqPublicTutorAi } from "../../../../integrations/ai/groq-public-tutor-ai";
 import { createSqlExecutor } from "../../../../integrations/neon/db";
-import { readByokKey } from "../../../../modules/tutor/byok";
+import { readByokKey, resolveByokBaseUrl, type ByokProvider } from "../../../../modules/tutor/byok";
 import { createContentRetriever } from "../../../../modules/tutor/content-retriever";
 import type { ContentRetriever } from "../../../../modules/tutor/model";
 import { createStudyTutor, TUTOR_CONTEXT_LIMIT, type StudyTutor, type TutorTurnRequest } from "../../../../modules/tutor/study-tutor";
@@ -17,6 +17,17 @@ export const tutorTurnSchema = z.object({
   context: z.array(z.object({ path: z.string().min(1).max(500), commitSha: z.string().min(1).max(160) })).min(1).max(TUTOR_CONTEXT_LIMIT),
   mode: z.enum(["sponsored", "byok"]).default("sponsored"),
   turnstileToken: z.string().max(2048).optional(),
+  /**
+   * The BYOK provider descriptor. A body field, not a header, because the
+   * schema is `.strict()`: the descriptor is the one deliberate widening of the
+   * validated contract, and an invented `X-Provider-Base-Url` header would hide
+   * an input this consequential from the parse. The key stays out of it — it is
+   * read from `Authorization` only. Absent, BYOK keeps today's Groq endpoint.
+   */
+  provider: z.object({
+    baseUrl: z.string().trim().min(1).max(2048),
+    model: z.string().trim().min(1).max(200),
+  }).strict().optional(),
 }).strict();
 
 export type TutorTurnDependencies = Readonly<{
@@ -35,7 +46,9 @@ export type TutorTurnDependencies = Readonly<{
    * silently substitutes a provider.
    */
   sponsoredAi?: PublicTutorAi;
-  byokAi?(key: string): PublicTutorAi;
+  /** BYOK adapter for the request; `provider` is present only when the visitor
+   * sent a valid descriptor, and absent means the default endpoint. */
+  byokAi?(key: string, provider?: ByokProvider): PublicTutorAi;
 }>;
 
 function error(code: string, message: string, status: number): Response {
@@ -131,7 +144,15 @@ export function createTutorTurnHandler(dependencies: TutorTurnDependencies) {
       if (mode === "byok") {
         const key = readByokKey(request);
         if (!key) return error("BYOK_KEY_REQUIRED", "Informe sua chave de API.", 401);
-        const ai = dependencies.byokAi?.(key);
+        let provider: ByokProvider | undefined;
+        if (parsed.data.provider) {
+          // The descriptor is refused before the adapter exists, so a rejected
+          // URL never reaches a fetch and the key is never offered to it.
+          const baseUrl = resolveByokBaseUrl(parsed.data.provider.baseUrl);
+          if (!baseUrl) return error("INVALID_BYOK_PROVIDER", "Provedor BYOK inválido.", 400);
+          provider = { baseUrl, model: parsed.data.provider.model };
+        }
+        const ai = dependencies.byokAi?.(key, provider);
         if (!ai) return error("PROVIDER_UNBOUND", "Provedor BYOK ainda não configurado.", 503);
         const tutor = createStudyTutor({ retriever: dependencies.retriever, ai });
         const turnRequest: TutorTurnRequest = { question, context, mode: { type: "byok" } };
@@ -197,7 +218,7 @@ function handler(): ((request: Request) => Promise<Response>) | null {
       }),
     firstUseGate: turnstileGateFromEnv(),
     sponsoredAi,
-    byokAi: (key) => createByokGroqPublicTutorAi(key),
+    byokAi: (key, provider) => createByokGroqPublicTutorAi(key, provider ?? {}),
   });
 }
 

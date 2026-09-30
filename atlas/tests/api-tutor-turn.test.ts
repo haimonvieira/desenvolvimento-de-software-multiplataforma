@@ -3,6 +3,8 @@ import { describe, expect, it } from "vitest";
 import catalog from "../src/generated/catalog.json";
 import { createTutorTurnHandler, type TutorTurnDependencies } from "../src/app/api/tutor/turn/route";
 import { createFakePublicTutorAi, type PublicTutorAi } from "../src/integrations/ai/public-tutor-ai";
+import { createByokGroqPublicTutorAi } from "../src/integrations/ai/groq-public-tutor-ai";
+import type { GroqFetch } from "../src/integrations/ai/groq-transport";
 import { TutorProviderError } from "../src/integrations/ai/provider-failure";
 import { createCatalogQuery } from "../src/modules/catalog/catalog-query";
 import type { CatalogData } from "../src/modules/catalog/model";
@@ -295,5 +297,109 @@ describe("POST /api/tutor/turn", () => {
     expect(seenKeys).toEqual([KEY]);
     expect(reservations).toBe(0);
     expect(JSON.stringify(await response.clone().json())).not.toContain(KEY);
+  });
+});
+
+describe("BYOK provider descriptor", () => {
+  const providerTurn = { ...turn, mode: "byok" as const };
+
+  it("keeps the default endpoint when the descriptor is absent", async () => {
+    const seen: (unknown)[] = [];
+    const ai = createFakePublicTutorAi([{ answer: "ok", citations: [found], proposedNotebookActions: [] }]);
+    const response = await post({
+      retriever,
+      byokAi: (key, provider) => {
+        seen.push(provider);
+        return ai;
+      },
+    }, providerTurn, { authorization: `Bearer ${KEY}` });
+
+    expect(response.status).toBe(200);
+    expect(seen).toEqual([undefined]);
+  });
+
+  it("refuses an unsafe descriptor before building the adapter", async () => {
+    const unsafe = [
+      "http://api.example.com/v1",
+      "api.example.com/v1",
+      "https://127.0.0.1/v1",
+      "https://[::1]/v1",
+      "https://localhost/v1",
+      "https://box.local/v1",
+      "https://foo.internal/v1",
+      "https://intranet/v1",
+      "https://user:pass@api.example.com/v1",
+      "https://api.example.com/v1/resource",
+    ];
+    let adapters = 0;
+    for (const baseUrl of unsafe) {
+      const response = await post({
+        retriever,
+        byokAi: () => {
+          adapters += 1;
+          return createFakePublicTutorAi([]);
+        },
+      }, { ...providerTurn, provider: { baseUrl, model: "visitor-model" } }, { authorization: `Bearer ${KEY}` });
+
+      expect(response.status, baseUrl).toBe(400);
+      expect(await response.json(), baseUrl).toEqual({ error: { code: "INVALID_BYOK_PROVIDER", message: "Provedor BYOK inválido." } });
+    }
+    expect(adapters).toBe(0);
+  });
+
+  it("reaches the visitor's base URL with the visitor's model", async () => {
+    const calls: { url: string; body: unknown }[] = [];
+    const fetchImpl: GroqFetch = async (url, init) => {
+      calls.push({ url, body: typeof init.body === "string" ? JSON.parse(init.body) : null });
+      return new Response(JSON.stringify({
+        id: "chatcmpl-1",
+        object: "chat.completion",
+        created: 1,
+        model: "visitor-model",
+        choices: [{
+          index: 0,
+          finish_reason: "stop",
+          message: {
+            role: "assistant",
+            content: JSON.stringify({
+              answer: "A lógica estuda o raciocínio.",
+              citations: [{ path: found.material.path, commitSha: found.material.commitSha, locator: { type: "lines", start: 1, end: 2 }, quote: "linha dois" }],
+              proposedNotebookActions: [],
+            }),
+          },
+        }],
+        usage: { prompt_tokens: 10, completion_tokens: 5, total_tokens: 15 },
+      }), { status: 200, headers: { "content-type": "application/json" } });
+    };
+
+    const response = await post({
+      retriever,
+      byokAi: (key, provider) => createByokGroqPublicTutorAi(key, { ...provider, fetchImpl }),
+    }, { ...providerTurn, provider: { baseUrl: "https://provider.example/openai/v1", model: "visitor-model" } }, { authorization: `Bearer ${KEY}` });
+
+    expect(response.status).toBe(200);
+    expect(calls).toHaveLength(1);
+    expect(calls[0]!.url).toBe("https://provider.example/openai/v1/chat/completions");
+    const requestBody = calls[0]!.body;
+    const model = typeof requestBody === "object" && requestBody !== null && "model" in requestBody ? requestBody.model : undefined;
+    expect(model).toBe("visitor-model");
+  });
+
+  it("keeps the server provider on a sponsored turn even when a descriptor is sent", async () => {
+    const sponsored = createFakePublicTutorAi([{ answer: "patrocinado", citations: [found], proposedNotebookActions: [] }]);
+    let byok = 0;
+    const response = await post({
+      retriever,
+      ledger: ledgerWith({ type: "reserved", reservationId: "r1", maxInputTokens: 4_000, maxOutputTokens: 1_000, maxToolCalls: 4 }),
+      subjectKey: async () => "s1",
+      sponsoredAi: sponsored,
+      byokAi: () => {
+        byok += 1;
+        return sponsored;
+      },
+    }, { ...turn, provider: { baseUrl: "https://provider.example/v1", model: "visitor-model" } });
+
+    expect(response.status).toBe(200);
+    expect(byok).toBe(0);
   });
 });

@@ -96,6 +96,9 @@ export default async function Home({ searchParams }: HomeProps) {
           </section>
           <ProfileControls />
         </main>
+        <footer className="site-footer">
+          <a href="/admin/entrar">Administração</a>
+        </footer>
       </div>
     </>
   );

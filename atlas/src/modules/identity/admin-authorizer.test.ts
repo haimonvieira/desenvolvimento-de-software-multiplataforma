@@ -108,6 +108,42 @@ describe("positive administrative authorization", () => {
     expect(identity).toEqual({ adminId: "owner", githubUserId: ownerGithubId });
   });
 
+  it("creates the owner identity exactly once across repeated bootstrap visits", async () => {
+    let stored: { adminId: string; githubUserId: string } | null = null;
+    let creates = 0;
+    const handler = createAdminBootstrapHandler(createAdminAuthorizer(dependencies({
+      identity: async () => stored,
+      createIdentity: async ({ adminId, githubUserId }) => {
+        creates += 1;
+        stored = { adminId, githubUserId };
+        return { adminId, created: true };
+      },
+    })));
+
+    expect((await handler(request("/api/admin/bootstrap", {}))).status).toBe(201);
+    expect((await handler(request("/api/admin/bootstrap", {}))).status).toBe(200);
+    expect((await handler(request("/api/admin/bootstrap", {}))).status).toBe(200);
+
+    expect(creates).toBe(1);
+    expect(stored).toEqual({ adminId: "owner", githubUserId: ownerGithubId });
+  });
+
+  it("refuses a non-owner GitHub account without creating an identity row", async () => {
+    let creates = 0;
+    const response = await createAdminBootstrapHandler(createAdminAuthorizer(dependencies({
+      githubIdentity: async () => ({ userId: "87654321" }),
+      identity: async () => null,
+      createIdentity: async () => {
+        creates += 1;
+        return { adminId: "owner", created: true };
+      },
+    })))(request("/api/admin/bootstrap", {}));
+
+    expect(response.status).toBe(403);
+    expect(creates).toBe(0);
+    expect(await response.json()).toEqual({ error: "Proibido" });
+  });
+
   it.each<[string, Partial<AdminDependencies>]>([
     ["wrong owner", { githubIdentity: async () => ({ userId: "87654321" }) }],
     ["non-numeric configured owner", { configuredOwnerGithubId: "octocat" }],

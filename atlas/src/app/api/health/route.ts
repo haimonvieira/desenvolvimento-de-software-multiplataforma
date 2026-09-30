@@ -5,6 +5,7 @@ import {
   createGitHubInstallationTransport,
   githubAppConfigured,
   repositoryFromEnv,
+  type GitHubAppDeps,
   type GitHubAppEnv,
 } from "../../../integrations/github/github-material-source";
 
@@ -26,13 +27,19 @@ async function checkDatabase() {
  * real installation token instead of a bare token: an App credential that has
  * been revoked turns the check red rather than reporting a false "ok".
  */
-async function checkGitHub() {
-  const response = await createGitHubInstallationTransport(runtimeEnv)(
-    `/repos/${repositoryFromEnv(runtimeEnv)}/commits/HEAD`,
-    { method: "GET" },
-  );
-
-  if (response.status >= 400) throw new Error(`GitHub returned ${response.status}`);
+export function createGitHubHealthCheck(
+  runtime: RuntimeEnv,
+  deps: GitHubAppDeps = {},
+): Check {
+  return async () => {
+    const response = await createGitHubInstallationTransport(runtime, deps)(
+      `/repos/${repositoryFromEnv(runtime)}/commits/HEAD`,
+      { method: "GET" },
+    );
+    // Only the status matters here, so the body is released on both paths.
+    await response.cancel?.();
+    if (response.status >= 400) throw new Error(`GitHub returned ${response.status}`);
+  };
 }
 
 export function createHealthHandler(adapters: HealthAdapters) {
@@ -69,5 +76,7 @@ function combine(database: HealthState, github: HealthState): HealthState {
 
 export const GET = createHealthHandler({
   database: runtimeEnv.DATABASE_URL ? checkDatabase : undefined,
-  github: githubAppConfigured(runtimeEnv) ? checkGitHub : undefined,
+  github: githubAppConfigured(runtimeEnv)
+    ? createGitHubHealthCheck(runtimeEnv)
+    : undefined,
 });

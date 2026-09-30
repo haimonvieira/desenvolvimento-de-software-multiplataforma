@@ -3,7 +3,12 @@ import { createPrivateKey, createSign } from "node:crypto";
 export type GitHubTransport = (
   path: string,
   init: { method: string; body?: string },
-) => Promise<{ status: number; json: () => Promise<unknown> }>;
+) => Promise<{
+  status: number;
+  json: () => Promise<unknown>;
+  /** Releases the body when the caller only needs the status. */
+  cancel?: () => Promise<void>;
+}>;
 
 export type GitHubAppConfig = Readonly<{
   appIdEnv: string;
@@ -187,6 +192,17 @@ const JWT_LIFETIME_SECONDS = 540;
 const JWT_CLOCK_SKEW_SECONDS = 60;
 /** Re-mint this long before `expires_at` so a request never races the expiry. */
 const TOKEN_EXPIRY_MARGIN_MS = 60_000;
+/**
+ * GitHub documents a one-hour installation token lifetime. The cache never
+ * trusts a longer `expires_at` than this, so a bad provider value cannot keep a
+ * stale token in use.
+ */
+const TOKEN_MAX_LIFETIME_MS = 3_600_000;
+
+/** The `repositories` body takes repository *names*, not `owner/name`. */
+function repositoryNameOf(repository: string): string {
+  return repository.slice(repository.lastIndexOf("/") + 1);
+}
 
 export type GitHubAppJwtClaims = Readonly<{ iat: number; exp: number; iss: string }>;
 
@@ -258,14 +274,16 @@ export function createInstallationTokenProvider(
   const config = deps.config ?? DEFAULT_GITHUB_APP_CONFIG;
 
   return async () => {
+    const nowMs = now();
     const appId = requiredEnv(env, config.appIdEnv);
     const privateKey = requiredEnv(env, config.privateKeyEnv);
     const installationId = requiredEnv(env, config.installationIdEnv);
+    const repositoryName = repositoryNameOf(requiredEnv(env, config.repositoryEnv));
     const cacheKey = `${appId}:${installationId}`;
     const cached = cache.get(cacheKey);
-    if (cached && cached.expiresAtMs - TOKEN_EXPIRY_MARGIN_MS > now()) return cached.token;
+    if (cached && cached.expiresAtMs - TOKEN_EXPIRY_MARGIN_MS > nowMs) return cached.token;
 
-    const jwt = sign(githubAppJwtClaims(appId, now()), privateKey);
+    const jwt = sign(githubAppJwtClaims(appId, nowMs), privateKey);
     const response = await fetchImpl(
       `${GITHUB_API_BASE_URL}/app/installations/${installationId}/access_tokens`,
       {
@@ -273,8 +291,12 @@ export function createInstallationTokenProvider(
         headers: {
           authorization: `Bearer ${jwt}`,
           accept: "application/vnd.github+json",
+          "content-type": "application/json",
           "x-github-api-version": GITHUB_API_VERSION,
         },
+        // Least privilege: the token covers only the repository the routes use,
+        // never every repository the installation was granted.
+        body: JSON.stringify({ repositories: [repositoryName] }),
       },
     );
     if (response.status >= 400) {
@@ -286,11 +308,12 @@ export function createInstallationTokenProvider(
       expires_at?: unknown;
     } | null;
     const token = typeof payload?.token === "string" ? payload.token : "";
-    const expiresAtMs =
+    const reportedExpiryMs =
       typeof payload?.expires_at === "string" ? Date.parse(payload.expires_at) : Number.NaN;
-    if (!token || !Number.isFinite(expiresAtMs)) {
+    if (!token || !Number.isFinite(reportedExpiryMs)) {
       throw new Error("GitHub installation token response is unusable");
     }
+    const expiresAtMs = Math.min(reportedExpiryMs, nowMs + TOKEN_MAX_LIFETIME_MS);
     cache.set(cacheKey, { token, expiresAtMs });
     return token;
   };
@@ -317,7 +340,11 @@ export function createGitHubInstallationTransport(
       },
       body: init.body,
     });
-    return { status: response.status, json: () => response.json() as Promise<unknown> };
+    return {
+      status: response.status,
+      json: () => response.json() as Promise<unknown>,
+      cancel: () => response.body?.cancel().catch(() => undefined) ?? Promise.resolve(),
+    };
   };
 }
 

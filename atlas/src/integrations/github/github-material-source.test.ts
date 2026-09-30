@@ -149,7 +149,7 @@ describe("GitHub App installation tokens", () => {
     ).toBe(true);
   });
 
-  it("exchanges the App JWT once for an installation token scoped to the installation", async () => {
+  it("exchanges the App JWT once for an installation token scoped to the installation and the repository", async () => {
     const calls: { url: string; init: RequestInit }[] = [];
     const token = createInstallationTokenProvider(appEnv, {
       fetchImpl: tokenFetch(calls, () => 1_700_000_000_000),
@@ -163,11 +163,55 @@ describe("GitHub App installation tokens", () => {
 
     expect(calls.map((call) => call.url)).toEqual([TOKEN_URL]);
     expect(calls[0]!.init.method).toBe("POST");
-    expect(calls[0]!.init.body).toBeUndefined();
     expect(calls[0]!.init.headers).toMatchObject({
       authorization: "Bearer signed.app.jwt",
       accept: "application/vnd.github+json",
     });
+    // Least privilege: the token covers only the repository the routes use,
+    // never every repository the installation was granted.
+    expect(JSON.parse(calls[0]!.init.body as string)).toEqual({ repositories: ["repo"] });
+  });
+
+  it("scopes the token to the repository name from an owner/name pair", async () => {
+    const calls: { url: string; init: RequestInit }[] = [];
+    const token = createInstallationTokenProvider(
+      { ...appEnv, GITHUB_REPOSITORY: "some-owner/dsm-atlas" },
+      {
+        fetchImpl: tokenFetch(calls, () => 1_700_000_000_000),
+        sign: () => "signed.app.jwt",
+        cache: new Map(),
+      },
+    );
+
+    await token();
+
+    expect(JSON.parse(calls[0]!.init.body as string)).toEqual({ repositories: ["dsm-atlas"] });
+  });
+
+  it("caps the cached expiry at one hour even when GitHub reports a far-future date", async () => {
+    const calls: { url: string; init: RequestInit }[] = [];
+    let clock = 1_700_000_000_000;
+    const token = createInstallationTokenProvider(appEnv, {
+      fetchImpl: async (url, init) => {
+        calls.push({ url, init });
+        // GitHub documents a 1-hour lifetime; a far-future value must not keep
+        // the token cached past its real validity.
+        return jsonResponse({ token: "ghs_installation", expires_at: "3000-01-01T00:00:00Z" });
+      },
+      sign: () => "signed.app.jwt",
+      now: () => clock,
+      cache: new Map(),
+    });
+
+    await token();
+    clock += 3_500_000;
+    await token();
+
+    expect(calls).toHaveLength(1);
+    // Past the local one-hour cap (minus the expiry margin), it re-mints.
+    clock += 100_000;
+    await token();
+    expect(calls).toHaveLength(2);
   });
 
   it("re-mints once the cached token is inside the expiry margin", async () => {
@@ -261,6 +305,28 @@ describe("GitHub App installation tokens", () => {
     expect(githubAppConfigured({ ...appEnv, GITHUB_APP_PRIVATE_KEY: undefined })).toBe(false);
     expect(githubAppConfigured({ ...appEnv, GITHUB_INSTALLATION_ID: undefined })).toBe(false);
     expect(githubAppConfigured({ ...appEnv, GITHUB_REPOSITORY: undefined })).toBe(false);
+  });
+
+  it("releases the data response body for callers that only read the status", async () => {
+    let cancelled = false;
+    const body = new ReadableStream({
+      cancel() {
+        cancelled = true;
+      },
+    });
+    const transport = createGitHubInstallationTransport(appEnv, {
+      fetchImpl: async (url, init) => {
+        if (url === TOKEN_URL) return tokenFetch([], () => 1_700_000_000_000)(url, init);
+        return new Response(body, { status: 200 });
+      },
+      sign: () => "signed.app.jwt",
+      cache: new Map(),
+    });
+
+    const response = await transport("/repos/owner/repo/commits/HEAD", { method: "GET" });
+    await response.cancel?.();
+
+    expect(cancelled).toBe(true);
   });
 
   it("sends the installation token, never the App JWT, to the data endpoints", async () => {

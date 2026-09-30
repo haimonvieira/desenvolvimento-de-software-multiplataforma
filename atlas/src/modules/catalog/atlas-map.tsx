@@ -23,9 +23,11 @@ export function AtlasMap({ currentMaterial, disciplines, materials, semester }: 
     <section className="atlas-map" data-representation="map" aria-labelledby="atlas-map-title" style={{ "--discipline-count": disciplines.length } as React.CSSProperties}>
       <h2 className="sr-only" id="atlas-map-title">Mapa de disciplinas de {semester}</h2>
       <dl className="legend" aria-label="Legenda do mapa">
-        <div><dt>Linha</dt><dd><span className="legend-route" aria-hidden="true" /> Disciplina</dd></div>
-        <div><dt><span className="legend-node" aria-hidden="true" /></dt><dd>Material</dd></div>
-        <div><dt><span className="legend-node legend-node--current" aria-hidden="true" /></dt><dd>Você está aqui</dd></div>
+        <div><dt>Linha — disciplina</dt><dd><span className="legend-route" aria-hidden="true" /></dd></div>
+        <div><dt>Estação — material</dt><dd><span className="legend-node" aria-hidden="true" /></dd></div>
+        <div><dt>Estação cheia</dt><dd><span className="legend-node legend-node--current" aria-hidden="true" /></dd></div>
+        <div><dt>Linha coral — recentes</dt><dd><span className="legend-route legend-route--recent" aria-hidden="true" /></dd></div>
+        <div><dt>Linha amarela — cruzamento</dt><dd><span className="legend-route legend-route--crossing" aria-hidden="true" /></dd></div>
       </dl>
       <svg className="atlas-geometry" aria-hidden="true" viewBox="0 0 720 100" preserveAspectRatio="none">
         {disciplines.map((discipline, index) => (
@@ -42,7 +44,11 @@ export function AtlasMap({ currentMaterial, disciplines, materials, semester }: 
             <ul className="atlas-materials" aria-label={`Materiais de ${discipline.name}`} key={discipline.code}>
               {disciplineMaterials.map((material, index) => (
                 <li key={material.ref.path} style={{ left: percent(index, disciplineMaterials.length) }}>
-                  <MaterialLink className={`atlas-station${sameRef(material.ref, currentMaterial) ? " atlas-station--current" : ""}`} material={material} />
+                  <MaterialLink
+                    className={`atlas-station${sameRef(material.ref, currentMaterial) ? " atlas-station--current" : ""}`}
+                    material={material}
+                    title={`${material.name} — ${material.extension.slice(1).toUpperCase() || "arquivo"}`}
+                  />
                   {sameRef(material.ref, currentMaterial) && <span className="current-marker current-marker--map">Você está aqui</span>}
                 </li>
               ))}

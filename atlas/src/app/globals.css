@@ -59,6 +59,9 @@ a { color: inherit; }
   outline-offset: 3px;
 }
 
+/* Programmatic focus target for the skip link: focusable, never ringed. */
+main[tabindex="-1"]:focus { outline: 0; }
+
 input { caret-color: var(--color-route); }
 
 ::-webkit-scrollbar { width: 0.75rem; height: 0.75rem; }
@@ -298,11 +301,10 @@ main {
   z-index: 8;
   top: 1.15rem;
   left: 1.6rem;
-  display: flex;
-  gap: 0.65rem;
-  align-items: center;
+  display: grid;
+  gap: 0.3rem;
   margin: 0;
-  padding: 0.5rem 0.65rem;
+  padding: 0.55rem 0.7rem;
   background: var(--color-paper-raised);
   border: var(--border-hairline);
   font-family: var(--font-data);
@@ -312,9 +314,13 @@ main {
   text-transform: uppercase;
 }
 
-.legend div { display: flex; gap: 0.35rem; align-items: center; }
+/* Symbol right after its label, same row: the pairing is the whole point. */
+.legend div { display: flex; gap: 0.45rem; align-items: center; justify-content: space-between; min-width: 13.5rem; }
+.legend dd { display: flex; align-items: center; }
 .legend dt, .legend dd { margin: 0; }
 .legend-route { display: inline-block; width: 1.75rem; height: 0.3rem; border-radius: var(--radius-station); background: var(--color-route); }
+.legend-route--recent { background: var(--color-recent); }
+.legend-route--crossing { background: var(--color-crossing); }
 .legend-node { display: inline-block; width: 0.65rem; height: 0.65rem; border: 2px solid var(--color-ink); border-radius: var(--radius-station); background: var(--color-paper); }
 .legend-node--current { background: var(--color-progress); }
 .illustrative-note { position: absolute; z-index: 8; right: 1.5rem; top: 1.15rem; max-width: 17rem; margin: 0; padding: 0.5rem 0.65rem; border: var(--border-hairline); background: var(--color-paper-raised); font-size: 0.65rem; }
@@ -361,6 +367,10 @@ main {
 
 .search-results { padding: var(--space-5); border-top: var(--border-hairline); border-bottom: var(--border-hairline); background: var(--color-paper-raised); }
 .search-results header, .material-group header { display: flex; justify-content: space-between; align-items: baseline; gap: var(--space-4); border-bottom: var(--border-strong); }
+details.material-group > summary { display: flex; justify-content: space-between; align-items: baseline; gap: var(--space-4); border-bottom: var(--border-strong); cursor: pointer; list-style: none; }
+details.material-group > summary::-webkit-details-marker { display: none; }
+details.material-group > summary::after { content: ""; width: 0.45rem; height: 0.45rem; border-right: 2px solid var(--color-ink); border-bottom: 2px solid var(--color-ink); translate: 0 -25%; rotate: 45deg; transition: rotate var(--duration-fast) var(--ease-out); }
+details.material-group[open] > summary::after { rotate: 225deg; }
 .search-results h2, .material-group h2 { margin: 0 0 var(--space-3); font-family: var(--font-display); font-size: clamp(1.3rem, 2.5vw, 2rem); }
 .search-results header span, .material-group header span { font-family: var(--font-data); font-size: 0.62rem; text-transform: uppercase; }
 .search-results ul, .material-group ul { margin: 0; padding: 0; list-style: none; }
@@ -384,6 +394,9 @@ main {
 .material-heading dt { color: var(--color-ink-soft); font-family: var(--font-data); font-size: .58rem; text-transform: uppercase; }
 .material-heading dd { margin: var(--space-1) 0 0; font-weight: 600; }
 .material-groups { display: grid; gap: var(--space-6); }
+.discipline-empty { border: var(--border-hairline); border-style: dashed; padding: var(--space-6) var(--space-5); }
+.discipline-empty h2 { margin: 0 0 var(--space-2); font-family: var(--font-display); font-size: clamp(1.4rem, 2.5vw, 2rem); }
+.discipline-empty p { margin: 0; max-width: var(--body-measure); color: var(--color-ink-soft); font-size: 0.75rem; }
 /* Indent a folder by its depth from the discipline root, clamped at six steps
    so the deepest catalogue path — eleven levels in TPI — still fits a 390px
    viewport instead of pushing the material names off screen. */
@@ -516,7 +529,7 @@ main {
   .study-editors form { padding: var(--space-4); }
   .profile-controls { margin: var(--space-4); }
   .profile-controls article { grid-template-columns: 1fr; }
-  .material-group header { align-items: start; flex-direction: column; gap: 0; }
+  .material-group header, details.material-group > summary { align-items: start; flex-direction: column; gap: 0; }
   .native-preview object, .native-preview iframe { min-height: 55vh; }
   .text-preview pre { padding: var(--space-4); font-size: .7rem; }
   .search-results { padding: var(--space-4); }
@@ -527,5 +540,5 @@ main {
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; scroll-behavior: auto !important; }
   .atlas-route { animation: none !important; stroke-dashoffset: 0; }
-  .you-are-here, .skip-link:focus { translate: 0; }
+  .skip-link:focus { translate: 0; }
 }

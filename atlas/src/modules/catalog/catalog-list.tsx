@@ -7,8 +7,8 @@ function materialHref(material: Material): string {
   return `/materiais/${path}?semester=${encodeURIComponent(material.semesterCode)}`;
 }
 
-export function MaterialLink({ className, material }: Readonly<{ className?: string; material: Material }>) {
-  return <a className={className} data-material-link href={materialHref(material)}>{material.name}</a>;
+export function MaterialLink({ className, material, title }: Readonly<{ className?: string; material: Material; title?: string }>) {
+  return <a className={className} data-material-link href={materialHref(material)} title={title}>{material.name}</a>;
 }
 
 export function DisciplineLink({ discipline }: Readonly<{ discipline: CatalogDiscipline }>) {

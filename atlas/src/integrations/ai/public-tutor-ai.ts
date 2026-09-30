@@ -1,6 +1,6 @@
 import type { MaterialRef } from "../../modules/catalog/model";
 import type { RetrievedExcerpt } from "../../modules/tutor/model";
-import type { ReservedBudget } from "../../modules/tutor/usage-ledger";
+import type { ReservedBudget, TokenUsage } from "../../modules/tutor/usage-ledger";
 
 /**
  * A tool the model may ask the orchestrator to run. The name is matched against
@@ -53,6 +53,17 @@ export type TutorModelOutput = Readonly<{
  */
 export interface PublicTutorAi {
   answer(input: TutorModelInput, budget: ReservedBudget): Promise<TutorModelOutput>;
+  /**
+   * Optional streaming variant: `onToken` receives readable answer text as it
+   * becomes available. The resolved output is exactly what `answer` returns, so
+   * a streamed turn and a plain turn cannot disagree about what the model said.
+   * A double that omits it simply never streams.
+   */
+  answerStream?(
+    input: TutorModelInput,
+    budget: ReservedBudget,
+    onToken: (token: string) => void,
+  ): Promise<Readonly<{ output: TutorModelOutput; usage: TokenUsage }>>;
 }
 
 /**

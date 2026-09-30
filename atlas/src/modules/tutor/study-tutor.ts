@@ -12,6 +12,7 @@ import {
   runSponsoredTurn,
   type ReservedBudget,
   type SponsoredTurnResult,
+  type TokenUsage,
   type UsageLedger,
 } from "./usage-ledger";
 
@@ -62,7 +63,21 @@ export type TutorTurnOutcome =
 
 export interface StudyTutor {
   answerTurn(request: TutorTurnRequest): Promise<TutorTurnOutcome>;
+  /**
+   * Streaming variant of `answerTurn`. It reserves budget before the first
+   * provider call, so a denied turn yields `denied` before any `answer` event —
+   * the caller can answer it with the ordinary JSON instead of opening a stream.
+   * The final `result` event carries exactly the output `answerTurn` would.
+   */
+  answerTurnStream(request: TutorTurnRequest): AsyncGenerator<TutorStreamEvent>;
 }
+
+export type TutorDenialReason = "minute" | "daily" | "global" | "disabled";
+
+export type TutorStreamEvent =
+  | Readonly<{ type: "denied"; reason: TutorDenialReason; resetsAt: string }>
+  | Readonly<{ type: "answer"; delta: string }>
+  | Readonly<{ type: "result"; result: TutorTurnResult }>;
 
 export type StudyTutorDependencies = Readonly<{
   retriever: ContentRetriever;
@@ -133,11 +148,26 @@ export function createStudyTutor(dependencies: StudyTutorDependencies): StudyTut
   const retrievalLimit = dependencies.retrievalLimit ?? DEFAULT_RETRIEVAL_LIMIT;
   const { retriever, ai } = dependencies;
 
-  async function runTurn(request: TutorTurnRequest, budget: ReservedBudget): Promise<SponsoredTurnResult<TutorTurnResult>> {
+  async function runTurn(
+    request: TutorTurnRequest,
+    budget: ReservedBudget,
+    onAnswer?: (delta: string) => void,
+  ): Promise<SponsoredTurnResult<TutorTurnResult>> {
     const excerpts: RetrievedExcerpt[] = [...await retriever.retrieve(request.context, request.question, retrievalLimit)];
     const toolResults: TutorToolResult[] = [];
     let used = 0;
-    let output = await ai.answer(buildInput(request, excerpts, toolResults, budget.maxToolCalls - used), budget);
+    let usage: TokenUsage | undefined;
+    // A streaming turn reads readable answer text from the provider as it
+    // arrives; anything without `answerStream` (the deterministic double, a
+    // BYOK adapter that does not stream) falls back to the one-shot call, which
+    // yields the same validated output.
+    const ask = async (input: TutorModelInput): Promise<TutorModelOutput> => {
+      if (!onAnswer || !ai.answerStream) return ai.answer(input, budget);
+      const streamed = await ai.answerStream(input, budget, onAnswer);
+      usage = streamed.usage;
+      return streamed.output;
+    };
+    let output = await ask(buildInput(request, excerpts, toolResults, budget.maxToolCalls - used));
 
     for (;;) {
       const room = budget.maxToolCalls - used;
@@ -149,10 +179,71 @@ export function createStudyTutor(dependencies: StudyTutorDependencies): StudyTut
         toolResults.push(Object.freeze({ name: call.name, query: call.query, excerpts: found }));
         used += 1;
       }
-      output = await ai.answer(buildInput(request, excerpts, toolResults, budget.maxToolCalls - used), budget);
+      output = await ask(buildInput(request, excerpts, toolResults, budget.maxToolCalls - used));
     }
 
-    return { output: finalize(output, excerpts) };
+    return { output: finalize(output, excerpts), usage };
+  }
+
+  /**
+   * Drives `runTurn` while forwarding the provider's readable text to the
+   * consumer. The reservation runs inside `runSponsoredTurn` before its first
+   * provider call, so a denied turn reaches the `denied` yield with no `answer`
+   * event and no spend.
+   */
+  async function* answerTurnStream(request: TutorTurnRequest): AsyncGenerator<TutorStreamEvent> {
+    const pending: string[] = [];
+    let wake: (() => void) | null = null;
+    let finished = false;
+    const onAnswer = (delta: string) => {
+      pending.push(delta);
+      wake?.();
+    };
+
+    let denied: Readonly<{ reason: TutorDenialReason; resetsAt: string }> | null = null;
+    let result: TutorTurnResult | null = null;
+    const run = (async () => {
+      if (request.mode.type === "byok") {
+        result = (await runTurn(request, byokBudget(), onAnswer)).output;
+        return;
+      }
+      const ledger = dependencies.ledger;
+      if (!ledger) throw new Error("A usage ledger is required for sponsored turns");
+      const outcome = await runSponsoredTurn(
+        ledger,
+        { scope: "public", subjectKey: request.mode.subjectKey },
+        (budget) => runTurn(request, budget, onAnswer),
+      );
+      if (outcome.decision.type === "denied") {
+        denied = { reason: outcome.decision.reason, resetsAt: outcome.decision.resetsAt };
+        return;
+      }
+      if (!outcome.output) throw new Error("A reserved turn produced no output");
+      result = outcome.output;
+    })();
+    // `finished` flips on both settle paths so the consumer stops waiting.
+    const settled = run.finally(() => {
+      finished = true;
+      wake?.();
+    });
+
+    for (;;) {
+      while (pending.length > 0) yield { type: "answer", delta: pending.shift()! };
+      if (finished) break;
+      await new Promise<void>((resolve) => {
+        wake = resolve;
+        if (pending.length > 0 || finished) resolve();
+      });
+    }
+    await settled;
+    // `denied` and `result` are assigned inside the async closure above; TS
+    // narrows them from their null initializers, so assert the union back.
+    const denial = denied as Readonly<{ reason: TutorDenialReason; resetsAt: string }> | null;
+    if (denial) {
+      yield { type: "denied", reason: denial.reason, resetsAt: denial.resetsAt };
+      return;
+    }
+    yield { type: "result", result: result! };
   }
 
   return Object.freeze({
@@ -175,5 +266,6 @@ export function createStudyTutor(dependencies: StudyTutorDependencies): StudyTut
       if (!outcome.output) throw new Error("A reserved turn produced no output");
       return { type: "answered", result: outcome.output };
     },
+    answerTurnStream,
   });
 }

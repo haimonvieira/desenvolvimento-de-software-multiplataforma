@@ -9,6 +9,7 @@ import type {
 } from "./public-tutor-ai";
 import { TutorProviderError } from "./provider-failure";
 import { postGroqChatCompletions, throwForGroqStatus, type GroqFetch } from "./groq-transport";
+import { createAnswerExtractor } from "../../modules/tutor/answer-stream";
 import type { ReservedBudget } from "../../modules/tutor/usage-ledger";
 import { promptCharBudget, TRUNCATION_MARKER } from "./prompt-budget";
 
@@ -299,7 +300,7 @@ export function validateGroqAnswer(
   };
 }
 
-function accumulateStreamDeltas(): {
+function accumulateStreamDeltas(onContent?: (delta: string) => void): {
   onChunk(chunk: GroqStreamChunk): void;
   result(): { content: string; toolCalls: GroqWireToolCall[]; usage: GroqChatResponse["usage"] | undefined };
 } {
@@ -310,7 +311,10 @@ function accumulateStreamDeltas(): {
     onChunk(chunk) {
       if (chunk.usage) usage = chunk.usage;
       const delta = chunk.choices?.[0]?.delta;
-      if (typeof delta?.content === "string") content += delta.content;
+      if (typeof delta?.content === "string") {
+        content += delta.content;
+        onContent?.(delta.content);
+      }
       for (const call of delta?.tool_calls ?? []) {
         const index = call.index ?? 0;
         const slot = callFragments[index] ?? { id: "", name: "", arguments: "" };
@@ -337,12 +341,15 @@ function accumulateStreamDeltas(): {
  * content deltas and tool-call argument fragments. Groq sends the totals in a
  * final usage chunk when `stream_options.include_usage` is set.
  */
-export async function readGroqStream(response: Response): Promise<{
+export async function readGroqStream(
+  response: Response,
+  onContent?: (delta: string) => void,
+): Promise<{
   content: string;
   toolCalls: GroqWireToolCall[];
   usage: GroqChatResponse["usage"] | undefined;
 }> {
-  const accumulator = accumulateStreamDeltas();
+  const accumulator = accumulateStreamDeltas(onContent);
   const reader = response.body?.getReader();
   if (!reader) return { ...accumulator.result(), usage: undefined };
   const decoder = new TextDecoder();
@@ -458,8 +465,15 @@ export function createGroqPublicTutorAi(options: GroqAdapterOptions): PublicTuto
   async function answerStream(input: TutorModelInput, budget: ReservedBudget, onToken: (token: string) => void) {
     const response = await postGroqChatCompletions({ baseUrl: GROQ_BASE_URL, apiKey, body: requestBody(input, budget, primary, true), fetchImpl, timeoutMs });
     if (!response.ok) await throwForGroqStatus(response);
-    const { content, toolCalls, usage } = await readGroqStream(response);
-    for (const token of content.match(/\S+\s*/g) ?? []) onToken(token);
+    // The raw deltas are fragments of the answer JSON, not the answer: the
+    // extractor decodes the top-level `"answer"` string so the caller forwards
+    // readable text to the student. A document that never closes just stops
+    // emitting; the validated output is still built from the full content.
+    const extractor = createAnswerExtractor();
+    const { content, toolCalls, usage } = await readGroqStream(response, (delta) => {
+      const readable = extractor.push(delta);
+      if (readable) onToken(readable);
+    });
     const measured = usageOf({ usage });
     const validation = validateGroqAnswer(content, toolCalls);
     if (!validation.ok) throw new TutorProviderError({ kind: "unusable" }, measured);

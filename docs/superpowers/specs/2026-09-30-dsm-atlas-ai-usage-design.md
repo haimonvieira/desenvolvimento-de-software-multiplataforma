@@ -271,8 +271,30 @@ coexiste. Escolher o desenho B significaria abrir mão do streaming **e** das fe
 o desenho A mantém as duas e move a garantia para o nosso lado, onde ela decide de fato o
 que acontece com a resposta.
 
-**Decidido: desenho A.** Mantém-se `tools` + `tool_choice: "auto"` + `json_object`; a
-aderência passa a ser verificada por nós.
+**Decidido: desenho A — mas ele não é o que eu havia escrito.** A versão original desta seção
+dizia "manter `tools` + `tool_choice: "auto"` + `json_object`". **O provedor proíbe exatamente
+essa combinação**, e a verificação contra o provedor real encontrou o erro:
+
+```
+HTTP 400  {"error":{"message":"json mode cannot be combined with tool/function calling",
+                    "type":"invalid_request_error","param":"response_format"}}
+```
+
+Isso significa que **todo turno patrocinado do tutor vinha falhando** com `invalid` ("O provedor
+recusou a requisição") — e nenhum teste podia pegar, porque todo teste substitui o transporte
+por um dublê. O erro só apareceu ao exercitar o adaptador real contra a API real.
+
+O desenho correto, e o que está implementado: **`json_object` sem `tools`**. A recuperação
+viaja pelo campo `toolCalls` **inline** que o prompt já documenta e que `validateGroqAnswer` já
+lia como caminho preferencial — a peça estava lá, só nunca era a única. `retrieveToolSchema()`
+foi removido por ficar sem uso.
+
+Uma tentativa intermediária foi medida e descartada: manter `tools` e largar o
+`response_format` faz o modelo tentar chamar uma ferramenta chamada `json` e o provedor
+devolver `tool_use_failed`. Não é um caminho viável.
+
+Consequência para a D3 (streaming): continua viável, porque `json_object` **não é** Structured
+Outputs — a proibição de streaming vale para `json_schema`, não para o modo de objeto JSON.
 
 O que a fatia entrega:
 

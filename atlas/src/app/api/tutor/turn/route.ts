@@ -42,15 +42,75 @@ function error(code: string, message: string, status: number): Response {
   return Response.json({ error: { code, message } }, { status });
 }
 
+function quotaDenied(reason: string, resetsAt: string): Response {
+  return Response.json({
+    error: { code: "QUOTA_DENIED", message: "Sua cota de estudo patrocinado terminou." },
+    decision: { reason, resetsAt },
+  }, { status: 429 });
+}
+
 async function respond(tutor: StudyTutor, request: TutorTurnRequest): Promise<Response> {
   const outcome = await tutor.answerTurn(request);
-  if (outcome.type === "denied") {
-    return Response.json({
-      error: { code: "QUOTA_DENIED", message: "Sua cota de estudo patrocinado terminou." },
-      decision: { reason: outcome.reason, resetsAt: outcome.resetsAt },
-    }, { status: 429 });
-  }
+  if (outcome.type === "denied") return quotaDenied(outcome.reason, outcome.resetsAt);
   return Response.json({ result: outcome.result });
+}
+
+const encoder = new TextEncoder();
+
+function sseEvent(name: string, data: unknown): Uint8Array {
+  return encoder.encode(`event: ${name}\ndata: ${JSON.stringify(data)}\n\n`);
+}
+
+/** The failure vocabulary the JSON path already uses, applied to a mid-stream error. */
+function streamFailure(failure: unknown): { code: string; message: string } {
+  if (failure instanceof TutorProviderError && failure.failure.kind === "rate_limited") {
+    return { code: "PROVIDER_QUOTA", message: failure.message };
+  }
+  return { code: "TUTOR_TURN_FAILED", message: "Não foi possível responder agora." };
+}
+
+/**
+ * Streams a turn as Server-Sent Events. The first event is pulled before the
+ * response is built: a denied reservation is decided before the provider call,
+ * so a denied turn is answered with the same 429 JSON as the non-streaming
+ * path, never a stream that opens and then dies. After that point every failure
+ * — including a provider failure mid-stream — arrives as an `error` event
+ * rather than a broken socket.
+ */
+async function respondStream(tutor: StudyTutor, request: TutorTurnRequest): Promise<Response> {
+  const events = tutor.answerTurnStream(request);
+  const first = await events.next();
+  if (!first.done && first.value.type === "denied") {
+    return quotaDenied(first.value.reason, first.value.resetsAt);
+  }
+  const body = new ReadableStream<Uint8Array>({
+    async start(controller) {
+      try {
+        let step = first;
+        while (!step.done) {
+          if (step.value.type === "answer") controller.enqueue(sseEvent("answer", { delta: step.value.delta }));
+          else if (step.value.type === "result") controller.enqueue(sseEvent("done", { result: step.value.result }));
+          step = await events.next();
+        }
+      } catch (failure) {
+        controller.enqueue(sseEvent("error", { error: streamFailure(failure) }));
+      } finally {
+        controller.close();
+      }
+    },
+  });
+  return new Response(body, {
+    headers: { "content-type": "text/event-stream; charset=utf-8", "cache-control": "no-store" },
+  });
+}
+
+/**
+ * Content negotiation, not a body field: the turn schema is `.strict()`, so a
+ * `stream: true` body would either be rejected or widen the validated contract
+ * for every caller. `Accept` is the HTTP-native way to ask for a stream.
+ */
+function wantsStream(request: Request): boolean {
+  return request.headers.get("accept")?.includes("text/event-stream") === true;
 }
 
 /**
@@ -64,6 +124,7 @@ export function createTutorTurnHandler(dependencies: TutorTurnDependencies) {
     const parsed = tutorTurnSchema.safeParse(await request.json().catch(() => null));
     if (!parsed.success) return error("INVALID_TUTOR_TURN", "Pergunta inválida.", 400);
     const { question, context, mode } = parsed.data;
+    const stream = wantsStream(request);
 
     try {
       if (mode === "byok") {
@@ -71,7 +132,9 @@ export function createTutorTurnHandler(dependencies: TutorTurnDependencies) {
         if (!key) return error("BYOK_KEY_REQUIRED", "Informe sua chave de API.", 401);
         const ai = dependencies.byokAi?.(key);
         if (!ai) return error("PROVIDER_UNBOUND", "Provedor BYOK ainda não configurado.", 503);
-        return await respond(createStudyTutor({ retriever: dependencies.retriever, ai }), { question, context, mode: { type: "byok" } });
+        const tutor = createStudyTutor({ retriever: dependencies.retriever, ai });
+        const turnRequest: TutorTurnRequest = { question, context, mode: { type: "byok" } };
+        return stream ? await respondStream(tutor, turnRequest) : await respond(tutor, turnRequest);
       }
 
       const subjectKey = dependencies.subjectKey;
@@ -87,7 +150,8 @@ export function createTutorTurnHandler(dependencies: TutorTurnDependencies) {
         if (!verified) return error("TURNSTILE_REQUIRED", "Verificação necessária.", 403);
       }
       const tutor = createStudyTutor({ retriever: dependencies.retriever, ai: dependencies.sponsoredAi, ledger });
-      return await respond(tutor, { question, context, mode: { type: "sponsored", subjectKey: key } });
+      const turnRequest: TutorTurnRequest = { question, context, mode: { type: "sponsored", subjectKey: key } };
+      return stream ? await respondStream(tutor, turnRequest) : await respond(tutor, turnRequest);
     } catch (failure) {
       // Provider failures are never echoed: a BYOK key can appear inside a
       // provider message, and this route neither returns nor logs it. A 429 is

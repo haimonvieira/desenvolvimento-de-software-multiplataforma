@@ -7,10 +7,10 @@ openapi: 3.0.0
 info:
   title: Arquivo Criminal Brasileiro API
   description: |
-    Organiza informações públicas sobre casos criminais brasileiros e os
-    relaciona a filmes, séries e documentários via TMDB.
+    Organiza informações públicas sobre casos criminais brasileiros, com os
+    detalhes de cada caso e as produções audiovisuais a ele relacionadas.
 
-    **Autenticação:** as rotas de `/casos` e `/tmdb/buscar` exigem o header
+    **Autenticação:** as rotas de `/casos` exigem o header
     `Authorization: Bearer TOKEN`. Use `POST /login` para obter o token e o
     botão **Authorize** (candado) para colá-lo.
   version: 1.0.0
@@ -94,7 +94,7 @@ components:
         poster:
           type: string
           description: URL completa da imagem; opcional
-          example: https://image.tmdb.org/t/p/w500/exemplo.jpg
+          example: https://exemplo.com/poster.jpg
 
     Caso:
       type: object

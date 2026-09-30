@@ -1,6 +1,6 @@
 # Arquivo Criminal Brasileiro — API
 
-API REST do projeto acadêmico **Arquivo Criminal Brasileiro** (FATEC DSM3/DW3, ATV02 — equipe HHR Solutions): organiza informações públicas sobre casos criminais brasileiros e os relaciona a filmes, séries e documentários via TMDB.
+API REST do projeto acadêmico **Arquivo Criminal Brasileiro** (FATEC DSM3/DW3, ATV02 — equipe HHR Solutions): organiza informações públicas sobre casos criminais brasileiros, com os detalhes de cada caso e as produções audiovisuais (filmes, séries e documentários) a ele relacionadas.
 
 Stack: Node.js + Express + Mongoose + MongoDB Atlas. Autenticação JWT (Bearer, 48h) com hash de senha Argon2id.
 
@@ -17,7 +17,7 @@ Crie um `.env` a partir do modelo:
 cp .env.example .env   # depois preencha com seus valores reais
 ```
 
-O `.env` é gitignored (nunca vai para o repositório); o `.env.example` é o modelo commitado com todas as variáveis que o código lê e comentários explicando cada uma.
+O `.env` é gitignored (nunca vai para o repositório); o `.env.example` é o modelo commitado com as variáveis que o código lê.
 
 **Requisito de versão:** Node ≥ 20.19.0 (imposto por `mongoose`/`mongodb`; nada no repo fixa isso).
 
@@ -27,21 +27,13 @@ O `.env` é gitignored (nunca vai para o repositório); o `.env.example` é o mo
 |---|---|
 | `PORT` | Porta da API (padrão `4000`) |
 | `JWT_SECRET` | Segredo de assinatura/verificação do JWT |
-| `TMDB_API_TOKEN` | Chave do TMDB — aceita API Key v3 (32 hex) ou Read Access Token v4 (`eyJ...`) |
-| `MONGODB_USERNAME` / `MONGODB_PASSWORD` | Credenciais do Atlas |
+| `MONGODB_USERNAME` / `MONGODB_PASSWORD` | Credenciais do usuário do Atlas |
 | `MONGODB_CLUSTER` | Host do cluster Atlas |
 | `MONGODB_DATABASE` | Nome do banco |
-| `MONGODB_URI` | **Opcional** — se definida, conecta nessa URI ignorando as de Atlas (modo de teste local) |
 
 Nunca publique valores reais. Se um segredo vazar, remova e rotacione.
 
-**Banco local (só para testes):** a atividade exige o banco no Atlas. Para destravar testes locais, descomente no `.env`:
-
-```bash
-MONGODB_URI=mongodb://127.0.0.1:27017/arquivo_criminal_brasileiro
-```
-
-O log de conexão indica o alvo: `Conectado ao MongoDB com sucesso! (LOCAL)` ou `(Atlas)`. **Comente de volta antes da apresentação.**
+O banco é hospedado no **MongoDB Atlas** (requisito da atividade). Se a API iniciar mas as rotas de banco falharem, verifique as credenciais e se o IP da máquina está liberado no *Network Access* do cluster.
 
 ## Rotas
 
@@ -58,10 +50,9 @@ O log de conexão indica o alvo: `Conectado ao MongoDB com sucesso! (LOCAL)` ou 
 |---|---|---|---|---|
 | `GET` | `/casos` | Lista todos os casos | `200` `{casos: [...]}` | `401`, `500` |
 | `POST` | `/casos` | Cadastra caso | `201` | `401`, `500` |
-| `GET` | `/casos/:id` | Consulta um caso | `200` `{caso}` | `400` (id inválido), `404`, `401`, `500` |
+| `GET` | `/casos/:id` | Consulta um caso | `200` `{caso}` | `400` (id inválido), `401`, `404`, `500` |
 | `PUT` | `/casos/:id` | Atualiza um caso | `200` | `400` (id inválido), `401`, `500` |
 | `DELETE` | `/casos/:id` | Exclui um caso | `204` (sem corpo) | `400` (id inválido), `401`, `500` |
-| `GET` | `/tmdb/buscar?query=texto` | Busca produções no TMDB | `200` `{producoes: [...]}` | `400` (query ausente), `401`, `500` |
 
 ### Documentação
 
@@ -73,8 +64,8 @@ O log de conexão indica o alvo: `Conectado ao MongoDB com sucesso! (LOCAL)` ou 
 
 ```json
 {
-  "titulo": "Caso Tremembé",
-  "resumo": "Fuga no complexo de Tremembé em São Paulo.",
+  "caso": "Caso Tremembé",
+  "descricao": "Fuga no complexo de Tremembé em São Paulo.",
   "categorias": ["Fuga", "Repercussão nacional"],
   "detalhes": {
     "cidade": "São Paulo",
@@ -85,24 +76,28 @@ O log de conexão indica o alvo: `Conectado ao MongoDB com sucesso! (LOCAL)` ou 
   },
   "producoes": [
     {
-      "tmdbId": 532321,
       "titulo": "Blindados",
       "tipo": "documentário",
       "ano": 2023,
-      "sinopse": "Série documental sobre fugas.",
-      "poster": "https://image.tmdb.org/t/p/w500/exemplo.jpg"
+      "sinopse": "Série documental sobre fugas e o sistema prisional.",
+      "poster": "https://exemplo.com/poster.jpg"
     }
   ]
 }
 ```
 
-`detalhes` (objeto) e `producoes` (array) são **documentos aninhados** dentro de `Caso` — não há `ref`/`populate` nem collections separadas. `tipo` aceita apenas `filme`, `série` ou `documentário`. O `_id` é gerado pelo MongoDB e **não** vai no body de POST/PUT.
+`detalhes` (objeto) e `producoes` (array) são **documentos aninhados** dentro de `Caso` — não há `ref`/`populate` nem collections separadas. Regras dos campos:
+
+- `tipo` aceita apenas `filme`, `série` ou `documentário`
+- `detalhes.estado` é gravado em maiúsculas e limitado a 2 caracteres (UF)
+- `anoFim`, `ano`, `sinopse` e `poster` são opcionais
+- `_id` é gerado pelo MongoDB e **não** vai no body de POST/PUT
 
 ## Uso
 
 ### Swagger UI — `http://localhost:4000/api-docs`
 
-O contrato completo (8 rotas, schemas, status codes) está em `docs/swaggerDocs.yaml` e é renderizado pelo Swagger UI. Para testar por lá:
+O contrato completo (7 rotas, schemas, status codes) está em `docs/swaggerDocs.yaml` e é renderizado pelo Swagger UI. Para testar por lá:
 
 1. `POST /login` → **Try it out** → informe `email`/`password` → **Execute**
 2. Copie o valor de `token` da resposta (só o `eyJ...`, sem aspas)
@@ -113,30 +108,31 @@ O token expira em 48h — `401 Token inválido` depois disso é só refazer o lo
 
 ### Insomnia
 
-Coleção **"Crimes"** (pastas `Usuários` e `Casos`, 8 requests) — URLs e auth usam as variáveis de ambiente da coleção (`base_url`, `token`, `caseId`), definidas em *Manage Environments*.
+Coleção **"Crimes"** (pastas `Usuários` e `Casos`) — URLs e auth usam as variáveis de ambiente da coleção (`base_url`, `token`, `caseId`), definidas em *Manage Environments*.
 
-Fluxo: `01 Cadastrar usuário` → `02 Fazer login` (copie o token para a variável `token`) → `03/04` (copie um `_id` para `caseId`) → demais requests funcionam direto. Os requests `05`, `06` e `07` usam `{{ caseId }}`; com a variável vazia, a URL vira `/casos/` e o Express responde 404 HTML (`cannot PUT /casos/`).
+Fluxo: `01 Cadastrar usuário` → `02 Fazer login` (copie o token para a variável `token`) → `03/04` (copie um `_id` para `caseId`) → demais requests funcionam direto.
 
-A query da busca TMDB fica no campo **Query Params** (`query` = `Tremembé`), não na URL — preencher nos dois lugares duplica o parâmetro, o Express monta um array e a rota responde 400.
+- Os requests `05`, `06` e `07` usam `{{ caseId }}`; com a variável vazia, a URL vira `/casos/` e o Express responde 404 HTML (`cannot PUT /casos/`)
+- O request `08 Buscar produção no TMDB` ficou **obsoleto** (a rota não existe mais) e deve ser removido da coleção
 
 ### Fluxo geral
 
 ```
-01 Cadastrar usuário → 02 Fazer login (token) → 03/04 (caseId) → 05..08
+01 Cadastrar usuário → 02 Fazer login (token) → 03/04 (caseId) → 05..07
 ```
 
 ## Estrutura
 
 ```
 index.js                  entrada: parsers, mounts, Swagger, listen
-routes/                   1 router por domínio (user, caso, tmdb)
+routes/                   1 router por domínio (user, caso)
 controllers/              HTTP: leem req, validam, chamam service
 services/                 Mongoose (classes, export singleton)
 models/                   Users.js, Casos.js (schemas)
 middleware/Auth.js        JWT Bearer -> req.loggedUser
-config/db-connection.js   conexão Atlas (ou MONGODB_URI)
+config/db-connection.js   conexão com o MongoDB Atlas
 config/swagger-config.js  metadados OpenAPI, securitySchemes, globs do contrato
-docs/swaggerDocs.yaml     fonte da verdade do contrato HTTP (8 rotas, 4 schemas)
+docs/swaggerDocs.yaml     fonte da verdade do contrato HTTP (7 rotas, 4 schemas)
 docs/                     arquitetura, domínio, operações, ADRs
 ```
 

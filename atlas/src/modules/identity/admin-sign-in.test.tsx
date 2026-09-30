@@ -10,19 +10,20 @@ import { ADMIN_SIGN_IN_CALLBACK_URL, AdminSignIn, startAdminGitHubSignIn } from 
 type SocialOptions = { provider: string; callbackURL: string };
 
 function recordingClient() {
+  const events: ("signOut" | "signIn.social")[] = [];
   const calls: SocialOptions[] = [];
-  let signOuts = 0;
   return {
+    events,
     calls,
-    signOuts: () => signOuts,
     signIn: {
       social: async (options: SocialOptions): Promise<{ error?: { message?: string } | null }> => {
+        events.push("signIn.social");
         calls.push(options);
         return { error: null };
       },
     },
     signOut: async () => {
-      signOuts += 1;
+      events.push("signOut");
     },
   };
 }
@@ -41,7 +42,7 @@ describe("GitHub admin sign-in", () => {
 
     await startAdminGitHubSignIn(client, { replaceAccount: true });
 
-    expect(client.signOuts()).toBe(1);
+    expect(client.events).toEqual(["signOut", "signIn.social"]);
     expect(client.calls).toHaveLength(1);
   });
 

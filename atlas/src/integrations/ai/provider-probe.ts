@@ -28,6 +28,49 @@ const completionSchema = z.object({
 
 const answerSchema = z.object({ answer: z.string() });
 
+export type ProviderCatalogue =
+  | Readonly<{ ok: true; models: readonly string[] }>
+  | Readonly<{ ok: false; reason: "bad-url" | "unreachable" | "not-openai" }>;
+
+/**
+ * The keyless `/models` catalogue call, shared by the probe and the models
+ * route. No credential is attached: the endpoint answers without one, and
+ * handing the key to a host before it has proven itself is exactly what the
+ * probe is here to avoid.
+ */
+export async function listProviderModels(
+  input: Readonly<{ baseUrl: string; fetchImpl: GroqFetch; timeoutMs?: number }>,
+): Promise<ProviderCatalogue> {
+  let parsed: URL;
+  try {
+    parsed = new URL(input.baseUrl);
+  } catch {
+    return { ok: false, reason: "bad-url" };
+  }
+  if (parsed.protocol !== "https:") return { ok: false, reason: "bad-url" };
+  const base = input.baseUrl.replace(/\/+$/, "");
+
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), input.timeoutMs ?? DEFAULT_TIMEOUT_MS);
+  try {
+    const response = await input.fetchImpl(`${base}/models`, { method: "GET", signal: controller.signal });
+    if (!response.ok) return { ok: false, reason: "not-openai" };
+    let raw: unknown;
+    try {
+      raw = await response.json();
+    } catch {
+      return { ok: false, reason: "not-openai" };
+    }
+    const catalogue = catalogueSchema.safeParse(raw);
+    if (!catalogue.success) return { ok: false, reason: "not-openai" };
+    return { ok: true, models: catalogue.data.data.map((entry) => entry.id) };
+  } catch {
+    return { ok: false, reason: "unreachable" };
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
 /**
  * A BYOK provider can be validated only by asking it. Its `/models` catalogue
  * says nothing about structured output — measured: a provider's `capabilities`
@@ -73,18 +116,10 @@ export function createProviderProbe(
     try {
       // Model discovery is keyless: the catalogue is public, and handing the
       // key to a host before it has proven itself is exactly what the probe is
-      // here to avoid.
-      const modelsResponse = await request(`${base}/models`, { method: "GET" });
-      if (!modelsResponse.ok) return { ok: false, reason: "not-openai" };
-      let catalogueRaw: unknown;
-      try {
-        catalogueRaw = await modelsResponse.json();
-      } catch {
-        return { ok: false, reason: "not-openai" };
-      }
-      const catalogue = catalogueSchema.safeParse(catalogueRaw);
-      if (!catalogue.success) return { ok: false, reason: "not-openai" };
-      const models = catalogue.data.data.map((entry) => entry.id);
+      // here to avoid. The same call backs the models route.
+      const catalogue = await listProviderModels({ baseUrl: base, fetchImpl: dependencies.fetchImpl, timeoutMs });
+      if (!catalogue.ok) return catalogue;
+      const models = catalogue.models;
 
       // One tiny JSON-mode turn with the key. It costs the visitor a single
       // turn of their own quota, so the prompt asks for the smallest object it

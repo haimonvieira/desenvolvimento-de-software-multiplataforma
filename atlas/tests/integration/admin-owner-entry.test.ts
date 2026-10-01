@@ -49,4 +49,30 @@ describe("owner GitHub entry point against Better Auth", () => {
     // leak into the OAuth redirect_uri the GitHub App validated.
     expect(authorize.searchParams.get("redirect_uri")).not.toContain(ADMIN_SIGN_IN_CALLBACK_URL);
   });
+
+  it("gives a profile with no email a deterministic one, so sign-in cannot fail with email_not_found", async () => {
+    // Reproduces the production failure: the provider answered, the profile had
+    // no email because GitHub hides a private address, and the auth library
+    // rejected the sign-in. Nothing here reads an email, so the field is only
+    // satisfied — deterministically, so the same account always maps the same.
+    const auth = createAuthForDatabase({
+      databaseUrl: "unused",
+      secret: "a".repeat(32),
+      baseUrl: productionOrigin,
+      rpId: "dsm-atlas.haimonvieira.workers.dev",
+      trustedOrigins: [productionOrigin],
+      githubClientId: "github-client-id",
+      githubClientSecret: "github-client-secret",
+    }, drizzle(database, { schema: authSchema }));
+
+    const github = (auth.options.socialProviders as Record<string, { mapProfileToUser?: (profile: unknown) => unknown }>).github!;
+    expect(typeof github.mapProfileToUser).toBe("function");
+
+    expect(await github.mapProfileToUser!({ id: 12345, login: "haimon", email: null })).toEqual({
+      email: "12345+haimon@users.noreply.github.com",
+    });
+    expect(await github.mapProfileToUser!({ id: 12345, login: "haimon", email: "owner@example.test" })).toEqual({
+      email: "owner@example.test",
+    });
+  });
 });

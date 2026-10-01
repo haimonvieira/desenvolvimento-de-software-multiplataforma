@@ -65,6 +65,23 @@ export function createAuth(config: AuthRuntimeConfig) {
   return createAuthForDatabase(config, createDatabase(config.databaseUrl));
 }
 
+/**
+ * GitHub returns an email only when the account's address is public, or when the
+ * app is allowed to read the private one. A private address made owner sign-in
+ * fail with `email_not_found` — the provider answered, the profile simply had no
+ * email and `/user/emails` returned nothing usable.
+ *
+ * Nothing in this app reads a user's email: the owner is identified by the
+ * numeric GitHub id (`ADMIN_GITHUB_USER_ID`) and visitors are anonymous. The
+ * field is required by the auth library's user model, not by the product, so a
+ * deterministic GitHub-style noreply address satisfies it without storing an
+ * address we have no use for — and without depending on an app permission we
+ * would only hold to satisfy a field nobody reads.
+ */
+export function githubNoreplyEmail(profile: Readonly<{ id?: number | string | null; login?: string | null }>): string {
+  return `${profile.id ?? "0"}+${profile.login ?? "user"}@users.noreply.github.com`;
+}
+
 export function createAuthForDatabase(config: AuthRuntimeConfig, database: DB) {
   assertProductionAuthConfig(config);
 
@@ -77,6 +94,9 @@ export function createAuthForDatabase(config: AuthRuntimeConfig, database: DB) {
       github: {
         clientId: config.githubClientId,
         clientSecret: config.githubClientSecret,
+        mapProfileToUser: (profile) => ({
+          email: profile.email ?? githubNoreplyEmail(profile),
+        }),
       },
     } : undefined,
     database: drizzleAdapter(database, {

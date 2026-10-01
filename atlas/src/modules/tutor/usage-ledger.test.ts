@@ -697,3 +697,75 @@ describe("sponsored quota endpoint", () => {
     expect(await response.json()).toEqual({ error: "unconfigured" });
   });
 });
+
+describe("provider dimension", () => {
+  async function providerWindowRows(scope: string, provider: string, subjectKey: string, kind: string) {
+    return executor.query(
+      `SELECT window_start, requests, reserved_input_tokens, reserved_output_tokens, input_tokens, output_tokens FROM ai_usage_window WHERE scope = $1 AND provider = $2 AND subject_key = $3 AND window_kind = $4`,
+      [scope, provider, subjectKey, kind],
+    );
+  }
+
+  it("keeps each provider's day window independent", async () => {
+    const clock = clockAt("2026-09-28T10:15:00.000Z");
+    const ledger = ledgerWith(clock, { public: { ...policyFor("public"), requestsPerHour: 100, requestsPerDay: 1, maxConcurrentTurns: 0 } });
+
+    expect((await ledger.reserve({ scope: "public", subjectKey: "device-a", provider: "alpha" })).type).toBe("reserved");
+    // Spending alpha's day does not consume beta's: they are separate rows.
+    expect((await ledger.reserve({ scope: "public", subjectKey: "device-a", provider: "beta" })).type).toBe("reserved");
+
+    expect(await providerWindowRows("public", "alpha", "device-a", "day")).toMatchObject([{ requests: 1 }]);
+    expect(await providerWindowRows("public", "beta", "device-a", "day")).toMatchObject([{ requests: 1 }]);
+    // Alpha's own daily ceiling denies the third alpha turn; the aggregate still
+    // has room, so the denial names alpha's window, not the global one.
+    expect(await ledger.reserve({ scope: "public", subjectKey: "device-a", provider: "alpha" })).toEqual({
+      type: "denied",
+      reason: "daily",
+      resetsAt: "2026-09-29T00:00:00.000Z",
+    });
+  });
+
+  it("denies on the aggregate ceiling once the sum across providers reaches it", async () => {
+    const clock = clockAt("2026-09-28T10:15:00.000Z");
+    const ledger = ledgerWith(clock, {
+      public: { ...policyFor("public"), requestsPerHour: 100, requestsPerDay: 100, globalTurnsPerDay: 2, maxConcurrentTurns: 0 },
+    });
+
+    expect((await ledger.reserve({ scope: "public", subjectKey: "device-a", provider: "alpha" })).type).toBe("reserved");
+    expect((await ledger.reserve({ scope: "public", subjectKey: "device-b", provider: "beta" })).type).toBe("reserved");
+
+    // Each provider still has its own daily room; the aggregate is spent.
+    expect(await ledger.reserve({ scope: "public", subjectKey: "device-c", provider: "gamma" })).toEqual({
+      type: "denied",
+      reason: "global",
+      resetsAt: "2026-09-29T00:00:00.000Z",
+    });
+    expect(await providerWindowRows("public", "gamma", "device-c", "day")).toHaveLength(0);
+    expect(await providerWindowRows("public", "*", "*", "global")).toMatchObject([{ requests: 2 }]);
+  });
+
+  it("expires a reservation by releasing both the provider's and the aggregate's rows", async () => {
+    // Created just before midnight so the late sweep crosses the day boundary:
+    // the release must credit the day the reservation was created in, not `now`.
+    const clock = clockAt("2026-09-28T23:59:00.000Z");
+    const ledger = ledgerWith(clock);
+    await ledger.reserve({ scope: "public", subjectKey: "device-a", provider: "alpha" });
+
+    clock.advance(120);
+    expect(await ledger.expireStaleReservations()).toBe(1);
+
+    expect(await providerWindowRows("public", "alpha", "device-a", "hour")).toMatchObject([
+      { requests: 1, reserved_input_tokens: 0, reserved_output_tokens: 0 },
+    ]);
+    expect(await providerWindowRows("public", "alpha", "device-a", "day")).toMatchObject([
+      { requests: 1, reserved_input_tokens: 0, reserved_output_tokens: 0 },
+    ]);
+    expect(await providerWindowRows("public", "*", "*", "global")).toMatchObject([
+      { requests: 1, reserved_input_tokens: 0, reserved_output_tokens: 0 },
+    ]);
+    // Nothing was credited to the new day's windows: the sweep used created_at.
+    expect(await executor.query(`SELECT count(*)::int AS total FROM ai_usage_window WHERE window_start = '2026-09-29T00:00:00.000Z'`, [])).toEqual([
+      { total: 0 },
+    ]);
+  });
+});

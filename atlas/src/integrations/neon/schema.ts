@@ -268,6 +268,8 @@ export const stagedUploadFile = pgTable("staged_upload_file", {
 
 export const aiUsageWindow = pgTable("ai_usage_window", {
   scope: text("scope").notNull(),
+  /** The provider whose own pool this row is; '*' owns the aggregate rows. */
+  provider: text("provider").notNull(),
   subjectKey: text("subject_key").notNull(),
   windowKind: text("window_kind").notNull(),
   windowStart: timestamp("window_start", { withTimezone: true }).notNull(),
@@ -278,7 +280,7 @@ export const aiUsageWindow = pgTable("ai_usage_window", {
   outputTokens: bigint("output_tokens", { mode: "number" }).notNull().default(0),
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
 }, (table) => [
-  primaryKey({ columns: [table.scope, table.subjectKey, table.windowKind, table.windowStart] }),
+  primaryKey({ columns: [table.scope, table.provider, table.subjectKey, table.windowKind, table.windowStart] }),
   check("ai_usage_window_scope_check", sql`${table.scope} in ('public', 'admin')`),
   check("ai_usage_window_kind_check", sql`${table.windowKind} in ('hour', 'day', 'global')`),
   check("ai_usage_window_global_subject_check", sql`(${table.windowKind} = 'global') = (${table.subjectKey} = '*')`),
@@ -288,6 +290,8 @@ export const aiUsageWindow = pgTable("ai_usage_window", {
 export const aiReservation = pgTable("ai_reservation", {
   id: text("id").primaryKey(),
   scope: text("scope").notNull(),
+  /** The provider this reservation charged; rows before the dimension are 'groq'. */
+  provider: text("provider").notNull().default("groq"),
   subjectKey: text("subject_key").notNull(),
   status: text("status").notNull(),
   maxInputTokens: integer("max_input_tokens").notNull(),

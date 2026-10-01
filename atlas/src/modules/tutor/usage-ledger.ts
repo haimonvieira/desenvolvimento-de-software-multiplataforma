@@ -36,12 +36,20 @@ export type SqlExecutor = Readonly<{
   query(text: string, params: readonly unknown[]): Promise<readonly Record<string, unknown>[]>;
 }>;
 
+/**
+ * The provider a turn charges when the caller names none: today's single
+ * provider. The provider dimension is additive, so a caller that predates it
+ * keeps the exact behavior it had. Routing later selects a provider per turn;
+ * this default is not that selection.
+ */
+export const DEFAULT_PROVIDER = "groq";
+
 export interface UsageLedger {
   policy(scope: UsageScope): UsagePolicy;
-  reserve(input: Readonly<{ scope: UsageScope; subjectKey: string }>): Promise<BudgetDecision>;
+  reserve(input: Readonly<{ scope: UsageScope; subjectKey: string; provider?: string }>): Promise<BudgetDecision>;
   reconcile(input: Readonly<{ reservationId: string; outcome: ReservationOutcome; usage?: TokenUsage }>): Promise<void>;
   expireStaleReservations(): Promise<number>;
-  readQuota(input: Readonly<{ scope: UsageScope; subjectKey: string }>): Promise<QuotaSnapshot>;
+  readQuota(input: Readonly<{ scope: UsageScope; subjectKey: string; provider?: string }>): Promise<QuotaSnapshot>;
   hasSponsoredHistory(input: Readonly<{ scope: UsageScope; subjectKey: string }>): Promise<boolean>;
 }
 
@@ -85,9 +93,10 @@ export function createUsageLedger(dependencies: UsageLedgerDependencies): UsageL
   return {
     policy,
 
-    async reserve({ scope, subjectKey }) {
-      const rows = await query("SELECT reserve_ai_budget($1, $2, $3, $4::jsonb, $5::timestamptz) AS decision", [
+    async reserve({ scope, subjectKey, provider = DEFAULT_PROVIDER }) {
+      const rows = await query("SELECT reserve_ai_budget($1, $2, $3, $4, $5::jsonb, $6::timestamptz) AS decision", [
         scope,
+        provider,
         subjectKey,
         newReservationId(),
         JSON.stringify(policy(scope)),
@@ -113,9 +122,10 @@ export function createUsageLedger(dependencies: UsageLedgerDependencies): UsageL
       return Number(rows[0]?.expired ?? 0);
     },
 
-    async readQuota({ scope, subjectKey }) {
-      const rows = await query("SELECT read_ai_quota($1, $2, $3::jsonb, $4::timestamptz) AS quota", [
+    async readQuota({ scope, subjectKey, provider = DEFAULT_PROVIDER }) {
+      const rows = await query("SELECT read_ai_quota($1, $2, $3, $4::jsonb, $5::timestamptz) AS quota", [
         scope,
+        provider,
         subjectKey,
         JSON.stringify(policy(scope)),
         now().toISOString(),

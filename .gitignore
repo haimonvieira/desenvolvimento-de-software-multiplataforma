@@ -40,3 +40,6 @@ node_modules
 /atlas/.env
 /atlas/.env.*
 !/atlas/.env.example
+
+# Maestri harness scaffolding: role files, briefs and inter-agent reports.
+/.maestri/

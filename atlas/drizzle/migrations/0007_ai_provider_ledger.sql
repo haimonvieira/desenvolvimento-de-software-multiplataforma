@@ -4,6 +4,13 @@
 -- it is and only the pool it sums changes: the sentinel provider '*' owns the
 -- aggregate rows, a real provider owns its own.
 --
+-- Each provider also carries its own allowance, which is the whole point of
+-- having more than one: `reserve_ai_budget` refuses a turn for exhausting its
+-- provider's own day ceiling, supplied by the caller because the ledger does
+-- not know which provider has how much. No new window kind is needed — a
+-- provider's day spend is the sum of its own day rows across subjects, exactly
+-- the shape of the aggregate.
+--
 -- The primary key has to change rather than just gain a column. With the old
 -- key, a provider's day row and the aggregate day row for the same subject
 -- would collide on (scope, subject_key, window_kind, window_start), so the two
@@ -35,6 +42,7 @@ CREATE FUNCTION reserve_ai_budget(
   p_provider text,
   p_subject_key text,
   p_reservation_id text,
+  p_provider_turns_per_day integer,
   p_policy jsonb,
   p_now timestamp with time zone
 )
@@ -56,10 +64,15 @@ DECLARE
   -- the committed spend; a turn that would push it past the ceiling is denied
   -- before any provider call. 0/absent disables the ceiling (legacy policies).
   global_tokens_per_day bigint := COALESCE((p_policy->>'globalTokensPerDay')::bigint, 0);
+  -- The provider's own day ceiling, supplied by the caller because the ledger
+  -- has no registry of which provider has how much. 0/absent disables it, like
+  -- every other ceiling.
+  provider_per_day integer := COALESCE(p_provider_turns_per_day, 0);
   max_concurrent integer := COALESCE((p_policy->>'maxConcurrentTurns')::integer, 0);
   v_expires_at timestamptz := p_now + make_interval(secs => deadline_seconds::double precision);
   changed integer;
   in_flight integer;
+  provider_day_used integer;
 BEGIN
   IF p_scope NOT IN ('public', 'admin') THEN
     RAISE EXCEPTION 'invalid scope' USING ERRCODE = '22023';
@@ -98,6 +111,16 @@ BEGIN
       IF in_flight >= max_concurrent THEN RAISE EXCEPTION 'concurrent' USING ERRCODE = 'AT004'; END IF;
     END IF;
 
+    -- A provider's day ceiling sums that provider's own day rows across every
+    -- subject, so — unlike the aggregate, which has one row to lock — there is
+    -- no single row whose lock makes the check and this turn's increment
+    -- atomic. A transaction-scoped advisory lock per scope and provider
+    -- serializes them, so two concurrent final-slot turns cannot both read the
+    -- other's absence and both commit.
+    IF provider_per_day >= 1 THEN
+      PERFORM pg_advisory_xact_lock(hashtext('atlas_ai_reserve_provider:' || p_scope || ':' || p_provider));
+    END IF;
+
     INSERT INTO ai_usage_window (scope, provider, subject_key, window_kind, window_start, requests, reserved_input_tokens, reserved_output_tokens, updated_at)
     SELECT p_scope, p_provider, p_subject_key, 'hour', hour_start, 1, max_input, max_output, p_now
     WHERE per_hour >= 1
@@ -121,6 +144,17 @@ BEGIN
       WHERE ai_usage_window.requests < per_day;
     GET DIAGNOSTICS changed = ROW_COUNT;
     IF changed = 0 THEN RAISE EXCEPTION 'daily' USING ERRCODE = 'AT002'; END IF;
+
+    -- The provider's own day ceiling: the sum of its day rows across subjects,
+    -- the same aggregation as the aggregate's global row but filtered by
+    -- provider instead of the sentinel. This turn has already been counted
+    -- above, so a sum past the ceiling means this turn broke it; the exception
+    -- rolls every increment in this subtransaction back. 0/absent disables it.
+    IF provider_per_day >= 1 THEN
+      SELECT COALESCE(sum(requests), 0) INTO provider_day_used FROM ai_usage_window
+        WHERE scope = p_scope AND provider = p_provider AND window_kind = 'day' AND window_start = day_start;
+      IF provider_day_used > provider_per_day THEN RAISE EXCEPTION 'provider' USING ERRCODE = 'AT005'; END IF;
+    END IF;
 
     -- The token ceiling is enforced on the aggregate row: provider '*', subject
     -- '*'. It holds the worst-case reservation of every live turn plus the actual
@@ -162,7 +196,7 @@ BEGIN
     RETURN jsonb_build_object('type', 'reserved', 'reservationId', p_reservation_id,
       'maxInputTokens', max_input, 'maxOutputTokens', max_output, 'maxToolCalls', max_tools,
       'expiresAt', to_char(v_expires_at AT TIME ZONE 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS.MS"Z"'));
-  -- Only the four tagged denials are caught here, so an unexpected
+  -- Only the five tagged denials are caught here, so an unexpected
   -- error (for example a duplicate reservation id) surfaces as an error instead
   -- of being reported as an exhausted quota.
   EXCEPTION
@@ -178,6 +212,9 @@ BEGIN
     WHEN SQLSTATE 'AT004' THEN
       RETURN jsonb_build_object('type', 'denied', 'reason', 'global',
         'resetsAt', to_char((hour_start + interval '1 hour') AT TIME ZONE 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS.MS"Z"'));
+    WHEN SQLSTATE 'AT005' THEN
+      RETURN jsonb_build_object('type', 'denied', 'reason', 'provider',
+        'resetsAt', to_char((day_start + interval '1 day') AT TIME ZONE 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS.MS"Z"'));
   END;
 END;
 $$;
@@ -287,6 +324,7 @@ CREATE FUNCTION read_ai_quota(
   p_scope text,
   p_provider text,
   p_subject_key text,
+  p_provider_turns_per_day integer,
   p_policy jsonb,
   p_now timestamp with time zone
 )
@@ -296,6 +334,7 @@ DECLARE
   day_start timestamptz := date_trunc('day', p_now AT TIME ZONE 'UTC') AT TIME ZONE 'UTC';
   used_hour integer := 0;
   used_day integer := 0;
+  used_provider_day integer := 0;
   used_global integer := 0;
   used_global_tokens bigint := 0;
 BEGIN
@@ -303,6 +342,10 @@ BEGIN
     WHERE scope = p_scope AND provider = p_provider AND subject_key = p_subject_key AND window_kind = 'hour' AND window_start = hour_start;
   SELECT COALESCE(sum(requests), 0) INTO used_day FROM ai_usage_window
     WHERE scope = p_scope AND provider = p_provider AND subject_key = p_subject_key AND window_kind = 'day' AND window_start = day_start;
+  -- The provider's own day pool: every subject it served today, not just this
+  -- one. This is the spend the provider ceiling is checked against.
+  SELECT COALESCE(sum(requests), 0) INTO used_provider_day FROM ai_usage_window
+    WHERE scope = p_scope AND provider = p_provider AND window_kind = 'day' AND window_start = day_start;
   SELECT COALESCE(sum(requests), 0) INTO used_global FROM ai_usage_window
     WHERE scope = p_scope AND provider = '*' AND window_kind = 'global' AND window_start = day_start;
   SELECT COALESCE(sum(reserved_input_tokens + reserved_output_tokens + input_tokens + output_tokens), 0)
@@ -315,6 +358,8 @@ BEGIN
     'requestsPerHour', COALESCE((p_policy->>'requestsPerHour')::integer, 0),
     'requestsToday', used_day,
     'requestsPerDay', COALESCE((p_policy->>'requestsPerDay')::integer, 0),
+    'providerTurnsToday', used_provider_day,
+    'providerTurnsPerDay', COALESCE(p_provider_turns_per_day, 0),
     'globalTurnsToday', used_global,
     'globalTurnsPerDay', COALESCE((p_policy->>'globalTurnsPerDay')::integer, 0),
     'globalTokensToday', used_global_tokens,

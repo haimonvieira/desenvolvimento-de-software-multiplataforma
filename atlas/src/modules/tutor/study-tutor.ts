@@ -59,7 +59,7 @@ export type TutorTurnResult = Readonly<{
 
 export type TutorTurnOutcome =
   | Readonly<{ type: "answered"; result: TutorTurnResult }>
-  | Readonly<{ type: "denied"; reason: "minute" | "daily" | "global" | "disabled"; resetsAt: string }>;
+  | Readonly<{ type: "denied"; reason: TutorDenialReason; resetsAt: string }>;
 
 export interface StudyTutor {
   answerTurn(request: TutorTurnRequest): Promise<TutorTurnOutcome>;
@@ -72,7 +72,7 @@ export interface StudyTutor {
   answerTurnStream(request: TutorTurnRequest): AsyncGenerator<TutorStreamEvent>;
 }
 
-export type TutorDenialReason = "minute" | "daily" | "global" | "disabled";
+export type TutorDenialReason = "minute" | "daily" | "provider" | "global" | "disabled";
 
 export type TutorStreamEvent =
   | Readonly<{ type: "denied"; reason: TutorDenialReason; resetsAt: string }>

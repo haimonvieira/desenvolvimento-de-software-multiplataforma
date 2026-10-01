@@ -3,7 +3,7 @@ import { policyFor, type UsagePolicy, type UsageScope } from "./usage-policy";
 
 export type BudgetDecision =
   | { type: "reserved"; reservationId: string; maxInputTokens: number; maxOutputTokens: number; maxToolCalls: number }
-  | { type: "denied"; reason: "minute" | "daily" | "global" | "disabled"; resetsAt: string };
+  | { type: "denied"; reason: "minute" | "daily" | "provider" | "global" | "disabled"; resetsAt: string };
 
 /** What the provider adapter is allowed to spend on one turn. */
 export type ReservedBudget = Readonly<{
@@ -25,6 +25,13 @@ export type QuotaSnapshot = Readonly<{
   requestsPerHour: number;
   requestsToday: number;
   requestsPerDay: number;
+  /**
+   * The named provider's own day pool, summed across subjects. Optional because
+   * it is additive: a ledger double that predates the provider dimension still
+   * satisfies the snapshot.
+   */
+  providerTurnsToday?: number;
+  providerTurnsPerDay?: number;
   globalTurnsToday: number;
   globalTurnsPerDay: number;
   globalTokensToday: number;
@@ -46,10 +53,15 @@ export const DEFAULT_PROVIDER = "groq";
 
 export interface UsageLedger {
   policy(scope: UsageScope): UsagePolicy;
-  reserve(input: Readonly<{ scope: UsageScope; subjectKey: string; provider?: string }>): Promise<BudgetDecision>;
+  /**
+   * The caller that knows a provider's quota supplies its day ceiling here;
+   * 0 or absent disables the check, like every other ceiling. The ledger stays
+   * policy-free about which provider has how much.
+   */
+  reserve(input: Readonly<{ scope: UsageScope; subjectKey: string; provider?: string; providerTurnsPerDay?: number }>): Promise<BudgetDecision>;
   reconcile(input: Readonly<{ reservationId: string; outcome: ReservationOutcome; usage?: TokenUsage }>): Promise<void>;
   expireStaleReservations(): Promise<number>;
-  readQuota(input: Readonly<{ scope: UsageScope; subjectKey: string; provider?: string }>): Promise<QuotaSnapshot>;
+  readQuota(input: Readonly<{ scope: UsageScope; subjectKey: string; provider?: string; providerTurnsPerDay?: number }>): Promise<QuotaSnapshot>;
   hasSponsoredHistory(input: Readonly<{ scope: UsageScope; subjectKey: string }>): Promise<boolean>;
 }
 
@@ -78,7 +90,7 @@ function parseDecision(value: unknown): BudgetDecision {
       maxToolCalls: Number(raw.maxToolCalls),
     };
   }
-  if (raw.type === "denied" && (raw.reason === "minute" || raw.reason === "daily" || raw.reason === "global" || raw.reason === "disabled")) {
+  if (raw.type === "denied" && (raw.reason === "minute" || raw.reason === "daily" || raw.reason === "provider" || raw.reason === "global" || raw.reason === "disabled")) {
     return { type: "denied", reason: raw.reason, resetsAt: String(raw.resetsAt) };
   }
   throw new Error("Invalid budget decision");
@@ -93,12 +105,13 @@ export function createUsageLedger(dependencies: UsageLedgerDependencies): UsageL
   return {
     policy,
 
-    async reserve({ scope, subjectKey, provider = DEFAULT_PROVIDER }) {
-      const rows = await query("SELECT reserve_ai_budget($1, $2, $3, $4, $5::jsonb, $6::timestamptz) AS decision", [
+    async reserve({ scope, subjectKey, provider = DEFAULT_PROVIDER, providerTurnsPerDay = 0 }) {
+      const rows = await query("SELECT reserve_ai_budget($1, $2, $3, $4, $5::integer, $6::jsonb, $7::timestamptz) AS decision", [
         scope,
         provider,
         subjectKey,
         newReservationId(),
+        providerTurnsPerDay,
         JSON.stringify(policy(scope)),
         now().toISOString(),
       ]);
@@ -122,11 +135,12 @@ export function createUsageLedger(dependencies: UsageLedgerDependencies): UsageL
       return Number(rows[0]?.expired ?? 0);
     },
 
-    async readQuota({ scope, subjectKey, provider = DEFAULT_PROVIDER }) {
-      const rows = await query("SELECT read_ai_quota($1, $2, $3, $4::jsonb, $5::timestamptz) AS quota", [
+    async readQuota({ scope, subjectKey, provider = DEFAULT_PROVIDER, providerTurnsPerDay = 0 }) {
+      const rows = await query("SELECT read_ai_quota($1, $2, $3, $4::integer, $5::jsonb, $6::timestamptz) AS quota", [
         scope,
         provider,
         subjectKey,
+        providerTurnsPerDay,
         JSON.stringify(policy(scope)),
         now().toISOString(),
       ]);
@@ -138,6 +152,8 @@ export function createUsageLedger(dependencies: UsageLedgerDependencies): UsageL
         requestsPerHour: Number(raw.requestsPerHour ?? 0),
         requestsToday: Number(raw.requestsToday ?? 0),
         requestsPerDay: Number(raw.requestsPerDay ?? 0),
+        providerTurnsToday: Number(raw.providerTurnsToday ?? 0),
+        providerTurnsPerDay: Number(raw.providerTurnsPerDay ?? 0),
         globalTurnsToday: Number(raw.globalTurnsToday ?? 0),
         globalTurnsPerDay: Number(raw.globalTurnsPerDay ?? 0),
         globalTokensToday: Number(raw.globalTokensToday ?? 0),

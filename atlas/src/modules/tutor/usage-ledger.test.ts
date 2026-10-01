@@ -768,4 +768,64 @@ describe("provider dimension", () => {
       { total: 0 },
     ]);
   });
+
+  it("denies a turn on the provider's own day ceiling while another provider has room", async () => {
+    const clock = clockAt("2026-09-28T10:15:00.000Z");
+    const ledger = ledgerWith(clock, {
+      public: { ...policyFor("public"), requestsPerHour: 100, requestsPerDay: 100, globalTurnsPerDay: 100, maxConcurrentTurns: 0 },
+    });
+    const ceiling = { providerTurnsPerDay: 1 };
+
+    expect((await ledger.reserve({ scope: "public", subjectKey: "device-a", provider: "alpha", ...ceiling })).type).toBe("reserved");
+    expect(await ledger.reserve({ scope: "public", subjectKey: "device-a", provider: "alpha", ...ceiling })).toEqual({
+      type: "denied",
+      reason: "provider",
+      resetsAt: "2026-09-29T00:00:00.000Z",
+    });
+    // Beta's own day pool is untouched, so the denial is alpha's, not the
+    // aggregate's.
+    expect((await ledger.reserve({ scope: "public", subjectKey: "device-a", provider: "beta", ...ceiling })).type).toBe("reserved");
+    // A denial consumes nothing: alpha's hour and day counters did not move and
+    // no reservation row was left behind.
+    expect(await providerWindowRows("public", "alpha", "device-a", "day")).toMatchObject([{ requests: 1 }]);
+    expect(await providerWindowRows("public", "alpha", "device-a", "hour")).toMatchObject([{ requests: 1 }]);
+    expect(await executor.query(`SELECT count(*)::int AS total FROM ai_reservation`, [])).toEqual([{ total: 2 }]);
+  });
+
+  it("counts the provider ceiling across subjects, not per subject", async () => {
+    const clock = clockAt("2026-09-28T10:15:00.000Z");
+    const ledger = ledgerWith(clock, {
+      public: { ...policyFor("public"), requestsPerHour: 100, requestsPerDay: 100, globalTurnsPerDay: 100, maxConcurrentTurns: 0 },
+    });
+    const ceiling = { providerTurnsPerDay: 2 };
+
+    expect((await ledger.reserve({ scope: "public", subjectKey: "device-a", provider: "alpha", ...ceiling })).type).toBe("reserved");
+    expect((await ledger.reserve({ scope: "public", subjectKey: "device-b", provider: "alpha", ...ceiling })).type).toBe("reserved");
+    // A third subject is well under its own daily limit; alpha's day total is not.
+    expect(await ledger.reserve({ scope: "public", subjectKey: "device-c", provider: "alpha", ...ceiling })).toEqual({
+      type: "denied",
+      reason: "provider",
+      resetsAt: "2026-09-29T00:00:00.000Z",
+    });
+    expect(await providerWindowRows("public", "alpha", "device-c", "day")).toHaveLength(0);
+
+    expect(await ledger.readQuota({ scope: "public", subjectKey: "device-a", provider: "alpha", providerTurnsPerDay: 5 })).toMatchObject({
+      providerTurnsToday: 2,
+      providerTurnsPerDay: 5,
+      globalTurnsToday: 2,
+      requestsToday: 1,
+    });
+  });
+
+  it("does not refuse a provider at a zero ceiling", async () => {
+    const clock = clockAt("2026-09-28T10:15:00.000Z");
+    const ledger = ledgerWith(clock, {
+      public: { ...policyFor("public"), requestsPerHour: 100, requestsPerDay: 100, globalTurnsPerDay: 100, maxConcurrentTurns: 0 },
+    });
+
+    // Passing 0 explicitly and omitting the ceiling both mean disabled.
+    expect((await ledger.reserve({ scope: "public", subjectKey: "device-a", provider: "alpha", providerTurnsPerDay: 0 })).type).toBe("reserved");
+    expect((await ledger.reserve({ scope: "public", subjectKey: "device-b", provider: "alpha", providerTurnsPerDay: 0 })).type).toBe("reserved");
+    expect((await ledger.reserve({ scope: "public", subjectKey: "device-c", provider: "alpha" })).type).toBe("reserved");
+  });
 });

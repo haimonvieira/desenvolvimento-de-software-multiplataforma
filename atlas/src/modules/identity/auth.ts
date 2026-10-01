@@ -77,6 +77,11 @@ export function createAuth(config: AuthRuntimeConfig) {
  * deterministic GitHub-style noreply address satisfies it without storing an
  * address we have no use for — and without depending on an app permission we
  * would only hold to satisfy a field nobody reads.
+ *
+ * The same holds for the display name, which our own plugin also declares
+ * required: an account with no public name would fail with
+ * `MISSING_FIELD: name is required`. The login is always present, so it fills
+ * the gap, and the noreply form never needs to be shown anywhere.
  */
 export function githubNoreplyEmail(profile: Readonly<{ id?: number | string | null; login?: string | null }>): string {
   return `${profile.id ?? "0"}+${profile.login ?? "user"}@users.noreply.github.com`;
@@ -95,6 +100,7 @@ export function createAuthForDatabase(config: AuthRuntimeConfig, database: DB) {
         clientId: config.githubClientId,
         clientSecret: config.githubClientSecret,
         mapProfileToUser: (profile) => ({
+          name: profile.name || profile.login || "Atlas",
           email: profile.email ?? githubNoreplyEmail(profile),
         }),
       },

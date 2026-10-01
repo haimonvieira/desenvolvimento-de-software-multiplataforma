@@ -69,10 +69,24 @@ describe("owner GitHub entry point against Better Auth", () => {
     expect(typeof github.mapProfileToUser).toBe("function");
 
     expect(await github.mapProfileToUser!({ id: 12345, login: "haimon", email: null })).toEqual({
+      name: "haimon",
       email: "12345+haimon@users.noreply.github.com",
     });
     expect(await github.mapProfileToUser!({ id: 12345, login: "haimon", email: "owner@example.test" })).toEqual({
+      name: "haimon",
       email: "owner@example.test",
+    });
+    // The profile may also carry no public name. Our own plugin declares `name`
+    // required, so an account without one would fail with
+    // `MISSING_FIELD: name is required` right after the email fix let it
+    // further. The login is always present and fills the gap.
+    expect(await github.mapProfileToUser!({ id: 12345, login: "haimon", name: null, email: null })).toEqual({
+      name: "haimon",
+      email: "12345+haimon@users.noreply.github.com",
+    });
+    expect(await github.mapProfileToUser!({ id: 12345, login: "haimon", name: "Haimon Vieira", email: null })).toEqual({
+      name: "Haimon Vieira",
+      email: "12345+haimon@users.noreply.github.com",
     });
   });
 });

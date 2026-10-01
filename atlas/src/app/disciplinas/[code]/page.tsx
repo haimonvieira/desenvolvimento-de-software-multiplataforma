@@ -1,12 +1,17 @@
 import Link from "next/link";
 
 import catalog from "../../../generated/catalog.json";
+import { env } from "cloudflare:workers";
 import { StudyDisciplineMaterials } from "../../../modules/study/study-discipline-materials";
 import { createCatalogQuery } from "../../../modules/catalog/catalog-query";
+import { TutorFloatingChat } from "../../../modules/study/tutor-floating-chat";
+import { tutorCandidates } from "../../../modules/study/tutor-context";
 import type { CatalogData } from "../../../modules/catalog/model";
 
 const data = catalog as CatalogData;
 const query = createCatalogQuery(data);
+
+type DisciplineEnv = { TURNSTILE_SITE_KEY?: string };
 
 type PageProps = Readonly<{
   params: Promise<{ code: string }>;
@@ -31,6 +36,7 @@ export default async function DisciplinePage({ params, searchParams }: PageProps
   }
 
   const materials = query.browse({ semester: discipline.semesterCode, discipline: discipline.code });
+  const turnstileSiteKey = (env as DisciplineEnv).TURNSTILE_SITE_KEY ?? null;
 
   return (
     <>
@@ -51,6 +57,7 @@ export default async function DisciplinePage({ params, searchParams }: PageProps
           <StudyDisciplineMaterials materials={materials} />
         </main>
       </div>
+      <TutorFloatingChat candidates={tutorCandidates(query.browse({ semester: discipline.semesterCode }))} turnstileSiteKey={turnstileSiteKey} />
     </>
   );
 }

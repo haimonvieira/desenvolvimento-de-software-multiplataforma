@@ -2,14 +2,19 @@ import Link from "next/link";
 import { headers } from "next/headers";
 
 import catalog from "../../../generated/catalog.json";
+import { env } from "cloudflare:workers";
 import { createCatalogQuery } from "../../../modules/catalog/catalog-query";
 import { materialPathCandidates } from "../../../modules/catalog/material-path";
 import { MaterialPreview } from "../../../modules/catalog/material-preview";
 import { MaterialStudyControls } from "../../../modules/study/material-study-controls";
+import { TutorFloatingChat } from "../../../modules/study/tutor-floating-chat";
+import { tutorCandidates } from "../../../modules/study/tutor-context";
 import type { CatalogData } from "../../../modules/catalog/model";
 
 const data = catalog as CatalogData;
 const query = createCatalogQuery(data);
+
+type MaterialEnv = { TURNSTILE_SITE_KEY?: string };
 
 type PageProps = Readonly<{
   params: Promise<{ path: string[] }>;
@@ -79,6 +84,10 @@ export default async function MaterialPage({ params }: PageProps) {
           <MaterialStudyControls material={material.ref} />
         </main>
       </div>
+      <TutorFloatingChat
+        candidates={tutorCandidates(query.browse({ semester: material.semesterCode }))}
+        turnstileSiteKey={(env as MaterialEnv).TURNSTILE_SITE_KEY ?? null}
+      />
     </>
   );
 }

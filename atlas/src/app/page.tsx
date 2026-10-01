@@ -1,9 +1,12 @@
 import catalog from "../generated/catalog.json";
+import { env } from "cloudflare:workers";
 import { createCatalogQuery } from "../modules/catalog/catalog-query";
 import { ReactiveSearch } from "../modules/catalog/reactive-search";
 import { type CatalogViewMode } from "../modules/catalog/catalog-view";
 import { StudyCatalogView } from "../modules/study/study-catalog-view";
 import { requireAdminPage } from "../modules/identity/server-admin";
+import { TutorFloatingChat } from "../modules/study/tutor-floating-chat";
+import { tutorCandidates } from "../modules/study/tutor-context";
 import type { CatalogData } from "../modules/catalog/model";
 import { ProfileControls } from "../modules/identity/profile-controls";
 
@@ -11,6 +14,8 @@ const data = catalog as CatalogData;
 const catalogQuery = createCatalogQuery(data);
 const knownSemesters = data.semesters.map(({ code }) => code);
 const latestSemester = knownSemesters.at(-1) ?? "DSM1";
+
+type HomeEnv = { TURNSTILE_SITE_KEY?: string };
 
 type HomeProps = Readonly<{
   searchParams?: Promise<Record<string, string | string[] | undefined>>;
@@ -39,6 +44,8 @@ export default async function Home({ searchParams }: HomeProps) {
   } catch {
     isOwner = false;
   }
+  const tutorContextCandidates = tutorCandidates(catalogQuery.browse({ semester }));
+  const turnstileSiteKey = (env as HomeEnv).TURNSTILE_SITE_KEY ?? null;
 
   return (
     <>
@@ -105,6 +112,7 @@ export default async function Home({ searchParams }: HomeProps) {
           <a href="/admin/entrar">Administração</a>
         </footer>
       </div>
+      <TutorFloatingChat candidates={tutorContextCandidates} turnstileSiteKey={turnstileSiteKey} />
     </>
   );
 }

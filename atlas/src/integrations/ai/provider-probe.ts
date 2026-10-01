@@ -16,7 +16,15 @@ export type ProviderProbeVerdict =
         | "bad-shape";
     }>;
 
-const DEFAULT_TIMEOUT_MS = 10_000;
+/**
+ * Inference on a shared free provider can take well over ten seconds — one
+ * measured probe answered in 12 s while the keyless `/models` call to the same
+ * host answered in under half a second. A timeout tuned for the catalogue call
+ * would mark a working provider as unreachable, so the completion probe gets
+ * its own, longer deadline.
+ */
+const CATALOGUE_TIMEOUT_MS = 10_000;
+const COMPLETION_TIMEOUT_MS = 45_000;
 
 /** The catalogue shape only an OpenAI-compatible `/models` answers with. */
 const catalogueSchema = z.object({ data: z.array(z.object({ id: z.string() })) });
@@ -51,7 +59,7 @@ export async function listProviderModels(
   const base = input.baseUrl.replace(/\/+$/, "");
 
   const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), input.timeoutMs ?? DEFAULT_TIMEOUT_MS);
+  const timer = setTimeout(() => controller.abort(), input.timeoutMs ?? CATALOGUE_TIMEOUT_MS);
   try {
     const response = await input.fetchImpl(`${base}/models`, { method: "GET", signal: controller.signal });
     if (!response.ok) return { ok: false, reason: "not-openai" };
@@ -101,7 +109,7 @@ export function createProviderProbe(
     if (parsed.protocol !== "https:") return { ok: false, reason: "bad-url" };
     const base = input.baseUrl.replace(/\/+$/, "");
 
-    const timeoutMs = input.timeoutMs ?? DEFAULT_TIMEOUT_MS;
+    const timeoutMs = input.timeoutMs ?? COMPLETION_TIMEOUT_MS;
 
     const request = async (url: string, init: RequestInit): Promise<Response> => {
       const controller = new AbortController();

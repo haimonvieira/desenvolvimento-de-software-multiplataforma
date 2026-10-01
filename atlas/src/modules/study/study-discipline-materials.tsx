@@ -6,36 +6,25 @@ import { buildMaterialTree, type MaterialFolder } from "../catalog/material-tree
 import type { Material, MaterialRef } from "../catalog/model";
 import { useCurrentStudyMaterial } from "./use-current-study-material";
 
-type FolderEntry = Readonly<{ key: string; folder: MaterialFolder }>;
-
-function flattenFolders(folder: MaterialFolder, parentKey = ""): readonly FolderEntry[] {
-  const entries: FolderEntry[] = [];
-  for (const child of folder.folders) {
-    const key = parentKey ? `${parentKey}/${child.name}` : child.name;
-    entries.push({ key, folder: child }, ...flattenFolders(child, key));
-  }
-  return entries;
+/** Recursive descendant count — files plus everything inside subfolders. */
+function folderItemCount(folder: MaterialFolder): number {
+  let count = folder.materials.length;
+  for (const child of folder.folders) count += folderItemCount(child);
+  return count;
 }
 
-function MaterialFolderSection({ entry, currentMaterial }: Readonly<{ entry: FolderEntry; currentMaterial: MaterialRef | null }>) {
-  const { folder } = entry;
-  const files = folder.materials.length === 1 ? "1 arquivo" : `${folder.materials.length} arquivos`;
-  // Big folders start collapsed so an 88-file discipline doesn't become one
-  // unbroken column; the summary keeps every folder openable in one click.
-  // A folder holding the current material never collapses — don't hide where you are.
-  const holdsCurrent = currentMaterial !== null && folder.materials.some((material) => material.ref.path === currentMaterial.path && material.ref.commitSha === currentMaterial.commitSha);
-  // Iterative descendant count — a stack walk is clearer than a one-use recursion here.
-  let count = folder.materials.length;
-  const stack = [...folder.folders];
-  while (stack.length > 0) {
-    const node = stack.pop()!;
-    count += node.materials.length;
-    stack.push(...node.folders);
-  }
-  const collapsible = count > 12 && !holdsCurrent;
-  const list = (
+function folderLabel(folder: MaterialFolder): string {
+  const files = folder.materials.length;
+  const subfolders = folder.folders.length;
+  if (files === 0 && subfolders > 0) return subfolders === 1 ? "1 pasta" : `${subfolders} pastas`;
+  const filePart = files === 1 ? "1 arquivo" : `${files} arquivos`;
+  return subfolders > 0 ? `${filePart}, ${subfolders === 1 ? "1 pasta" : `${subfolders} pastas`}` : filePart;
+}
+
+function MaterialFileList({ materials, currentMaterial }: Readonly<{ materials: readonly Material[]; currentMaterial: MaterialRef | null }>) {
+  return (
     <ul>
-      {folder.materials.map((material) => {
+      {materials.map((material) => {
         const current = currentMaterial?.path === material.ref.path && currentMaterial.commitSha === material.ref.commitSha;
         return (
           <li key={material.ref.path}>
@@ -47,18 +36,38 @@ function MaterialFolderSection({ entry, currentMaterial }: Readonly<{ entry: Fol
       })}
     </ul>
   );
+}
+
+/**
+ * One folder, rendered as a real subtree: files in a flat list, subfolders as
+ * nested groups inside the same section. The old flat map turned every
+ * descendant into a top-level sibling, so opening "ATV 02" revealed nothing —
+ * its children lived below it as separate sections.
+ */
+function MaterialFolderGroup({ folder, currentMaterial }: Readonly<{ folder: MaterialFolder; currentMaterial: MaterialRef | null }>) {
+  const holdsCurrent = currentMaterial !== null && folder.materials.some((material) => material.ref.path === currentMaterial.path && material.ref.commitSha === currentMaterial.commitSha);
+  const collapsible = folderItemCount(folder) > 12 && !holdsCurrent;
+  const style = { "--depth": folder.depth } as CSSProperties;
+  const label = folderLabel(folder);
+  const header = <header><h2>{folder.name}</h2><span>{label}</span></header>;
+  const body = (
+    <>
+      {folder.materials.length > 0 && <MaterialFileList materials={folder.materials} currentMaterial={currentMaterial} />}
+      {folder.folders.map((child) => <MaterialFolderGroup key={child.name} folder={child} currentMaterial={currentMaterial} />)}
+    </>
+  );
   if (!collapsible) {
     return (
-      <section className="material-group" style={{ "--depth": folder.depth } as CSSProperties} aria-label={`${folder.name}, ${files}`}>
-        <header><h2>{folder.name}</h2><span>{files}</span></header>
-        {list}
+      <section className="material-group" style={style} aria-label={`${folder.name}, ${label}`}>
+        {header}
+        {body}
       </section>
     );
   }
   return (
-    <details className="material-group" style={{ "--depth": folder.depth } as CSSProperties} aria-label={`${folder.name}, ${files}`}>
-      <summary><h2>{folder.name}</h2><span>{files}</span></summary>
-      {list}
+    <details className="material-group" style={style} aria-label={`${folder.name}, ${label}`}>
+      <summary>{header}</summary>
+      {body}
     </details>
   );
 }
@@ -81,8 +90,8 @@ export function StudyDisciplineMaterials({ materials }: Readonly<{ materials: re
         </section>
       ) : (
         <div className="material-groups">
-          {tree.materials.length > 0 && <MaterialFolderSection entry={{ key: rootFiles.name, folder: rootFiles }} currentMaterial={study.currentMaterial} />}
-          {flattenFolders(tree).map((entry) => <MaterialFolderSection key={entry.key} entry={entry} currentMaterial={study.currentMaterial} />)}
+          {tree.materials.length > 0 && <MaterialFolderGroup folder={rootFiles} currentMaterial={study.currentMaterial} />}
+          {tree.folders.map((child) => <MaterialFolderGroup key={child.name} folder={child} currentMaterial={study.currentMaterial} />)}
         </div>
       )}
     </>

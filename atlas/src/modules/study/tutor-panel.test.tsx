@@ -88,6 +88,44 @@ function announcer(): string {
   return container.querySelector(".sr-only[role='status']")?.textContent ?? "";
 }
 
+function setInput(selector: string, value: string) {
+  const input = container.querySelector<HTMLInputElement>(selector);
+  if (!input) throw new Error(`input not found: ${selector}`);
+  const setter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value")?.set;
+  return act(async () => {
+    setter?.call(input, value);
+    input.dispatchEvent(new Event("input", { bubbles: true }));
+    input.dispatchEvent(new Event("change", { bubbles: true }));
+    await tick();
+  });
+}
+
+function setSelect(selector: string, value: string) {
+  const select = container.querySelector<HTMLSelectElement>(selector);
+  if (!select) throw new Error(`select not found: ${selector}`);
+  return act(async () => {
+    select.value = value;
+    select.dispatchEvent(new Event("change", { bubbles: true }));
+    await tick();
+  });
+}
+
+function clickButton(label: string) {
+  return act(async () => {
+    button(label).click();
+    await tick();
+  });
+}
+
+function byokMode() {
+  return act(async () => {
+    const radio = container.querySelector<HTMLInputElement>('input[name="mode"][value="byok"]');
+    if (!radio) throw new Error("byok radio not found");
+    radio.click();
+    await tick();
+  });
+}
+
 describe("TutorPanel streaming", () => {
   it("renders the status, then the growing answer, then the citations", async () => {
     const stream = manualStream();
@@ -196,5 +234,58 @@ describe("TutorPanel streaming", () => {
     await setQuestion("o que é lógica?");
     await submit();
     expect(container.querySelector('[data-testid="tutor-status-band"]')).toBeNull();
+  });
+});
+
+describe("TutorPanel BYOK provider", () => {
+  it("keeps the submit disabled until the probe approves", async () => {
+    vi.stubGlobal("fetch", async (input: RequestInfo | URL) => {
+      const url = String(input);
+      if (url.startsWith("/api/tutor/byok/models")) {
+        return new Response(JSON.stringify({ models: ["m-1"] }), { status: 200 });
+      }
+      if (url === "/api/tutor/byok/probe") {
+        return new Response(JSON.stringify({ ok: true, models: ["m-1"] }), { status: 200 });
+      }
+      throw new Error(`unexpected fetch: ${url}`);
+    });
+    await render(<TutorPanel candidates={[material]} turnstileSiteKey={null} />);
+    await byokMode();
+    await setQuestion("o que é lógica?");
+
+    expect(button("Perguntar").disabled).toBe(true);
+    expect(container.textContent).toContain("não é armazenada");
+
+    await clickButton("Buscar modelos");
+    await setSelect("#tutor-byok-model", "m-1");
+    expect(button("Perguntar").disabled).toBe(true);
+
+    await setInput("#tutor-byok-key", "sk-visitor");
+    await clickButton("Testar conexão");
+
+    expect(container.querySelector('[data-testid="tutor-probe-line"]')?.textContent).toContain("aprovado");
+    expect(button("Perguntar").disabled).toBe(false);
+  });
+
+  it("renders the not-your-key copy for a 403, not the invalid-key copy", async () => {
+    vi.stubGlobal("fetch", async (input: RequestInfo | URL) => {
+      const url = String(input);
+      if (url.startsWith("/api/tutor/byok/models")) {
+        return new Response(JSON.stringify({ models: ["m-1"] }), { status: 200 });
+      }
+      return new Response(JSON.stringify({ ok: false, reason: "model-not-subscribed" }), { status: 200 });
+    });
+    await render(<TutorPanel candidates={[material]} turnstileSiteKey={null} />);
+    await byokMode();
+    await clickButton("Buscar modelos");
+    await setSelect("#tutor-byok-model", "m-1");
+    await setInput("#tutor-byok-key", "sk-visitor");
+    await clickButton("Testar conexão");
+
+    const failure = container.querySelector('[data-testid="tutor-probe-failure"]')?.textContent ?? "";
+    expect(container.querySelector('[data-testid="tutor-probe-line"]')?.textContent).toContain("reprovado");
+    expect(failure).toContain("não está liberado na sua conta — não é a chave");
+    expect(failure).not.toContain("Chave inválida ou revogada");
+    expect(button("Perguntar").disabled).toBe(true);
   });
 });

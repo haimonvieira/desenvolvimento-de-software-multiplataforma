@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import type { FormEvent } from "react";
 import type { MaterialRef } from "../catalog/model";
 import type { ProposedNotebookAction } from "../../integrations/ai/public-tutor-ai";
+import type { ProviderProbeVerdict } from "../../integrations/ai/provider-probe";
 import type { RetrievedExcerpt } from "../tutor/model";
 import { TUTOR_CONTEXT_LIMIT } from "../tutor/study-tutor";
 import { applyProposedNotebookAction } from "../tutor/notebook";
@@ -38,12 +39,52 @@ type ApiBody = Readonly<{
   context: readonly MaterialRef[];
   mode: "sponsored" | "byok";
   turnstileToken?: string;
+  provider?: Readonly<{ baseUrl: string; model: string }>;
 }>;
 
 /** The status band's fixed line when the model never writes one. */
 const STATUS_FALLBACK = "Consultando os materiais da conversa…";
 /** While the answer streams, so no one expects citations before the turn ends. */
 const PRE_NOTICE = "Citações e ações chegam no fim do turno";
+
+/**
+ * The probe failure copy, keyed by the probe reason. 401 and 403 are the pair
+ * the panel must never confuse: a bad key and a model the account cannot use
+ * have different remedies, and telling the visitor to fix the key for a 403
+ * would be wrong. 429 carries the provider's retry hint; the rest share the
+ * "not your key" family with per-cause wording.
+ */
+const PROBE_FAILURE_COPY: Readonly<Record<string, Readonly<{ title: string; remedy: string }>>> = Object.freeze({
+  auth: Object.freeze({ title: "Chave inválida ou revogada.", remedy: "Remédio: revisar a chave no painel do provedor." }),
+  "model-not-subscribed": Object.freeze({
+    title: "Este modelo não está liberado na sua conta — não é a chave.",
+    remedy: "Remédio: assine o modelo no painel do provedor ou escolha outro na lista.",
+  }),
+  "rate-limited": Object.freeze({
+    title: "Limite do provedor atingido.",
+    remedy: "Remédio: esperar a janela; o painel mostra o texto do retry.",
+  }),
+  "no-json-mode": Object.freeze({
+    title: "Este modelo não devolve resposta estruturada.",
+    remedy: "Remédio: escolha outro modelo na lista.",
+  }),
+  "bad-shape": Object.freeze({
+    title: "Este modelo respondeu fora do formato estruturado que o tutor exige.",
+    remedy: "Remédio: escolha outro modelo na lista.",
+  }),
+  "not-openai": Object.freeze({
+    title: "Este endereço não responde como um provedor compatível.",
+    remedy: "Remédio: conferir a URL base do provedor.",
+  }),
+  unreachable: Object.freeze({
+    title: "Não foi possível alcançar o provedor.",
+    remedy: "Remédio: conferir a URL e tentar de novo.",
+  }),
+  "bad-url": Object.freeze({
+    title: "URL base inválida.",
+    remedy: "Remédio: usar uma URL https do provedor, terminando na versão (…/v1).",
+  }),
+});
 
 function proposalLabel(proposal: ProposedNotebookAction): string {
   return proposal.type === "flashcard" ? `Flashcard: ${proposal.front}` : `Nota: ${proposal.title}`;
@@ -104,6 +145,15 @@ export function TutorPanel({ candidates, turnstileSiteKey }: Readonly<{
   const [question, setQuestion] = useState("");
   const [mode, setMode] = useState<"sponsored" | "byok">("sponsored");
   const [byokKey, setByokKey] = useState("");
+  const [byokBaseUrl, setByokBaseUrl] = useState("https://api.groq.com/openai/v1");
+  const [byokModels, setByokModels] = useState<readonly string[]>([]);
+  const [byokModel, setByokModel] = useState("");
+  const [byokModelsState, setByokModelsState] = useState<"idle" | "loading" | "failed">("idle");
+  const [byokModelsError, setByokModelsError] = useState("");
+  const [byokProbe, setByokProbe] = useState<"idle" | "probing" | "approved" | "rejected">("idle");
+  const [byokProbeReason, setByokProbeReason] = useState("");
+  const [byokProbeRemedy, setByokProbeRemedy] = useState("");
+  const [byokApproved, setByokApproved] = useState<Readonly<{ baseUrl: string; model: string }> | null>(null);
   const [turnstileToken, setTurnstileToken] = useState("");
   const [state, setState] = useState<TurnState>({ type: "idle" });
   const [announcement, setAnnouncement] = useState("");
@@ -130,6 +180,95 @@ export function TutorPanel({ candidates, turnstileSiteKey }: Readonly<{
   }, [candidates, workspace]);
 
   const inFlight = state.type === "pending" || state.type === "streaming";
+
+  /** Lists the provider's models through the Atlas proxy — keyless, so the key
+   * never travels before the URL is validated. */
+  async function loadByokModels(): Promise<void> {
+    const trimmed = byokBaseUrl.trim();
+    if (!trimmed) return;
+    setByokModelsState("loading");
+    setByokModelsError("");
+    setByokModels([]);
+    setByokModel("");
+    setByokProbe("idle");
+    setByokProbeReason("");
+    setByokProbeRemedy("");
+    setByokApproved(null);
+    try {
+      const response = await fetch(`/api/tutor/byok/models?baseUrl=${encodeURIComponent(trimmed)}`);
+      const payload = (await response.json().catch(() => null)) as {
+        models?: unknown;
+        error?: { message?: string };
+      } | null;
+      if (!response.ok || !Array.isArray(payload?.models)) {
+        setByokModelsState("failed");
+        setByokModelsError(
+          typeof payload?.error?.message === "string" && payload.error.message
+            ? payload.error.message
+            : "Não foi possível listar os modelos.",
+        );
+        return;
+      }
+      const ids = (payload.models as unknown[]).filter((id): id is string => typeof id === "string");
+      setByokModels(ids);
+      setByokModelsState("idle");
+      if (ids.length === 0) setByokModelsError("Este provedor não listou nenhum modelo.");
+    } catch {
+      setByokModelsState("failed");
+      setByokModelsError("Não foi possível alcançar o provedor.");
+    }
+  }
+
+  /** Runs the JSON-mode probe: one minimal turn proving the model answers in
+   * our shape. The submit stays disabled until this approves. */
+  async function probeByokProvider(): Promise<void> {
+    const base = byokBaseUrl.trim();
+    const key = byokKey.trim();
+    if (!base || !key || !byokModel) return;
+    setByokProbe("probing");
+    setByokProbeReason("");
+    setByokProbeRemedy("");
+    setByokApproved(null);
+    try {
+      const response = await fetch("/api/tutor/byok/probe", {
+        method: "POST",
+        headers: { "content-type": "application/json", authorization: `Bearer ${key}` },
+        body: JSON.stringify({ baseUrl: base, model: byokModel }),
+      });
+      const payload = (await response.json().catch(() => null)) as
+        | ProviderProbeVerdict
+        | Readonly<{ error?: Readonly<{ message?: string }> }>
+        | null;
+      if (payload !== null && "ok" in payload && payload.ok) {
+        setByokProbe("approved");
+        setByokApproved({ baseUrl: base, model: byokModel });
+        return;
+      }
+      setByokProbe("rejected");
+      if (payload !== null && "ok" in payload && !payload.ok) {
+        const copy = PROBE_FAILURE_COPY[payload.reason];
+        if (copy) {
+          setByokProbeReason(copy.title);
+          setByokProbeRemedy(copy.remedy);
+        }
+      } else if (response.status === 429) {
+        const copy = PROBE_FAILURE_COPY["rate-limited"];
+        if (copy) {
+          setByokProbeReason(copy.title);
+          setByokProbeRemedy(copy.remedy);
+        }
+      } else if (payload !== null && "error" in payload && typeof payload.error?.message === "string" && payload.error.message) {
+        setByokProbeReason(payload.error.message);
+      }
+    } catch {
+      setByokProbe("rejected");
+      const copy = PROBE_FAILURE_COPY["unreachable"];
+      if (copy) {
+        setByokProbeReason(copy.title);
+        setByokProbeRemedy(copy.remedy);
+      }
+    }
+  }
 
   /** Renders the ordinary JSON payload — the path a non-streaming response takes. */
   async function readJsonTurn(response: Response): Promise<void> {
@@ -230,6 +369,10 @@ export function TutorPanel({ candidates, turnstileSiteKey }: Readonly<{
       context,
       mode,
       ...(mode === "sponsored" && turnstileToken.trim() ? { turnstileToken: turnstileToken.trim() } : {}),
+      // Approved only: the submit stays disabled until the probe approves, so a
+      // provider that cannot produce our JSON never reaches a turn it would
+      // fail with nothing to explain why.
+      ...(mode === "byok" && byokApproved ? { provider: byokApproved } : {}),
     };
     try {
       const response = await fetch("/api/tutor/turn", {
@@ -323,20 +466,107 @@ export function TutorPanel({ candidates, turnstileSiteKey }: Readonly<{
         {mode === "sponsored" && <TurnstileWidget siteKey={turnstileSiteKey} onToken={setTurnstileToken} />}
         {mode === "byok" && (
           <>
-            <label htmlFor="tutor-byok-key">Sua chave de API</label>
+            <label htmlFor="tutor-byok-baseurl">URL base do provedor</label>
+            <input
+              id="tutor-byok-baseurl"
+              name="byokBaseUrl"
+              type="url"
+              autoComplete="off"
+              value={byokBaseUrl}
+              onChange={(event) => {
+                setByokBaseUrl(event.target.value);
+                setByokModels([]);
+                setByokModel("");
+                setByokModelsState("idle");
+                setByokModelsError("");
+                setByokProbe("idle");
+                setByokProbeReason("");
+                setByokProbeRemedy("");
+                setByokApproved(null);
+              }}
+              placeholder="https://…/v1"
+              disabled={inFlight}
+            />
+            <button
+              type="button"
+              onClick={() => void loadByokModels()}
+              disabled={inFlight || byokModelsState === "loading" || byokBaseUrl.trim().length === 0}
+            >
+              {byokModelsState === "loading" ? "Buscando modelos…" : "Buscar modelos"}
+            </button>
+            {byokModelsError && <p role="alert">{byokModelsError}</p>}
+            <label htmlFor="tutor-byok-key">Chave da API</label>
             <input
               id="tutor-byok-key"
               name="byokKey"
               type="password"
               autoComplete="off"
               value={byokKey}
-              onChange={(event) => setByokKey(event.target.value)}
+              onChange={(event) => {
+                setByokKey(event.target.value);
+                setByokProbe("idle");
+                setByokProbeReason("");
+                setByokProbeRemedy("");
+                setByokApproved(null);
+              }}
               placeholder="Mantida só nesta sessão, nunca salva"
+              disabled={inFlight}
             />
-            <p className="tutor-hint">Sua chave trafega só no cabeçalho desta requisição, pelo proxy do portal. Não é salva nem registrada.</p>
+            <label htmlFor="tutor-byok-model">Modelo</label>
+            <select
+              id="tutor-byok-model"
+              name="byokModel"
+              value={byokModel}
+              onChange={(event) => {
+                setByokModel(event.target.value);
+                setByokProbe("idle");
+                setByokProbeReason("");
+                setByokProbeRemedy("");
+                setByokApproved(null);
+              }}
+              disabled={inFlight || byokModels.length === 0}
+            >
+              <option value="">{byokModels.length === 0 ? "Busque os modelos primeiro" : "Escolha um modelo"}</option>
+              {byokModels.map((id) => (
+                <option key={id} value={id}>{id}</option>
+              ))}
+            </select>
+            <p className="tutor-byok-notice">
+              <strong>Antes do primeiro uso</strong>
+              Sua chave é usada na memória desta requisição e <strong>não é armazenada</strong> — nem no portal, nem no navegador, nem em log. Ela trafega só no cabeçalho, pelo proxy do Atlas.
+            </p>
+            <div className="tutor-probe-line" data-testid="tutor-probe-line">
+              <span>Modelo devolve resposta estruturada</span>
+              {byokProbe === "probing" && (
+                <span className="tutor-probe-state"><span className="tutor-probe-mark tutor-probe-mark--probing" aria-hidden="true" />sondando</span>
+              )}
+              {byokProbe === "approved" && (
+                <span className="tutor-probe-state"><span className="tutor-probe-mark tutor-probe-mark--approved" aria-hidden="true" />aprovado</span>
+              )}
+              {byokProbe === "rejected" && (
+                <span className="tutor-probe-state"><span className="tutor-probe-mark tutor-probe-mark--rejected" aria-hidden="true" />reprovado</span>
+              )}
+              {byokProbe === "idle" && <span className="tutor-probe-state">não testado</span>}
+            </div>
+            {(byokProbeReason || byokProbeRemedy) && (
+              <p role="alert" data-testid="tutor-probe-failure">
+                {byokProbeReason && <span>{byokProbeReason} </span>}
+                {byokProbeRemedy && <span>{byokProbeRemedy}</span>}
+              </p>
+            )}
+            <button
+              type="button"
+              onClick={() => void probeByokProvider()}
+              disabled={inFlight || byokProbe === "probing" || byokKey.trim().length === 0 || byokModel.length === 0}
+            >
+              {byokProbe === "probing" ? "Sondando…" : "Testar conexão"}
+            </button>
           </>
         )}
-        <button type="submit" disabled={inFlight || question.trim().length === 0 || context.length === 0}>Perguntar</button>
+        <button
+          type="submit"
+          disabled={inFlight || question.trim().length === 0 || context.length === 0 || (mode === "byok" && byokApproved === null)}
+        >Perguntar</button>
       </form>
       {inFlight && (
         <div className="tutor-status-band" data-testid="tutor-status-band">

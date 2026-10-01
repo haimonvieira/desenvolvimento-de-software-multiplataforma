@@ -478,7 +478,7 @@ details.material-group[open] > summary::after { rotate: 225deg; }
 .tutor-panel fieldset { display: flex; flex-wrap: wrap; gap: var(--space-3); margin: 0; padding: 0; border: 0; }
 .tutor-panel fieldset legend { padding: 0; font: 600 .68rem var(--font-data); text-transform: uppercase; }
 .tutor-panel button { min-height: 2.5rem; padding: .6rem .85rem; border: var(--border-hairline); background: var(--color-ink); color: var(--color-paper); font: 600 .62rem var(--font-data); text-transform: uppercase; cursor: pointer; justify-self: start; }
-.tutor-panel button:disabled, .tutor-panel textarea:disabled, .tutor-panel input:disabled { cursor: not-allowed; opacity: .55; }
+.tutor-panel button:disabled, .tutor-panel textarea:disabled, .tutor-panel input:disabled, .tutor-panel select:disabled { cursor: not-allowed; opacity: .55; }
 .tutor-panel [role="alert"], .tutor-panel [role="status"] { margin: 0; padding: var(--space-3) var(--space-5); font-weight: 600; }
 .tutor-panel [role="alert"] { background: var(--color-selection); }
 .tutor-panel blockquote { margin: var(--space-2) 0; padding-left: var(--space-3); border-left: var(--border-strong); overflow-wrap: anywhere; }
@@ -500,6 +500,20 @@ details.material-group[open] > summary::after { rotate: 225deg; }
 .tutor-panel .tutor-cancel { background: var(--color-paper); color: var(--color-ink); }
 @keyframes tutor-pulse { 0%, 100% { opacity: 1; } 50% { opacity: .2; } }
 @media (prefers-reduced-motion: reduce) { .tutor-pulse { animation: none; } }
+/* The BYOK probe line: "Modelo devolve resposta estruturada" with a 1px square
+ * mark — pulsing while sondando, lime when aprovado, coral when reprovado. */
+.tutor-byok-notice { margin: var(--space-2) 0 0; padding: var(--space-3) var(--space-4); border: var(--border-hairline); background: var(--color-crossing); font-size: .72rem; line-height: 1.5; }
+.tutor-byok-notice strong { display: block; font: 600 .58rem var(--font-data); text-transform: uppercase; letter-spacing: .06em; }
+.tutor-probe-line { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); padding: var(--space-3) var(--space-4); border: var(--border-hairline); background: var(--color-paper); font-size: .72rem; }
+.tutor-probe-state { display: inline-flex; align-items: center; gap: var(--space-2); font: 600 .58rem var(--font-data); text-transform: uppercase; letter-spacing: .06em; white-space: nowrap; }
+.tutor-probe-mark { display: inline-block; width: .5rem; height: .5rem; border: 1px solid var(--color-ink); }
+.tutor-probe-mark--probing { animation: tutor-pulse 1s steps(2) infinite; }
+.tutor-probe-mark--approved { background: var(--color-progress); }
+.tutor-probe-mark--rejected { background: var(--color-recent); }
+@media (prefers-reduced-motion: reduce) { .tutor-probe-mark--probing { animation: none; opacity: .5; } }
+.tutor-panel select { width: 100%; border: var(--border-hairline); border-radius: 0; background: var(--color-paper); padding: .75rem; color: var(--color-ink); }
+.tutor-panel input[type="url"] { width: 100%; border: var(--border-hairline); border-radius: 0; background: var(--color-paper); padding: .75rem; color: var(--color-ink); }
+.tutor-panel button[type="button"] { background: var(--color-paper); color: var(--color-ink); }
 
 @keyframes atlas-route-draw { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
 @keyframes location-pulse { from { translate: 0 0.35rem; } to { translate: 0; } }

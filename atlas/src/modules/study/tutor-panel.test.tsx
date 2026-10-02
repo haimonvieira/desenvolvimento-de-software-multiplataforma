@@ -237,6 +237,66 @@ describe("TutorPanel streaming", () => {
   });
 });
 
+describe("TutorPanel persona", () => {
+  function personaRadio(value: "chat" | "agent") {
+    return act(async () => {
+      const radio = container.querySelector<HTMLInputElement>(`input[name="persona"][value="${value}"]`);
+      if (!radio) throw new Error(`persona radio not found: ${value}`);
+      radio.click();
+      await tick();
+    });
+  }
+
+  function lastTurnBody(calls: (RequestInit | undefined)[]) {
+    const last = calls[calls.length - 1];
+    return JSON.parse(String(last?.body)) as Record<string, unknown>;
+  }
+
+  it("defaults to chat and posts persona chat", async () => {
+    const calls: (RequestInit | undefined)[] = [];
+    stubFetch((init) => {
+      calls.push(init);
+      return new Response(
+        JSON.stringify({ result: { answer: "oi", citations: [], proposedNotebookActions: [] } }),
+        { status: 200, headers: { "content-type": "application/json" } },
+      );
+    });
+    await render(<TutorPanel candidates={[material]} turnstileSiteKey={null} />);
+    expect(container.querySelector<HTMLInputElement>('input[name="persona"][value="chat"]')?.checked).toBe(true);
+    await setQuestion("o que é lógica?");
+    await submit();
+    expect(lastTurnBody(calls)).toMatchObject({ persona: "chat" });
+  });
+
+  it("posts persona agent after switching, keeping the answer history", async () => {
+    const calls: (RequestInit | undefined)[] = [];
+    stubFetch((init) => {
+      calls.push(init);
+      return new Response(
+        JSON.stringify({ result: { answer: "primeira", citations: [], proposedNotebookActions: [] } }),
+        { status: 200, headers: { "content-type": "application/json" } },
+      );
+    });
+    await render(<TutorPanel candidates={[material]} turnstileSiteKey={null} />);
+    await setQuestion("primeira pergunta");
+    await submit();
+    expect(container.querySelector(".tutor-answer")?.textContent).toContain("primeira");
+
+    await personaRadio("agent");
+    expect(container.querySelector(".tutor-answer")?.textContent).toContain("primeira");
+
+    await setQuestion("segunda pergunta");
+    await submit();
+    expect(lastTurnBody(calls)).toMatchObject({ persona: "agent" });
+    expect(container.querySelector(".tutor-answer")?.textContent).toBeTruthy();
+
+    await personaRadio("chat");
+    await setQuestion("terceira pergunta");
+    await submit();
+    expect(lastTurnBody(calls)).toMatchObject({ persona: "chat" });
+  });
+});
+
 describe("TutorPanel BYOK provider", () => {
   it("keeps the submit disabled until the probe approves", async () => {
     vi.stubGlobal("fetch", async (input: RequestInfo | URL) => {

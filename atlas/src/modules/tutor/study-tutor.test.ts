@@ -83,6 +83,50 @@ describe("StudyTutor.answerTurn", () => {
     expect(outcome).toEqual({ type: "answered", result: { answer: UNSUPPORTED_ANSWER, citations: [], proposedNotebookActions: [] } });
   });
 
+  it("runs a chat persona with retrieve and ignores a tool outside it", async () => {
+    const found = excerpt("conteúdo permitido");
+    const { calls, retriever } = retrieverReturning([[found]]);
+    const ai = createFakePublicTutorAi([
+      output({ answer: "", toolCalls: [{ name: "retrieve", query: "mais contexto" }, { name: "web_search", query: "na internet" }] }),
+      output({ answer: "resposta", citations: [found] }),
+    ]);
+    const tutor = createStudyTutor({ retriever, ai });
+
+    const outcome = await tutor.answerTurn({ question: "pergunta", context: [material], mode: { type: "byok" }, persona: "chat" });
+
+    // Only the retrieve call ran; the tool outside the persona's set never
+    // reaches the provider as a tool result.
+    expect(calls).toEqual(["pergunta", "mais contexto"]);
+    expect(ai.calls.flatMap((call) => call.toolResults).map((result) => result.name)).toEqual(["retrieve"]);
+    expect(outcome).toEqual({ type: "answered", result: { answer: "resposta", citations: [found], proposedNotebookActions: [] } });
+  });
+
+  it("defaults to chat when the turn carries no persona", async () => {
+    const found = excerpt("conteúdo permitido");
+    const { calls, retriever } = retrieverReturning([[found]]);
+    const ai = createFakePublicTutorAi([output({ answer: "", toolCalls: [{ name: "web_search", query: "na internet" }] })]);
+    const tutor = createStudyTutor({ retriever, ai });
+
+    const outcome = await tutor.answerTurn({ question: "pergunta", context: [material], mode: { type: "byok" } });
+
+    expect(calls).toEqual(["pergunta"]);
+    expect(ai.calls).toHaveLength(1);
+    expect(outcome).toEqual({ type: "answered", result: { answer: UNSUPPORTED_ANSWER, citations: [], proposedNotebookActions: [] } });
+  });
+
+  it("behaves like chat for an agent turn with no capability enabled", async () => {
+    const found = excerpt("conteúdo permitido");
+    const { calls, retriever } = retrieverReturning([[found]]);
+    const ai = createFakePublicTutorAi([output({ answer: "", toolCalls: [{ name: "web_search", query: "na internet" }] })]);
+    const tutor = createStudyTutor({ retriever, ai });
+
+    const outcome = await tutor.answerTurn({ question: "pergunta", context: [material], mode: { type: "byok" }, persona: "agent" });
+
+    expect(calls).toEqual(["pergunta"]);
+    expect(ai.calls).toHaveLength(1);
+    expect(outcome).toEqual({ type: "answered", result: { answer: UNSUPPORTED_ANSWER, citations: [], proposedNotebookActions: [] } });
+  });
+
   it("answers explicitly in Portuguese when no citation survives", async () => {
     const { retriever } = retrieverReturning([[excerpt("algo")]]);
     const ai = createFakePublicTutorAi([output({ answer: "Uma afirmação inventada" })]);

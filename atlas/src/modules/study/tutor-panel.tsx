@@ -38,6 +38,7 @@ type ApiBody = Readonly<{
   question: string;
   context: readonly MaterialRef[];
   mode: "sponsored" | "byok";
+  persona: "chat" | "agent";
   turnstileToken?: string;
   provider?: Readonly<{ baseUrl: string; model: string }>;
 }>;
@@ -144,6 +145,7 @@ export function TutorPanel({ candidates, turnstileSiteKey }: Readonly<{
   const [context, setContext] = useState<readonly MaterialRef[]>(() => selectTutorContext(candidates, null));
   const [question, setQuestion] = useState("");
   const [mode, setMode] = useState<"sponsored" | "byok">("sponsored");
+  const [persona, setPersona] = useState<"chat" | "agent">("chat");
   const [byokKey, setByokKey] = useState("");
   const [byokBaseUrl, setByokBaseUrl] = useState("https://api.groq.com/openai/v1");
   const [byokModels, setByokModels] = useState<readonly string[]>([]);
@@ -368,6 +370,7 @@ export function TutorPanel({ candidates, turnstileSiteKey }: Readonly<{
       question: trimmed,
       context,
       mode,
+      persona,
       ...(mode === "sponsored" && turnstileToken.trim() ? { turnstileToken: turnstileToken.trim() } : {}),
       // Approved only: the submit stays disabled until the probe approves, so a
       // provider that cannot produce our JSON never reaches a turn it would
@@ -463,6 +466,24 @@ export function TutorPanel({ candidates, turnstileSiteKey }: Readonly<{
             Minha chave (BYOK)
           </label>
         </fieldset>
+        <fieldset>
+          <legend>Persona</legend>
+          <label>
+            <input
+              type="radio"
+              name="persona"
+              value="chat"
+              checked={persona === "chat"}
+              onChange={() => setPersona("chat")}
+            />
+            Conversa
+          </label>
+          <label>
+            <input type="radio" name="persona" value="agent" checked={persona === "agent"} onChange={() => setPersona("agent")} />
+            Agente
+          </label>
+        </fieldset>
+        <p className="tutor-hint">Capacidades do modo agente chegam nas próximas fatias.</p>
         {mode === "sponsored" && <TurnstileWidget siteKey={turnstileSiteKey} onToken={setTurnstileToken} />}
         {mode === "byok" && (
           <>

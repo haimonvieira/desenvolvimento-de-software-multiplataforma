@@ -27,6 +27,29 @@ const ALLOWED_TOOLS: Readonly<Record<string, true>> = Object.freeze(
   Object.fromEntries(TUTOR_TOOL_ALLOWLIST.map((name) => [name, true])) as Record<string, true>,
 );
 
+/**
+ * How a turn runs. `chat` is the tutor as it has always been — retrieval and
+ * nothing else. `agent` is the same orchestrator with the capabilities the
+ * visitor switched on; in this slice no capability adds a tool yet, so an agent
+ * turn with everything off behaves exactly like a chat turn.
+ */
+export type TutorPersona = "chat" | "agent";
+
+/** The persona a turn runs as when the caller does not name one. */
+export const TUTOR_DEFAULT_PERSONA: TutorPersona = "chat";
+
+/**
+ * The tools each persona may run. This is the turn's capability set, in code:
+ * a tool the persona does not carry is never executed, so the provider input
+ * never contains a tool result for a capability the visitor did not enable.
+ * `agent` draws on the full code allowlist; `chat` is retrieval-only by
+ * definition, even as later slices add tools to `TUTOR_TOOL_ALLOWLIST`.
+ */
+const PERSONA_TOOLS: Readonly<Record<TutorPersona, Readonly<Record<string, true>>>> = Object.freeze({
+  chat: Object.freeze({ retrieve: true }),
+  agent: ALLOWED_TOOLS,
+});
+
 /** The only answer the tutor gives when nothing it retrieved supports the claim. */
 export const UNSUPPORTED_ANSWER = "Não encontrei isso nos materiais.";
 
@@ -49,6 +72,12 @@ export type TutorTurnRequest = Readonly<{
   /** The materials the visitor is studying; retrieval never leaves this set. */
   context: readonly MaterialRef[];
   mode: TutorTurnMode;
+  /**
+   * The turn's capability set. Absent means `chat`: the tutor may run `retrieve`
+   * and nothing else. `agent` runs the capabilities the visitor enabled; with
+   * none enabled it is the same set as `chat`.
+   */
+  persona?: TutorPersona;
 }>;
 
 export type TutorTurnResult = Readonly<{
@@ -166,6 +195,7 @@ export function createStudyTutor(dependencies: StudyTutorDependencies): StudyTut
     budget: ReservedBudget,
     hooks?: TutorStreamHooks,
   ): Promise<SponsoredTurnResult<TutorTurnResult>> {
+    const personaTools = PERSONA_TOOLS[request.persona ?? TUTOR_DEFAULT_PERSONA];
     const excerpts: RetrievedExcerpt[] = [...await retriever.retrieve(request.context, request.question, retrievalLimit)];
     const toolResults: TutorToolResult[] = [];
     let used = 0;
@@ -194,7 +224,7 @@ export function createStudyTutor(dependencies: StudyTutorDependencies): StudyTut
 
     for (;;) {
       const room = budget.maxToolCalls - used;
-      const allowed = (output.toolCalls ?? []).filter((call) => ALLOWED_TOOLS[call.name] === true);
+      const allowed = (output.toolCalls ?? []).filter((call) => personaTools[call.name] === true);
       if (allowed.length === 0 || room <= 0) break;
       for (const call of allowed.slice(0, room)) {
         const found = await retriever.retrieve(request.context, call.query, retrievalLimit);

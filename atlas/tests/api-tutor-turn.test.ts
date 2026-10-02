@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import catalog from "../src/generated/catalog.json";
-import { createTutorTurnHandler, type TutorTurnDependencies } from "../src/app/api/tutor/turn/route";
+import { createTutorTurnHandler, tutorTurnSchema, type TutorTurnDependencies } from "../src/app/api/tutor/turn/route";
 import { createFakePublicTutorAi, type PublicTutorAi } from "../src/integrations/ai/public-tutor-ai";
 import { createByokGroqPublicTutorAi } from "../src/integrations/ai/groq-public-tutor-ai";
 import type { GroqFetch } from "../src/integrations/ai/groq-transport";
@@ -297,6 +297,37 @@ describe("POST /api/tutor/turn", () => {
     expect(seenKeys).toEqual([KEY]);
     expect(reservations).toBe(0);
     expect(JSON.stringify(await response.clone().json())).not.toContain(KEY);
+  });
+});
+
+describe("turn persona", () => {
+  it("defaults to chat, accepts agent, and rejects an unknown value", () => {
+    const base = { question: "o que é lógica?", context: [material] };
+
+    expect(tutorTurnSchema.parse(base).persona).toBe("chat");
+    expect(tutorTurnSchema.parse({ ...base, persona: "agent" }).persona).toBe("agent");
+    expect(tutorTurnSchema.parse({ ...base, persona: "chat" }).persona).toBe("chat");
+    expect(tutorTurnSchema.safeParse({ ...base, persona: "x" }).success).toBe(false);
+  });
+
+  it("carries a chat persona end-to-end through the handler", async () => {
+    const ai = createFakePublicTutorAi([{ answer: "ok", citations: [found], proposedNotebookActions: [] }]);
+    const response = await post({
+      retriever,
+      ledger: ledgerWith({ type: "reserved", reservationId: "r1", maxInputTokens: 4_000, maxOutputTokens: 1_000, maxToolCalls: 4 }),
+      subjectKey: async () => "s1",
+      sponsoredAi: ai,
+    }, { ...turn, persona: "chat" });
+
+    expect(response.status).toBe(200);
+    expect(await response.json()).toEqual({ result: { answer: "ok", citations: [found], proposedNotebookActions: [] } });
+  });
+
+  it("rejects an unknown persona with a stable 400", async () => {
+    const response = await post({ retriever }, { ...turn, persona: "x" });
+
+    expect(response.status).toBe(400);
+    expect(await response.json()).toEqual({ error: { code: "INVALID_TUTOR_TURN", message: "Pergunta inválida." } });
   });
 });
 

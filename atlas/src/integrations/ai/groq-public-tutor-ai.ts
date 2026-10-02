@@ -173,6 +173,7 @@ function buildMessages(input: TutorModelInput, budget: ReservedBudget): GroqMess
   ].join("\n");
   const questionLead = `Pergunta: ${input.question}\n\nTrechos recuperados:\n`;
   const historyLead = "Resultados das buscas anteriores:\n";
+  const conversationLead = "Conversa anterior (resumo):\n";
   // Everything except the excerpts is fixed overhead; the excerpts share what
   // remains of the reserved input budget, across the whole accumulated set.
   const evidenceBudget = Math.max(0, promptCharBudget(budget) - system.length - questionLead.length);
@@ -181,11 +182,17 @@ function buildMessages(input: TutorModelInput, budget: ReservedBudget): GroqMess
   const history = input.toolResults.length > 0
     ? boundedHistory(input.toolResults, Math.max(0, evidenceBudget - contextBlock.length - historyLead.length))
     : null;
+  // Conversation memory is evidence, never instruction — same rule as uploads.
+  // It shares the existing evidence budget with the excerpts, never exceeds it.
+  const conversationBlock = input.historySummary
+    ? input.historySummary.slice(0, Math.max(0, evidenceBudget - contextBlock.length - (history ? historyLead.length + history.length : 0) - conversationLead.length))
+    : "";
   const messages: GroqMessage[] = [
     { role: "system", content: system },
     { role: "user", content: `${questionLead}${context}` },
   ];
   if (history) messages.push({ role: "user", content: `${historyLead}${history}` });
+  if (conversationBlock) messages.push({ role: "user", content: `${conversationLead}${conversationBlock}` });
   return messages;
 }
 

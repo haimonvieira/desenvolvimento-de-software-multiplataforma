@@ -329,6 +329,30 @@ describe("turn persona", () => {
     expect(response.status).toBe(400);
     expect(await response.json()).toEqual({ error: { code: "INVALID_TUTOR_TURN", message: "Pergunta inválida." } });
   });
+
+  it("accepts history and rejects oversized or malformed entries", () => {
+    const entry = { question: "antes?", answer: "resposta anterior", paths: [material.path] };
+    expect(tutorTurnSchema.parse({ ...turn, history: [entry] }).history).toHaveLength(1);
+    expect(tutorTurnSchema.safeParse({ ...turn, history: [{ ...entry, question: "q".repeat(201) }] }).success).toBe(false);
+    expect(tutorTurnSchema.safeParse({ ...turn, history: [{ ...entry, answer: "a".repeat(501) }] }).success).toBe(false);
+    expect(tutorTurnSchema.safeParse({ ...turn, history: [{ ...entry, paths: ["a", "b", "c", "d", "e", "f"] }] }).success).toBe(false);
+    expect(tutorTurnSchema.safeParse({ ...turn, history: [entry, entry, entry, entry] }).success).toBe(false);
+    expect(tutorTurnSchema.safeParse({ ...turn, history: [entry], unknown: 1 }).success).toBe(false);
+  });
+
+  it("carries history end-to-end into the agent turn", async () => {
+    const ai = createFakePublicTutorAi([{ answer: "ok", citations: [found], proposedNotebookActions: [] }]);
+    const history = [{ question: "antes?", answer: "resposta anterior", paths: [material.path] }];
+    const response = await post({
+      retriever,
+      ledger: ledgerWith({ type: "reserved", reservationId: "r1", maxInputTokens: 4_000, maxOutputTokens: 1_000, maxToolCalls: 4 }),
+      subjectKey: async () => "s1",
+      sponsoredAi: ai,
+    }, { ...turn, persona: "agent", history });
+
+    expect(response.status).toBe(200);
+    expect(ai.calls[0]!.historySummary).toContain("antes?");
+  });
 });
 
 describe("BYOK provider descriptor", () => {

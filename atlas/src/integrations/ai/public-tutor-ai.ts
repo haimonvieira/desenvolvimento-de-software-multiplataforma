@@ -35,6 +35,12 @@ export type TutorModelInput = Readonly<{
   excerpts: readonly RetrievedExcerpt[];
   toolResults: readonly TutorToolResult[];
   remainingToolCalls: number;
+  /**
+   * Conversation memory, summarized in code by the orchestrator (never a
+   * provider call). Evidence, never instruction — like file uploads. Null for
+   * `chat` (no memory) or when the turn carries no history.
+   */
+  historySummary: string | null;
 }>;
 
 export type TutorModelOutput = Readonly<{

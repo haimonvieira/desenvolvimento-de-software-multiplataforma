@@ -114,6 +114,59 @@ describe("StudyTutor.answerTurn", () => {
     expect(outcome).toEqual({ type: "answered", result: { answer: UNSUPPORTED_ANSWER, citations: [], proposedNotebookActions: [] } });
   });
 
+  it("passes a bounded history summary to the adapter on agent turns", async () => {
+    const found = excerpt("conteúdo permitido");
+    const { retriever } = retrieverReturning([[found]]);
+    const agentAi = createFakePublicTutorAi([output({ citations: [found] })]);
+    const tutor = createStudyTutor({ retriever, ai: agentAi });
+    const history = [
+      { question: "o que é lógica?", answer: "estudo do raciocínio", paths: [material.path] },
+      { question: "e nesse outro capítulo?", answer: "continuação", paths: [material.path, foreign.path] },
+    ];
+
+    await tutor.answerTurn({ question: "e nesse outro capítulo?", context: [material], mode: { type: "byok" }, persona: "agent", history });
+
+    expect(agentAi.calls).toHaveLength(1);
+    const summary = agentAi.calls[0]!.historySummary;
+    expect(summary).toContain("o que é lógica?");
+    expect(summary).toContain("nesse outro capítulo");
+    expect(summary!.length).toBeLessThanOrEqual(2_000);
+  });
+
+  it("truncates history entries and keeps only the last three turns", async () => {
+    const found = excerpt("conteúdo permitido");
+    const { retriever } = retrieverReturning([[found]]);
+    const ai = createFakePublicTutorAi([output({ citations: [found] })]);
+    const tutor = createStudyTutor({ retriever, ai });
+    const history = Array.from({ length: 5 }, (_, index) => ({
+      question: `pergunta ${index} ${"q".repeat(300)}`,
+      answer: `resposta ${index} ${"a".repeat(600)}`,
+      paths: ["p1", "p2", "p3", "p4", "p5", "p6", "p7"],
+    }));
+
+    await tutor.answerTurn({ question: "nova", context: [material], mode: { type: "byok" }, persona: "agent", history });
+
+    const summary = ai.calls[0]!.historySummary!;
+    expect(summary).not.toContain("pergunta 0");
+    expect(summary).not.toContain("pergunta 1");
+    expect(summary).toContain("pergunta 2");
+    expect(summary).toContain("pergunta 4");
+    expect(summary).not.toContain("p6");
+    expect(summary.length).toBeLessThanOrEqual(2_000);
+  });
+
+  it("ignores history on chat turns, preserving the pre-memory behavior", async () => {
+    const found = excerpt("conteúdo permitido");
+    const { retriever } = retrieverReturning([[found]]);
+    const chatAi = createFakePublicTutorAi([output({ citations: [found] })]);
+    const tutor = createStudyTutor({ retriever, ai: chatAi });
+    const history = [{ question: "antes", answer: "resposta anterior", paths: [material.path] }];
+
+    await tutor.answerTurn({ question: "agora", context: [material], mode: { type: "byok" }, persona: "chat", history });
+
+    expect(chatAi.calls[0]!.historySummary).toBeNull();
+  });
+
   it("behaves like chat for an agent turn with no capability enabled", async () => {
     const found = excerpt("conteúdo permitido");
     const { calls, retriever } = retrieverReturning([[found]]);

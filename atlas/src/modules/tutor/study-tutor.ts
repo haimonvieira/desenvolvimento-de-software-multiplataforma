@@ -67,6 +67,13 @@ export type TutorTurnMode =
   | Readonly<{ type: "sponsored"; subjectKey: string }>
   | Readonly<{ type: "byok" }>;
 
+export type TurnHistoryEntry = Readonly<{
+  question: string;
+  answer: string;
+  /** Material paths cited in that turn (paths only, never shas). */
+  paths: readonly string[];
+}>;
+
 export type TutorTurnRequest = Readonly<{
   question: string;
   /** The materials the visitor is studying; retrieval never leaves this set. */
@@ -78,6 +85,11 @@ export type TutorTurnRequest = Readonly<{
    * none enabled it is the same set as `chat`.
    */
   persona?: TutorPersona;
+  /**
+   * Previous turns, kept by the panel in session state only. Memory is a
+   * code-built summary, never a provider call; `chat` ignores it.
+   */
+  history?: readonly TurnHistoryEntry[];
 }>;
 
 export type TutorTurnResult = Readonly<{
@@ -129,6 +141,32 @@ export type StudyTutorDependencies = Readonly<{
   retrievalLimit?: number;
 }>;
 
+/** Caps for the code-built conversation summary (Fatia 2). The whole block is
+ * bounded and shares the adapter's existing evidence budget — never adds. */
+export const TUTOR_HISTORY_TURNS = 3;
+export const TUTOR_HISTORY_QUESTION_CHARS = 200;
+export const TUTOR_HISTORY_ANSWER_CHARS = 500;
+export const TUTOR_HISTORY_PATHS = 5;
+export const TUTOR_HISTORY_CHARS = 2_000;
+
+/**
+ * Summarizes previous turns in code — no provider call. `chat` gets null
+ * (no memory); `agent` gets the bounded block or null when empty.
+ */
+export function buildHistorySummary(request: TutorTurnRequest): string | null {
+  if ((request.persona ?? TUTOR_DEFAULT_PERSONA) !== "agent") return null;
+  const entries = (request.history ?? []).slice(-TUTOR_HISTORY_TURNS);
+  if (entries.length === 0) return null;
+  const lines = entries.map((entry) => {
+    const question = entry.question.length > TUTOR_HISTORY_QUESTION_CHARS ? entry.question.slice(0, TUTOR_HISTORY_QUESTION_CHARS) : entry.question;
+    const answer = entry.answer.length > TUTOR_HISTORY_ANSWER_CHARS ? entry.answer.slice(0, TUTOR_HISTORY_ANSWER_CHARS) : entry.answer;
+    const paths = entry.paths.slice(0, TUTOR_HISTORY_PATHS).join(", ");
+    return `P: ${question}\nR: ${answer}\nMateriais: ${paths || "(nenhum)"}`;
+  });
+  const summary = lines.join("\n\n").slice(0, TUTOR_HISTORY_CHARS);
+  return summary.length > 0 ? summary : null;
+}
+
 function buildInput(
   request: TutorTurnRequest,
   excerpts: readonly RetrievedExcerpt[],
@@ -140,6 +178,7 @@ function buildInput(
     excerpts: Object.freeze([...excerpts]),
     toolResults: Object.freeze([...toolResults]),
     remainingToolCalls,
+    historySummary: buildHistorySummary(request),
   });
 }
 

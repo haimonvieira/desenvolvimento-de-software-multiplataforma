@@ -33,6 +33,7 @@ const input = {
   ],
   toolResults: [],
   remainingToolCalls: 4,
+  historySummary: null,
 };
 
 function jsonBody(answer: string) {
@@ -156,6 +157,45 @@ describe("Groq public tutor adapter", () => {
     const chars = sent.messages.reduce((total, message) => total + message.content.length, 0);
     // The prompt is assembled at the pessimistic 3-chars-per-token floor, so it
     // cannot exceed the reserved per-turn input ceiling.
+    expect(chars).toBeLessThanOrEqual(budget.maxInputTokens * 3);
+  });
+
+  it("appends the conversation summary as a delimited evidence block", async () => {
+    const { calls, fetchImpl } = recordedFetch(() => chatResponse(jsonBody("ok")));
+    const ai = createGroqPublicTutorAi({ apiKey: "k", fetchImpl });
+
+    await ai.answer({ ...input, historySummary: "P: o que é lógica?\nR: estudo do raciocínio\nMateriais: DSM1/ALP/introducao.md" }, budget);
+
+    const sent = JSON.parse(calls[0]!.init.body as string) as { messages: readonly { role: string; content: string }[] };
+    const last = sent.messages[sent.messages.length - 1]!;
+    expect(last.content.startsWith("Conversa anterior (resumo):\n")).toBe(true);
+    expect(last.content).toContain("o que é lógica?");
+  });
+
+  it("omits the conversation block when there is no summary", async () => {
+    const { calls, fetchImpl } = recordedFetch(() => chatResponse(jsonBody("ok")));
+    const ai = createGroqPublicTutorAi({ apiKey: "k", fetchImpl });
+
+    await ai.answer(input, budget);
+
+    const sent = JSON.parse(calls[0]!.init.body as string) as { messages: readonly { content: string }[] };
+    expect(sent.messages.some((message) => message.content.startsWith("Conversa anterior"))).toBe(false);
+  });
+
+  it("keeps the conversation summary inside the reserved input budget", async () => {
+    const { calls, fetchImpl } = recordedFetch(() => chatResponse(jsonBody("ok")));
+    const ai = createGroqPublicTutorAi({ apiKey: "k", fetchImpl });
+    const huge = {
+      material: { path: "DSM1/ALP/gigante.md", commitSha: "a".repeat(40) },
+      locator: { type: "lines" as const, start: 1, end: 1 },
+      text: "x".repeat(400_000),
+      score: 1,
+    };
+
+    await ai.answer({ ...input, excerpts: [huge, huge], historySummary: "y".repeat(50_000) }, budget);
+
+    const sent = JSON.parse(calls[0]!.init.body as string) as { messages: readonly { content: string }[] };
+    const chars = sent.messages.reduce((total, message) => total + message.content.length, 0);
     expect(chars).toBeLessThanOrEqual(budget.maxInputTokens * 3);
   });
 

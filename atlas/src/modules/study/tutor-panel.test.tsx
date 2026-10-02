@@ -297,6 +297,103 @@ describe("TutorPanel persona", () => {
   });
 });
 
+describe("TutorPanel history", () => {
+  function lastTurnBody(calls: (RequestInit | undefined)[]) {
+    const last = calls[calls.length - 1];
+    return JSON.parse(String(last?.body)) as Record<string, unknown>;
+  }
+
+  function jsonTurn(answer: string): Response {
+    return new Response(
+      JSON.stringify({
+        result: { answer, citations: [citation], proposedNotebookActions: [] },
+      }),
+      { status: 200, headers: { "content-type": "application/json" } },
+    );
+  }
+
+  it("omits history on the first turn and sends it on the second", async () => {
+    const calls: (RequestInit | undefined)[] = [];
+    let n = 0;
+    stubFetch((init) => {
+      calls.push(init);
+      n += 1;
+      return jsonTurn(n === 1 ? "primeira resposta" : "segunda resposta");
+    });
+    await render(<TutorPanel candidates={[material]} turnstileSiteKey={null} />);
+    await setQuestion("primeira pergunta");
+    await submit();
+    expect(container.querySelector(".tutor-answer")?.textContent).toContain("primeira resposta");
+    expect(lastTurnBody(calls)).not.toHaveProperty("history");
+
+    await setQuestion("segunda pergunta");
+    await submit();
+    expect(container.querySelector(".tutor-answer")?.textContent).toContain("segunda resposta");
+    const body = lastTurnBody(calls);
+    expect(body["history"]).toEqual([
+      { question: "primeira pergunta", answer: "primeira resposta", paths: [material.path] },
+    ]);
+  });
+
+  it("keeps history across a persona switch", async () => {
+    const calls: (RequestInit | undefined)[] = [];
+    stubFetch((init) => {
+      calls.push(init);
+      return jsonTurn("resposta");
+    });
+    await render(<TutorPanel candidates={[material]} turnstileSiteKey={null} />);
+    await setQuestion("pergunta em chat");
+    await submit();
+    expect(lastTurnBody(calls)).not.toHaveProperty("history");
+
+    await act(async () => {
+      const radio = container.querySelector<HTMLInputElement>('input[name="persona"][value="agent"]');
+      if (!radio) throw new Error("agent radio not found");
+      radio.click();
+      await tick();
+    });
+
+    await setQuestion("pergunta em agent");
+    await submit();
+    const body = lastTurnBody(calls);
+    expect(body).toMatchObject({ persona: "agent" });
+    expect(body["history"]).toEqual([
+      { question: "pergunta em chat", answer: "resposta", paths: [material.path] },
+    ]);
+  });
+
+  it("records streamed turns in history too", async () => {
+    const calls: (RequestInit | undefined)[] = [];
+    const stream = manualStream();
+    let streamed = false;
+    stubFetch((init) => {
+      calls.push(init);
+      if (!streamed) {
+        streamed = true;
+        return stream.response;
+      }
+      return jsonTurn("segunda resposta");
+    });
+    await render(<TutorPanel candidates={[material]} turnstileSiteKey={null} />);
+    await setQuestion("pergunta via stream");
+    await submit();
+    await act(async () => {
+      stream.send("done", {
+        result: { answer: "resposta via stream", citations: [citation], proposedNotebookActions: [] },
+      });
+      stream.close();
+      await tick();
+    });
+    expect(container.querySelector(".tutor-answer")?.textContent).toContain("resposta via stream");
+
+    await setQuestion("pergunta seguinte");
+    await submit();
+    expect(lastTurnBody(calls)["history"]).toEqual([
+      { question: "pergunta via stream", answer: "resposta via stream", paths: [material.path] },
+    ]);
+  });
+});
+
 describe("TutorPanel BYOK provider", () => {
   it("keeps the submit disabled until the probe approves", async () => {
     vi.stubGlobal("fetch", async (input: RequestInfo | URL) => {

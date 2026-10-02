@@ -21,6 +21,16 @@ export const tutorTurnSchema = z.object({
    * from before this field existed keeps the exact behavior it had.
    */
   persona: z.enum(["chat", "agent"]).default("chat"),
+  /**
+   * Conversation memory: previous turns kept by the panel in session state.
+   * Capped at 3 entries; each truncated (question 200, answer 500, 5 paths).
+   * `chat` ignores it; only `agent` summarizes it into the provider input.
+   */
+  history: z.array(z.object({
+    question: z.string().trim().min(1).max(200),
+    answer: z.string().trim().min(1).max(500),
+    paths: z.array(z.string().min(1).max(500)).max(5),
+  }).strict()).max(3).optional(),
   turnstileToken: z.string().max(2048).optional(),
   /**
    * The BYOK provider descriptor. A body field, not a header, because the
@@ -142,7 +152,7 @@ export function createTutorTurnHandler(dependencies: TutorTurnDependencies) {
   return async function POST(request: Request): Promise<Response> {
     const parsed = tutorTurnSchema.safeParse(await request.json().catch(() => null));
     if (!parsed.success) return error("INVALID_TUTOR_TURN", "Pergunta inválida.", 400);
-    const { question, context, mode, persona } = parsed.data;
+    const { question, context, mode, persona, history } = parsed.data;
     const stream = wantsStream(request);
 
     try {
@@ -160,7 +170,7 @@ export function createTutorTurnHandler(dependencies: TutorTurnDependencies) {
         const ai = dependencies.byokAi?.(key, provider);
         if (!ai) return error("PROVIDER_UNBOUND", "Provedor BYOK ainda não configurado.", 503);
         const tutor = createStudyTutor({ retriever: dependencies.retriever, ai });
-        const turnRequest: TutorTurnRequest = { question, context, mode: { type: "byok" }, persona };
+        const turnRequest: TutorTurnRequest = { question, context, mode: { type: "byok" }, persona, ...(history ? { history } : {}) };
         return stream ? await respondStream(tutor, turnRequest) : await respond(tutor, turnRequest);
       }
 
@@ -177,7 +187,7 @@ export function createTutorTurnHandler(dependencies: TutorTurnDependencies) {
         if (!verified) return error("TURNSTILE_REQUIRED", "Verificação necessária.", 403);
       }
       const tutor = createStudyTutor({ retriever: dependencies.retriever, ai: dependencies.sponsoredAi, ledger });
-      const turnRequest: TutorTurnRequest = { question, context, mode: { type: "sponsored", subjectKey: key }, persona };
+      const turnRequest: TutorTurnRequest = { question, context, mode: { type: "sponsored", subjectKey: key }, persona, ...(history ? { history } : {}) };
       return stream ? await respondStream(tutor, turnRequest) : await respond(tutor, turnRequest);
     } catch (failure) {
       // Provider failures are never echoed: a BYOK key can appear inside a

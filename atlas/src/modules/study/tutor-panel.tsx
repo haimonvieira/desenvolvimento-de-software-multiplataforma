@@ -34,11 +34,18 @@ type TurnState =
   | Readonly<{ type: "denied"; message: string }>
   | Readonly<{ type: "failed"; message: string }>;
 
+type TurnHistoryEntry = Readonly<{
+  question: string;
+  answer: string;
+  paths: readonly string[];
+}>;
+
 type ApiBody = Readonly<{
   question: string;
   context: readonly MaterialRef[];
   mode: "sponsored" | "byok";
   persona: "chat" | "agent";
+  history?: readonly TurnHistoryEntry[];
   turnstileToken?: string;
   provider?: Readonly<{ baseUrl: string; model: string }>;
 }>;
@@ -157,6 +164,7 @@ export function TutorPanel({ candidates, turnstileSiteKey }: Readonly<{
   const [byokProbeRemedy, setByokProbeRemedy] = useState("");
   const [byokApproved, setByokApproved] = useState<Readonly<{ baseUrl: string; model: string }> | null>(null);
   const [turnstileToken, setTurnstileToken] = useState("");
+  const [history, setHistory] = useState<readonly TurnHistoryEntry[]>([]);
   const [state, setState] = useState<TurnState>({ type: "idle" });
   const [announcement, setAnnouncement] = useState("");
   const [notice, setNotice] = useState("");
@@ -272,8 +280,17 @@ export function TutorPanel({ candidates, turnstileSiteKey }: Readonly<{
     }
   }
 
+  /** Appends an answered turn to the session-only history (max 3, raw — the
+   * backend truncates). Persona switches never clear it; reload drops it. */
+  function recordTurn(asked: string, answer: string, citations: readonly RetrievedExcerpt[]): void {
+    setHistory((previous) => [
+      ...previous.slice(-2),
+      { question: asked, answer, paths: citations.map((entry) => entry.material.path) },
+    ]);
+  }
+
   /** Renders the ordinary JSON payload — the path a non-streaming response takes. */
-  async function readJsonTurn(response: Response): Promise<void> {
+  async function readJsonTurn(response: Response, asked: string): Promise<void> {
     const payload = (await response.json().catch(() => null)) as {
       result?: TurnResult;
       error?: { message?: string };
@@ -292,10 +309,11 @@ export function TutorPanel({ candidates, turnstileSiteKey }: Readonly<{
       citations: payload.result.citations,
       proposals: payload.result.proposedNotebookActions,
     });
+    recordTurn(asked, payload.result.answer, payload.result.citations);
   }
 
   /** Renders the event stream as it arrives: status, growing answer, then result. */
-  async function readStreamedTurn(response: Response): Promise<void> {
+  async function readStreamedTurn(response: Response, asked: string): Promise<void> {
     if (!response.body) {
       setState({ type: "failed", message: "Não foi possível responder agora." });
       return;
@@ -329,15 +347,18 @@ export function TutorPanel({ candidates, turnstileSiteKey }: Readonly<{
           setState({ type: "streaming", status, answer: partialRef.current });
         } else if (block.event === "done") {
           const result = asRecord(asRecord(block.data)["result"]);
+          const citations = Array.isArray(result["citations"]) ? (result["citations"] as RetrievedExcerpt[]) : [];
+          const answer = asText(result["answer"]);
           setAnnouncement("Resposta concluída.");
           setState({
             type: "answered",
-            answer: asText(result["answer"]),
-            citations: Array.isArray(result["citations"]) ? (result["citations"] as RetrievedExcerpt[]) : [],
+            answer,
+            citations,
             proposals: Array.isArray(result["proposedNotebookActions"])
               ? (result["proposedNotebookActions"] as ProposedNotebookAction[])
               : [],
           });
+          recordTurn(asked, answer, citations);
           return;
         } else if (block.event === "error") {
           const message = asText(asRecord(asRecord(block.data)["error"])["message"]) || "Não foi possível responder agora.";
@@ -371,6 +392,7 @@ export function TutorPanel({ candidates, turnstileSiteKey }: Readonly<{
       context,
       mode,
       persona,
+      ...(history.length > 0 ? { history: history.slice(-3) } : {}),
       ...(mode === "sponsored" && turnstileToken.trim() ? { turnstileToken: turnstileToken.trim() } : {}),
       // Approved only: the submit stays disabled until the probe approves, so a
       // provider that cannot produce our JSON never reaches a turn it would
@@ -390,10 +412,10 @@ export function TutorPanel({ candidates, turnstileSiteKey }: Readonly<{
       });
       const contentType = response.headers.get("content-type") ?? "";
       if (!contentType.includes("text/event-stream")) {
-        await readJsonTurn(response);
+        await readJsonTurn(response, trimmed);
         return;
       }
-      await readStreamedTurn(response);
+      await readStreamedTurn(response, trimmed);
     } catch {
       if (controller.signal.aborted) {
         setAnnouncement("Resposta interrompida.");

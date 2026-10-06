@@ -55,22 +55,22 @@ components:
       properties:
         cidade:
           type: string
-          example: São Paulo
+          example: Santo André
         estado:
           type: string
           description: UF
           example: SP
         anoInicio:
           type: integer
-          example: 2019
+          example: 2008
         anoFim:
           type: integer
           description: Opcional
-          example: 2020
+          example: 2008
         situacaoJudicial:
           type: string
           description: Texto simples com a situação judicial geral do caso
-          example: Investigação em andamento
+          example: Lindemberg Alves condenado a 39 anos de prisão
 
     Producao:
       type: object
@@ -78,7 +78,7 @@ components:
       properties:
         titulo:
           type: string
-          example: Blindados
+          example: "Caso Eloá: Refém ao Vivo"
         tipo:
           type: string
           enum: [filme, série, documentário]
@@ -86,15 +86,15 @@ components:
         ano:
           type: integer
           description: Opcional
-          example: 2023
+          example: 2025
         sinopse:
           type: string
           description: Opcional
-          example: Série documental sobre fugas e o sistema prisional.
+          example: Documentário da Netflix que revisita o sequestro e assassinato de Eloá, com depoimentos inéditos e análise da cobertura midiática.
         poster:
           type: string
           description: URL completa da imagem; opcional
-          example: https://exemplo.com/poster.jpg
+          example: https://media.themoviedb.org/t/p/w500/zhDxIfVMmcEE4g7sx5gCcuJYzad.jpg
 
     Caso:
       type: object
@@ -102,15 +102,15 @@ components:
       properties:
         caso:
           type: string
-          example: Caso Tremembé
+          example: Caso Eloá
         descricao:
           type: string
-          example: Fuga de blinds do complexo de Tremembé em São Paulo.
+          example: Sequestro e assassinato da adolescente Eloá Cristina Pimentel, de 15 anos, mantida refém pelo ex-namorado Lindemberg Alves por mais de 100 horas em Santo André, SP.
         categorias:
           type: array
           items:
             type: string
-          example: [Fuga, Repercussão nacional]
+          example: [Sequestro, Feminicídio, Repercussão nacional, Cobertura midiática]
         detalhes:
           $ref: '#/components/schemas/Detalhes'
         producoes:

@@ -1,0 +1,196 @@
+# ===== TP2: TP2\Atividade Avaliativa\ATV1\Aula 01\exercicio6.py =====
+
+salario_mensal = float(input("Insira o seu salário mensal: R$ "))
+pct_aumento = float(input("Insira a porcentagem de aumento: "))
+novo_salario = (salario_mensal * pct_aumento)/100 + salario_mensal
+print(f"Seu novo salário mensal com {pct_aumento}% de aumento fica igual a R$ {novo_salario:.2f}"
+      + f"\nAntes era R$ {salario_mensal:.2f}. Diferença de {novo_salario - salario_mensal}")
+
+# ===== TP2: TP2\Atividade Avaliativa\ATV1\Aula 01\exericio2.py =====
+
+distancia = int(input("Insira a distancia em metros: "))
+tempo = int(input("Insira o tempo em segundos: "))
+velocidade_media = distancia/tempo
+print(f"Sua velocidade média foi de {velocidade_media}m/s")
+
+# ===== TP2: TP2\Atividade Avaliativa\ATV1\Aula 01\exericio9.py =====
+
+voto_nulo = int(input("Votos nulos: "))
+voto_branco = int(input("Voto branco: "))
+voto_valido = int(input("Voto valido: "))
+total_eleitores = voto_branco + voto_nulo + voto_valido
+percentual_branco = (voto_branco * 100) / total_eleitores
+print(f"Voto nulo: {voto_nulo}\n Voto branco: {voto_branco}\n Voto válido: {voto_valido} \n"
+      + f"Porcentagem votos brancos: {percentual_branco}\n Total de eleitores: {total_eleitores}")
+
+# ===== TP2: TP2\Atividade Avaliativa\ATV1\Aula 02\exercicio4.py =====
+
+numero = int(input("Insira um numero inteiro positivo: "))
+
+if numero % 2 == 0:
+    resultado = numero*numero
+    print(f"{resultado} é par.")
+else:
+    resultado = numero*numero*numero
+    print(f"{resultado} é ímpar.")
+
+
+
+
+# ===== TP2: TP2\Atividade Avaliativa\ATV1\Aula 02\exercicio5.py =====
+
+print("Primeira pessoa")
+altura1 = float(input("Insira a sua altura: "))
+print("Segunda pessoa")
+altura2 = float(input("Insira a sua altura: "))
+print("Terceira pessoa")
+altura3 = float(input("Insira a sua altura: "))
+
+# Altura maior
+if altura1 > altura2 and altura1 > altura3:
+    maior = altura1
+    if altura2 > altura3:
+        menor = altura3
+        media = altura2
+    else:
+        menor = altura2
+        media = altura3
+elif altura2 > altura1 and altura2 > altura3:
+    maior = altura2
+    if altura3 > altura1:
+        menor = altura1
+        media = altura3
+    else: 
+        menor = altura3
+        media = altura1
+elif altura3 > altura1 and altura3 > altura2:
+    maior = altura3
+    if altura1 > altura2:
+        media = altura1
+        menor = altura2
+    else:
+        media = altura2
+        menor = altura1
+
+print(f"Maior: {maior}\nMedia: {media}\nMenor: {menor}")
+
+
+# ===== TP2: TP2\Atividade Avaliativa\ATV1\Aula 02\exercicio6.py =====
+
+import math
+
+print("Informe os dois números")
+num1 = int(input("Insira o primeiro numero: "))
+num2 = int(input("Insira o segundo numero: "))
+
+print("""
+1 - Média ponderada
+2 - Quadrado da soma dos 2 números
+3 - Cubo do menor número 
+Excolha uma opção: 
+""")
+opcao = int(input("> "))
+
+if opcao == 1:
+    media = (num1 * 2 + num2 * 3) / 5
+    print("Média ponderada igual a " + str(media))
+elif opcao == 2:
+    soma = math.pow(num1, 2) + math.pow(num2, 2)
+    print("Quadrado da soma dos 2 números é " + str(soma))
+elif opcao == 3:
+    if num1 < num2:
+        print("Cubo do menor número é " + str(math.pow(num1, 3)))
+    else:
+        print("Cubo do menor número é " + str(math.pow(num2, 3)))
+else:
+    print("Opção inválida.")
+
+# ===== TP2: TP2\Atividade Avaliativa\ATV1\Aula 02-1\exercicio3.py =====
+
+op = int(input("""
+CÁLCULO DE GRANDEZAS ELETRICAS
+
+1 - Tensão
+2 - Resistência
+3 - Corrente
+0 - SAIR
+"""))
+
+match op:
+    case 1:
+        resistencia = float(input("Insira o valor da resistencia: "))
+        corrente = float(input("Insira o valor da corrente: "))
+        tensao = resistencia * corrente
+        print(f"Tensão: {tensao} V")
+    case 2:
+        tensao = float(input("Insira o valor da tensao: "))
+        corrente = float(input("Insira o valor da corrente: "))
+        resistencia = tensao / corrente
+        print(f"Resistencia: {resistencia} Ohm")
+
+    case 3:
+        tensao = float(input("Insira o valor da tensao: "))
+        resistencia = float(input("Insira o valor da resistencia: "))
+        corrente = tensao / resistencia
+        print(f"Corrente: {corrente} A")
+
+    case _:
+        print("Opcao invalida")
+
+
+# ===== TP2: TP2\Atividade Avaliativa\ATV1\Aula 02-1\exercicio6.py =====
+
+peso = float(input("Insira seu peso: "))
+planeta = int(input("""
+Escolha um planeta: 
+1 - Mercúrio
+2 - Vênus
+3 - Marte
+4 - Júpiter
+5 - Saturno
+
+0 - SAIR
+"""))
+
+match planeta:
+    case 1:
+        peso = peso * .37
+        print(f"Seu peso em Mercúrio é de {peso}")
+    case 2:
+        peso = peso * .88
+        print(f"Seu peso em Vênus é de {peso}")
+    case 3:
+        peso = peso * .38
+        print(f"Seu peso em Marte é de {peso}")
+    case 4: 
+        peso = peso * 2.64
+        print(f"Seu peso em Júpiter é de {peso}")
+    case 5: 
+        peso = peso * 1.15
+        print(f"Seu peso em Saturno é de {peso}")
+    case _:
+        print("Opção inválida")
+
+
+# ===== TP2: TP2\Atividade Avaliativa\ATV1\Aula 03\exemplo4forRange.py =====
+
+# range faz a repetição for ate um valor determinado
+# primeiro valor incicial, valor do meio é o valor final da repetição -1
+# ultimo valor é a quantidadd de passos
+
+for numero in range(1, 40, 2):
+    print(numero)
+
+# ===== TP2: TP2\Atividade Avaliativa\ATV1\Aula 03\exemplo8for-split.py =====
+
+# A função split le varios valores
+# só devemos digitar os valores com espaço
+
+numero = input("Insira os números deixando espaço entre eles: ")
+
+vetor = [
+    int(num)
+    for num in numero.split()
+]
+
+print("Valores armazenados: ", vetor)

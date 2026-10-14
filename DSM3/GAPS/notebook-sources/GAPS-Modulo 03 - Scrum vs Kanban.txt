@@ -1,0 +1,374 @@
+# Modulo 03 - Scrum vs Kanban
+Fonte: https://i-davies.github.io/conteudo-fatec-2026-2/GAPS/03_Scrum_vs_Kanban/
+
+
+## Pagina: Scrum vs Kanban e Papéis na Gestão de Projetos
+(03_Scrum_vs_Kanban/01_Scrum_vs_Kanban)
+
+Scrum vs Kanban e Papéis na Gestão de Projetos 
+
+ Comparação entre ciclos fechados e fluxo contínuo, e definição de papéis de gestão. 
+
+ Scrum vs Kanban: Como o Trabalho Flui? 
+ O desenvolvimento de software pode ser gerenciado de duas formas principais: 
+ Scrum: Sprints e Metas Fechadas 
+ Divide o trabalho em blocos de tempo fixo chamados Sprints (geralmente de 1 a 4 semanas). 
+
+ Foco e Proteção: Iniciada a Sprint, o escopo é congelado. Nenhuma tarefa nova entra até o fim do ciclo. 
+ Meta da Sprint: O time se compromete com um objetivo claro, e todas as entregas do ciclo devem contribuir para essa meta. 
+
+ O Ciclo da Sprint (Cerimônias) 
+ O Scrum é estruturado em quatro rituais fundamentais para garantir transparência e adaptação: 
+
+ Sprint Planning (Planejamento): Reunião inicial para definir a Meta da Sprint e selecionar os itens do Product Backlog que serão desenvolvidos. 
+ Daily Scrum (Reunião Diária): Sincronização rápida para alinhar as atividades do dia anterior, planejar o dia atual e relatar impedimentos. 
+ Sprint Review (Revisão): Demonstração do incremento funcional construído para validar a entrega com o Product Manager e clientes. 
+ Sprint Retrospective (Retrospectiva): Análise interna da equipe sobre o processo de trabalho, com foco em propor melhorias práticas para o próximo ciclo. 
+
+ `graph TD
+ PB[Product Backlog] --> SP[Sprint Planning]
+ SP --> SB[Sprint Backlog]
+ SB --> SC["Sprint Cycle (1-4 semanas)"]
+ SC --> SR[Sprint Review]
+ SR --> SRe[Sprint Retrospective]
+ SRe --> PB
+
+ Kanban: Fluxo Contínuo e Limite de WIP 
+ Foca na visualização e na entrega sob demanda, sem ciclos de tempo fixos. 
+
+ Fluxo Contínuo: O time puxa novas tarefas conforme conclui as anteriores. 
+ Limite de Trabalho em Progresso (WIP Limit): Define um máximo de tarefas simultâneas por coluna (ex: máximo de 3 em desenvolvimento), forçando o time a terminar tarefas pendentes antes de iniciar novas. 
+ Adaptação Rápida: Mudanças de prioridade entram na fila e são iniciadas assim que alguém estiver livre. 
+
+ `graph LR
+ subgraph QK["Quadro Kanban"]
+ direction LR
+ Todo["A Fazer"] --> InProgress["Em Progresso (WIP: 3)"]
+ InProgress --> Done["Concluído"]
+ end
+
+ Scrumban: O Modelo Híbrido 
+ Combina a estrutura organizacional do Scrum com a flexibilidade de fluxo do Kanban. 
+
+ Estrutura com Fluxo: O time mantém rituais de planejamento e retrospectiva do Scrum, mas utiliza o limite de WIP e o fluxo puxado do Kanban no dia a dia. 
+ Adaptabilidade: Ideal para equipes que precisam de previsibilidade de entregas, mas necessitam de flexibilidade para tratar mudanças rápidas e urgências sem interromper o ciclo. 
+
+ Comparativo Direto 
+
+ Característica 
+ Scrum 
+ Kanban 
+
+ Ritmo de Entrega 
+ Ao final de cada Sprint 
+ Contínuo, sob demanda 
+
+ Escopo do Ciclo 
+ Fechado durante a Sprint 
+ Flexível, muda a qualquer momento 
+
+ Papéis 
+ PO, Scrum Master e Devs (obrigatórios) 
+ Sem papéis predefinidos 
+
+ Métrica 
+ Velocidade (pontos por Sprint) 
+ Lead Time (tempo de entrega da tarefa) 
+
+ O Ciclo do Produto: Backlog e Incremento 
+ Diferente do modelo tradicional que congela requisitos, o desenvolvimento ágil enxerga o produto como um organismo vivo: 
+
+ Backlog do Produto: Uma lista dinâmica de requisitos, melhorias e correções ordenada por valor. Ele nunca está completo; evolui conforme novas necessidades de mercado surgem. 
+ Incremento de Produto: O resultado de cada ciclo. Deve ser uma fatia de software testada, funcional e potencialmente utilizável pelo cliente. 
+
+ Priorização do Backlog: O Método MoSCoW 
+ Antes de estimar o esforço ou planejar um ciclo, o time precisa classificar a importância de cada item do Backlog. O método MoSCoW ajuda a definir o que entra no MVP (Mínimo Produto Viável): 
+
+ Must Have (Precisa ter): Requisitos vitais para o produto funcionar. Se um item desse faltar, o sistema não pode ser lançado (exemplo: login do voluntário). 
+ Should Have (Deveria ter): Requisitos importantes, mas não vitais para a primeira versão. Há soluções de contorno temporárias caso não sejam entregues. 
+ Could Have (Poderia ter): Funcionalidades desejáveis que melhoram a experiência, mas só serão feitas se houver tempo livre (exemplo: filtro avançado de ONGs). 
+ Won't Have (Não terá por enquanto): Ideias descartadas ou adiadas para futuras versões (exemplo: aplicativo nativo para celular). 
+
+ Aplicação no GitHub Projects 
+ No GitHub Projects, mapeamos o MoSCoW diretamente utilizando o campo nativo `Priority : 
+
+ `Must Have corresponde a `High (ou `Urgent ). 
+ `Should Have corresponde a `Medium . 
+ `Could Have corresponde a `Low . 
+
+ Estimativas Ágeis: Medindo o Esforço 
+ Em projetos tradicionais, as estimativas são feitas em horas ou dias de trabalho, o que costuma gerar prazos irreais devido à incerteza do desenvolvimento. O modelo ágil estima o esforço relativo utilizando duas técnicas populares: 
+ T-Shirt Sizing (Tamanhos de Camiseta) 
+ Ideal para refinamentos iniciais e planejamentos de alto nível. Classifica as tarefas em tamanhos:
+- P (Pequeno): Tarefas simples, de baixo esforço e sem incerteza (exemplo: mudar a cor de um botão).
+- M (Médio): Tarefas com complexidade conhecida (exemplo: criar um formulário simples).
+- G (Grande): Tarefas complexas, com alguma incerteza e que exigem mais esforço (exemplo: integrar com API externa de mapas).
+- GG (Muito Grande): Tarefas gigantescas que precisam ser fatiadas antes de iniciar. 
+
+ Aplicação no GitHub Projects 
+ No GitHub Projects, o T-Shirt Sizing é mapeado utilizando o campo nativo `Size com a nomenclatura padrão: 
+
+ `P (Pequeno) corresponde a `S ( Small ). 
+ `M (Médio) corresponde a `M ( Medium ). 
+ `G (Grande) corresponde a `L ( Large ). 
+ `GG (Muito Grande) corresponde a `XL ( Extra Large ). 
+
+ Sequência de Fibonacci e Story Points 
+ Utiliza a sequência de Fibonacci (1, 2, 3, 5, 8, 13, 21...) para pontuar tarefas (Story Points).
+- Incerteza Não Linear: A distância entre os números aumenta conforme o tamanho cresce. Isso reflete que, quanto maior uma tarefa, maior é a incerteza envolvida. Uma tarefa pontuada com 8 story points não é exatamente o dobro de uma de 4, mas indica que o time enxerga riscos e complexidades muito maiores nela. 
+
+ Papéis: PM, PO e Scrum Master 
+ O sucesso de um produto depende da clareza nas responsabilidades de cada papel: 
+ Product Manager (PM) 
+
+ Foco: O Negócio e o Cliente (Estratégico). 
+ Responde: "Por que" e "O que" construir no longo prazo (visão de produto). 
+ Atuação: Define a estratégia de mercado, estuda concorrentes e alinha as metas comerciais do produto. 
+
+ Product Owner (PO) 
+
+ Foco: O Backlog e o Time (Tático). 
+ Responde: Detalhamento de tarefas, priorização do dia a dia e validação dos critérios de aceitação. 
+ Atuação: Traduz a visão macro do PM em itens práticos (User Stories) e garante que o time compreende os requisitos. 
+
+ Scrum Master (SM) 
+
+ Foco: O Processo e a Equipe (Facilitador). 
+ Responde: Melhoria contínua da equipe, remoção de impedimentos e proteção do fluxo de trabalho. 
+ Atuação: Ajuda o time a aplicar práticas ágeis, elimina bloqueios do dia a dia e apoia a auto-organização. 
+
+ Ligação entre o PM e o Scrum Master 
+ O PM e o SM trabalham em parceria e sem subordinação. Enquanto o PM define a direção de valor (o que construir), o SM garante a saúde e a viabilidade do processo (como construir com eficiência): 
+
+ O PM alinha as metas de negócio e o valor que precisa ser gerado. 
+ O Scrum Master ajuda o PM a compreender a capacidade técnica real do time, evitando sobrecarga e garantindo um ritmo sustentável. 
+
+ Próximo Passo 
+ Agora que entendemos a diferença entre o planejamento iterativo e o contínuo, vamos organizar as equipes. Cada squad definirá seus papéis e configurará as etiquetas (Labels) no GitHub para gerenciar o fluxo de desenvolvimento: 
+ Ir para o Laboratório: Definição de Papéis e Organização com Labels
+
+
+## Pagina: Laboratório: Definição de Papéis e Organização com Labels
+(03_Scrum_vs_Kanban/02_Papeis_e_Labels)
+
+Laboratório: Definição de Papéis e Organização com Labels 
+
+ Atividade prática para definição de papéis nas squads e uso de etiquetas (Labels) no GitHub. 
+
+ Kick-off e Organização da Equipe 
+ Com o início do projeto prático do semestre (Projeto Integrador - PI), as squads devem formalizar os seus papéis ágeis, padronizar o quadro visual de tarefas e configurar o ecossistema inicial de desenvolvimento. 
+
+ Passo a Passo do Laboratório 
+ Definição de Papéis na Squad 
+ Reúna a equipe e defina quem assumirá cada papel para este ciclo inicial do projeto: 
+
+ Product Owner (PO): Ponto focal do backlog, responsável por refinar tarefas e validar os critérios de aceitação. 
+ Scrum Master (SM): Facilitador, responsável por organizar o Kanban e ajudar o time a resolver impedimentos. 
+ Desenvolvedores: Todos os integrantes (incluindo PO e SM) que codificam e realizam as tarefas. 
+
+ Papéis Rotativos 
+ Os papéis de PO e SM podem ser rotativos entre os ciclos do projeto, permitindo que todos os integrantes experimentem as diferentes perspectivas de liderança e facilitação de projetos. 
+
+ Criando Labels no GitHub 
+ Para organizar as tarefas por área ou tipo, crie as etiquetas abaixo nos repositórios da sua squad (exemplo: `api e `web ): 
+
+ Acesse o repositório no GitHub. 
+ Vá na aba Issues e clique no botão Labels . 
+ Clique em New label e cadastre a seguinte estrutura padronizada: 
+
+ Nome da Label 
+ Cor Sugerida 
+ Descrição 
+
+ `backend 
+ Azul escuro 
+ Rotas da API, banco de dados e regras de negócio. 
+
+ `frontend 
+ Roxo / Rosa 
+ Telas, componentes de interface e integração com API. 
+
+ `bug 
+ Vermelho 
+ Correção de falhas e problemas de comportamento. 
+
+ `documentation 
+ Ciano / Verde 
+ READMEs, manuais, guias e diagramas. 
+
+ `design 
+ Amarelo 
+ Layouts, mockups e estilos visuais. 
+
+ Configurando o Projeto do Semestre (PI) 
+ Agora que as squads têm o conhecimento básico de setup e gestão, iniciem a estruturação oficial do Projeto do Semestre : 
+
+ Organização no GitHub: Se ainda não o fizeram, criem a Organização oficial do squad no GitHub. 
+ Criação de Repositórios: Criem os repositórios base para o projeto (exemplo: `nome-do-projeto-api e `nome-do-projeto-web ). 
+ Quadro Kanban: Criem o GitHub Project da Organização no formato Board para a gestão visual de tarefas. 
+ Brainstorming Inicial (Drafts): Adicionem de 10 a 15 rascunhos (Draft Issues) na coluna `Todo representando as principais funcionalidades mapeadas para a entrega inicial do projeto. 
+
+ Priorização e Estimativa no Quadro 
+ Com as ideias iniciais mapeadas no quadro Kanban, a squad discutirá a ordem de importância e o esforço de cada entrega utilizando os campos nativos do GitHub Projects: 
+
+ Localizar os Campos no Quadro: Ao abrir qualquer Issue ou rascunho no quadro Kanban, localize no menu lateral direito os campos predefinidos: 
+ `Priority : Campo de seleção para definir a prioridade (exemplo: `High , `Medium , `Low ). 
+ `Size : Campo de seleção para definir o tamanho do esforço relativo (`S , `M , `L , `XL ). 
+ Debate e Definição: O time debate coletivamente o nível de complexidade e a urgência de cada tarefa: 
+ No campo `Priority , defina os itens essenciais do MVP como prioridade máxima (`High ) e as melhorias secundárias como prioridades menores. 
+ No campo `Size , atribua o esforço estimado da tarefa (exemplo: `S para tarefas simples e rápidas, `M para médias e `L para complexas). Se houver divergência entre os desenvolvedores (exemplo: um sugere `S e outro `L ), debatam os detalhes técnicos até chegarem a um consenso. 
+
+ Planejando as Sprints no GitHub Projects 
+ Para organizar as iterações e o ritmo de entrega utilizando o campo de iteração nativo do projeto (geralmente chamado de `Sprint ou `Iteration ): 
+
+ Identificar o Campo de Sprint: No menu lateral da Issue ou nas colunas do quadro, verifique se já existe o campo `Sprint (ou outra iteração ativa com datas). 
+ Distribuição de Carga: Defina em qual ciclo cada tarefa será realizada: 
+ Associe as tarefas de maior prioridade (`High ) e menor complexidade (`S e `M ) à Sprint 1 . 
+ Planeje o restante das tarefas mais complexas (`L / `XL ) ou secundárias para a Sprint 2 , garantindo que o primeiro ciclo de desenvolvimento do time seja realista e viável. 
+
+ Detalhamento e Refinamento do Backlog 
+ Com o plano do projeto estruturado no quadro Kanban, realizem a conversão e o detalhamento das primeiras tarefas a serem desenvolvidas: 
+
+ Conversão para Issues: Selecionem pelo menos 5 rascunhos críticos planejados para a Sprint 1 e convertam-nos em Issues oficiais nos respectivos repositórios (`api ou `web ). 
+ Definição de Responsáveis (Assignees): Atribuam cada Issue oficial ao desenvolvedor responsável por sua execução. 
+ Associação de Labels: Vinculem as etiquetas (`backend , `frontend , `design , etc.) correspondentes a cada Issue oficial. 
+ Detalhamento (Histórias de Usuário e Critérios): Escrevam na descrição de cada Issue oficial: 
+ Contexto no formato de História de Usuário (Como / Desejo / Para). 
+ Checklist com critérios de aceitação específicos (o que deve funcionar para a tarefa ser dada como pronta). 
+
+ Exemplos de Drafts e Evolução para o Projeto Integrador (PI) 
+ Para apoiar a arrancada do seu projeto, veja uma lista de ideias iniciais (Drafts) genéricas e como uma delas evolui com todas as configurações do laboratório: 
+ Lista de Drafts Iniciais Comuns 
+
+ `Configurar ambiente base da API e banco de dados 
+ `Criar estrutura inicial do frontend Web 
+ `Implementar autenticação e controle de login 
+ `Desenvolver cadastro principal do sistema (exemplo: usuários ou serviços) 
+ `Mapear integração com serviço de mapas ou geolocalização 
+ `Criar painel principal de visualização de dados (Dashboard) 
+
+ Exemplo de Evolução de Draft para Issue Oficial 
+ Imagine que o grupo selecionou o draft `Implementar autenticação e controle de login . A squad decide fatiá-lo em duas entregas técnicas específicas: 
+ Fatia Backend: Criar rotas de login e geração de token JWT Fatia Frontend: Desenvolver tela de login e armazenar token 
+
+ Repositório: `nome-do-projeto-api 
+ Atribuído a (Assignee): `@desenvolvedor-back 
+ Etiquetas (Labels): `backend 
+ Priority: `High 
+ Size: `M 
+ Iteração (Sprint): `Sprint 1 
+ Descrição da Issue: 
+ ` ### Descrição 
+ Como API do sistema, desejo autenticar as credenciais do usuário e retornar um token JWT válido para garantir o acesso seguro às rotas protegidas.
+
+ ### Checklist de Desenvolvimento 
+ - [ ] Criar entidade de Usuário com senha criptografada (bcrypt) no banco de dados
+ - [ ] Implementar rota POST /login recebendo e-mail e senha
+ - [ ] Validar credenciais e gerar token JWT com expiração de 2 horas
+ - [ ] Tratar erro de credenciais inválidas retornando HTTP 401
+
+ Repositório: `nome-do-projeto-web 
+ Atribuído a (Assignee): `@desenvolvedor-front 
+ Etiquetas (Labels): `frontend , `design 
+ Priority: `High 
+ Size: `M 
+ Iteração (Sprint): `Sprint 1 
+ Descrição da Issue: 
+ ` ### Descrição 
+ Como usuário do sistema, desejo ter uma tela de login intuitiva para inserir minhas credenciais e acessar meu painel administrativo.
+
+ ### Checklist de Desenvolvimento 
+ - [ ] Criar interface da página de login com campos de e-mail e senha
+ - [ ] Validar formato de e-mail no preenchimento do campo
+ - [ ] Integrar formulário com a rota POST /login da API
+ - [ ] Armazenar o token JWT recebido no LocalStorage do navegador
+ - [ ] Redirecionar o usuário para a página de Dashboard após o sucesso
+ - [ ] Exibir mensagem de erro amigável caso as credenciais estejam erradas
+
+ Exercícios de Fixação 
+
+ Responda às questões abaixo para verificar a fixação dos tópicos da aula. 
+
+Qual é a principal responsabilidade do Product Owner (PO) no dia a dia de um time que utiliza Scrum?
+* [ ] Escrever o código-fonte de toda a arquitetura de banco de dados do sistema.
+* [x] Gerenciar, priorizar e refinar o Backlog do Produto para garantir a entrega de valor.
+* [ ] Cobrar diariamente os desenvolvedores sobre o cumprimento de metas individuais.
+* [ ] Instalar as dependências de ambiente de desenvolvimento nas máquinas da equipe.
+
+-->
+
+ # 
+ Questão 1 
+
+ Qual é a principal responsabilidade do Product Owner (PO) no dia a dia de um time que utiliza Scrum? 
+
+ Escrever o código-fonte de toda a arquitetura de banco de dados do sistema. Gerenciar, priorizar e refinar o Backlog do Produto para garantir a entrega de valor. Cobrar diariamente os desenvolvedores sobre o cumprimento de metas individuais. Instalar as dependências de ambiente de desenvolvimento nas máquinas da equipe. 
+
+No gerenciamento de projetos com GitHub Issues, qual é a principal finalidade do uso de Labels (etiquetas)?
+* [ ] Compilar o código do front-end e do back-end automaticamente na nuvem.
+* [ ] Impedir que outros desenvolvedores editem arquivos específicos do repositório.
+* [x] Categorizar e filtrar visualmente as tarefas por área técnica, tipo de entrega ou prioridade.
+
+-->
+
+ # 
+ Questão 2 
+
+ No gerenciamento de projetos com GitHub Issues, qual é a principal finalidade do uso de Labels (etiquetas)? 
+
+ Compilar o código do front-end e do back-end automaticamente na nuvem. Impedir que outros desenvolvedores editem arquivos específicos do repositório. Categorizar e filtrar visualmente as tarefas por área técnica, tipo de entrega ou prioridade. 
+
+O papel do Scrum Master (SM) é melhor descrito como:
+* [ ] Um gerente tradicional que determina quais tarefas cada desenvolvedor deve fazer e define prazos inflexíveis.
+* [x] Um facilitador do processo ágil que remove impedimentos e apoia a auto-organização da equipe.
+* [ ] O responsável por negociar contratos e faturamento diretamente com os investidores da empresa.
+
+-->
+
+ # 
+ Questão 3 
+
+ O papel do Scrum Master (SM) é melhor descrito como: 
+
+ Um gerente tradicional que determina quais tarefas cada desenvolvedor deve fazer e define prazos inflexíveis. Um facilitador do processo ágil que remove impedimentos e apoia a auto-organização da equipe. O responsável por negociar contratos e faturamento diretamente com os investidores da empresa. 
+
+O modelo híbrido Scrumban é melhor descrito como:
+* [ ] Um framework que proíbe o uso de quadros visuais e foca apenas em documentações extensas.
+* [x] Uma abordagem que combina rituais e a estrutura organizacional do Scrum com o fluxo puxado e limites de WIP do Kanban.
+* [ ] Um processo tradicional em cascata que não permite nenhuma mudança de escopo.
+
+-->
+
+ # 
+ Questão 4 
+
+ O modelo híbrido Scrumban é melhor descrito como: 
+
+ Um framework que proíbe o uso de quadros visuais e foca apenas em documentações extensas. Uma abordagem que combina rituais e a estrutura organizacional do Scrum com o fluxo puxado e limites de WIP do Kanban. Um processo tradicional em cascata que não permite nenhuma mudança de escopo. 
+
+Por que estimamos o esforço no desenvolvimento ágil utilizando tamanhos relativos (como P, M, G) ou a sequência de Fibonacci em vez de estimar diretamente em horas?
+* [ ] Porque o GitHub Projects só aceita letras e números primos nos campos de esforço.
+* [x] Porque as estimativas relativas consideram a complexidade e a incerteza da tarefa, reduzindo a falsa precisão das estimativas de tempo que costumam falhar.
+* [ ] Para evitar que o Product Manager saiba quanto tempo o time levará para entregar as tarefas.
+
+-->
+
+ # 
+ Questão 5 
+
+ Por que estimamos o esforço no desenvolvimento ágil utilizando tamanhos relativos (como P, M, G) ou a sequência de Fibonacci em vez de estimar diretamente em horas? 
+
+ Porque o GitHub Projects só aceita letras e números primos nos campos de esforço. Porque as estimativas relativas consideram a complexidade e a incerteza da tarefa, reduzindo a falsa precisão das estimativas de tempo que costumam falhar. Para evitar que o Product Manager saiba quanto tempo o time levará para entregar as tarefas. 
+
+ Progresso do quiz 
+
+ 0 / 0 questões respondidas
+ ( 0% )
+
+ 0 correto
+
+ Quiz completo! 
+
+ 0% 
+
+ Reiniciar quiz

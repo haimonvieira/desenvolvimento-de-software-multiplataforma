@@ -1,0 +1,3 @@
+===== hub-solidario-api\.python-version =====
+
+3.14

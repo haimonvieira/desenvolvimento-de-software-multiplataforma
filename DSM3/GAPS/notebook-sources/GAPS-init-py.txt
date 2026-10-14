@@ -1,0 +1,4 @@
+===== hub-solidario-api\src\hub_solidario_api\__init__.py =====
+
+def main() -> None:
+    print("Hello from hub-solidario-api!")

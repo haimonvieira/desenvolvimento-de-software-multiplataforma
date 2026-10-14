@@ -1,0 +1,1157 @@
+# Modulo 07 - Custos e Orcamentos
+Fonte: https://i-davies.github.io/conteudo-fatec-2026-2/GAPS/07_Custos_e_Orcamentos/
+
+
+## Pagina: Custos e Orçamentos no Desenvolvimento de Software
+(07_Custos_e_Orcamentos/01_Custos_e_Orcamentos_no_Software)
+
+Custos e Orçamentos no Desenvolvimento de Software 
+
+ Princípios de composição orçamentária, cálculo de custo de Sprints por hora-homem carregada, dimensionamento de infraestrutura em nuvem e gestão de Burn Rate. 
+
+ Composição dos Custos em Projetos de Software 
+ Diferente da manufatura tradicional, onde os custos estão atrelados a matérias-primas físicas, a construção de software é intensiva em capital intelectual e serviços contínuos . 
+ O orçamento total de um projeto de software é distribuído em quatro pilares fundamentais: 
+ `flowchart TD
+ Orcamento["Orçamento Total do Software"] --> Pessoal["1. Pessoal e Squad (70% a 85%)"]
+ Orcamento --> Infra["2. Infraestrutura e Nuvem (10% a 20%)"]
+ Orcamento --> Ferramentas["3. Ferramentas e Licenças (3% a 7%)"]
+ Orcamento --> Reserva["4. Reserva de Contingência (5% a 10%)"]
+
+ Pessoal --- P1["Desenvolvedores, PO, Scrum Master e Designers"]
+ Infra --- I1["Hospedagem, Banco de Dados, Storage e CDN"]
+ Ferramentas --- F1["GitHub Enterprise, Figma, APM e CI/CD"]
+ Reserva --- R1["Imprevistos técnicos e oscilação cambial"]
+
+ CapEx vs OpEx na Gestão Tecnológica 
+ A evolução da computação em nuvem transformou a forma como as empresas financiam a tecnologia da informação: 
+
+ Dimensão 
+ CapEx ( Capital Expenditure / Despesa de Capital) 
+ OpEx ( Operational Expenditure / Despesa Operacional) 
+
+ Definição 
+ Investimento em bens permanentes e infraestrutura física adquirida. 
+ Despesas contínuas de operação e consumo sob demanda de serviços. 
+
+ Exemplo em TI 
+ Compra de servidores físicos próprios, roteadores e nobreaks para data center local. 
+ Assinatura mensal de banco de dados no Supabase e instâncias na AWS/Railway. 
+
+ Flexibilidade 
+ Baixa. Capacidade fixa com risco de subutilização ou obsolescência rápida. 
+ Alta. Escala para cima ou para baixo conforme o tráfego do sistema. 
+
+ Impacto Financeiro 
+ Alto desembolso inicial de caixa ( Upfront Cost ). 
+ Custo distribuído mês a mês proporcional ao uso real ( Pay-as-you-go ). 
+
+ Como Calcular o Custo de uma Sprint 
+ O maior centro de custo em qualquer projeto ágil é a remuneração da equipe técnica. Para orçar uma Sprint com precisão, a gestão não utiliza apenas o salário bruto contratual, mas sim o custo da hora carregada . 
+ Salário Bruto vs Custo da Hora Carregada ( Loaded Rate ) 
+ O custo de um profissional para uma organização envolve encargos sociais (INSS, FGTS), provisões de férias e 13º salário, benefícios (vale-refeição, plano de saúde), equipamentos e licenças de software. 
+ Em regime de contratação formal (CLT), aplica-se um fator multiplicador padrão sobre o salário nominal: 
+ \[\text{Custo Real Mensal} = \text{Salário Base} \times \text{Fator de Encargos (1.6 a 2.0)}\] 
+ Para prestadores de serviços ou consultorias (PJ), o valor/hora faturado já incorpora esses custos operacionais e margem. 
+ Cálculo da Hora Técnica Efetiva 
+ Em um mês típico com 22 dias úteis e 8 horas diárias, a jornada mensal é de 176 horas. No entanto, nenhum desenvolvedor passa 100% do tempo codificando; reuniões, alinhamentos e revisões reduzem a produtividade técnica focada. 
+ Adota-se o Fator de Foco (geralmente entre 70% e 80%): 
+ \[\text{Horas Efetivas Mensais} = 176\text{ h} \times 0.75 = 132\text{ horas úteis}\] 
+ \[\text{Valor da Hora Técnica} = \frac{\text{Custo Real Mensal}}{\text{Horas Efetivas Mensais}}\] 
+
+ Exemplo Prático: Custo de uma Sprint de 2 Semanas 
+ Considere uma squad típica de desenvolvimento composta por 4 profissionais atuando em uma Sprint de 10 dias úteis (80 horas de calendário por integrante, com 60 horas técnicas efetivas a 75% de foco): 
+
+ Papel na Squad 
+ Nível / Perfil 
+ Custo Mensal Total 
+ Custo da Hora Efetiva 
+ Horas na Sprint 
+ Custo na Sprint 
+
+ Tech Lead / Backend 
+ Sênior 
+ R$ 18.000,00 
+ R$ 136,36 
+ 60 h 
+ R$ 8.181,60 
+
+ Desenvolvedor Full Stack 
+ Pleno 
+ R$ 10.000,00 
+ R$ 75,76 
+ 60 h 
+ R$ 4.545,60 
+
+ Desenvolvedor Frontend 
+ Júnior 
+ R$ 5.500,00 
+ R$ 41,67 
+ 60 h 
+ R$ 2.500,20 
+
+ Product Owner (PO) 
+ Pleno (50% alocação) 
+ R$ 9.000,00 
+ R$ 68,18 
+ 30 h 
+ R$ 2.045,40 
+
+ Total da Squad 
+ 4 integrantes 
+ R$ 42.500,00 
+ - 
+ 210 h 
+ R$ 17.272,80 
+
+ \[\text{Custo Total da Sprint (Equipe)} = \text{R\$ } 17.272,80\] 
+
+ Custo por Story Point 
+ Ao cruzar a velocidade média da squad com o custo financeiro da Sprint, a gestão obtém o custo unitário de entrega: 
+ \[\text{Custo por Story Point} = \frac{\text{Custo Total da Sprint}}{\text{Velocidade da Squad (Story Points Entregues)}}\] 
+ Se a squad do exemplo acima entrega uma média de 25 Story Points por Sprint: 
+ \[\text{Custo por Story Point} = \frac{\text{R\$ } 17.272,80}{25\text{ pts}} = \text{R\$ } 690,91\text{ por ponto}\] 
+
+ Utilidade do Custo por Ponto no Cálculo de ROI 
+ O valor em reais obtido representa o Custo de Investimento da funcionalidade. Com esse dado, o Product Owner pode calcular o Retorno sobre o Investimento (ROI) comparando o custo de construção com o ganho esperado: 
+ \[\text{ROI} = \frac{\text{Ganho Esperado} - \text{Custo de Desenvolvimento}}{\text{Custo de Desenvolvimento}} \times 100\%\] 
+ Se uma funcionalidade estimada em 8 pontos custa R$ 5.527,28 ( \(8 \times \text{R\$ } 690,91\) ) e projeta gerar ou economizar R$ 20.000,00 , o ROI estimado é de aproximadamente 261,8% , comprovando a viabilidade da priorização. 
+
+ Dimensionamento de Custos de Infraestrutura e Nuvem 
+ A arquitetura de software moderna distribui o sistema em serviços gerenciados ( Managed Services ). Cada camada possui métricas de cobrança específicas: 
+ `graph LR
+ User["Usuário"] --> CDN["1. Frontend & CDN (Vercel / Cloudflare)"]
+ CDN --> API["2. API Backend (Railway / Render / AWS ECS)"]
+ API --> DB["3. Banco de Dados (Supabase / AWS RDS)"]
+ API --> S3["4. Storage & Anexos (AWS S3 / R2)"]
+ API --> Ext["5. APIs de Terceiros (SendGrid / Stripe)"]
+
+ Principais Drivers de Cobrança por Camada 
+
+ Camada 
+ Exemplos de Provedores 
+ Métrica de Cobrança 
+ Fatores que Elevam o Custo 
+
+ Frontend / SPA 
+ Vercel, Netlify, Cloudflare Pages 
+ Largura de banda (GB) e requisições no Edge. 
+ Alto volume de tráfego e imagens não otimizadas. 
+
+ API Backend 
+ Railway, Render, Fly.io, AWS App Runner 
+ vCPU alocada, RAM consumida e tempo de execução. 
+ Vazamentos de memória ( memory leaks ) e processos síncronos pesados. 
+
+ Banco Relacional 
+ PostgreSQL no Supabase, Neon, AWS RDS 
+ Instância (RAM/CPU), IOPS e volume de disco (GB). 
+ Consultas sem índice, alto volume de conexões e retenção de dados brutos. 
+
+ Storage de Objetos 
+ AWS S3, Cloudflare R2, Supabase Storage 
+ GB armazenados, requisições PUT/GET e tráfego de saída ( egress ). 
+ Uploads de arquivos sem compressão e downloads diretos sem CDN. 
+
+ Integrações Externas 
+ SendGrid, Twilio, Stripe, Auth0 
+ Volume transacional (e-mails disparados, SMS, chamadas de API). 
+ Disparos em lote sem debounce ou filas assíncronas. 
+
+ A Ilusão do Free-Tier e os Riscos na Produção 
+ Planos gratuitos ( Free Tiers ) são excelentes para testes de conceito e ambientes de aprendizado, mas trazem restrições críticas que impedem o uso comercial direto: 
+ `graph TD
+ subgraph FreeTier ["Limitações Típicas de Planos Gratuitos"]
+ F1["Pausa por Inatividade (Cold Start de 30 a 50s)"]
+ F2["Limite Baixo de Conexões de Banco (Pool reduzido)"]
+ F3["Sem SLA de Disponibilidade e Suporte"]
+ F4["Sem Backups Automáticos Ponto no Tempo (PITR)"]
+ end
+
+ Atenção ao Orçamento de Produção 
+ Projetos que planejam ir para produção devem prever ao menos o primeiro nível pago ( Starter / Pro / Standard ) dos provedores para garantir instâncias ativas sem cold start , conexões suficientes no banco e backups automatizados. 
+
+ Métricas Financeiras Fundamentais em Software 
+ `flowchart LR
+ Caixa["Orçamento Total Aprovado (R$ 150.000)"] --> Burn["Burn Rate Mensal (R$ 37.500/mês)"]
+ Burn --> Runway["Runway (Tempo de Vida: 4 Meses)"]
+
+ Burn Rate (Taxa de Consumo) 
+ Representa a quantidade de capital que a operação de software consome por mês: 
+ \[\text{Burn Rate Mensal} = \text{Custo de Pessoal/mês} + \text{Custo de Infraestrutura/mês} + \text{Licenças/mês}\] 
+ Runway (Pista de Decolagem) 
+ Representa quantos meses a squad ou startup consegue operar antes que os recursos financeiros se esgotem: 
+ \[\text{Runway (Meses)} = \frac{\text{Orçamento Disponível em Caixa}}{\text{Burn Rate Mensal}}\] 
+ TCO ( Total Cost of Ownership / Custo Total de Propriedade) 
+ O custo real do software não se limita ao desenvolvimento inicial (construção do MVP). O TCO engloba o ciclo completo de vida em um horizonte de tempo (ex: 2 anos): 
+ \[\text{TCO} = \text{Custo de Desenvolvimento (Sprints)} + \text{Manutenção Corretiva/Evolutiva} + \text{Infraestrutura Acumulada}\] 
+
+ Próximo Passo 
+ Ir para a Prática: Construção da Calculadora e Deploy no GitHub Pages
+
+
+## Pagina: Construção da Calculadora de Custos e Deploy no GitHub Pages
+(07_Custos_e_Orcamentos/02_Construcao_da_Calculadora_de_Orcamento)
+
+Construção da Calculadora de Custos e Deploy no GitHub Pages 
+
+ Desenvolvimento de uma aplicação web interativa com Tailwind CSS e JavaScript puro para dimensionamento orçamentário e publicação estática no GitHub Pages. 
+
+ Visão Geral da Ferramenta 
+ Para facilitar a simulação de cenários financeiros do Projeto Integrador (PI) e de squads ágeis, construímos uma Calculadora de Custos e Orçamento de Software interativa. 
+ A aplicação opera inteiramente no navegador ( Client-Side ), sem necessidade de instalação de dependências, servidores de backend ou ferramentas complexas de build. 
+ `flowchart LR
+ A["index.html (HTML5 + Tailwind CSS)"] --> B["app.js / Script (Cálculo Reativo)"]
+ B --> C["Exportador Markdown (README / Wiki)"]
+ A --> D["Deploy Estático no GitHub Pages"]
+
+ Principais Recursos da Calculadora 
+
+ Entrada Dinâmica de Integrantes: Adição e remoção de membros da squad com definição de função, custo mensal e horas dedicadas na Sprint. 
+ Matriz de Infraestrutura em Nuvem: Levantamento mensal de custos para API Backend, Banco de Dados, Storage/CDN, Mensageria e Ferramentas. 
+ Métricas em Tempo Real: Cálculo instantâneo do custo da Sprint, Custo por Story Point, Burn Rate Mensal, Custo Consolidado do MVP e Runway. 
+ Gerador de Documentação Markdown: Botão que converte todos os dados calculados em tabelas prontas para serem copiadas e coladas no `README.md do repositório. 
+
+ Código Completo da Aplicação (`index.html ) 
+ Crie um arquivo chamado `index.html em uma pasta local do seu computador e insira a estrutura de código abaixo: 
+ ` <!DOCTYPE html> 
+ < html lang = "pt-BR" > 
+ < head > 
+ < meta charset = "UTF-8" > 
+ < meta name = "viewport" content = "width=device-width, initial-scale=1.0" > 
+ < title > Calculadora de Orçamento de Software | GAPS </ title > 
+ <!-- Tailwind CSS via CDN --> 
+ < script src = "https://cdn.tailwindcss.com" ></ script > 
+ < link rel = "preconnect" href = "https://fonts.googleapis.com" > 
+ < link rel = "preconnect" href = "https://fonts.gstatic.com" crossorigin > 
+ < link href = "https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel = "stylesheet" > 
+ < style > 
+ body { 
+ font-family : 'Plus Jakarta Sans' , sans-serif ; 
+ } 
+ </ style > 
+ </ head > 
+ < body class = "bg-slate-50 text-slate-900 min-h-screen" > 
+
+ <!-- Barra Superior --> 
+ < header class = "bg-white border-b border-slate-200 sticky top-0 z-30" > 
+ < div class = "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between" > 
+ < div class = "flex items-center gap-3" > 
+ < div class = "w-9 h-9 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-600 font-bold" > 
+ < svg class = "w-5 h-5" fill = "none" stroke = "currentColor" viewBox = "0 0 24 24" > 
+ < path stroke-linecap = "round" stroke-linejoin = "round" stroke-width = "2" d = "M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" ></ path > 
+ </ svg > 
+ </ div > 
+ < div > 
+ < h1 class = "text-base font-bold text-slate-900 leading-tight" > Calculadora de Custos de Software </ h1 > 
+ < p class = "text-xs text-slate-500" > Gestão de Agilidade e Projetos de Software (GAPS) </ p > 
+ </ div > 
+ </ div > 
+ < div class = "flex items-center gap-2" > 
+ < button id = "btn-load-demo" class = "px-3.5 py-1.5 text-xs font-medium bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg transition-colors" > 
+ Carregar Exemplo (Hub Solidário)
+ </ button > 
+ < button id = "btn-reset" class = "px-3.5 py-1.5 text-xs font-medium border border-slate-200 hover:bg-slate-50 text-slate-600 rounded-lg transition-colors" > 
+ Limpar
+ </ button > 
+ </ div > 
+ </ div > 
+ </ header > 
+
+ < main class = "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8" > 
+ < div class = "grid grid-cols-1 lg:grid-cols-12 gap-8" > 
+
+ <!-- Coluna Esquerda: Entrada de Dados (7 Colunas) --> 
+ < div class = "lg:col-span-7 space-y-6" > 
+
+ <!-- 1. Equipe e Capacidade da Squad --> 
+ < section class = "bg-white rounded-2xl border border-slate-200/80 p-6 shadow-sm" > 
+ < div class = "flex items-center justify-between mb-4" > 
+ < div > 
+ < h2 class = "text-sm font-bold text-slate-900 uppercase tracking-wider" > 1. Equipe e Capacidade da Squad </ h2 > 
+ < p class = "text-xs text-slate-500" > Informe os membros da squad, custo mensal carregado e horas na Sprint. </ p > 
+ </ div > 
+ < button id = "btn-add-member" class = "px-3 py-1 text-xs font-medium bg-slate-900 hover:bg-slate-800 text-white rounded-lg transition-colors flex items-center gap-1.5" > 
+ < svg class = "w-3.5 h-3.5" fill = "none" stroke = "currentColor" viewBox = "0 0 24 24" > 
+ < path stroke-linecap = "round" stroke-linejoin = "round" stroke-width = "2" d = "M12 4v16m8-8H4" ></ path > 
+ </ svg > 
+ Adicionar Membro
+ </ button > 
+ </ div > 
+
+ <!-- Parâmetros Globais de Horas --> 
+ < div class = "grid grid-cols-2 gap-4 p-3.5 bg-slate-50 rounded-xl mb-4 text-xs border border-slate-100" > 
+ < div > 
+ < label class = "block font-medium text-slate-700 mb-1" > Dias Úteis por Sprint </ label > 
+ < input type = "number" id = "sprint-days" value = "10" min = "1" max = "30" class = "w-full bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500" > 
+ </ div > 
+ < div > 
+ < label class = "block font-medium text-slate-700 mb-1" > Fator de Foco Técnico (%) </ label > 
+ < input type = "number" id = "focus-factor" value = "75" min = "10" max = "100" class = "w-full bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500" > 
+ </ div > 
+ </ div > 
+
+ <!-- Lista de Membros --> 
+ < div class = "overflow-x-auto" > 
+ < table class = "w-full text-left text-xs" > 
+ < thead > 
+ < tr class = "border-b border-slate-100 text-slate-400 font-medium" > 
+ < th class = "pb-2" > Função / Papel </ th > 
+ < th class = "pb-2" > Custo Mensal (R$) </ th > 
+ < th class = "pb-2" > Horas / Sprint </ th > 
+ < th class = "pb-2 text-right" > Subtotal </ th > 
+ < th class = "pb-2 text-center w-10" > Ação </ th > 
+ </ tr > 
+ </ thead > 
+ < tbody id = "members-list" class = "divide-y divide-slate-100" > 
+ <!-- Inserido dinamicamente via JS --> 
+ </ tbody > 
+ </ table > 
+ </ div > 
+ </ section > 
+
+ <!-- 2. Custos de Infraestrutura e Nuvem --> 
+ < section class = "bg-white rounded-2xl border border-slate-200/80 p-6 shadow-log shadow-sm" > 
+ < div class = "mb-4" > 
+ < h2 class = "text-sm font-bold text-slate-900 uppercase tracking-wider" > 2. Infraestrutura e Serviços em Nuvem </ h2 > 
+ < p class = "text-xs text-slate-500" > Custos operacionais mensais de hospedagem, banco de dados e APIs. </ p > 
+ </ div > 
+
+ < div class = "grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs" > 
+ < div > 
+ < label class = "block font-medium text-slate-700 mb-1" > API Backend (R$/mês) </ label > 
+ < input type = "number" id = "infra-api" value = "35" min = "0" step = "0.01" class = "calc-input w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500" placeholder = "Ex: 35.00" > 
+ < span class = "text-[10px] text-slate-400" > Ex: Render, Railway, AWS ECS </ span > 
+ </ div > 
+
+ < div > 
+ < label class = "block font-medium text-slate-700 mb-1" > Banco de Dados (R$/mês) </ label > 
+ < input type = "number" id = "infra-db" value = "125" min = "0" step = "0.01" class = "calc-input w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500" placeholder = "Ex: 125.00" > 
+ < span class = "text-[10px] text-slate-400" > Ex: Supabase PostgreSQL, AWS RDS </ span > 
+ </ div > 
+
+ < div > 
+ < label class = "block font-medium text-slate-700 mb-1" > Storage & CDN (R$/mês) </ label > 
+ < input type = "number" id = "infra-storage" value = "10" min = "0" step = "0.01" class = "calc-input w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500" placeholder = "Ex: 10.00" > 
+ < span class = "text-[10px] text-slate-400" > Ex: Cloudflare R2, AWS S3 </ span > 
+ </ div > 
+
+ < div > 
+ < label class = "block font-medium text-slate-700 mb-1" > Serviços / APIs / E-mail (R$/mês) </ label > 
+ < input type = "number" id = "infra-services" value = "75" min = "0" step = "0.01" class = "calc-input w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500" placeholder = "Ex: 75.00" > 
+ < span class = "text-[10px] text-slate-400" > Ex: Resend, SendGrid, Stripe </ span > 
+ </ div > 
+ </ div > 
+ </ section > 
+
+ <!-- 3. Parâmetros do Projeto e MVP --> 
+ < section class = "bg-white rounded-2xl border border-slate-200/80 p-6 shadow-sm" > 
+ < div class = "mb-4" > 
+ < h2 class = "text-sm font-bold text-slate-900 uppercase tracking-wider" > 3. Parâmetros de Escopo e Caixa </ h2 > 
+ < p class = "text-xs text-slate-500" > Duração estimada do MVP, velocidade da squad e orçamento disponível. </ p > 
+ </ div > 
+
+ < div class = "grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs" > 
+ < div > 
+ < label class = "block font-medium text-slate-700 mb-1" > Sprints para o MVP </ label > 
+ < input type = "number" id = "mvp-sprints" value = "3" min = "1" max = "20" class = "calc-input w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500" > 
+ < span class = "text-[10px] text-slate-400" > Ciclos de entrega previstos </ span > 
+ </ div > 
+
+ < div > 
+ < label class = "block font-medium text-slate-700 mb-1" > Velocidade Média (Story Points / Sprint) </ label > 
+ < input type = "number" id = "sprint-points" value = "25" min = "1" max = "200" class = "calc-input w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500" > 
+ < span class = "text-[10px] text-slate-400" > Pontuação entregue por ciclo </ span > 
+ </ div > 
+
+ < div > 
+ < label class = "block font-medium text-slate-700 mb-1" > Margem de Contingência (%) </ label > 
+ < input type = "number" id = "contingency-rate" value = "5" min = "0" max = "50" class = "calc-input w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500" > 
+ < span class = "text-[10px] text-slate-400" > Reserva técnica para imprevistos </ span > 
+ </ div > 
+
+ < div > 
+ < label class = "block font-medium text-slate-700 mb-1" > Orçamento Teto Aprovado (R$) </ label > 
+ < input type = "number" id = "total-budget" value = "60000" min = "0" step = "500" class = "calc-input w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500" > 
+ < span class = "text-[10px] text-slate-400" > Verba máxima disponível para o projeto / MVP </ span > 
+ </ div > 
+ </ div > 
+ </ section > 
+
+ </ div > 
+
+ <!-- Coluna Direita: Painel de Indicadores e Síntese (5 Colunas) --> 
+ < div class = "lg:col-span-5 space-y-6" > 
+
+ <!-- Card de Destaque: Orçamento e Viabilidade do MVP --> 
+ < div class = "bg-gradient-to-br from-slate-900 to-slate-800 text-white rounded-2xl p-6 shadow-md border border-slate-800 relative overflow-hidden" > 
+ < div class = "absolute -right-6 -bottom-6 w-32 h-32 bg-emerald-500/10 rounded-full blur-2xl pointer-events-none" ></ div > 
+
+ < div class = "flex items-center justify-between mb-2" > 
+ < span class = "text-xs uppercase tracking-wider text-slate-400 font-semibold" > Custo Estimado do MVP </ span > 
+ < span id = "badge-budget-status" class = "px-2.5 py-0.5 text-[11px] font-semibold rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30" > 
+ Dentro do Teto
+ </ span > 
+ </ div > 
+
+ < div class = "text-3xl font-extrabold text-white tracking-tight mb-1" id = "card-mvp-total" > R$ 0,00 </ div > 
+ < div class = "text-xs text-slate-400 flex items-center gap-2 mb-4" > 
+ < span > Teto Aprovado: < strong class = "text-slate-200" id = "card-target-budget" > R$ 60.000,00 </ strong ></ span > 
+ < span > • </ span > 
+ < span id = "card-budget-diff" class = "text-emerald-400 font-medium" > + R$ 0,00 de saldo </ span > 
+ </ div > 
+
+ <!-- Barra de Consumo do Orçamento --> 
+ < div class = "space-y-1 mb-4" > 
+ < div class = "flex justify-between text-[11px] text-slate-400" > 
+ < span > Comprometimento da Verba </ span > 
+ < span id = "card-budget-percent" class = "font-semibold text-slate-200" > 0% </ span > 
+ </ div > 
+ < div class = "w-full bg-slate-700/60 rounded-full h-2 overflow-hidden" > 
+ < div id = "budget-progress-bar" class = "bg-emerald-500 h-2 rounded-full transition-all duration-300" style = "width: 0%" ></ div > 
+ </ div > 
+ </ div > 
+
+ < div class = "pt-3 border-t border-slate-700/60 grid grid-cols-2 gap-3 text-xs" > 
+ < div > 
+ < span class = "text-slate-400 block text-[11px]" > Duração Prevista: </ span > 
+ < span class = "font-semibold text-slate-200" id = "card-mvp-sprints-count" > 3 Sprints (6 semanas) </ span > 
+ </ div > 
+ < div > 
+ < span class = "text-slate-400 block text-[11px]" > Contingência Inclusa: </ span > 
+ < span class = "font-semibold text-emerald-400" id = "card-mvp-contingency" > R$ 0,00 </ span > 
+ </ div > 
+ </ div > 
+ </ div > 
+
+ <!-- Grade de Métricas Principais --> 
+ < div class = "grid grid-cols-2 gap-4" > 
+
+ <!-- Custo por Sprint --> 
+ < div class = "bg-white rounded-2xl border border-slate-200/80 p-5 shadow-sm" > 
+ < span class = "text-[11px] font-medium text-slate-400 uppercase tracking-wider block mb-1" > Custo / Sprint (Equipe) </ span > 
+ < div class = "text-lg font-bold text-slate-900" id = "card-sprint-cost" > R$ 0,00 </ div > 
+ < span class = "text-[10px] text-slate-500" id = "card-sprint-hours" > 0 horas úteis </ span > 
+ </ div > 
+
+ <!-- Custo por Story Point --> 
+ < div class = "bg-white rounded-2xl border border-slate-200/80 p-5 shadow-sm" > 
+ < span class = "text-[11px] font-medium text-slate-400 uppercase tracking-wider block mb-1" > Custo / Story Point </ span > 
+ < div class = "text-lg font-bold text-slate-900" id = "card-point-cost" > R$ 0,00 </ div > 
+ < span class = "text-[10px] text-slate-500" id = "card-points-rate" > Base: 25 pts/sprint </ span > 
+ </ div > 
+
+ <!-- Burn Rate Mensal --> 
+ < div class = "bg-white rounded-2xl border border-slate-200/80 p-5 shadow-sm" > 
+ < span class = "text-[11px] font-medium text-slate-400 uppercase tracking-wider block mb-1" > Burn Rate Mensal </ span > 
+ < div class = "text-lg font-bold text-slate-900" id = "card-burn-rate" > R$ 0,00 </ div > 
+ < span class = "text-[10px] text-slate-500" > Equipe + Nuvem </ span > 
+ </ div > 
+
+ <!-- Runway Estimado --> 
+ < div class = "bg-white rounded-2xl border border-slate-200/80 p-5 shadow-sm" > 
+ < span class = "text-[11px] font-medium text-slate-400 uppercase tracking-wider block mb-1" > Runway (Sobrevida) </ span > 
+ < div class = "text-lg font-bold text-emerald-600" id = "card-runway" > 0,0 meses </ div > 
+ < span class = "text-[10px] text-slate-500" > Com base no teto </ span > 
+ </ div > 
+
+ </ div > 
+
+ <!-- Exportação em Markdown --> 
+ < div class = "bg-white rounded-2xl border border-slate-200/80 p-6 shadow-sm space-y-3" > 
+ < div class = "flex items-center justify-between" > 
+ < h3 class = "text-xs font-bold text-slate-900 uppercase tracking-wider" > Exportar para o README </ h3 > 
+ < button id = "btn-copy-md" class = "px-3 py-1.5 text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition-all flex items-center gap-1.5 shadow-sm" > 
+ < svg class = "w-3.5 h-3.5" fill = "none" stroke = "currentColor" viewBox = "0 0 24 24" > 
+ < path stroke-linecap = "round" stroke-linejoin = "round" stroke-width = "2" d = "M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" ></ path > 
+ </ svg > 
+ < span id = "copy-text" > Copiar Markdown </ span > 
+ </ button > 
+ </ div > 
+ < textarea id = "markdown-output" readonly rows = "8" class = "w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-[11px] font-mono text-slate-700 focus:outline-none resize-none" ></ textarea > 
+ </ div > 
+
+ </ div > 
+
+ </ div > 
+ </ main > 
+
+ <!-- Lógica JavaScript da Aplicação --> 
+ < script > 
+ // Estado da Equipe 
+ let members = [ 
+ { role : 'Tech Lead / Backend' , salary : 16000 , hours : 60 }, 
+ { role : 'Dev Backend (API)' , salary : 9000 , hours : 60 }, 
+ { role : 'Dev Frontend (Web)' , salary : 9000 , hours : 60 }, 
+ { role : 'PO / UI Designer' , salary : 8000 , hours : 30 } 
+ ]; 
+
+ const demoMembers = [ 
+ { role : 'Tech Lead / Backend' , salary : 16000 , hours : 60 }, 
+ { role : 'Dev Backend (API)' , salary : 9000 , hours : 60 }, 
+ { role : 'Dev Frontend (Web)' , salary : 9000 , hours : 60 }, 
+ { role : 'PO / UI Designer' , salary : 8000 , hours : 30 } 
+ ]; 
+
+ // Elementos DOM 
+ const membersListEl = document . getElementById ( 'members-list' ); 
+ const sprintDaysEl = document . getElementById ( 'sprint-days' ); 
+ const focusFactorEl = document . getElementById ( 'focus-factor' ); 
+ const infraApiEl = document . getElementById ( 'infra-api' ); 
+ const infraDbEl = document . getElementById ( 'infra-db' ); 
+ const infraStorageEl = document . getElementById ( 'infra-storage' ); 
+ const infraServicesEl = document . getElementById ( 'infra-services' ); 
+ const mvpSprintsEl = document . getElementById ( 'mvp-sprints' ); 
+ const sprintPointsEl = document . getElementById ( 'sprint-points' ); 
+ const contingencyRateEl = document . getElementById ( 'contingency-rate' ); 
+ const totalBudgetEl = document . getElementById ( 'total-budget' ); 
+
+ // Cards 
+ const cardMvpTotal = document . getElementById ( 'card-mvp-total' ); 
+ const cardTargetBudget = document . getElementById ( 'card-target-budget' ); 
+ const cardBudgetDiff = document . getElementById ( 'card-budget-diff' ); 
+ const cardBudgetPercent = document . getElementById ( 'card-budget-percent' ); 
+ const budgetProgressBar = document . getElementById ( 'budget-progress-bar' ); 
+ const badgeBudgetStatus = document . getElementById ( 'badge-budget-status' ); 
+ const cardMvpSprintsCount = document . getElementById ( 'card-mvp-sprints-count' ); 
+ const cardMvpContingency = document . getElementById ( 'card-mvp-contingency' ); 
+ const cardSprintCost = document . getElementById ( 'card-sprint-cost' ); 
+ const cardSprintHours = document . getElementById ( 'card-sprint-hours' ); 
+ const cardPointCost = document . getElementById ( 'card-point-cost' ); 
+ const cardPointsRate = document . getElementById ( 'card-points-rate' ); 
+ const cardBurnRate = document . getElementById ( 'card-burn-rate' ); 
+ const cardRunway = document . getElementById ( 'card-runway' ); 
+ const markdownOutput = document . getElementById ( 'markdown-output' ); 
+
+ // Formatação de Moeda 
+ function formatCurrency ( val ) { 
+ return new Intl . NumberFormat ( 'pt-BR' , { style : 'currency' , currency : 'BRL' }). format ( val ); 
+ } 
+
+ // Renderização dos Membros 
+ function renderMembers () { 
+ membersListEl . innerHTML = '' ; 
+ const focus = parseFloat ( focusFactorEl . value ) / 100 || 0.75 ; 
+ const effectiveMonthlyHours = 176 * focus ; 
+
+ members . forEach (( m , idx ) => { 
+ const hourlyRate = effectiveMonthlyHours > 0 ? ( m . salary / effectiveMonthlyHours ) : 0 ; 
+ const subtotal = hourlyRate * m . hours ; 
+
+ const tr = document . createElement ( 'tr' ); 
+ tr . className = 'hover:bg-slate-50/50 transition-colors' ; 
+ tr . innerHTML = ` 
+ <td class="py-2.5 pr-2"> 
+ <input type="text" value=" ${ m . role } " data-idx=" ${ idx } " data-field="role" class="w-full bg-transparent border-0 border-b border-transparent hover:border-slate-300 focus:border-emerald-500 focus:ring-0 p-0 text-xs font-medium text-slate-800"> 
+ </td> 
+ <td class="py-2.5 pr-2"> 
+ <input type="number" value=" ${ m . salary } " data-idx=" ${ idx } " data-field="salary" min="0" step="100" class="w-24 bg-slate-50 border border-slate-200 rounded px-2 py-1 text-xs font-semibold focus:outline-none focus:border-emerald-500"> 
+ </td> 
+ <td class="py-2.5 pr-2"> 
+ <input type="number" value=" ${ m . hours } " data-idx=" ${ idx } " data-field="hours" min="0" max="200" class="w-16 bg-slate-50 border border-slate-200 rounded px-2 py-1 text-xs font-semibold focus:outline-none focus:border-emerald-500"> 
+ </td> 
+ <td class="py-2.5 text-right font-semibold text-slate-700"> 
+ ${ formatCurrency ( subtotal ) } 
+ </td> 
+ <td class="py-2.5 text-center"> 
+ <button data-idx=" ${ idx } " class="btn-remove-member text-slate-400 hover:text-red-500 transition-colors p-1"> 
+ <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"> 
+ <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path> 
+ </svg> 
+ </button> 
+ </td> 
+ ` ; 
+ membersListEl . appendChild ( tr ); 
+ }); 
+
+ calculateAll (); 
+ } 
+
+ // Cálculo Geral de Métricas 
+ function calculateAll () { 
+ const focus = parseFloat ( focusFactorEl . value ) / 100 || 0.75 ; 
+ const effectiveMonthlyHours = 176 * focus ; 
+
+ // 1. Equipe 
+ let totalSprintTeamCost = 0 ; 
+ let totalSprintHours = 0 ; 
+ let totalMonthlyTeamCost = 0 ; 
+
+ members . forEach ( m => { 
+ const hourlyRate = effectiveMonthlyHours > 0 ? ( m . salary / effectiveMonthlyHours ) : 0 ; 
+ totalSprintTeamCost += hourlyRate * m . hours ; 
+ totalSprintHours += m . hours ; 
+ totalMonthlyTeamCost += m . salary ; 
+ }); 
+
+ // 2. Infraestrutura 
+ const infraApi = parseFloat ( infraApiEl . value ) || 0 ; 
+ const infraDb = parseFloat ( infraDbEl . value ) || 0 ; 
+ const infraStorage = parseFloat ( infraStorageEl . value ) || 0 ; 
+ const infraServices = parseFloat ( infraServicesEl . value ) || 0 ; 
+ const totalMonthlyInfra = infraApi + infraDb + infraStorage + infraServices ; 
+
+ // 3. Parâmetros 
+ const mvpSprints = parseInt ( mvpSprintsEl . value ) || 1 ; 
+ const sprintDays = parseInt ( sprintDaysEl . value ) || 10 ; 
+ const pointsPerSprint = parseFloat ( sprintPointsEl . value ) || 1 ; 
+ const contingencyRate = ( parseFloat ( contingencyRateEl . value ) || 0 ) / 100 ; 
+ const targetBudget = parseFloat ( totalBudgetEl . value ) || 0 ; 
+
+ // Duração do MVP em meses (1 Sprint de 10 dias úteis = 0.5 mês) 
+ const mvpDurationMonths = ( mvpSprints * sprintDays ) / 22 ; 
+
+ // Custos Consolidados 
+ const mvpTeamCost = totalSprintTeamCost * mvpSprints ; 
+ const mvpInfraCost = totalMonthlyInfra * mvpDurationMonths ; 
+ const subtotalMvp = mvpTeamCost + mvpInfraCost ; 
+ const contingencyVal = subtotalMvp * contingencyRate ; 
+ const totalMvpCost = subtotalMvp + contingencyVal ; 
+
+ // Comparação com o Orçamento Teto Aprovado 
+ const budgetDiff = targetBudget - totalMvpCost ; 
+ const percentUsed = targetBudget > 0 ? ( totalMvpCost / targetBudget ) * 100 : 0 ; 
+
+ // Burn Rate e Runway 
+ const monthlyBurnRate = totalMonthlyTeamCost + totalMonthlyInfra ; 
+ const runwayMonths = monthlyBurnRate > 0 ? ( targetBudget / monthlyBurnRate ) : 0 ; 
+ const costPerPoint = pointsPerSprint > 0 ? ( totalSprintTeamCost / pointsPerSprint ) : 0 ; 
+
+ // Atualização dos Cards 
+ cardMvpTotal . innerText = formatCurrency ( totalMvpCost ); 
+ cardTargetBudget . innerText = formatCurrency ( targetBudget ); 
+ cardMvpSprintsCount . innerText = ` ${ mvpSprints } Sprints ( ${ ( mvpSprints * ( sprintDays / 5 )). toFixed ( 0 ) } semanas)` ; 
+ cardMvpContingency . innerText = formatCurrency ( contingencyVal ); 
+ cardBudgetPercent . innerText = ` ${ percentUsed . toFixed ( 1 ) } %` ; 
+
+ // Barra e Status do Orçamento 
+ budgetProgressBar . style . width = ` ${ Math . min ( percentUsed , 100 ) } %` ; 
+ if ( budgetDiff >= 0 ) { 
+ badgeBudgetStatus . className = 'px-2.5 py-0.5 text-[11px] font-semibold rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' ; 
+ badgeBudgetStatus . innerText = 'Dentro do Teto' ; 
+ cardBudgetDiff . className = 'text-emerald-400 font-medium' ; 
+ cardBudgetDiff . innerText = `+ ${ formatCurrency ( budgetDiff ) } de saldo livre` ; 
+ budgetProgressBar . className = 'bg-emerald-500 h-2 rounded-full transition-all duration-300' ; 
+ } else { 
+ badgeBudgetStatus . className = 'px-2.5 py-0.5 text-[11px] font-semibold rounded-full bg-rose-500/20 text-rose-300 border border-rose-500/30' ; 
+ badgeBudgetStatus . innerText = 'Teto Ultrapassado' ; 
+ cardBudgetDiff . className = 'text-rose-400 font-medium' ; 
+ cardBudgetDiff . innerText = `- ${ formatCurrency ( Math . abs ( budgetDiff )) } de estouro` ; 
+ budgetProgressBar . className = 'bg-rose-500 h-2 rounded-full transition-all duration-300' ; 
+ } 
+
+ cardSprintCost . innerText = formatCurrency ( totalSprintTeamCost ); 
+ cardSprintHours . innerText = ` ${ totalSprintHours } h técnicas úteis` ; 
+
+ cardPointCost . innerText = formatCurrency ( costPerPoint ); 
+ cardPointsRate . innerText = `Base: ${ pointsPerSprint } pts/sprint` ; 
+
+ cardBurnRate . innerText = ` ${ formatCurrency ( monthlyBurnRate ) } /mês` ; 
+ cardRunway . innerText = ` ${ runwayMonths . toFixed ( 1 ) } meses` ; 
+
+ // Atualização do Markdown Gerado 
+ generateMarkdown ({ 
+ members , 
+ focus , 
+ effectiveMonthlyHours , 
+ totalSprintTeamCost , 
+ totalSprintHours , 
+ infraApi , 
+ infraDb , 
+ infraStorage , 
+ infraServices , 
+ totalMonthlyInfra , 
+ mvpSprints , 
+ sprintDays , 
+ pointsPerSprint , 
+ costPerPoint , 
+ contingencyRate , 
+ contingencyVal , 
+ totalMvpCost , 
+ targetBudget , 
+ budgetDiff , 
+ percentUsed , 
+ monthlyBurnRate , 
+ runwayMonths 
+ }); 
+ } 
+
+ // Gerador de Tabela em Markdown 
+ function generateMarkdown ( data ) { 
+ let md = `## Estimativa de Custos e Orçamento do Software\n\n` ; 
+ md += `### 1. Equipe e Capacidade da Squad (Sprint de ${ data . sprintDays } dias úteis)\n\n` ; 
+ md += `| Papel / Função | Custo Mensal Estimado | Custo / Hora Efetiva | Horas / Sprint | Subtotal da Sprint |\n` ; 
+ md += `| :--- | :--- | :--- | :--- | :--- |\n` ; 
+
+ data . members . forEach ( m => { 
+ const rate = data . effectiveMonthlyHours > 0 ? ( m . salary / data . effectiveMonthlyHours ) : 0 ; 
+ const sub = rate * m . hours ; 
+ md += `| ${ m . role } | ${ formatCurrency ( m . salary ) } | ${ formatCurrency ( rate ) } | ${ m . hours } h | ${ formatCurrency ( sub ) } |\n` ; 
+ }); 
+
+ md += `| **Total da Squad** | - | - | ** ${ data . totalSprintHours } h** | ** ${ formatCurrency ( data . totalSprintTeamCost ) } ** |\n\n` ; 
+
+ md += `### 2. Infraestrutura em Nuvem (Custos Mensais)\n\n` ; 
+ md += `| Componente / Camada | Provedor / Serviço | Custo Mensal Estimado |\n` ; 
+ md += `| :--- | :--- | :--- |\n` ; 
+ md += `| API Backend | Render / Railway | ${ formatCurrency ( data . infraApi ) } |\n` ; 
+ md += `| Banco de Dados | Supabase PostgreSQL | ${ formatCurrency ( data . infraDb ) } |\n` ; 
+ md += `| Storage & CDN | Cloudflare R2 / S3 | ${ formatCurrency ( data . infraStorage ) } |\n` ; 
+ md += `| Serviços & Mensageria | Resend / SendGrid | ${ formatCurrency ( data . infraServices ) } |\n` ; 
+ md += `| **Total Infraestrutura** | - | ** ${ formatCurrency ( data . totalMonthlyInfra ) } / mês** |\n\n` ; 
+
+ md += `### 3. Síntese do Projeto e Projeção do MVP\n\n` ; 
+ md += `- **Custo por Sprint (Equipe):** ${ formatCurrency ( data . totalSprintTeamCost ) } \n` ; 
+ md += `- **Custo por Story Point:** ${ formatCurrency ( data . costPerPoint ) } (Base: ${ data . pointsPerSprint } pts/sprint)\n` ; 
+ md += `- **Burn Rate Mensal Operacional:** ${ formatCurrency ( data . monthlyBurnRate ) } / mês\n` ; 
+ md += `- **Orçamento Teto Aprovado:** ${ formatCurrency ( data . targetBudget ) } \n` ; 
+ md += `- **Custo Total Estimado do MVP ( ${ data . mvpSprints } Sprints):** ** ${ formatCurrency ( data . totalMvpCost ) } ** (Comprometimento: ${ data . percentUsed . toFixed ( 1 ) } %)\n` ; 
+ if ( data . budgetDiff >= 0 ) { 
+ md += `- **Saldo Livre de Orçamento:** ${ formatCurrency ( data . budgetDiff ) } (Dentro do teto)\n` ; 
+ } else { 
+ md += `- **Déficit de Orçamento:** ${ formatCurrency ( Math . abs ( data . budgetDiff )) } (Teto ultrapassado)\n` ; 
+ } 
+
+ markdownOutput . value = md ; 
+ } 
+
+ // Listeners de Eventos 
+ document . addEventListener ( 'input' , ( e ) => { 
+ if ( e . target . dataset . field ) { 
+ const idx = parseInt ( e . target . dataset . idx ); 
+ const field = e . target . dataset . field ; 
+ if ( field === 'role' ) members [ idx ]. role = e . target . value ; 
+ if ( field === 'salary' ) members [ idx ]. salary = parseFloat ( e . target . value ) || 0 ; 
+ if ( field === 'hours' ) members [ idx ]. hours = parseFloat ( e . target . value ) || 0 ; 
+ calculateAll (); 
+ } else if ( e . target . classList . contains ( 'calc-input' ) || e . target . id === 'sprint-days' || e . target . id === 'focus-factor' ) { 
+ calculateAll (); 
+ } 
+ }); 
+
+ document . addEventListener ( 'click' , ( e ) => { 
+ if ( e . target . closest ( '.btn-remove-member' )) { 
+ const btn = e . target . closest ( '.btn-remove-member' ); 
+ const idx = parseInt ( btn . dataset . idx ); 
+ if ( members . length > 1 ) { 
+ members . splice ( idx , 1 ); 
+ renderMembers (); 
+ } 
+ } 
+ }); 
+
+ document . getElementById ( 'btn-add-member' ). addEventListener ( 'click' , () => { 
+ members . push ({ role : 'Novo Integrante' , salary : 6000 , hours : 60 }); 
+ renderMembers (); 
+ }); 
+
+ document . getElementById ( 'btn-load-demo' ). addEventListener ( 'click' , () => { 
+ members = JSON . parse ( JSON . stringify ( demoMembers )); 
+ infraApiEl . value = 35 ; 
+ infraDbEl . value = 125 ; 
+ infraStorageEl . value = 10 ; 
+ infraServicesEl . value = 75 ; 
+ mvpSprintsEl . value = 3 ; 
+ sprintPointsEl . value = 25 ; 
+ contingencyRateEl . value = 5 ; 
+ totalBudgetEl . value = 60000 ; 
+ renderMembers (); 
+ }); 
+
+ document . getElementById ( 'btn-reset' ). addEventListener ( 'click' , () => { 
+ members = [{ role : 'Desenvolvedor' , salary : 5000 , hours : 60 }]; 
+ infraApiEl . value = 0 ; 
+ infraDbEl . value = 0 ; 
+ infraStorageEl . value = 0 ; 
+ infraServicesEl . value = 0 ; 
+ mvpSprintsEl . value = 1 ; 
+ sprintPointsEl . value = 20 ; 
+ contingencyRateEl . value = 0 ; 
+ totalBudgetEl . value = 0 ; 
+ renderMembers (); 
+ }); 
+
+ // Copiar Markdown 
+ document . getElementById ( 'btn-copy-md' ). addEventListener ( 'click' , () => { 
+ markdownOutput . select (); 
+ navigator . clipboard . writeText ( markdownOutput . value ); 
+ const copyText = document . getElementById ( 'copy-text' ); 
+ copyText . innerText = 'Copiado!' ; 
+ setTimeout (() => { copyText . innerText = 'Copiar Markdown' ; }, 2000 ); 
+ }); 
+
+ // Inicialização 
+ renderMembers (); 
+ </ script > 
+ </ body > 
+ </ html > 
+
+ Como Publicar a Aplicação no GitHub Pages 
+ O GitHub Pages é um serviço gratuito do GitHub que hospeda sites estáticos (HTML, CSS e JavaScript) diretamente a partir de um repositório. 
+ Siga os quatro passos abaixo para publicar a calculadora na web: 
+ `sequenceDiagram
+ autonumber
+ actor Dev as Estudante / Squad
+ participant Git as Git Local
+ participant GH as GitHub Repositories
+ participant Pages as GitHub Pages (Web)
+
+ Dev->>Git: git init & git add index.html
+ Dev->>Git: git commit -m "feat: calculadora de orcamento"
+ Dev->>GH: git push origin main
+ Dev->>GH: Ativa Pages em Settings > Pages (Source: Branch main /root)
+ GH->>Pages: Build & Deploy Automático
+ Pages-->>Dev: URL Pública: https://usuario.github.io/calculadora-orcamento/
+
+ Passo 1: Criar o Repositório no GitHub 
+
+ Acesse sua conta no GitHub e clique no botão New repository . 
+ Nomeie o repositório como `calculadora-orcamento-pi (ou nome equivalente). 
+ Deixe o repositório como Public (repositórios públicos possuem GitHub Pages gratuito sem limites de organização). 
+ Não marque a opção de adicionar `.gitignore ou licença neste momento e clique em Create repository . 
+
+ Passo 2: Inicializar o Repositório e Enviar os Arquivos 
+ No terminal do seu computador, acesse a pasta onde salvou o arquivo `index.html e execute os comandos: 
+ ` # Inicializar o repositório Git local 
+ git init
+
+ # Adicionar o arquivo index.html 
+ git add index.html
+
+ # Criar o primeiro commit 
+ git commit -m "feat: interface da calculadora de custos e orcamento" 
+
+ # Renomear a branch principal para main 
+ git branch -M main
+
+ # Vincular ao seu repositório remoto no GitHub (substitua com a sua URL) 
+ git remote add origin https://github.com/SEU-USUARIO/calculadora-orcamento-pi.git
+
+ # Enviar os arquivos para o GitHub 
+ git push -u origin main
+
+ Passo 3: Ativar o GitHub Pages 
+
+ No GitHub, acesse a aba Settings (Configurações) do seu repositório. 
+ No menu lateral esquerdo, clique em Pages (na seção Code and automation ). 
+ Na seção Build and deployment : 
+ Em Source , selecione Deploy from a branch . 
+ Em Branch , selecione a branch `main e a pasta `/ (root) . 
+ Clique no botão Save . 
+
+ Passo 4: Acessar a Aplicação Publicada 
+ Após cerca de 1 a 2 minutos, o GitHub concluirá o processo de publicação. 
+
+ Recarregue a página de configurações do Pages. 
+ O link oficial do seu site será exibido no topo:
+ `https://SEU-USUARIO.github.io/calculadora-orcamento-pi/ 
+ Compartilhe o link com os demais membros da squad para realizar as simulações orçamentárias do Projeto Integrador. 
+
+ Próximo Passo 
+ Com a calculadora construída e publicada, avance para o laboratório para pesquisar as tabelas reais de mercado, preencher os dados do projeto e formalizar a documentação no repositório: 
+ Ir para o Laboratório: Cálculo e Documentação Orçamentária
+
+
+## Pagina: Laboratório: Cálculo e Documentação Orçamentária do Projeto
+(07_Custos_e_Orcamentos/03_Calculo_e_Documentacao_de_Custos)
+
+Laboratório: Cálculo e Documentação Orçamentária do Projeto 
+
+ Roteiro prático para levantamento de custos de equipe por Sprint, precificação de infraestrutura em nuvem e formalização da documentação financeira no repositório. 
+
+ Estrutura Padrão de Documentação Financeira 
+ Para garantir governança e previsibilidade orçamentária, todo projeto de software deve manter sua estimativa de custos registrada de forma pública ou interna no repositório (via `README.md ou Wiki). 
+ A documentação financeira organiza-se em três blocos essenciais: 
+ `graph TD
+ Doc["Documentação de Custos (README / Wiki)"] --> B1["1. Custos de Equipe (Horas e Sprint)"]
+ Doc --> B2["2. Custos de Infraestrutura e Nuvem"]
+ Doc --> B3["3. Projeção de Burn Rate e MVP (3 Sprints)"]
+
+ B1 --- T1["Tabela de papéis, taxas horárias e esforço"]
+ B2 --- T2["Hospedagem de API, Banco de Dados, Storage e CDN"]
+ B3 --- T3["Cenário de Desenvolvimento vs Cenário de Produção"]
+
+ Estudo de Caso: Orçamento do Hub Solidário 
+ Abaixo está o modelo oficial de levantamento financeiro estruturado para a plataforma Hub Solidário , gerado a partir dos parâmetros inseridos na calculadora de custos: 
+ 1. Custos de Equipe por Sprint (Ciclo de 2 Semanas) 
+ Considerando uma squad composta por 4 desenvolvedores com dedicação de 60 horas técnicas úteis por integrante ao longo de 10 dias úteis: 
+
+ Integrante / Função 
+ Nível Referência 
+ Custo Mensal Estimado 
+ Custo / Hora Efetiva 
+ Horas / Sprint 
+ Subtotal da Sprint 
+
+ Tech Lead / Backend 
+ Sênior 
+ R$ 16.000,00 
+ R$ 121,21 
+ 60 h 
+ R$ 7.272,60 
+
+ Desenvolvedor Backend (API) 
+ Pleno 
+ R$ 9.000,00 
+ R$ 68,18 
+ 60 h 
+ R$ 4.090,80 
+
+ Desenvolvedor Frontend (Web) 
+ Pleno 
+ R$ 9.000,00 
+ R$ 68,18 
+ 60 h 
+ R$ 4.090,80 
+
+ Product Owner / UI Designer 
+ Pleno (50% alocação) 
+ R$ 8.000,00 
+ R$ 60,60 
+ 30 h 
+ R$ 1.818,00 
+
+ Total da Equipe 
+ 4 integrantes 
+ R$ 42.000,00 
+ - 
+ 210 h 
+ R$ 17.272,20 
+
+ 2. Custos de Infraestrutura e Serviços em Nuvem 
+ Comparativo entre o ambiente de desenvolvimento inicial e o ambiente de produção estável: 
+
+ Camada / Recurso 
+ Provedor Selecionado 
+ Especificação Técnica 
+ Custo Mensal (Dev / Testes) 
+ Custo Mensal (Produção Inicial) 
+
+ API Backend 
+ Railway / Render 
+ Instância Node/Python (1 GB RAM, 1 vCPU) 
+ R$ 0,00 (Free / Hobby) 
+ R$ 35,00 (US$ 7,00) 
+
+ Banco de Dados 
+ Supabase (PostgreSQL) 
+ Instância Dedicada + Backup Automático 
+ R$ 0,00 (Free Tier) 
+ R$ 125,00 (US$ 25,00 - Pro) 
+
+ Storage de Imagens 
+ Supabase Storage / R2 
+ Armazenamento de fotos de campanhas (50 GB) 
+ R$ 0,00 (Até 1 GB free) 
+ R$ 10,00 
+
+ Frontend Web 
+ Vercel / Cloudflare 
+ Hospedagem SPA React + CDN Global 
+ R$ 0,00 (Hobby) 
+ R$ 0,00 (Hobby / Starter) 
+
+ Disparo de E-mails 
+ Resend / SendGrid 
+ Confirmação de cadastro e notificações 
+ R$ 0,00 (Até 3.000 msgs/mês) 
+ R$ 75,00 (US$ 15,00) 
+
+ Pipeline CI/CD 
+ GitHub Actions 
+ 2.000 minutos de build mensal 
+ R$ 0,00 (Repositório Público) 
+ R$ 0,00 (Incluído) 
+
+ Total de Infraestrutura 
+ - 
+ - 
+ R$ 0,00 / mês 
+ R$ 245,00 / mês 
+
+ 3. Síntese Orçamentária e Projeção do MVP 
+ Considerando o desenvolvimento do MVP ao longo de 3 Sprints consecutivas (6 semanas / 1,5 mês) : 
+ `flowchart LR
+ E["Custos de Equipe (3 Sprints)
+ R$ 51.816,60"] --> Total["Custo Total do MVP
+ R$ 52.184,10"]
+ I["Infraestrutura (1,5 mês Produção)
+ R$ 367,50"] --> Total
+
+ Categoria 
+ Cálculo / Base 
+ Valor Total Estimado 
+
+ Custo Total de Desenvolvimento (3 Sprints) 
+ \(3 \times \text{R\$ } 17.272,20\) 
+ R$ 51.816,60 
+
+ Infraestrutura em Nuvem (1,5 mês) 
+ \(1,5 \times \text{R\$ } 245,00\) 
+ R$ 367,50 
+
+ Reserva Técnica de Contingência (5%) 
+ \(0,05 \times (\text{Equipe} + \text{Infra})\) 
+ R$ 2.609,21 
+
+ Orçamento Consolidado do MVP 
+ Equipe + Nuvem + Contingência 
+ R$ 54.793,31 
+
+ Template Markdown Gerado pela Calculadora 
+ Abaixo está o modelo em Markdown produzido automaticamente pelo botão de exportação da calculadora: 
+ ` ## Estimativa de Custos e Orçamento 
+
+ ### 1. Equipe e Capacidade por Sprint (2 Semanas) 
+
+ | Papel | Nível | Custo/Hora Efetiva | Horas na Sprint | Subtotal |
+ | :--- | :--- | :--- | :--- | :--- |
+ | Backend Developer | Pleno | R$ 68,00 | 60 h | R$ 4.080,00 |
+ | Frontend Developer | Pleno | R$ 68,00 | 60 h | R$ 4.080,00 |
+ | QA / DevOps | Júnior | R$ 40,00 | 60 h | R$ 2.400,00 |
+ | **Total da Squad** | - | - | **180 h** | **R$ 10.560,00** |
+
+ ### 2. Infraestrutura em Nuvem (Mensal) 
+
+ | Componente | Provedor / Serviço | Tier Selecionado | Custo Mensal Estimado |
+ | :--- | :--- | :--- | :--- |
+ | API Backend | Railway / Render | Standard / Hobby | R$ 35,00 |
+ | Banco de Dados | Supabase PostgreSQL | Pro Tier | R$ 125,00 |
+ | Frontend | Vercel | Hobby Tier | R$ 0,00 |
+ | Storage & CDN | Cloudflare R2 | Pay-as-you-go | R$ 10,00 |
+ | **Total Nuvem** | - | - | **R$ 170,00 / mês** |
+
+ ### 3. Projeção Consolidada do Ciclo 
+
+ - **Custo por Sprint de Desenvolvimento:** R$ 10.560,00
+ - **Custo Operacional Mensal de Nuvem:** R$ 170,00
+ - **Projeção para Entrega do MVP (3 Sprints):** R$ 31.935,00 (incluindo 5% de contingência)
+
+ Roteiro de Atividades Práticas para as Squads 
+ As squads devem utilizar a calculadora construída e publicada no GitHub Pages para executar as quatro etapas práticas a seguir. 
+
+ Atividade Prática 1: Dimensionamento da Capacidade e Custo da Squad 
+
+ Reúna os integrantes da squad e defina os papéis assumidos no projeto (Tech Lead, Backend, Frontend, Full Stack, QA, PO/Designer). 
+ Adote taxas horárias e salários de referência de mercado para simulação (ex: R$ 4.000,00 para perfil Júnior, R$ 9.000,00 para Pleno e R$ 16.000,00 para Sênior). 
+ Insira cada integrante na calculadora e ajuste as horas na Sprint com base no fator de foco técnico (75%). 
+ Registre o Custo Financeiro Total da Sprint calculado pela ferramenta. 
+
+ Atividade Prática 2: Matriz de Recursos e Precificação de Nuvem 
+
+ Mapeie todos os serviços e componentes técnicos que o projeto utiliza ou utilizará: 
+ Repositório da API (`*-api ). 
+ Repositório Frontend (`*-web ). 
+ Instância de Banco de Dados Relacional (PostgreSQL). 
+ Armazenamento de Arquivos/Imagens. 
+ Serviços de Autenticação e Disparo de E-mails. 
+ Acesse as páginas de preços dos provedores reais (ex: Railway, Supabase, Vercel, AWS Pricing Calculator). 
+ Insira os valores cotados nos campos da calculadora para obter o custo de infraestrutura mensal. 
+
+ Atividade Prática 3: Análise de Métricas (Burn Rate e Custo por Ponto) 
+
+ Avalie o Burn Rate Mensal exibido no painel de indicadores da calculadora. 
+ Informe a velocidade média de Story Points planejada no Backlog para obter o Custo Médio por Story Point : 
+
+ \[\text{Custo por Ponto} = \frac{\text{Custo da Sprint}}{\text{Story Points Planejados}}\] 
+
+ Ajuste a margem de contingência (ex: 5% a 10%) e o total de Sprints estimadas para o MVP. 
+
+ Atividade Prática 4: Exportação e Publicação no Repositório 
+
+ Na calculadora, clique no botão Copiar Markdown . 
+ No repositório do projeto no GitHub, crie uma branch de documentação: `docs/planejamento-custos-orcamento . 
+ Cole o conteúdo gerado no `README.md principal ou crie um arquivo dedicado `docs/orcamento.md (ou página da Wiki). 
+ Abra um Pull Request , vincule a Issue correspondente e solicite a revisão e aprovação dos demais membros da squad antes de realizar o merge. 
+
+ Exercícios de Fixação 
+
+ Responda às questões abaixo para verificar a assimilação dos conceitos de cálculo de custos, infraestrutura em nuvem e métricas financeiras em software. 
+
+Por que o cálculo do custo de uma equipe de desenvolvimento não deve se basear apenas no salário nominal registrado em carteira?
+* [ ] Porque os desenvolvedores trabalham 24 horas por dia em regime de plantão ininterrupto.
+* [x] Porque a contratação envolve encargos trabalhistas, benefícios, impostos, licenças de software e custos operacionais, exigindo a aplicação do conceito de hora carregada (Loaded Rate).
+* [ ] Porque o GitHub cobra uma taxa percentual sobre o salário de cada integrante cadastrado na organização.
+* [ ] Porque em metodologias ágeis os desenvolvedores não recebem remuneração fixa.
+
+-->
+
+ # 
+ Questão 1 
+
+ Por que o cálculo do custo de uma equipe de desenvolvimento não deve se basear apenas no salário nominal registrado em carteira? 
+
+ Porque os desenvolvedores trabalham 24 horas por dia em regime de plantão ininterrupto. Porque a contratação envolve encargos trabalhistas, benefícios, impostos, licenças de software e custos operacionais, exigindo a aplicação do conceito de hora carregada (Loaded Rate). Porque o GitHub cobra uma taxa percentual sobre o salário de cada integrante cadastrado na organização. Porque em metodologias ágeis os desenvolvedores não recebem remuneração fixa. 
+
+Qual é a principal diferença financeira entre os modelos CapEx e OpEx na gestão de infraestrutura de software?
+* [ ] O modelo CapEx só aceita pagamentos via Pix, enquanto o OpEx exige cartão corporativo.
+* [ ] O modelo OpEx exige a compra física de servidores para o escritório, enquanto o CapEx utiliza serviços em nuvem.
+* [x] O CapEx envolve grandes investimentos iniciais em ativos permanentes (servidores físicos), enquanto o OpEx converte a infraestrutura em despesas operacionais contínuas e escaláveis sob demanda.
+* [ ] No modelo CapEx os custos de banco de dados são sempre gratuitos.
+
+-->
+
+ # 
+ Questão 2 
+
+ Qual é a principal diferença financeira entre os modelos CapEx e OpEx na gestão de infraestrutura de software? 
+
+ O modelo CapEx só aceita pagamentos via Pix, enquanto o OpEx exige cartão corporativo. O modelo OpEx exige a compra física de servidores para o escritório, enquanto o CapEx utiliza serviços em nuvem. O CapEx envolve grandes investimentos iniciais em ativos permanentes (servidores físicos), enquanto o OpEx converte a infraestrutura em despesas operacionais contínuas e escaláveis sob demanda. No modelo CapEx os custos de banco de dados são sempre gratuitos. 
+
+Uma squad com custo total de Sprint de R$ 15.000,00 concluiu com sucesso 20 Story Points que atenderam 100% da Definição de Pronto (DoD). Qual foi o Custo por Story Point dessa Sprint?
+* [ ] R$ 300,00 por ponto.
+* [x] R$ 750,00 por ponto.
+* [ ] R$ 1.500,00 por ponto.
+* [ ] R$ 75,00 por ponto.
+
+-->
+
+ # 
+ Questão 3 
+
+ Uma squad com custo total de Sprint de R$ 15.000,00 concluiu com sucesso 20 Story Points que atenderam 100% da Definição de Pronto (DoD). Qual foi o Custo por Story Point dessa Sprint? 
+
+ R$ 300,00 por ponto. R$ 750,00 por ponto. R$ 1.500,00 por ponto. R$ 75,00 por ponto. 
+
+Qual risco crítico a equipe assume ao manter uma aplicação em produção comercial dependente exclusivamente de planos gratuitos (Free Tier) de provedores de nuvem?
+* [ ] O código-fonte torna-se automaticamente público e perde os direitos autorais.
+* [ ] O framework da aplicação perde o suporte à linguagem TypeScript.
+* [x] Ocorrência de pausas por inatividade (cold starts longos), limites severos de conexões simultâneas no banco de dados e ausência de garantias de disponibilidade (SLA) ou backups ponto a ponto.
+* [ ] O Git impede o envio de novos commits para a branch main.
+
+-->
+
+ # 
+ Questão 4 
+
+ Qual risco crítico a equipe assume ao manter uma aplicação em produção comercial dependente exclusivamente de planos gratuitos (Free Tier) de provedores de nuvem? 
+
+ O código-fonte torna-se automaticamente público e perde os direitos autorais. O framework da aplicação perde o suporte à linguagem TypeScript. Ocorrência de pausas por inatividade (cold starts longos), limites severos de conexões simultâneas no banco de dados e ausência de garantias de disponibilidade (SLA) ou backups ponto a ponto. O Git impede o envio de novos commits para a branch main. 
+
+Se um projeto de software possui um orçamento total restante de R$ 120.000,00 e consome R$ 30.000,00 por mês entre salários e servidores (Burn Rate), qual é o Runway disponível para a operação?
+* [ ] 12 meses de operação.
+* [ ] 1 mês de operação.
+* [x] 4 meses de operação.
+* [ ] 30 meses de operação.
+
+-->
+
+ # 
+ Questão 5 
+
+ Se um projeto de software possui um orçamento total restante de R$ 120.000,00 e consome R$ 30.000,00 por mês entre salários e servidores (Burn Rate), qual é o Runway disponível para a operação? 
+
+ 12 meses de operação. 1 mês de operação. 4 meses de operação. 30 meses de operação. 
+
+ Progresso do quiz 
+
+ 0 / 0 questões respondidas
+ ( 0% )
+
+ 0 correto
+
+ Quiz completo! 
+
+ 0% 
+
+ Reiniciar quiz

@@ -1,0 +1,194 @@
+{
+  "gerado_em": "2026-10-24T17:19:05.306362+00:00",
+  "total_fontes": 592,
+  "total_tokens_estimados": 631422,
+  "disciplinas": 20,
+  "por_disciplina": {
+    "DSM1/ALP": {
+      "fontes": 28,
+      "tokens": 81513,
+      "pdfs": 3,
+      "ok": 28,
+      "vazio": 0
+    },
+    "DSM1/DD": {
+      "fontes": 9,
+      "tokens": 21615,
+      "pdfs": 9,
+      "ok": 9,
+      "vazio": 0
+    },
+    "DSM1/DW1": {
+      "fontes": 9,
+      "tokens": 1873,
+      "pdfs": 0,
+      "ok": 9,
+      "vazio": 0
+    },
+    "DSM1/ES1": {
+      "fontes": 4,
+      "tokens": 9195,
+      "pdfs": 4,
+      "ok": 4,
+      "vazio": 0
+    },
+    "DSM1/MBD": {
+      "fontes": 5,
+      "tokens": 4660,
+      "pdfs": 3,
+      "ok": 5,
+      "vazio": 0
+    },
+    "DSM1/PI": {
+      "fontes": 4,
+      "tokens": 80910,
+      "pdfs": 3,
+      "ok": 4,
+      "vazio": 0
+    },
+    "DSM1/SORC1": {
+      "fontes": 7,
+      "tokens": 18474,
+      "pdfs": 7,
+      "ok": 7,
+      "vazio": 0
+    },
+    "DSM2/BD2": {
+      "fontes": 17,
+      "tokens": 23783,
+      "pdfs": 3,
+      "ok": 17,
+      "vazio": 0
+    },
+    "DSM2/DW2": {
+      "fontes": 81,
+      "tokens": 47831,
+      "pdfs": 14,
+      "ok": 80,
+      "vazio": 1
+    },
+    "DSM2/ED1": {
+      "fontes": 27,
+      "tokens": 19367,
+      "pdfs": 1,
+      "ok": 27,
+      "vazio": 0
+    },
+    "DSM2/ES2": {
+      "fontes": 3,
+      "tokens": 6190,
+      "pdfs": 2,
+      "ok": 2,
+      "vazio": 1
+    },
+    "DSM2/MPC": {
+      "fontes": 4,
+      "tokens": 10068,
+      "pdfs": 1,
+      "ok": 4,
+      "vazio": 0
+    },
+    "DSM2/TPI": {
+      "fontes": 202,
+      "tokens": 136783,
+      "pdfs": 16,
+      "ok": 202,
+      "vazio": 0
+    },
+    "DSM3/AL": {
+      "fontes": 13,
+      "tokens": 2331,
+      "pdfs": 0,
+      "ok": 13,
+      "vazio": 0
+    },
+    "DSM3/BDNR": {
+      "fontes": 21,
+      "tokens": 44795,
+      "pdfs": 2,
+      "ok": 21,
+      "vazio": 0
+    },
+    "DSM3/DW3": {
+      "fontes": 39,
+      "tokens": 30578,
+      "pdfs": 6,
+      "ok": 38,
+      "vazio": 1
+    },
+    "DSM3/GAPS": {
+      "fontes": 16,
+      "tokens": 58039,
+      "pdfs": 0,
+      "ok": 14,
+      "vazio": 2
+    },
+    "DSM3/IHC": {
+      "fontes": 4,
+      "tokens": 8943,
+      "pdfs": 4,
+      "ok": 4,
+      "vazio": 0
+    },
+    "DSM3/ING1": {
+      "fontes": 2,
+      "tokens": 595,
+      "pdfs": 1,
+      "ok": 2,
+      "vazio": 0
+    },
+    "DSM3/TP2": {
+      "fontes": 97,
+      "tokens": 23879,
+      "pdfs": 0,
+      "ok": 96,
+      "vazio": 1
+    }
+  },
+  "ignorados_por_tipo": {
+    ".js": 174,
+    ".png": 112,
+    ".xml": 94,
+    ".ejs": 82,
+    "(sem extensão)": 75,
+    ".alg": 73,
+    ".json": 68,
+    ".properties": 64,
+    ".jpg": 21,
+    ".form": 18,
+    ".svg": 16,
+    ".cmd": 15,
+    ".exe": 13,
+    ".db": 13,
+    ".mf": 12,
+    ".zip": 9,
+    ".mjs": 7,
+    ".dev": 6,
+    ".layout": 6,
+    ".o": 6,
+    ".asz": 5,
+    ".win": 5,
+    ".ini": 4,
+    ".chm": 4,
+    ".fig": 4,
+    ".class": 4,
+    ".java": 4,
+    ".ico": 4,
+    ".rar": 3,
+    ".jsonl": 3,
+    ".bson": 3,
+    ".pas": 1,
+    ".bmp": 1,
+    ".thmx": 1,
+    ".ppsx": 1,
+    ".brm3": 1,
+    ".c": 1,
+    ".example": 1,
+    ".yaml": 1,
+    ".env": 1,
+    ".gif": 1,
+    ".toml": 1,
+    ".py": 1,
+    ".odt": 1
+  }
+}

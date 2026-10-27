@@ -1,0 +1,72 @@
+{
+  "skill": "dsm-al",
+  "disciplina": "DSM3/AL",
+  "descricao": "Perguntas de recuperação para Álgebra Linear. Cada item exige que a fonte mínima apareça no top-5 da busca.",
+  "perguntas": [
+    {
+      "id": "al-01",
+      "prompt": "Como testar se uma transformação T é linear usando dois vetores e escalares?",
+      "fonte_minima": [
+        "conhecimento/DSM3/AL/ex03.md",
+        "conhecimento/DSM3/AL/ex09.md"
+      ],
+      "resposta_esperada": "Verificar T(αu+βv)=αT(u)+βT(v); no corpus, ex03 e ex09 comparam os dois lados e concluem 'Linear'."
+    },
+    {
+      "id": "al-02",
+      "prompt": "Por que T(x,y)=(x+2,y) não é linear?",
+      "fonte_minima": [
+        "conhecimento/DSM3/AL/ex04.md"
+      ],
+      "resposta_esperada": "Porque T(0,0)=(2,0)≠(0,0); a constante +2 quebra a condição do vetor nulo."
+    },
+    {
+      "id": "al-03",
+      "prompt": "Qual é a imagem do ponto (3,4) pela transformação T(x,y)=(3x,2y)?",
+      "fonte_minima": [
+        "conhecimento/DSM3/AL/ex05.md"
+      ],
+      "resposta_esperada": "(9,8), obtido por A=[[3,0],[0,2]] aplicada a P=(3,4)."
+    },
+    {
+      "id": "al-04",
+      "prompt": "Qual matriz representa uma reflexão e qual é a imagem de (5,-2)?",
+      "fonte_minima": [
+        "conhecimento/DSM3/AL/ex06.md"
+      ],
+      "resposta_esperada": "A=[[-1,0],[0,1]], que reflete no eixo y; a imagem é (-5,-2)."
+    },
+    {
+      "id": "al-05",
+      "prompt": "Como multiplicar uma matriz de pontos por A com o operador @ e obter os novos pontos em Python?",
+      "fonte_minima": [
+        "conhecimento/DSM3/AL/ex07.md"
+      ],
+      "resposta_esperada": "Organizar os pontos em uma matriz e usar pontos @ A; com A=[[2,0],[0,2]], os pontos (1,2), (4,1) e (2,5) viram (2,4), (8,2) e (4,10)."
+    },
+    {
+      "id": "al-06",
+      "prompt": "Como calcular autovalores e autovetores de uma matriz 2x2 com numpy?",
+      "fonte_minima": [
+        "conhecimento/DSM3/AL/autovetores.md"
+      ],
+      "resposta_esperada": "Usar np.linalg.eig(A); para A=[[4,1],[2,3]], os autovalores são 5 e 2 e os autovetores são proporcionais a (1,1) e (1,-2)."
+    },
+    {
+      "id": "al-07",
+      "prompt": "Como desenhar vetores no plano cartesiano com matplotlib?",
+      "fonte_minima": [
+        "conhecimento/DSM3/AL/exmatplot-vetor.md"
+      ],
+      "resposta_esperada": "Usar plt.quiver com origem (0,0), angles='xy', scale_units='xy' e scale=1; o corpus desenha u=(3,8) e v=(1,4)."
+    },
+    {
+      "id": "al-08",
+      "prompt": "Como desenhar um triângulo a partir de três pontos e fechar a figura?",
+      "fonte_minima": [
+        "conhecimento/DSM3/AL/exmatplot-triangulo.md"
+      ],
+      "resposta_esperada": "Montar listas x e y com os três pontos e repetir o primeiro no fim; usar plt.plot com marker='o', plt.axis('equal') e plt.text para rotular."
+    }
+  ]
+}

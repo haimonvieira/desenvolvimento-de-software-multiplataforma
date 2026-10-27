@@ -1,0 +1,16 @@
+{
+  "$schema": "https://opencode.ai/config.json"
+
+  // MCP é opcional (Fase 8). Quando o servidor existir, descomente:
+  //
+  // "mcp": {
+  //   "servers": {
+  //     "fatec-materiais": {
+  //       "type": "local",
+  //       "command": ["python", "-m", "mcp_server.server"],
+  //       "cwd": ".",
+  //       "environment": { "DSM_ROOT": "." }
+  //     }
+  //   }
+  // }
+}

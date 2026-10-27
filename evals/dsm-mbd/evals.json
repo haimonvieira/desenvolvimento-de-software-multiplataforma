@@ -1,0 +1,71 @@
+{
+  "skill": "dsm-mbd",
+  "disciplina": "DSM1/MBD",
+  "descricao": "Perguntas de recuperação para Modelagem de Banco de Dados. Cada item exige que a fonte mínima apareça no top-5 da busca.",
+  "perguntas": [
+    {
+      "id": "mbd-01",
+      "prompt": "O que é um banco de dados e quais são os componentes de um SGBD?",
+      "fonte_minima": [
+        "conhecimento/DSM1/MBD/materiais-aula01-introducao-aos-sistemas-de-banco-de-dados.md"
+      ],
+      "resposta_esperada": "Banco é uma coleção organizada de dados; o SGBD tem hardware, software, dados, usuários e procedimentos."
+    },
+    {
+      "id": "mbd-02",
+      "prompt": "Quem propôs o modelo relacional e em que ano?",
+      "fonte_minima": [
+        "conhecimento/DSM1/MBD/materiais-aula01-introducao-aos-sistemas-de-banco-de-dados.md"
+      ],
+      "resposta_esperada": "Edgar F. Codd, em 1970, com um artigo que organizava dados em tabelas e álgebra relacional."
+    },
+    {
+      "id": "mbd-03",
+      "prompt": "Qual a diferença entre o modelo de dados em rede e o modelo hierárquico?",
+      "fonte_minima": [
+        "conhecimento/DSM1/MBD/materiais-aula02-modelos-de-dados-redes-e-hierarquicos.md"
+      ],
+      "resposta_esperada": "O de rede é um grafo e permite múltiplos pais; o hierárquico é uma árvore com um único pai."
+    },
+    {
+      "id": "mbd-04",
+      "prompt": "O que são chave primária e chave estrangeira no modelo relacional?",
+      "fonte_minima": [
+        "conhecimento/DSM1/MBD/materiais-aula03-modelos-de-dados-relacional.md"
+      ],
+      "resposta_esperada": "PK identifica unicamente cada registro; FK referencia a PK de outra tabela e cria o relacionamento."
+    },
+    {
+      "id": "mbd-05",
+      "prompt": "Como o material representa um relacionamento muitos-para-muitos entre estudantes e cursos?",
+      "fonte_minima": [
+        "conhecimento/DSM1/MBD/materiais-aula03-modelos-de-dados-relacional.md"
+      ],
+      "resposta_esperada": "Com a tabela associativa Inscricoes, contendo idInscricao, idCurso e idEstudante."
+    },
+    {
+      "id": "mbd-06",
+      "prompt": "Quais são os níveis de abstração de um SGBD?",
+      "fonte_minima": [
+        "conhecimento/DSM1/MBD/materiais-aula01-introducao-aos-sistemas-de-banco-de-dados.md"
+      ],
+      "resposta_esperada": "Físico, lógico e visão."
+    },
+    {
+      "id": "mbd-07",
+      "prompt": "No arquivo de registro dos clientes da bicicletaria, quais tabelas e atributos aparecem no rascunho de modelagem?",
+      "fonte_minima": [
+        "conhecimento/DSM1/MBD/clientes-registro-dos-clientes.md"
+      ],
+      "resposta_esperada": "Clientes, bicicletas, atendimento, serviços, produtos, personalização e vendas, com seus atributos."
+    },
+    {
+      "id": "mbd-08",
+      "prompt": "Quais são as vantagens e desvantagens do modelo hierárquico?",
+      "fonte_minima": [
+        "conhecimento/DSM1/MBD/materiais-aula02-modelos-de-dados-redes-e-hierarquicos.md"
+      ],
+      "resposta_esperada": "Simples e eficiente para hierarquias claras; pouco flexível e difícil de adaptar a mudanças."
+    }
+  ]
+}

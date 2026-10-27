@@ -1,0 +1,174 @@
+---
+disciplina: DSM3/BDNR
+titulo: exercicio02
+fonte: DSM3/BDNR/Atividade Avaliativa/ATV2/Lista_Exercicios_MongoDB - Haimon Cugler Vieira/exercicio02.txt
+tipo: txt
+paginas: 0
+extraido_em: 2026-10-24
+---
+
+EXERCÍCIO 2 – Sistema de Pedidos: embedding e referencing
+Uma loja precisa armazenar seus clientes e os pedidos realizados. Um cliente pode realizar vários pedidos ao longo do tempo e seus dados cadastrais podem ser alterados. Cada pedido possui vários itens que pertencem somente àquele pedido.
+
+//2.1 - Crie duas coleções chamadas clientes e pedidos.
+
+db.createCollection("clientes")
+db.createCollection("pedidos")
+
+//2.2 - Cadastre no mínimo 4 clientes, cada um com identificador próprio, nome, email e telefone.
+
+db.clientes.insertMany([
+  {
+    codigo: "CLI001",
+    nome: "Ana Paula Ribeiro",
+    email: "ana.ribeiro@email.com",
+    telefone: "(13) 98888-1011",
+    cidade: "Registro",
+    uf: "SP",
+    segmento: "pessoa fisica"
+  },
+  {
+    codigo: "CLI002",
+    nome: "Bruno Martins Costa",
+    email: "bruno.costa@email.com",
+    telefone: "(13) 98888-2022",
+    cidade: "Cajati",
+    uf: "SP",
+    segmento: "pessoa fisica"
+  },
+  {
+    codigo: "CLI003",
+    nome: "Carla Mendes Souza",
+    email: "carla.mendes@email.com",
+    telefone: "(13) 98888-3033",
+    cidade: "Jacupiranga",
+    uf: "SP",
+    segmento: "pessoa fisica"
+  },
+  {
+    codigo: "CLI004",
+    nome: "Diego Alves Rocha",
+    email: "diego.rocha@email.com",
+    telefone: "(13) 98888-4044",
+    cidade: "Pariquera-Acu",
+    uf: "SP",
+    segmento: "pessoa fisica"
+  }
+])
+
+demais clientes: clientes.json (CLI005 a CLI012, 12 no total)
+
+
+//2.3 a 2.6 - Cadastre no mínimo 5 pedidos (2.3). Cada pedido deve possuir cliente_id, data, status e uma lista chamada itens, e dentro de itens documentos com pelo menos produto, quantidade e preço (2.4). Utilize referencing para relacionar cada pedido ao cliente por meio de cliente_id (2.5) e embedding para guardar os itens dentro do documento do pedido (2.6).
+
+db.pedidos.insertMany([
+  {
+    codigo: "PED001",
+    cliente_id: "CLI001",
+    data: "2026-08-03",
+    forma_pagamento: "pix",
+    status: "concluido",
+    itens: [
+      { produto_codigo: "PRD002", produto: "Mouse Logitech M170", quantidade: 1, preco: 79.90 },
+      { produto_codigo: "PRD011", produto: "Cabo HDMI 2m", quantidade: 2, preco: 39.90 }
+    ],
+    total: 214.60
+  },
+  {
+    codigo: "PED002",
+    cliente_id: "CLI005",
+    data: "2026-08-04",
+    forma_pagamento: "boleto",
+    status: "concluido",
+    itens: [
+      { produto_codigo: "PRD004", produto: "Monitor LG 24MP400", quantidade: 3, preco: 749.90 },
+      { produto_codigo: "PRD012", produto: "Cabo de Rede Cat6 3m", quantidade: 10, preco: 29.90 }
+    ],
+    total: 4187.50
+  },
+  {
+    codigo: "PED003",
+    cliente_id: "CLI003",
+    data: "2026-08-05",
+    forma_pagamento: "cartao credito",
+    status: "concluido",
+    itens: [
+      { produto_codigo: "PRD008", produto: "Headset HyperX Cloud Stinger 2", quantidade: 1, preco: 319.90 },
+      { produto_codigo: "PRD016", produto: "Hub USB 3.0 4 Portas", quantidade: 1, preco: 89.90 }
+    ],
+    total: 409.80
+  },
+  {
+    codigo: "PED004",
+    cliente_id: "CLI006",
+    data: "2026-08-07",
+    forma_pagamento: "pix",
+    status: "concluido",
+    itens: [
+      { produto_codigo: "PRD009", produto: "Roteador TP-Link Archer C6", quantidade: 2, preco: 289.90 },
+      { produto_codigo: "PRD010", produto: "Switch TP-Link 8 Portas", quantidade: 3, preco: 129.90 }
+    ],
+    total: 1208.70
+  },
+  {
+    codigo: "PED005",
+    cliente_id: "CLI002",
+    data: "2026-08-09",
+    forma_pagamento: "cartao credito",
+    status: "concluido",
+    itens: [
+      { produto_codigo: "PRD001", produto: "Notebook Lenovo IdeaPad 3", quantidade: 1, preco: 3299.90 },
+      { produto_codigo: "PRD013", produto: "Pen Drive SanDisk 64GB", quantidade: 1, preco: 54.90 }
+    ],
+    total: 3469.70
+  }
+])
+
+demais pedidos: pedidos.json (PED006 a PED020, 20 no total)
+
+
+db.pedidos.aggregate([
+  { $lookup: { from: "clientes", localField: "cliente_id", foreignField: "codigo", as: "cliente" } },
+  { $project: { _id: 0, codigo: 1, data: 1, status: 1, total: 1, cliente: { $first: "$cliente" } } },
+  { $limit: 2 }
+])
+
+//2.7 - Escreva um pequeno texto, com aproximadamente 5 linhas, explicando por que o cliente foi referenciado e os itens foram incorporados ao pedido.
+
+O cliente foi referenciado porque seus dados cadastrais mudam com o tempo
+(email, telefone), então a atualização fica em um único documento, sem alterar
+todos os pedidos do cliente e sem duplicar cadastro. Já os itens foram
+incorporados porque pertencem a um único pedido e sempre são lidos junto com
+ele, assim uma leitura já traz o pedido completo, sem join.
+
+//2.8 - Crie uma validação de esquema para a coleção pedidos exigindo, no mínimo, os campos cliente_id, data e itens.
+
+db.runCommand({
+  collMod: "pedidos",
+  validator: {
+    $jsonSchema: {
+      bsonType: "object",
+      required: ["cliente_id", "data", "itens"],
+      properties: {
+        cliente_id: { bsonType: "string", description: "codigo do cliente - obrigatorio" },
+        data:       { bsonType: "string", description: "data do pedido AAAA-MM-DD - obrigatoria" },
+        itens: {
+          bsonType: "array",
+          minItems: 1,
+          description: "lista de itens - obrigatoria",
+          items: {
+            bsonType: "object",
+            required: ["produto", "quantidade", "preco"],
+            properties: {
+              produto:    { bsonType: "string" },
+              quantidade: { bsonType: "int" },
+              preco:      { bsonType: "double" }
+            }
+          }
+        }
+      }
+    }
+  },
+  validationLevel: "moderate",
+  validationAction: "error"
+})

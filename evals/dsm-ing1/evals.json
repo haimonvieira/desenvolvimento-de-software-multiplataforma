@@ -1,0 +1,71 @@
+{
+  "skill": "dsm-ing1",
+  "disciplina": "DSM3/ING1",
+  "descricao": "Perguntas de recuperação para Inglês I. Cada item exige que a fonte mínima apareça no top-5 da busca.",
+  "perguntas": [
+    {
+      "id": "ing1-01",
+      "prompt": "Qual tempo verbal predomina no texto Technical Game Safety Guide e por que ele foi escolhido?",
+      "fonte_minima": [
+        "conhecimento/DSM3/ING1/atividade-avaliativa-at1-reading-grammar-activity-haimon-cugler-vieira.md"
+      ],
+      "resposta_esperada": "Simple Present, usado para instruções e ações que o leitor deve seguir no manual."
+    },
+    {
+      "id": "ing1-02",
+      "prompt": "Quais preposições aparecem no texto Technical Game Safety Guide?",
+      "fonte_minima": [
+        "conhecimento/DSM3/ING1/atividade-avaliativa-at1-reading-grammar-activity-haimon-cugler-vieira.md"
+      ],
+      "resposta_esperada": "into, on, of, from, through, during, with, in, for, to; a resposta do arquivo omite through e during."
+    },
+    {
+      "id": "ing1-03",
+      "prompt": "Quem está aprendendo a usar um computador no vídeo?",
+      "fonte_minima": [
+        "conhecimento/DSM3/ING1/technology-using-a-computer-haimon-cugler-vieira.md"
+      ],
+      "resposta_esperada": "Jeffrey."
+    },
+    {
+      "id": "ing1-04",
+      "prompt": "Quais equipamentos ou dispositivos de computador são mencionados no vídeo?",
+      "fonte_minima": [
+        "conhecimento/DSM3/ING1/technology-using-a-computer-haimon-cugler-vieira.md"
+      ],
+      "resposta_esperada": "Printer, mouse, keyboard, screen e cable."
+    },
+    {
+      "id": "ing1-05",
+      "prompt": "Qual é a função do mouse e qual é a função do teclado?",
+      "fonte_minima": [
+        "conhecimento/DSM3/ING1/technology-using-a-computer-haimon-cugler-vieira.md"
+      ],
+      "resposta_esperada": "O mouse move o cursor e clica para abrir programas; o teclado digita palavras."
+    },
+    {
+      "id": "ing1-06",
+      "prompt": "No questionário sobre o vídeo Technology Using a Computer, o que pode conter um arquivo?",
+      "fonte_minima": [
+        "conhecimento/DSM3/ING1/technology-using-a-computer-haimon-cugler-vieira.md"
+      ],
+      "resposta_esperada": "Texto, música ou foto; o programa executa uma tarefa específica."
+    },
+    {
+      "id": "ing1-07",
+      "prompt": "Como o imperativo é usado em um manual de instruções em inglês?",
+      "fonte_minima": [
+        "conhecimento/DSM3/ING1/atividade-avaliativa-at1-reading-grammar-activity-haimon-cugler-vieira.md"
+      ],
+      "resposta_esperada": "Verbo na forma base, sem sujeito explícito, como em 'Take a 10-minute break' e 'check the voltage label'."
+    },
+    {
+      "id": "ing1-08",
+      "prompt": "O que o vídeo diz que a pessoa pode fazer com o computador?",
+      "fonte_minima": [
+        "conhecimento/DSM3/ING1/technology-using-a-computer-haimon-cugler-vieira.md"
+      ],
+      "resposta_esperada": "Escrever cartas, buscar informações e falar com pessoas que estão longe."
+    }
+  ]
+}

@@ -1,0 +1,87 @@
+{
+  "skill": "dsm-bdnr",
+  "disciplina": "DSM3/BDNR",
+  "descricao": "Perguntas de recuperação para Banco de Dados Não Relacional. Cada item exige que a fonte mínima apareça no top-5 da busca.",
+  "perguntas": [
+    {
+      "id": "bdnr-01",
+      "prompt": "O que significa NoSQL e por que não quer dizer que o banco não usa SQL?",
+      "fonte_minima": [
+        "conhecimento/DSM3/BDNR/aula-01.md"
+      ],
+      "resposta_esperada": "NoSQL é Not Only SQL: os bancos de documentos complementam, e não substituem, os relacionais em cenários específicos — aula-01, §4.1."
+    },
+    {
+      "id": "bdnr-02",
+      "prompt": "Por que na prática o Teorema CAP vira uma escolha entre consistência e disponibilidade?",
+      "fonte_minima": [
+        "conhecimento/DSM3/BDNR/aula-02.md"
+      ],
+      "resposta_esperada": "Porque falhas de rede são inevitáveis e a tolerância a partições não é opcional; resta escolher entre consistência e disponibilidade — aula-02, §Por que é preciso escolher."
+    },
+    {
+      "id": "bdnr-03",
+      "prompt": "Quando devo usar embedding e quando devo usar referencing na modelagem de documentos?",
+      "fonte_minima": [
+        "conhecimento/DSM3/BDNR/aula-06.md"
+      ],
+      "resposta_esperada": "Embedding para dados acessados juntos e que não crescem sem limite; referencing para dados independentes, muitos-para-muitos e que mudam muito; o documento tem limite de 16 MB — aula-06, §Embedding e referencing."
+    },
+    {
+      "id": "bdnr-04",
+      "prompt": "Como insiro vários documentos em uma única operação no MongoDB?",
+      "fonte_minima": [
+        "conhecimento/DSM3/BDNR/aula-04.md"
+      ],
+      "resposta_esperada": "Com db.produtos.insertMany([...]), passando uma lista de documentos entre colchetes — aula-04, §Inserindo vários de uma vez."
+    },
+    {
+      "id": "bdnr-05",
+      "prompt": "Como busco produtos com preço entre 20 e 100 usando operadores de comparação?",
+      "fonte_minima": [
+        "conhecimento/DSM3/BDNR/aula-04.md"
+      ],
+      "resposta_esperada": "db.produtos.find({ preco: { $gte: 20, $lte: 100 } }) — aula-04, §Buscando em uma faixa."
+    },
+    {
+      "id": "bdnr-06",
+      "prompt": "Como atualizar um documento com updateOne e $set, e como somar um valor com $inc?",
+      "fonte_minima": [
+        "conhecimento/DSM3/BDNR/aula-05.md"
+      ],
+      "resposta_esperada": "$set define o valor do campo; $inc soma ou subtrai um valor numérico — aula-05, §Atualizando Documentos."
+    },
+    {
+      "id": "bdnr-07",
+      "prompt": "Como faço um relatório de quantidade e preço médio por categoria com aggregation?",
+      "fonte_minima": [
+        "conhecimento/DSM3/BDNR/aula-07.md"
+      ],
+      "resposta_esperada": "db.produtos.aggregate([{ $group: { _id: '$categoria', quantidade: { $sum: 1 }, preco_medio: { $avg: '$preco' } } }]) — aula-07, §Agrupando com Group."
+    },
+    {
+      "id": "bdnr-08",
+      "prompt": "O que é um índice no MongoDB, como criar e qual é o custo?",
+      "fonte_minima": [
+        "conhecimento/DSM3/BDNR/aula-08.md"
+      ],
+      "resposta_esperada": "Estrutura que evita varrer todos os documentos; db.alunos.createIndex({ matricula: 1 }); ocupa espaço e torna as gravações mais lentas — aula-08, §Índices."
+    },
+    {
+      "id": "bdnr-09",
+      "prompt": "Como exigir que todo documento de uma coleção tenha nome e e-mail?",
+      "fonte_minima": [
+        "conhecimento/DSM3/BDNR/aula-06.md"
+      ],
+      "resposta_esperada": "Criar a coleção com validator e $jsonSchema, usando bsonType object e required: ['nome', 'email'] — aula-06, §Criando uma coleção com validação."
+    },
+    {
+      "id": "bdnr-10",
+      "prompt": "No simulado, como filtrar ordens de serviço com status Pendente ou Em andamento e valor entre 1000 e 3000, incluindo os limites?",
+      "fonte_minima": [
+        "conhecimento/DSM3/BDNR/simulado-revisao-bdnr.md"
+      ],
+      "resposta_esperada": "db.ordens_servico.find({ status: { $in: ['Pendente', 'Em andamento'] }, valor_total: { $gte: 1000, $lte: 3000 } }) — alternativa A, simulado, p. 3–4 (resposta derivada, sem gabarito oficial)."
+    }
+  ]
+}

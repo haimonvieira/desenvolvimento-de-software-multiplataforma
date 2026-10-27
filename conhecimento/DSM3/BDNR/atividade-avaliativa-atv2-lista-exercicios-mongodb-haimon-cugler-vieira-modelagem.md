@@ -1,0 +1,51 @@
+---
+disciplina: DSM3/BDNR
+titulo: modelagem
+fonte: DSM3/BDNR/Atividade Avaliativa/ATV2/Lista_Exercicios_MongoDB - Haimon Cugler Vieira/modelagem.txt
+tipo: txt
+paginas: 0
+extraido_em: 2026-10-24
+---
+
+EXERCÍCIO 2 – Modelagem (referencing vs embedding) e validação de esquema
+
+// 2.7 - Justificativa da modelagem (cliente referenciado, itens incorporados)
+
+O cliente foi referenciado porque seus dados cadastrais mudam com o tempo
+(email, telefone), então a atualização fica em um único documento, sem alterar
+todos os pedidos do cliente e sem duplicar cadastro. Já os itens foram
+incorporados porque pertencem a um único pedido e sempre são lidos junto com
+ele, assim uma leitura já traz o pedido completo, sem join.
+
+// 2.8 - Comando usado para a validação de esquema da coleção pedidos
+// (exige, no mínimo, os campos cliente_id, data e itens)
+
+db.runCommand({
+  collMod: "pedidos",
+  validator: {
+    $jsonSchema: {
+      bsonType: "object",
+      required: ["cliente_id", "data", "itens"],
+      properties: {
+        cliente_id: { bsonType: "string", description: "codigo do cliente - obrigatorio" },
+        data:       { bsonType: "string", description: "data do pedido AAAA-MM-DD - obrigatoria" },
+        itens: {
+          bsonType: "array",
+          minItems: 1,
+          description: "lista de itens - obrigatoria",
+          items: {
+            bsonType: "object",
+            required: ["produto", "quantidade", "preco"],
+            properties: {
+              produto:    { bsonType: "string" },
+              quantidade: { bsonType: "int" },
+              preco:      { bsonType: "double" }
+            }
+          }
+        }
+      }
+    }
+  },
+  validationLevel: "moderate",
+  validationAction: "error"
+})

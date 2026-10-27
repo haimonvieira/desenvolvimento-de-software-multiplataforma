@@ -1,0 +1,48 @@
+---
+disciplina: DSM3/BDNR
+titulo: exercicio04
+fonte: DSM3/BDNR/Atividade Avaliativa/ATV2/Lista_Exercicios_MongoDB - Haimon Cugler Vieira/exercicio04.txt
+tipo: txt
+paginas: 0
+extraido_em: 2026-10-24
+---
+
+EXERCÍCIO 4 – Otimização de Consultas com Índices
+Com o aumento da quantidade de produtos cadastrados, algumas consultas passaram a ser realizadas com muita frequência. O objetivo é utilizar índices para melhorar a eficiência das buscas e analisar como o MongoDB executa uma consulta.
+
+//4.1 - Na coleção produtos, crie um índice único para o campo código.
+
+db.produtos.createIndex({ codigo: 1 }, { unique: true })
+
+//4.2 - Crie um índice composto envolvendo os campos categoria e preço.
+
+db.produtos.createIndex({ categoria: 1, preco: 1 })
+
+//4.3 - Escreva uma consulta que possa se beneficiar do índice composto criado.
+
+db.produtos.find(
+  { categoria: "armazenamento", preco: { $gte: 100 } },
+  { _id: 0, codigo: 1, nome: 1, categoria: 1, preco: 1 }
+)
+
+//4.4 - Execute essa consulta utilizando explain('executionStats') e registre o comando utilizado.
+
+db.produtos.find(
+  { categoria: "armazenamento", preco: { $gte: 100 } },
+  { _id: 0, codigo: 1, nome: 1, categoria: 1, preco: 1 }
+).explain("executionStats")
+
+//4.5 - Crie um índice de texto em um ou mais campos textuais adequados da coleção produtos.
+
+db.produtos.createIndex({ nome: "text", descricao: "text", tags: "text" })
+
+//4.6 - Faça uma pesquisa utilizando $text e $search.
+
+db.produtos.find({ $text: { $search: "ssd wireless" } })
+
+//4.7 - Escreva entre 3 e 5 linhas explicando por que não é recomendado criar índices em todos os campos de uma coleção.
+
+Cada índice ocupa espaço em disco e memória RAM, e todo insert, update ou
+delete precisa mantê-los atualizados, o que deixa a escrita mais lenta.
+Muitos índices nunca são usados por consulta alguma. O certo é indexar só os
+campos realmente filtrados, ordenados ou usados em join, conferindo com explain.

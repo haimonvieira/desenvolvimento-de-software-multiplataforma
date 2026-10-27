@@ -1,0 +1,88 @@
+{
+  "schema": 1,
+  "disciplina": "DSM1/MBD",
+  "sigla": "MBD",
+  "semestre": "DSM1",
+  "nome": "Modelagem de Banco de Dados",
+  "skill": "dsm-mbd",
+  "tier": 2,
+  "dialeto": null,
+  "atualizado_em": "2026-10-24",
+  "corpus": {
+    "arquivos_md": 4,
+    "tokens_aproximados": 4660,
+    "pdfs": 3,
+    "paginas_pdf": 13,
+    "fontes_com_gabarito": [],
+    "fontes_sem_gabarito": [
+      "materiais-aula03-modelos-de-dados-relacional.md",
+      "clientes-registro-dos-clientes.md"
+    ]
+  },
+  "topicos": [
+    "Conceito de banco de dados e importância",
+    "História: 1960s (SGBDs hierárquicos e de rede), 1970 (Codd e o modelo relacional), 1980 (popularização), 2000 (NoSQL e nuvem)",
+    "Componentes de um SGBD: hardware, software, dados, usuários e procedimentos",
+    "Níveis de abstração: físico, lógico e visão",
+    "Tipos de SGBD: centralizado, distribuído, paralelo e em nuvem",
+    "Funções de um SGBD: concorrência, recuperação de falhas, segurança e integridade",
+    "Modelo de dados em rede: grafo, múltiplos pais, IDMS/CA-IDMS",
+    "Modelo de dados hierárquico: árvore, um pai e vários filhos, IMS e Windows Registry",
+    "Modelo relacional: tabelas, linhas (registros) e colunas (atributos)",
+    "Chave primária (PK) e chave estrangeira (FK)",
+    "Relacionamentos 1:1, 1:N e N:N",
+    "Tabela associativa para N:N (exemplo Inscricoes)",
+    "Exemplos de modelagem: biblioteca, cursos/estudantes e bicicletaria"
+  ],
+  "topicos_ausentes_no_corpus": [
+    "MER formal (notação de entidade-relacionamento, cardinalidades e atributos compostos)",
+    "Normalização (1FN, 2FN, 3FN) e formas normais",
+    "Álgebra relacional aprofundada",
+    "SQL (DDL/DML) — pertence a BD2/DSM2",
+    "Dicionário de dados e modelo lógico detalhado",
+    "Modelagem física, índices e particionamento"
+  ],
+  "fontes_principais": [
+    {
+      "arquivo": "conhecimento/DSM1/MBD/materiais-aula01-introducao-aos-sistemas-de-banco-de-dados.md",
+      "original": "DSM1/MBD/Materiais/Aula01 - Introdução aos Sistemas de Banco de Dados.pdf",
+      "paginas": 4,
+      "papel": "Conceito, história, componentes, arquitetura, tipos e funções de SGBD"
+    },
+    {
+      "arquivo": "conhecimento/DSM1/MBD/materiais-aula02-modelos-de-dados-redes-e-hierarquicos.md",
+      "original": "DSM1/MBD/Materiais/Aula02 - Modelos de Dados Redes e Hierárquicos.pdf",
+      "paginas": 3,
+      "papel": "Modelos em rede e hierárquico, comparação e casos de uso"
+    },
+    {
+      "arquivo": "conhecimento/DSM1/MBD/materiais-aula03-modelos-de-dados-relacional.md",
+      "original": "DSM1/MBD/Materiais/Aula03 - Modelos de Dados Relacional.pdf",
+      "paginas": 6,
+      "papel": "Modelo relacional, PK/FK, relacionamentos e exercício de modelagem"
+    },
+    {
+      "arquivo": "conhecimento/DSM1/MBD/clientes-registro-dos-clientes.md",
+      "original": "DSM1/MBD/clientes - registro dos clientes.md",
+      "paginas": null,
+      "papel": "Notas de modelagem de uma bicicletaria: entidades e atributos"
+    }
+  ],
+  "avisos_de_fidelidade": [
+    "O corpus é composto por resumos de aula, não por um capítulo de livro; definições são curtas.",
+    "As imagens dos slides não foram preservadas na extração; diagramas citados no PDF podem não aparecer no texto.",
+    "O exercício da aula 03 (biblioteca, cursos/estudantes e bicicletaria) não tem gabarito no corpus.",
+    "`clientes-registro-dos-clientes.md` são anotações pessoais, com grafia inconsistente (por exemplo, 'séricos' em vez de 'serviços'); trate como rascunho, não como padrão formal.",
+    "O corpus não usa a sigla MER; quando o aluno perguntar por MER, responda com o que existe (tabelas, PK/FK e relacionamentos) e declare a lacuna da notação formal.",
+    "SQL e normalização não são desta disciplina: SQL está em BD2/DSM2."
+  ],
+  "avaliacao": {
+    "evals": "evals/dsm-mbd/evals.json",
+    "perguntas": 8,
+    "metrica": "recall@5 da fonte mínima"
+  },
+  "atualizacao": {
+    "comando": "python3 ferramentas/extrair.py --disciplina DSM1/MBD && python3 ferramentas/indexar.py",
+    "observacao": "Nunca editar os arquivos de DSM1/MBD; a fonte da verdade continua sendo o material original."
+  }
+}

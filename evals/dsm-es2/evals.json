@@ -1,0 +1,71 @@
+{
+  "skill": "dsm-es2",
+  "disciplina": "DSM2/ES2",
+  "descricao": "Perguntas de recuperação para Engenharia de Software II. Cada item exige que a fonte mínima apareça no top-5 da busca.",
+  "perguntas": [
+    {
+      "id": "es2-01",
+      "prompt": "Quais são os quatro tipos de viabilidade de um sistema?",
+      "fonte_minima": [
+        "conhecimento/DSM2/ES2/documentos-aula-01-2026-estudo-de-viabilidade.md"
+      ],
+      "resposta_esperada": "Operacional, técnica, de cronograma e econômica."
+    },
+    {
+      "id": "es2-02",
+      "prompt": "Qual a diferença entre custos de desenvolvimento e custos de operação?",
+      "fonte_minima": [
+        "conhecimento/DSM2/ES2/documentos-aula-01-2026-estudo-de-viabilidade.md"
+      ],
+      "resposta_esperada": "Desenvolvimento ocorre uma vez; operação é contínuo e se divide em fixos e variáveis."
+    },
+    {
+      "id": "es2-03",
+      "prompt": "O que são pontos de função e para que servem?",
+      "fonte_minima": [
+        "conhecimento/DSM2/ES2/documentos-aula-01-2026-estudo-de-viabilidade.md"
+      ],
+      "resposta_esperada": "Medem o tamanho funcional do software, o que ele faz, e ajudam a estimar esforço, prazo e preço."
+    },
+    {
+      "id": "es2-04",
+      "prompt": "Qual é a diferença entre agregação e composição no diagrama de classes?",
+      "fonte_minima": [
+        "conhecimento/DSM2/ES2/documentos-aula-03-2026-introducao-diagrama-de-classes.md"
+      ],
+      "resposta_esperada": "Agregação é vínculo fraco, losango vazio, a parte sobrevive; composição é vínculo forte, losango preenchido, parte exclusiva."
+    },
+    {
+      "id": "es2-05",
+      "prompt": "O que significam as multiplicidades 0..1, 1..1, 0..*, * e 1..*?",
+      "fonte_minima": [
+        "conhecimento/DSM2/ES2/documentos-aula-03-2026-introducao-diagrama-de-classes.md"
+      ],
+      "resposta_esperada": "Zero ou um; um e somente um; zero ou muitos; muitos; um ou muitos."
+    },
+    {
+      "id": "es2-06",
+      "prompt": "Quais são os símbolos de visibilidade pública, privada e protegida em UML?",
+      "fonte_minima": [
+        "conhecimento/DSM2/ES2/documentos-aula-03-2026-introducao-diagrama-de-classes.md"
+      ],
+      "resposta_esperada": "Pública +, privada -, protegida #."
+    },
+    {
+      "id": "es2-07",
+      "prompt": "O que é uma classe associativa e quando ela é necessária?",
+      "fonte_minima": [
+        "conhecimento/DSM2/ES2/documentos-aula-03-2026-introducao-diagrama-de-classes.md"
+      ],
+      "resposta_esperada": "Classe que guarda dados de uma associação com multiplicidade muitos em todas as extremidades."
+    },
+    {
+      "id": "es2-08",
+      "prompt": "O que é viabilidade técnica e por que a curva de aprendizagem importa?",
+      "fonte_minima": [
+        "conhecimento/DSM2/ES2/documentos-aula-01-2026-estudo-de-viabilidade.md"
+      ],
+      "resposta_esperada": "Avalia se a tecnologia e o conhecimento existem; ter a tecnologia não garante as habilidades, e aprender impacta o cronograma."
+    }
+  ]
+}

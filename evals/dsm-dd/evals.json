@@ -1,0 +1,87 @@
+{
+  "skill": "dsm-dd",
+  "disciplina": "DSM1/DD",
+  "descricao": "Perguntas de recuperação para Design Digital. Cada item exige que a fonte mínima apareça no top-5 da busca.",
+  "perguntas": [
+    {
+      "id": "dd-01",
+      "prompt": "Quais são os seis princípios do design e o que cada um faz?",
+      "fonte_minima": [
+        "conhecimento/DSM1/DD/materiais-dd-aula-01-principios-do-design.md"
+      ],
+      "resposta_esperada": "Proximidade (agrupar relacionados), espaço em branco (respiro), alinhamento (organizar), contraste (destacar), hierarquia (ordenar a leitura) e repetição (dar unidade) — aula 01, p. 8–40."
+    },
+    {
+      "id": "dd-02",
+      "prompt": "Quais são as seis harmonias de cores e o que diz a regra 60-30-10?",
+      "fonte_minima": [
+        "conhecimento/DSM1/DD/materiais-dd-aula-02-1-teoria-das-cores.md"
+      ],
+      "resposta_esperada": "Monocromática, análoga, complementar, complementar dividida, triádica e tetrádica; 60% cor dominante, 30% secundária e 10% destaque (aula 02.1, p. 18–28)."
+    },
+    {
+      "id": "dd-03",
+      "prompt": "O que o azul e o vermelho transmitem na psicologia das cores?",
+      "fonte_minima": [
+        "conhecimento/DSM1/DD/materiais-dd-aula-02-2-psicologia-das-cores.md"
+      ],
+      "resposta_esperada": "Azul: quietude, serenidade e confiança; vermelho: calor, fogo, excitação, violência, amor e paixão (aula 02.2, p. 17–22)."
+    },
+    {
+      "id": "dd-04",
+      "prompt": "Como funcionam os padrões RGB, HEX e HSL e o que é o canal alpha?",
+      "fonte_minima": [
+        "conhecimento/DSM1/DD/materiais-dd-aula-03-padroes-de-cores.md"
+      ],
+      "resposta_esperada": "RGB usa canais de 0 a 255; HEX é #rrggbb; HSL usa tom em graus e saturação/luminosidade em %; alpha é a opacidade, de 0 a 1, e é vantagem do PNG (aula 03, p. 3–21)."
+    },
+    {
+      "id": "dd-05",
+      "prompt": "Qual é a diferença entre CMYK e Pantone?",
+      "fonte_minima": [
+        "conhecimento/DSM1/DD/materiais-dd-aula-03-padroes-de-cores.md"
+      ],
+      "resposta_esperada": "CMYK é o padrão de cores-pigmento para impressão; Pantone não é um padrão, mas um catálogo cromático criado em 1963 para padronizar nomenclatura (aula 03, p. 23–32)."
+    },
+    {
+      "id": "dd-06",
+      "prompt": "Qual a diferença entre imagem bitmap e vetorial, e o que são PPI e DPI?",
+      "fonte_minima": [
+        "conhecimento/DSM1/DD/materiais-dd-aula-04-imagem-digital-e-formatos-e-resolucoes-de-imagens.md"
+      ],
+      "resposta_esperada": "Bitmap é formado por pixels e perde qualidade ao redimensionar; vetor usa fórmulas matemáticas e escala sem perda. PPI é pixels por polegada (imagem); DPI é pontos por polegada (impressão) — aula 04, p. 5–18."
+    },
+    {
+      "id": "dd-07",
+      "prompt": "Quais são as características dos formatos JPEG, GIF, PNG, TIFF e AVIF?",
+      "fonte_minima": [
+        "conhecimento/DSM1/DD/materiais-dd-aula-04-imagem-digital-e-formatos-e-resolucoes-de-imagens.md"
+      ],
+      "resposta_esperada": "JPEG comprime com perda; GIF tem 256 cores e 15 fps; PNG tem canal alpha e boa compressão; TIFF é de alta qualidade e não comprime; AVIF promete ~50% menos que JPEG (aula 04, p. 26–38)."
+    },
+    {
+      "id": "dd-08",
+      "prompt": "Quais são as cinco categorias tipográficas e a diferença entre leading, tracking e kerning?",
+      "fonte_minima": [
+        "conhecimento/DSM1/DD/materiais-dd-aula-05-tipografia.md"
+      ],
+      "resposta_esperada": "Serif, sans serif, condensada, script e fantasia/decorativa; leading é o espaço entre linhas, tracking é o espaçamento geral entre caracteres e kerning é o espaço entre pares específicos (aula 05, p. 6–18)."
+    },
+    {
+      "id": "dd-09",
+      "prompt": "Quais são os componentes de uma identidade visual e as etapas para criá-la?",
+      "fonte_minima": [
+        "conhecimento/DSM1/DD/materiais-dd-aula-06-identidade-visual.md"
+      ],
+      "resposta_esperada": "Logotipo, cores, tipografia e imagens; etapas: referências, paleta, tipografia, logotipo e manual de identidade visual (aula 06, p. 3 e 13)."
+    },
+    {
+      "id": "dd-10",
+      "prompt": "Quais são os níveis de protótipo e qual grid usar no Figma para mobile, desktop e tablet?",
+      "fonte_minima": [
+        "conhecimento/DSM1/DD/materiais-dd-aula-07-prototipacao-de-softwares.md"
+      ],
+      "resposta_esperada": "Lo-Fi, média e Hi-Fi; mobile 4 colunas/gutter 8/margin 24, desktop 12/16/24 e tablet 8/12/24 (aula 07, p. 7–23)."
+    }
+  ]
+}

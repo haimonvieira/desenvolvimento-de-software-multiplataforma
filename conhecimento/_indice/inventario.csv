@@ -1,0 +1,593 @@
+disciplina,semestre,sigla,tipo,caminho,paginas,chars,tokens_estimados,status,destino
+DSM1/ALP,DSM1,ALP,pdf,DSM1/ALP/LISTAS DE EXERCÍCIOS/Lista 01 - Pseudocódigo.docx.pdf,2,2615,653,ok,conhecimento/DSM1/ALP/listas-de-exercicios-lista-01-pseudocodigo-docx.md
+DSM1/ALP,DSM1,ALP,pdf,DSM1/ALP/PLANO DE ENSINO/PLANO DE ENSINO - ALP.PDF,3,12257,3064,ok,conhecimento/DSM1/ALP/plano-de-ensino-plano-de-ensino-alp.md
+DSM1/ALP,DSM1,ALP,txt,DSM1/ALP/PROGRAMAS/visualg3.0.7/visualg3.0.7/LEIA-ME.txt,0,832,208,ok,conhecimento/DSM1/ALP/programas-visualg3-0-7-visualg3-0-7-leia-me.md
+DSM1/ALP,DSM1,ALP,txt,DSM1/ALP/PROGRAMAS/visualg3.0.7/visualg3.0.7/LEIAME.txt,0,832,208,ok,conhecimento/DSM1/ALP/programas-visualg3-0-7-visualg3-0-7-leiame.md
+DSM1/ALP,DSM1,ALP,pdf,DSM1/ALP/PROGRAMAS/visualg3.0.7/visualg3.0.7/Menu do Visualg autalizado.pdf,2,10605,2651,ok,conhecimento/DSM1/ALP/programas-visualg3-0-7-visualg3-0-7-menu-do-visualg-autalizado.md
+DSM1/ALP,DSM1,ALP,txt,DSM1/ALP/PROGRAMAS/visualg3.0.7/visualg3.0.7/README.txt,0,832,208,ok,conhecimento/DSM1/ALP/programas-visualg3-0-7-visualg3-0-7-readme.md
+DSM1/ALP,DSM1,ALP,txt,DSM1/ALP/PROGRAMAS/visualg3.0.7/visualg3.0.7/RELAÇÃO DOS COMANDOS DO VISUALG 3.0.txt,0,5972,1493,ok,conhecimento/DSM1/ALP/programas-visualg3-0-7-visualg3-0-7-relacao-dos-comandos-do-visualg-3-0.md
+DSM1/ALP,DSM1,ALP,txt,DSM1/ALP/PROGRAMAS/visualg3.0.7/visualg3.0.7/listas.txt,0,3977,994,ok,conhecimento/DSM1/ALP/programas-visualg3-0-7-visualg3-0-7-listas.md
+DSM1/ALP,DSM1,ALP,txt,DSM1/ALP/PROGRAMAS/visualg3.0.7/visualg3.0.7/Exemplos/dados.txt,0,60,15,ok,conhecimento/DSM1/ALP/programas-visualg3-0-7-visualg3-0-7-exemplos-dados.md
+DSM1/ALP,DSM1,ALP,htm,DSM1/ALP/PROGRAMAS/visualg3.0.7/visualg3.0.7/help/Principal.htm,0,66592,16648,ok,conhecimento/DSM1/ALP/programas-visualg3-0-7-visualg3-0-7-help-principal.md
+DSM1/ALP,DSM1,ALP,htm,DSM1/ALP/PROGRAMAS/visualg3.0.7/visualg3.0.7/help/Principal2.htm,0,7709,1927,ok,conhecimento/DSM1/ALP/programas-visualg3-0-7-visualg3-0-7-help-principal2.md
+DSM1/ALP,DSM1,ALP,htm,DSM1/ALP/PROGRAMAS/visualg3.0.7/visualg3.0.7/help/autocomp.htm,0,11464,2866,ok,conhecimento/DSM1/ALP/programas-visualg3-0-7-visualg3-0-7-help-autocomp.md
+DSM1/ALP,DSM1,ALP,txt,DSM1/ALP/PROGRAMAS/visualg3.0.7/visualg3.0.7/help/dados.txt,0,60,15,ok,conhecimento/DSM1/ALP/programas-visualg3-0-7-visualg3-0-7-help-dados.md
+DSM1/ALP,DSM1,ALP,htm,DSM1/ALP/PROGRAMAS/visualg3.0.7/visualg3.0.7/help/funcoes.htm,0,9477,2369,ok,conhecimento/DSM1/ALP/programas-visualg3-0-7-visualg3-0-7-help-funcoes.md
+DSM1/ALP,DSM1,ALP,htm,DSM1/ALP/PROGRAMAS/visualg3.0.7/visualg3.0.7/help/linguagem.htm,0,11268,2817,ok,conhecimento/DSM1/ALP/programas-visualg3-0-7-visualg3-0-7-help-linguagem.md
+DSM1/ALP,DSM1,ALP,htm,DSM1/ALP/PROGRAMAS/visualg3.0.7/visualg3.0.7/help/linguagem2.htm,0,17141,4285,ok,conhecimento/DSM1/ALP/programas-visualg3-0-7-visualg3-0-7-help-linguagem2.md
+DSM1/ALP,DSM1,ALP,htm,DSM1/ALP/PROGRAMAS/visualg3.0.7/visualg3.0.7/help/linguagem3.htm,0,14835,3708,ok,conhecimento/DSM1/ALP/programas-visualg3-0-7-visualg3-0-7-help-linguagem3.md
+DSM1/ALP,DSM1,ALP,htm,DSM1/ALP/PROGRAMAS/visualg3.0.7/visualg3.0.7/help/linguagem4.htm,0,21902,5475,ok,conhecimento/DSM1/ALP/programas-visualg3-0-7-visualg3-0-7-help-linguagem4.md
+DSM1/ALP,DSM1,ALP,htm,DSM1/ALP/PROGRAMAS/visualg3.0.7/visualg3.0.7/help/linguagem5.htm,0,13886,3471,ok,conhecimento/DSM1/ALP/programas-visualg3-0-7-visualg3-0-7-help-linguagem5.md
+DSM1/ALP,DSM1,ALP,txt,DSM1/ALP/PROGRAMAS/visualg3.0.7/visualg3.0.7/help/listas.txt,0,3969,992,ok,conhecimento/DSM1/ALP/programas-visualg3-0-7-visualg3-0-7-help-listas.md
+DSM1/ALP,DSM1,ALP,htm,DSM1/ALP/PROGRAMAS/visualg3.0.7/visualg3.0.7/help/menu.htm,0,7709,1927,ok,conhecimento/DSM1/ALP/programas-visualg3-0-7-visualg3-0-7-help-menu.md
+DSM1/ALP,DSM1,ALP,htm,DSM1/ALP/PROGRAMAS/visualg3.0.7/visualg3.0.7/help/objetivos.htm,0,7309,1827,ok,conhecimento/DSM1/ALP/programas-visualg3-0-7-visualg3-0-7-help-objetivos.md
+DSM1/ALP,DSM1,ALP,htm,DSM1/ALP/PROGRAMAS/visualg3.0.7/visualg3.0.7/help/refer.htm,0,4176,1044,ok,conhecimento/DSM1/ALP/programas-visualg3-0-7-visualg3-0-7-help-refer.md
+DSM1/ALP,DSM1,ALP,html,DSM1/ALP/PROGRAMAS/visualg3.0.7/visualg3.0.7/help/telaprin.html,0,37890,9472,ok,conhecimento/DSM1/ALP/programas-visualg3-0-7-visualg3-0-7-help-telaprin.md
+DSM1/ALP,DSM1,ALP,pptx,DSM1/ALP/SLIDES/AULA 01 - ETAPAS PARA A RESOLUÇAO DE PROBLEMAS (1).pptx,0,14721,3680,ok,conhecimento/DSM1/ALP/slides-aula-01-etapas-para-a-resolucao-de-problemas-1.md
+DSM1/ALP,DSM1,ALP,pptx,DSM1/ALP/SLIDES/AULA 02 - INTRODUÇÃO AOS ALGORITMOS E SUAS FORMAS DE REPRESENTAÇÃO.pptx,0,19991,4997,ok,conhecimento/DSM1/ALP/slides-aula-02-introducao-aos-algoritmos-e-suas-formas-de-representacao.md
+DSM1/ALP,DSM1,ALP,pptx,DSM1/ALP/SLIDES/AULA 03 - INTRODUÇÃO AS LINGUAGENS DE PROGRAMAÇÃO.pptx,0,5895,1473,ok,conhecimento/DSM1/ALP/slides-aula-03-introducao-as-linguagens-de-programacao.md
+DSM1/ALP,DSM1,ALP,pptx,"DSM1/ALP/SLIDES/AULA 04 - TIPOS DE DADOS, VARIÁVEIS E OPERADORES.pptx",0,12107,3026,ok,conhecimento/DSM1/ALP/slides-aula-04-tipos-de-dados-variaveis-e-operadores.md
+DSM1/DD,DSM1,DD,pdf,DSM1/DD/Materiais/DD-Aula_00 - Conteúdo e Introdução.pdf,13,4133,1033,ok,conhecimento/DSM1/DD/materiais-dd-aula-00-conteudo-e-introducao.md
+DSM1/DD,DSM1,DD,pdf,DSM1/DD/Materiais/DD-Aula_01 - Princípios do Design.pdf,43,9084,2271,ok,conhecimento/DSM1/DD/materiais-dd-aula-01-principios-do-design.md
+DSM1/DD,DSM1,DD,pdf,DSM1/DD/Materiais/DD-Aula_02.1 - Teoria das Cores.pdf,35,10292,2573,ok,conhecimento/DSM1/DD/materiais-dd-aula-02-1-teoria-das-cores.md
+DSM1/DD,DSM1,DD,pdf,DSM1/DD/Materiais/DD-Aula_02.2 - Psicologia das Cores.pdf,53,13968,3492,ok,conhecimento/DSM1/DD/materiais-dd-aula-02-2-psicologia-das-cores.md
+DSM1/DD,DSM1,DD,pdf,DSM1/DD/Materiais/DD-Aula_03 - Padrões de Cores.pdf,35,10704,2676,ok,conhecimento/DSM1/DD/materiais-dd-aula-03-padroes-de-cores.md
+DSM1/DD,DSM1,DD,pdf,DSM1/DD/Materiais/DD-Aula_04 - Imagem Digital e Formatos e Resoluções de imagens.pdf,53,18190,4547,ok,conhecimento/DSM1/DD/materiais-dd-aula-04-imagem-digital-e-formatos-e-resolucoes-de-imagens.md
+DSM1/DD,DSM1,DD,pdf,DSM1/DD/Materiais/DD-Aula_05 - Tipografia.pdf,22,8053,2013,ok,conhecimento/DSM1/DD/materiais-dd-aula-05-tipografia.md
+DSM1/DD,DSM1,DD,pdf,DSM1/DD/Materiais/DD-Aula_06 - Identidade Visual.pdf,14,5496,1374,ok,conhecimento/DSM1/DD/materiais-dd-aula-06-identidade-visual.md
+DSM1/DD,DSM1,DD,pdf,DSM1/DD/Materiais/DD-Aula_07 - Prototipação de Softwares.pdf,35,6544,1636,ok,conhecimento/DSM1/DD/materiais-dd-aula-07-prototipacao-de-softwares.md
+DSM1/DW1,DSM1,DW1,html,DSM1/DW1/Exercicios/caca_palabra.html,0,1105,276,ok,conhecimento/DSM1/DW1/exercicios-caca-palabra.md
+DSM1/DW1,DSM1,DW1,html,DSM1/DW1/Exercicios/index.html,0,318,79,ok,conhecimento/DSM1/DW1/exercicios-index.md
+DSM1/DW1,DSM1,DW1,html,DSM1/DW1/Exercicios/jogo_da_memoria.html,0,1065,266,ok,conhecimento/DSM1/DW1/exercicios-jogo-da-memoria.md
+DSM1/DW1,DSM1,DW1,html,DSM1/DW1/Exercicios/task.html,0,690,172,ok,conhecimento/DSM1/DW1/exercicios-task.md
+DSM1/DW1,DSM1,DW1,html,DSM1/DW1/Exercicios/Top Down/index.html,0,376,94,ok,conhecimento/DSM1/DW1/exercicios-top-down-index.md
+DSM1/DW1,DSM1,DW1,css,DSM1/DW1/Exercicios/Top Down/assets/css/style.css,0,2280,570,ok,conhecimento/DSM1/DW1/exercicios-top-down-assets-css-style.md
+DSM1/DW1,DSM1,DW1,html,DSM1/DW1/Exercicios/website/contato.html,0,499,124,ok,conhecimento/DSM1/DW1/exercicios-website-contato.md
+DSM1/DW1,DSM1,DW1,html,DSM1/DW1/Exercicios/website/index.html,0,436,109,ok,conhecimento/DSM1/DW1/exercicios-website-index.md
+DSM1/DW1,DSM1,DW1,html,DSM1/DW1/Exercicios/website/produtos.html,0,734,183,ok,conhecimento/DSM1/DW1/exercicios-website-produtos.md
+DSM1/ES1,DSM1,ES1,pdf,DSM1/ES1/Materiais/aula 01 - 2025.pdf,20,11770,2942,ok,conhecimento/DSM1/ES1/materiais-aula-01-2025.md
+DSM1/ES1,DSM1,ES1,pdf,DSM1/ES1/Materiais/aula 02 2025.pdf,15,6358,1589,ok,conhecimento/DSM1/ES1/materiais-aula-02-2025.md
+DSM1/ES1,DSM1,ES1,pdf,DSM1/ES1/Materiais/aula 03 2025.pdf,30,12091,3022,ok,conhecimento/DSM1/ES1/materiais-aula-03-2025.md
+DSM1/ES1,DSM1,ES1,pdf,DSM1/ES1/Materiais/aula 04 2025 Canvas.pdf,36,6570,1642,ok,conhecimento/DSM1/ES1/materiais-aula-04-2025-canvas.md
+DSM1/MBD,DSM1,MBD,md,DSM1/MBD/clientes - registro dos clientes.md,0,835,208,ok,conhecimento/DSM1/MBD/clientes-registro-dos-clientes.md
+DSM1/MBD,DSM1,MBD,txt,DSM1/MBD/clientes - registro dos clientes.txt,0,761,190,ok,conhecimento/DSM1/MBD/clientes-registro-dos-clientes.md
+DSM1/MBD,DSM1,MBD,pdf,DSM1/MBD/Materiais/Aula01 - Introdução aos Sistemas de Banco de Dados.pdf,4,6805,1701,ok,conhecimento/DSM1/MBD/materiais-aula01-introducao-aos-sistemas-de-banco-de-dados.md
+DSM1/MBD,DSM1,MBD,pdf,DSM1/MBD/Materiais/Aula02 - Modelos de Dados Redes e Hierárquicos.pdf,3,3903,975,ok,conhecimento/DSM1/MBD/materiais-aula02-modelos-de-dados-redes-e-hierarquicos.md
+DSM1/MBD,DSM1,MBD,pdf,DSM1/MBD/Materiais/Aula03 - Modelos de Dados Relacional.pdf,6,6347,1586,ok,conhecimento/DSM1/MBD/materiais-aula03-modelos-de-dados-relacional.md
+DSM1/PI,DSM1,PI,docx,DSM1/PI/Artigo Cientifico/artigo_dsm1_id_35_ver_01.docx,0,11783,2945,ok,conhecimento/DSM1/PI/artigo-cientifico-artigo-dsm1-id-35-ver-01.md
+DSM1/PI,DSM1,PI,pdf,DSM1/PI/Artigo Cientifico/Referencias/AbordagemComputacionalAprimoramento_compressed (1).pdf,117,236999,59249,ok,conhecimento/DSM1/PI/artigo-cientifico-referencias-abordagemcomputacionalaprimoramento-compressed-1.md
+DSM1/PI,DSM1,PI,pdf,DSM1/PI/Artigo Cientifico/Referencias/Explorando visão computacional e IA.pdf,16,39086,9771,ok,conhecimento/DSM1/PI/artigo-cientifico-referencias-explorando-visao-computacional-e-ia.md
+DSM1/PI,DSM1,PI,pdf,DSM1/PI/Artigo Cientifico/Referencias/Reconhecimento de emocoes em criancas com TEA (1).pdf,14,35781,8945,ok,conhecimento/DSM1/PI/artigo-cientifico-referencias-reconhecimento-de-emocoes-em-criancas-com-tea-1.md
+DSM1/SORC1,DSM1,SORC1,pdf,DSM1/SORC1/Materiais/01 - Tipos de redes de computadores.pptx.pdf,16,4797,1199,ok,conhecimento/DSM1/SORC1/materiais-01-tipos-de-redes-de-computadores-pptx.md
+DSM1/SORC1,DSM1,SORC1,pdf,"DSM1/SORC1/Materiais/02 - Topologia de rede, Modelo OSI e HOST.pptx.pdf",27,8294,2073,ok,conhecimento/DSM1/SORC1/materiais-02-topologia-de-rede-modelo-osi-e-host-pptx.md
+DSM1/SORC1,DSM1,SORC1,pdf,"DSM1/SORC1/Materiais/03 - Protocolo TCP-IP, Mascara de SubRede e Broadcast.pptx.pdf",18,5315,1328,ok,conhecimento/DSM1/SORC1/materiais-03-protocolo-tcp-ip-mascara-de-subrede-e-broadcast-pptx.md
+DSM1/SORC1,DSM1,SORC1,pdf,"DSM1/SORC1/Materiais/04 - Tipos de Cabos, conectores e ferramentas para crimpagem.pdf",22,6022,1505,ok,conhecimento/DSM1/SORC1/materiais-04-tipos-de-cabos-conectores-e-ferramentas-para-crimpagem.md
+DSM1/SORC1,DSM1,SORC1,pdf,DSM1/SORC1/Materiais/05 - Rack e Dispositvos de Rede.pptx.pdf,19,2709,677,ok,conhecimento/DSM1/SORC1/materiais-05-rack-e-dispositvos-de-rede-pptx.md
+DSM1/SORC1,DSM1,SORC1,pdf,DSM1/SORC1/Materiais/06 - CLASSIFICAÇÃO DE FLUXO DE  TRANSMISSÃO.pptx.pdf,15,3834,958,ok,conhecimento/DSM1/SORC1/materiais-06-classificacao-de-fluxo-de-transmissao-pptx.md
+DSM1/SORC1,DSM1,SORC1,pdf,DSM1/SORC1/Materiais/curso_de_linux_utfpr_2023.pdf,184,42936,10734,ok,conhecimento/DSM1/SORC1/materiais-curso-de-linux-utfpr-2023.md
+DSM2/BD2,DSM2,BD2,sql,DSM2/BD2/ATV2_HAIMON_CUGLER_VIEIRA.sql,0,6959,1739,ok,conhecimento/DSM2/BD2/atv2-haimon-cugler-vieira.md
+DSM2/BD2,DSM2,BD2,docx,DSM2/BD2/AULA06 - LISTA DE EXERCÍCIOS - FUNCTIONS.docx,0,3060,765,ok,conhecimento/DSM2/BD2/aula06-lista-de-exercicios-functions.md
+DSM2/BD2,DSM2,BD2,pdf,DSM2/BD2/Aula02_Consultas_Básicas_SQL.pdf,7,8808,2202,ok,conhecimento/DSM2/BD2/aula02-consultas-basicas-sql.md
+DSM2/BD2,DSM2,BD2,sql,DSM2/BD2/Aula02_Consultas_Básicas_SQL.sql,0,3642,910,ok,conhecimento/DSM2/BD2/aula02-consultas-basicas-sql.md
+DSM2/BD2,DSM2,BD2,sql,DSM2/BD2/Aula02_Script_Aula_24022026_Consultas Básicas.sql,0,3921,980,ok,conhecimento/DSM2/BD2/aula02-script-aula-24022026-consultas-basicas.md
+DSM2/BD2,DSM2,BD2,md,DSM2/BD2/Banco de dados 2.md,0,1895,473,ok,conhecimento/DSM2/BD2/banco-de-dados-2.md
+DSM2/BD2,DSM2,BD2,pdf,DSM2/BD2/atividade_mysql.pdf,4,6177,1544,ok,conhecimento/DSM2/BD2/atividade-mysql.md
+DSM2/BD2,DSM2,BD2,sql,DSM2/BD2/script JAVA.sql,0,220,55,ok,conhecimento/DSM2/BD2/script-java.md
+DSM2/BD2,DSM2,BD2,sql,DSM2/BD2/script JOIN.sql,0,2799,699,ok,conhecimento/DSM2/BD2/script-join.md
+DSM2/BD2,DSM2,BD2,sql,DSM2/BD2/script PROCEDURE.sql,0,5078,1269,ok,conhecimento/DSM2/BD2/script-procedure.md
+DSM2/BD2,DSM2,BD2,sql,DSM2/BD2/script RESTRICOES.sql,0,1693,423,ok,conhecimento/DSM2/BD2/script-restricoes.md
+DSM2/BD2,DSM2,BD2,sql,DSM2/BD2/script RH.sql,0,16467,4116,ok,conhecimento/DSM2/BD2/script-rh.md
+DSM2/BD2,DSM2,BD2,sql,DSM2/BD2/script agroverde.sql,0,6959,1739,ok,conhecimento/DSM2/BD2/script-agroverde.md
+DSM2/BD2,DSM2,BD2,sql,DSM2/BD2/script escola.sql,0,3852,963,ok,conhecimento/DSM2/BD2/script-escola.md
+DSM2/BD2,DSM2,BD2,sql,DSM2/BD2/script livraria.sql,0,1100,275,ok,conhecimento/DSM2/BD2/script-livraria.md
+DSM2/BD2,DSM2,BD2,pdf,DSM2/BD2/exercicio/Atividade 1 - N1 - HAIMON CUGLER VIEIRA.pdf,12,16502,4125,ok,conhecimento/DSM2/BD2/exercicio-atividade-1-n1-haimon-cugler-vieira.md
+DSM2/BD2,DSM2,BD2,sql,DSM2/BD2/exercicio/sc.sql,0,6027,1506,ok,conhecimento/DSM2/BD2/exercicio-sc.md
+DSM2/DW2,DSM2,DW2,md,DSM2/DW2/Programação Web 2.md,0,855,213,ok,conhecimento/DSM2/DW2/programacao-web-2.md
+DSM2/DW2,DSM2,DW2,html,DSM2/DW2/dw2-nodejs-express/teste.html,0,205,51,ok,conhecimento/DSM2/DW2/dw2-nodejs-express-teste.md
+DSM2/DW2,DSM2,DW2,pdf,DSM2/DW2/dw2-nodejs-express/Documentos/DW2-JS-Aula_01.2-Tipos de Funções.pdf,18,8349,2087,ok,conhecimento/DSM2/DW2/dw2-nodejs-express-documentos-dw2-js-aula-01-2-tipos-de-funcoes.md
+DSM2/DW2,DSM2,DW2,pdf,DSM2/DW2/dw2-nodejs-express/Documentos/DW2-JS-Aula_02-Arrays e Objetos.pdf,10,7738,1934,ok,conhecimento/DSM2/DW2/dw2-nodejs-express-documentos-dw2-js-aula-02-arrays-e-objetos.md
+DSM2/DW2,DSM2,DW2,pdf,"DSM2/DW2/dw2-nodejs-express/Documentos/DW2-JS-Aula_02-Arrays, Objetos e Classes.pdf",14,10209,2552,ok,conhecimento/DSM2/DW2/dw2-nodejs-express-documentos-dw2-js-aula-02-arrays-objetos-e-classes.md
+DSM2/DW2,DSM2,DW2,pdf,DSM2/DW2/dw2-nodejs-express/Documentos/DW2-JS-Aula_03-Classes.pdf,6,3063,765,ok,conhecimento/DSM2/DW2/dw2-nodejs-express-documentos-dw2-js-aula-03-classes.md
+DSM2/DW2,DSM2,DW2,pdf,DSM2/DW2/dw2-nodejs-express/Documentos/DW2-JS-Aula_1.1-Introdução e Variáveis.pdf,24,10175,2543,ok,conhecimento/DSM2/DW2/dw2-nodejs-express-documentos-dw2-js-aula-1-1-introducao-e-variaveis.md
+DSM2/DW2,DSM2,DW2,pdf,DSM2/DW2/dw2-nodejs-express/Documentos/DW2-Lista de exercícios-JS-Exercício 02-Arrays e Objetos.pdf,1,1225,306,ok,conhecimento/DSM2/DW2/dw2-nodejs-express-documentos-dw2-lista-de-exercicios-js-exercicio-02-arrays-e-objetos.md
+DSM2/DW2,DSM2,DW2,pdf,DSM2/DW2/dw2-nodejs-express/Documentos/DW2-NodeJS-Aula_03.1-Introdução ao Node.js e Express.pdf,19,9095,2273,ok,conhecimento/DSM2/DW2/dw2-nodejs-express-documentos-dw2-nodejs-aula-03-1-introducao-ao-node-js-e-express.md
+DSM2/DW2,DSM2,DW2,pdf,DSM2/DW2/dw2-nodejs-express/Documentos/DW2-NodeJS-Aula_03.1-Node.js e Express.pdf,19,9095,2273,ok,conhecimento/DSM2/DW2/dw2-nodejs-express-documentos-dw2-nodejs-aula-03-1-node-js-e-express.md
+DSM2/DW2,DSM2,DW2,pdf,DSM2/DW2/dw2-nodejs-express/Documentos/DW2-NodeJS-Aula_03.2-Passando parâmetros à rotas.pdf,6,2688,672,ok,conhecimento/DSM2/DW2/dw2-nodejs-express-documentos-dw2-nodejs-aula-03-2-passando-parametros-a-rotas.md
+DSM2/DW2,DSM2,DW2,pdf,DSM2/DW2/dw2-nodejs-express/Documentos/DW2-NodeJS-Aula_03.3-View Engine EJS - Exibindo dados nas páginas.pdf,10,5154,1288,ok,conhecimento/DSM2/DW2/dw2-nodejs-express-documentos-dw2-nodejs-aula-03-3-view-engine-ejs-exibindo-dados-nas-paginas.md
+DSM2/DW2,DSM2,DW2,pdf,DSM2/DW2/dw2-nodejs-express/Documentos/DW2-NodeJS-Aula_04-Partials e Arquivos estáticos.pdf,7,3534,883,ok,conhecimento/DSM2/DW2/dw2-nodejs-express-documentos-dw2-nodejs-aula-04-partials-e-arquivos-estaticos.md
+DSM2/DW2,DSM2,DW2,pdf,DSM2/DW2/dw2-nodejs-express/Documentos/DW2-NodeJS-Aula_05-Arquitetura MVC.pdf,10,4723,1180,ok,conhecimento/DSM2/DW2/dw2-nodejs-express-documentos-dw2-nodejs-aula-05-arquitetura-mvc.md
+DSM2/DW2,DSM2,DW2,pdf,DSM2/DW2/dw2-nodejs-express/Documentos/DW2-NodeJS-Aula_06-Conexão ao banco de dados com Sequelize.pdf,16,11163,2790,ok,conhecimento/DSM2/DW2/dw2-nodejs-express-documentos-dw2-nodejs-aula-06-conexao-ao-banco-de-dados-com-sequelize.md
+DSM2/DW2,DSM2,DW2,pdf,DSM2/DW2/dw2-nodejs-express/Documentos/DW2-NodeJS-Aula_07-CRUD-Exibindo e Cadastrando dados no banco.pdf,9,5143,1285,ok,conhecimento/DSM2/DW2/dw2-nodejs-express-documentos-dw2-nodejs-aula-07-crud-exibindo-e-cadastrando-dados-no-banco.md
+DSM2/DW2,DSM2,DW2,txt,DSM2/DW2/dw2-nodejs-express/Documentos/atvDW.txt,0,2626,656,ok,conhecimento/DSM2/DW2/dw2-nodejs-express-documentos-atvdw.md
+DSM2/DW2,DSM2,DW2,html,DSM2/DW2/dw2-nodejs-express/exercicios-js/arrays-e-objetos/index.html,0,308,77,ok,conhecimento/DSM2/DW2/dw2-nodejs-express-exercicios-js-arrays-e-objetos-index.md
+DSM2/DW2,DSM2,DW2,html,DSM2/DW2/dw2-nodejs-express/exercicios-js/exercicio-02/index.html,0,277,69,ok,conhecimento/DSM2/DW2/dw2-nodejs-express-exercicios-js-exercicio-02-index.md
+DSM2/DW2,DSM2,DW2,html,DSM2/DW2/dw2-nodejs-express/js-aula-02-arrays-objetos-e-classes/arrays/index.html,0,279,69,ok,conhecimento/DSM2/DW2/dw2-nodejs-express-js-aula-02-arrays-objetos-e-classes-arrays-index.md
+DSM2/DW2,DSM2,DW2,html,DSM2/DW2/dw2-nodejs-express/js-aula-02-arrays-objetos-e-classes/classes/index.html,0,280,70,ok,conhecimento/DSM2/DW2/dw2-nodejs-express-js-aula-02-arrays-objetos-e-classes-classes-index.md
+DSM2/DW2,DSM2,DW2,html,DSM2/DW2/dw2-nodejs-express/js-aula-02-arrays-objetos-e-classes/objetos/index.html,0,296,74,ok,conhecimento/DSM2/DW2/dw2-nodejs-express-js-aula-02-arrays-objetos-e-classes-objetos-index.md
+DSM2/DW2,DSM2,DW2,md,DSM2/DW2/dw2-nodejs-express/js-aula01-tipos-de-funcoes/README.md,0,25,6,vazio,conhecimento/DSM2/DW2/dw2-nodejs-express-js-aula01-tipos-de-funcoes-readme.md
+DSM2/DW2,DSM2,DW2,html,DSM2/DW2/dw2-nodejs-express/js-aula01-tipos-de-funcoes/1-variaveis/index.html,0,267,66,ok,conhecimento/DSM2/DW2/dw2-nodejs-express-js-aula01-tipos-de-funcoes-1-variaveis-index.md
+DSM2/DW2,DSM2,DW2,html,DSM2/DW2/dw2-nodejs-express/js-aula01-tipos-de-funcoes/2-funcoes/index.html,0,304,76,ok,conhecimento/DSM2/DW2/dw2-nodejs-express-js-aula01-tipos-de-funcoes-2-funcoes-index.md
+DSM2/DW2,DSM2,DW2,css,DSM2/DW2/dw2-nodejs-express/nodejs-aula-05-arquitetura-mvc/SistemaLoja/public/css/style.css,0,237,59,ok,conhecimento/DSM2/DW2/dw2-nodejs-express-nodejs-aula-05-arquitetura-mvc-sistemaloja-public-css-style.md
+DSM2/DW2,DSM2,DW2,css,DSM2/DW2/dw2-nodejs-express/nodejs-aula-06-conexao-com-banco-de-dados-mysql/SistemaLoja/public/css/style.css,0,237,59,ok,conhecimento/DSM2/DW2/dw2-nodejs-express-nodejs-aula-06-conexao-com-banco-de-dados-mysql-sistemaloja-public-css-style.md
+DSM2/DW2,DSM2,DW2,css,DSM2/DW2/dw2-nodejs-express/nodejs-aula-07-crud/SistemaLoja/public/css/style.css,0,237,59,ok,conhecimento/DSM2/DW2/dw2-nodejs-express-nodejs-aula-07-crud-sistemaloja-public-css-style.md
+DSM2/DW2,DSM2,DW2,css,DSM2/DW2/dw2-nodejs-express/nodejs-aula-08-relacionamente-entre-tabelas/SistemaLoja/public/css/style.css,0,237,59,ok,conhecimento/DSM2/DW2/dw2-nodejs-express-nodejs-aula-08-relacionamente-entre-tabelas-sistemaloja-public-css-style.md
+DSM2/DW2,DSM2,DW2,css,DSM2/DW2/dw2-nodejs-express/nodejs-aula-09-sistema-de-login/SistemaLoja/public/css/style.css,0,237,59,ok,conhecimento/DSM2/DW2/dw2-nodejs-express-nodejs-aula-09-sistema-de-login-sistemaloja-public-css-style.md
+DSM2/DW2,DSM2,DW2,css,DSM2/DW2/dw2-nodejs-express/nodejs-aula-10-flash-message-e-logout/SistemaLoja/public/css/style.css,0,237,59,ok,conhecimento/DSM2/DW2/dw2-nodejs-express-nodejs-aula-10-flash-message-e-logout-sistemaloja-public-css-style.md
+DSM2/DW2,DSM2,DW2,css,DSM2/DW2/dw2-nodejs-express/nodejs-aula04-partials-e-arquivos/public/css/styles.css,0,272,68,ok,conhecimento/DSM2/DW2/dw2-nodejs-express-nodejs-aula04-partials-e-arquivos-public-css-styles.md
+DSM2/DW2,DSM2,DW2,md,DSM2/DW2/exercicios/ATV-01-Node.js-main/README.md,0,1418,354,ok,conhecimento/DSM2/DW2/exercicios-atv-01-node-js-main-readme.md
+DSM2/DW2,DSM2,DW2,js,DSM2/DW2/exercicios/ATV-01-Node.js-main/index.js,0,1971,492,ok,conhecimento/DSM2/DW2/exercicios-atv-01-node-js-main-index.md
+DSM2/DW2,DSM2,DW2,js,DSM2/DW2/exercicios/ATV-01-Node.js-main/config/associations.js,0,352,88,ok,conhecimento/DSM2/DW2/exercicios-atv-01-node-js-main-config-associations.md
+DSM2/DW2,DSM2,DW2,js,DSM2/DW2/exercicios/ATV-01-Node.js-main/config/sequelize-config.js,0,239,59,ok,conhecimento/DSM2/DW2/exercicios-atv-01-node-js-main-config-sequelize-config.md
+DSM2/DW2,DSM2,DW2,js,DSM2/DW2/exercicios/ATV-01-Node.js-main/controllers/AlgoritmosController.js,0,3551,887,ok,conhecimento/DSM2/DW2/exercicios-atv-01-node-js-main-controllers-algoritmoscontroller.md
+DSM2/DW2,DSM2,DW2,js,DSM2/DW2/exercicios/ATV-01-Node.js-main/controllers/HistoriaController.js,0,3930,982,ok,conhecimento/DSM2/DW2/exercicios-atv-01-node-js-main-controllers-historiacontroller.md
+DSM2/DW2,DSM2,DW2,js,DSM2/DW2/exercicios/ATV-01-Node.js-main/controllers/PerfilController.js,0,781,195,ok,conhecimento/DSM2/DW2/exercicios-atv-01-node-js-main-controllers-perfilcontroller.md
+DSM2/DW2,DSM2,DW2,js,DSM2/DW2/exercicios/ATV-01-Node.js-main/models/Algoritmo.js,0,659,164,ok,conhecimento/DSM2/DW2/exercicios-atv-01-node-js-main-models-algoritmo.md
+DSM2/DW2,DSM2,DW2,js,DSM2/DW2/exercicios/ATV-01-Node.js-main/models/Criador.js,0,242,60,ok,conhecimento/DSM2/DW2/exercicios-atv-01-node-js-main-models-criador.md
+DSM2/DW2,DSM2,DW2,js,DSM2/DW2/exercicios/ATV-01-Node.js-main/models/Perfil.js,0,325,81,ok,conhecimento/DSM2/DW2/exercicios-atv-01-node-js-main-models-perfil.md
+DSM2/DW2,DSM2,DW2,css,DSM2/DW2/exercicios/ATV-01-Node.js-main/public/css/styles.css,0,1412,353,ok,conhecimento/DSM2/DW2/exercicios-atv-01-node-js-main-public-css-styles.md
+DSM2/DW2,DSM2,DW2,ejs,DSM2/DW2/exercicios/ATV-01-Node.js-main/views/algoritmoEditar.ejs,0,4453,1113,ok,conhecimento/DSM2/DW2/exercicios-atv-01-node-js-main-views-algoritmoeditar.md
+DSM2/DW2,DSM2,DW2,ejs,DSM2/DW2/exercicios/ATV-01-Node.js-main/views/algoritmos.ejs,0,1791,447,ok,conhecimento/DSM2/DW2/exercicios-atv-01-node-js-main-views-algoritmos.md
+DSM2/DW2,DSM2,DW2,ejs,DSM2/DW2/exercicios/ATV-01-Node.js-main/views/algoritmosGerenciar.ejs,0,5981,1495,ok,conhecimento/DSM2/DW2/exercicios-atv-01-node-js-main-views-algoritmosgerenciar.md
+DSM2/DW2,DSM2,DW2,ejs,DSM2/DW2/exercicios/ATV-01-Node.js-main/views/historia.ejs,0,1964,491,ok,conhecimento/DSM2/DW2/exercicios-atv-01-node-js-main-views-historia.md
+DSM2/DW2,DSM2,DW2,ejs,DSM2/DW2/exercicios/ATV-01-Node.js-main/views/index.ejs,0,1864,466,ok,conhecimento/DSM2/DW2/exercicios-atv-01-node-js-main-views-index.md
+DSM2/DW2,DSM2,DW2,ejs,DSM2/DW2/exercicios/ATV-01-Node.js-main/views/perfil.ejs,0,5513,1378,ok,conhecimento/DSM2/DW2/exercicios-atv-01-node-js-main-views-perfil.md
+DSM2/DW2,DSM2,DW2,ejs,DSM2/DW2/exercicios/ATV-01-Node.js-main/views/partials/footer.ejs,0,845,211,ok,conhecimento/DSM2/DW2/exercicios-atv-01-node-js-main-views-partials-footer.md
+DSM2/DW2,DSM2,DW2,ejs,DSM2/DW2/exercicios/ATV-01-Node.js-main/views/partials/header.ejs,0,1711,427,ok,conhecimento/DSM2/DW2/exercicios-atv-01-node-js-main-views-partials-header.md
+DSM2/DW2,DSM2,DW2,md,DSM2/DW2/exercicios/ATV02-CRUD-NODEJS/README.md,0,1386,346,ok,conhecimento/DSM2/DW2/exercicios-atv02-crud-nodejs-readme.md
+DSM2/DW2,DSM2,DW2,sql,DSM2/DW2/exercicios/ATV02-CRUD-NODEJS/criptografia.sql,0,4957,1239,ok,conhecimento/DSM2/DW2/exercicios-atv02-crud-nodejs-criptografia.md
+DSM2/DW2,DSM2,DW2,js,DSM2/DW2/exercicios/ATV02-CRUD-NODEJS/index.js,0,1971,492,ok,conhecimento/DSM2/DW2/exercicios-atv02-crud-nodejs-index.md
+DSM2/DW2,DSM2,DW2,js,DSM2/DW2/exercicios/ATV02-CRUD-NODEJS/config/associations.js,0,352,88,ok,conhecimento/DSM2/DW2/exercicios-atv02-crud-nodejs-config-associations.md
+DSM2/DW2,DSM2,DW2,js,DSM2/DW2/exercicios/ATV02-CRUD-NODEJS/config/sequelize-config.js,0,239,59,ok,conhecimento/DSM2/DW2/exercicios-atv02-crud-nodejs-config-sequelize-config.md
+DSM2/DW2,DSM2,DW2,js,DSM2/DW2/exercicios/ATV02-CRUD-NODEJS/controllers/AlgoritmosController.js,0,3551,887,ok,conhecimento/DSM2/DW2/exercicios-atv02-crud-nodejs-controllers-algoritmoscontroller.md
+DSM2/DW2,DSM2,DW2,js,DSM2/DW2/exercicios/ATV02-CRUD-NODEJS/controllers/HistoriaController.js,0,3930,982,ok,conhecimento/DSM2/DW2/exercicios-atv02-crud-nodejs-controllers-historiacontroller.md
+DSM2/DW2,DSM2,DW2,js,DSM2/DW2/exercicios/ATV02-CRUD-NODEJS/controllers/PerfilController.js,0,781,195,ok,conhecimento/DSM2/DW2/exercicios-atv02-crud-nodejs-controllers-perfilcontroller.md
+DSM2/DW2,DSM2,DW2,js,DSM2/DW2/exercicios/ATV02-CRUD-NODEJS/models/Algoritmo.js,0,659,164,ok,conhecimento/DSM2/DW2/exercicios-atv02-crud-nodejs-models-algoritmo.md
+DSM2/DW2,DSM2,DW2,js,DSM2/DW2/exercicios/ATV02-CRUD-NODEJS/models/Criador.js,0,242,60,ok,conhecimento/DSM2/DW2/exercicios-atv02-crud-nodejs-models-criador.md
+DSM2/DW2,DSM2,DW2,js,DSM2/DW2/exercicios/ATV02-CRUD-NODEJS/models/Perfil.js,0,325,81,ok,conhecimento/DSM2/DW2/exercicios-atv02-crud-nodejs-models-perfil.md
+DSM2/DW2,DSM2,DW2,css,DSM2/DW2/exercicios/ATV02-CRUD-NODEJS/public/css/styles.css,0,1412,353,ok,conhecimento/DSM2/DW2/exercicios-atv02-crud-nodejs-public-css-styles.md
+DSM2/DW2,DSM2,DW2,ejs,DSM2/DW2/exercicios/ATV02-CRUD-NODEJS/views/algoritmoEditar.ejs,0,4453,1113,ok,conhecimento/DSM2/DW2/exercicios-atv02-crud-nodejs-views-algoritmoeditar.md
+DSM2/DW2,DSM2,DW2,ejs,DSM2/DW2/exercicios/ATV02-CRUD-NODEJS/views/algoritmos.ejs,0,1791,447,ok,conhecimento/DSM2/DW2/exercicios-atv02-crud-nodejs-views-algoritmos.md
+DSM2/DW2,DSM2,DW2,ejs,DSM2/DW2/exercicios/ATV02-CRUD-NODEJS/views/algoritmosGerenciar.ejs,0,5981,1495,ok,conhecimento/DSM2/DW2/exercicios-atv02-crud-nodejs-views-algoritmosgerenciar.md
+DSM2/DW2,DSM2,DW2,ejs,DSM2/DW2/exercicios/ATV02-CRUD-NODEJS/views/historia.ejs,0,1964,491,ok,conhecimento/DSM2/DW2/exercicios-atv02-crud-nodejs-views-historia.md
+DSM2/DW2,DSM2,DW2,ejs,DSM2/DW2/exercicios/ATV02-CRUD-NODEJS/views/index.ejs,0,1864,466,ok,conhecimento/DSM2/DW2/exercicios-atv02-crud-nodejs-views-index.md
+DSM2/DW2,DSM2,DW2,ejs,DSM2/DW2/exercicios/ATV02-CRUD-NODEJS/views/perfil.ejs,0,5513,1378,ok,conhecimento/DSM2/DW2/exercicios-atv02-crud-nodejs-views-perfil.md
+DSM2/DW2,DSM2,DW2,ejs,DSM2/DW2/exercicios/ATV02-CRUD-NODEJS/views/partials/footer.ejs,0,845,211,ok,conhecimento/DSM2/DW2/exercicios-atv02-crud-nodejs-views-partials-footer.md
+DSM2/DW2,DSM2,DW2,ejs,DSM2/DW2/exercicios/ATV02-CRUD-NODEJS/views/partials/header.ejs,0,1711,427,ok,conhecimento/DSM2/DW2/exercicios-atv02-crud-nodejs-views-partials-header.md
+DSM2/DW2,DSM2,DW2,js,DSM2/DW2/simulado_pratico_dw2/index.js,0,886,221,ok,conhecimento/DSM2/DW2/simulado-pratico-dw2-index.md
+DSM2/DW2,DSM2,DW2,js,DSM2/DW2/simulado_pratico_dw2/config/sequelize-config.js,0,236,59,ok,conhecimento/DSM2/DW2/simulado-pratico-dw2-config-sequelize-config.md
+DSM2/DW2,DSM2,DW2,js,DSM2/DW2/simulado_pratico_dw2/controllers/ClienteControler.js,0,1844,461,ok,conhecimento/DSM2/DW2/simulado-pratico-dw2-controllers-clientecontroler.md
+DSM2/DW2,DSM2,DW2,js,DSM2/DW2/simulado_pratico_dw2/models/Cliente.js,0,425,106,ok,conhecimento/DSM2/DW2/simulado-pratico-dw2-models-cliente.md
+DSM2/DW2,DSM2,DW2,js,DSM2/DW2/simulado_pratico_dw2/models/Produto.js,0,424,106,ok,conhecimento/DSM2/DW2/simulado-pratico-dw2-models-produto.md
+DSM2/DW2,DSM2,DW2,ejs,DSM2/DW2/simulado_pratico_dw2/views/clienteEditar.ejs,0,1212,303,ok,conhecimento/DSM2/DW2/simulado-pratico-dw2-views-clienteeditar.md
+DSM2/DW2,DSM2,DW2,ejs,DSM2/DW2/simulado_pratico_dw2/views/clientes.ejs,0,2386,596,ok,conhecimento/DSM2/DW2/simulado-pratico-dw2-views-clientes.md
+DSM2/DW2,DSM2,DW2,ejs,DSM2/DW2/simulado_pratico_dw2/views/index.ejs,0,1126,281,ok,conhecimento/DSM2/DW2/simulado-pratico-dw2-views-index.md
+DSM2/DW2,DSM2,DW2,ejs,DSM2/DW2/simulado_pratico_dw2/views/partials/footer.ejs,0,263,65,ok,conhecimento/DSM2/DW2/simulado-pratico-dw2-views-partials-footer.md
+DSM2/DW2,DSM2,DW2,ejs,DSM2/DW2/simulado_pratico_dw2/views/partials/header.ejs,0,947,236,ok,conhecimento/DSM2/DW2/simulado-pratico-dw2-views-partials-header.md
+DSM2/ED1,DSM2,ED1,pptx,DSM2/ED1/ALGORITMOS DE ORDENAÇÃO NÃO-RECURSIVOS.pptx,0,11227,2806,ok,conhecimento/DSM2/ED1/algoritmos-de-ordenacao-nao-recursivos.md
+DSM2/ED1,DSM2,ED1,pptx,DSM2/ED1/ALGORITMOS DE ORDENAÇÃO RECURSIVOS.pptx,0,10914,2728,ok,conhecimento/DSM2/ED1/algoritmos-de-ordenacao-recursivos.md
+DSM2/ED1,DSM2,ED1,md,DSM2/ED1/Estrutura de dados.md,0,8600,2150,ok,conhecimento/DSM2/ED1/estrutura-de-dados.md
+DSM2/ED1,DSM2,ED1,pptx,DSM2/ED1/MATRIZ.pptx,0,10486,2621,ok,conhecimento/DSM2/ED1/matriz.md
+DSM2/ED1,DSM2,ED1,pptx,DSM2/ED1/VETOR.pptx,0,9292,2323,ok,conhecimento/DSM2/ED1/vetor.md
+DSM2/ED1,DSM2,ED1,c,DSM2/ED1/main.c,0,342,85,ok,conhecimento/DSM2/ED1/main.md
+DSM2/ED1,DSM2,ED1,c,DSM2/ED1/Algoritmos de ordenacao/bubble.c,0,655,163,ok,conhecimento/DSM2/ED1/algoritmos-de-ordenacao-bubble.md
+DSM2/ED1,DSM2,ED1,c,DSM2/ED1/Algoritmos de ordenacao/selection_sort.c,0,61,15,ok,conhecimento/DSM2/ED1/algoritmos-de-ordenacao-selection-sort.md
+DSM2/ED1,DSM2,ED1,pdf,DSM2/ED1/Exercicio/Merge_Sort.pdf,5,6648,1662,ok,conhecimento/DSM2/ED1/exercicio-merge-sort.md
+DSM2/ED1,DSM2,ED1,c,DSM2/ED1/Exercicio/Exercicios 21-05/exercicio01.c,0,1014,253,ok,conhecimento/DSM2/ED1/exercicio-exercicios-21-05-exercicio01.md
+DSM2/ED1,DSM2,ED1,c,DSM2/ED1/Exercicio/Exercicios 21-05/exercicio02.c,0,1352,338,ok,conhecimento/DSM2/ED1/exercicio-exercicios-21-05-exercicio02.md
+DSM2/ED1,DSM2,ED1,c,DSM2/ED1/Exercicio/Exercicios 21-05/exercicio03.c,0,3957,989,ok,conhecimento/DSM2/ED1/exercicio-exercicios-21-05-exercicio03.md
+DSM2/ED1,DSM2,ED1,c,DSM2/ED1/Exercicio/Exercicios 21-05/exercicio04.c,0,1099,274,ok,conhecimento/DSM2/ED1/exercicio-exercicios-21-05-exercicio04.md
+DSM2/ED1,DSM2,ED1,c,DSM2/ED1/Exercicio/Exercicios 21-05/exercicio05.c,0,2546,636,ok,conhecimento/DSM2/ED1/exercicio-exercicios-21-05-exercicio05.md
+DSM2/ED1,DSM2,ED1,c,DSM2/ED1/Exercicio/Exercicios 21-05/exercicio06.c,0,2287,571,ok,conhecimento/DSM2/ED1/exercicio-exercicios-21-05-exercicio06.md
+DSM2/ED1,DSM2,ED1,c,DSM2/ED1/Matriz/ex02.c,0,548,137,ok,conhecimento/DSM2/ED1/matriz-ex02.md
+DSM2/ED1,DSM2,ED1,c,DSM2/ED1/Matriz/ex03.c,0,905,226,ok,conhecimento/DSM2/ED1/matriz-ex03.md
+DSM2/ED1,DSM2,ED1,c,DSM2/ED1/Matriz/matriz.c,0,419,104,ok,conhecimento/DSM2/ED1/matriz-matriz.md
+DSM2/ED1,DSM2,ED1,c,DSM2/ED1/Matriz/matriz_identidade.c,0,407,101,ok,conhecimento/DSM2/ED1/matriz-matriz-identidade.md
+DSM2/ED1,DSM2,ED1,c,DSM2/ED1/Ponteiros/main.c,0,372,93,ok,conhecimento/DSM2/ED1/ponteiros-main.md
+DSM2/ED1,DSM2,ED1,c,DSM2/ED1/Ponteiros/Exercicio/main.c,0,431,107,ok,conhecimento/DSM2/ED1/ponteiros-exercicio-main.md
+DSM2/ED1,DSM2,ED1,c,DSM2/ED1/Ponteiros/Exercicio 2/main.c,0,372,93,ok,conhecimento/DSM2/ED1/ponteiros-exercicio-2-main.md
+DSM2/ED1,DSM2,ED1,c,DSM2/ED1/Struct/main.c,0,832,208,ok,conhecimento/DSM2/ED1/struct-main.md
+DSM2/ED1,DSM2,ED1,c,DSM2/ED1/Struct/Livro/main.c,0,830,207,ok,conhecimento/DSM2/ED1/struct-livro-main.md
+DSM2/ED1,DSM2,ED1,c,DSM2/ED1/Struct/Pesquisa/main.c,0,929,232,ok,conhecimento/DSM2/ED1/struct-pesquisa-main.md
+DSM2/ED1,DSM2,ED1,c,DSM2/ED1/Vetor/ex1.c,0,348,87,ok,conhecimento/DSM2/ED1/vetor-ex1.md
+DSM2/ED1,DSM2,ED1,c,DSM2/ED1/Vetor/ex2.c,0,635,158,ok,conhecimento/DSM2/ED1/vetor-ex2.md
+DSM2/ES2,DSM2,ES2,md,DSM2/ES2/Engenharia de Software 2.md,0,0,0,vazio,conhecimento/DSM2/ES2/engenharia-de-software-2.md
+DSM2/ES2,DSM2,ES2,pdf,DSM2/ES2/Documentos/Aula 03 2026 - Introdução Diagrama de Classes.pdf,34,16230,4057,ok,conhecimento/DSM2/ES2/documentos-aula-03-2026-introducao-diagrama-de-classes.md
+DSM2/ES2,DSM2,ES2,pdf,DSM2/ES2/Documentos/aula 01 - 2026 - Estudo de Viabilidade.pdf,23,8535,2133,ok,conhecimento/DSM2/ES2/documentos-aula-01-2026-estudo-de-viabilidade.md
+DSM2/MPC,DSM2,MPC,pptx,DSM2/MPC/AULA 01 - LÓGICA MATEMÁTICA.pptx,0,21266,5316,ok,conhecimento/DSM2/MPC/aula-01-logica-matematica.md
+DSM2/MPC,DSM2,MPC,pptx,DSM2/MPC/AULA 02 - CONJUNTOS.pptx,0,10565,2641,ok,conhecimento/DSM2/MPC/aula-02-conjuntos.md
+DSM2/MPC,DSM2,MPC,pdf,DSM2/MPC/Lista - Matematica - 1 Bimestre.pdf,1,1628,407,ok,conhecimento/DSM2/MPC/lista-matematica-1-bimestre.md
+DSM2/MPC,DSM2,MPC,md,DSM2/MPC/Matemática para Computação.md,0,6817,1704,ok,conhecimento/DSM2/MPC/matematica-para-computacao.md
+DSM2/TPI,DSM2,TPI,md,DSM2/TPI/Tecnica de Programação 1.md,0,434,108,ok,conhecimento/DSM2/TPI/tecnica-de-programacao-1.md
+DSM2/TPI,DSM2,TPI,pdf,DSM2/TPI/aula 01- Técnica de Programação I - Introd.Java.pdf,13,3957,989,ok,conhecimento/DSM2/TPI/aula-01-tecnica-de-programacao-i-introd-java.md
+DSM2/TPI,DSM2,TPI,pdf,DSM2/TPI/aula 01.1- Técnicas de Programação- Java Estruturado.pdf,20,4097,1024,ok,conhecimento/DSM2/TPI/aula-01-1-tecnicas-de-programacao-java-estruturado.md
+DSM2/TPI,DSM2,TPI,pdf,DSM2/TPI/aula 01.2- Técnicas de Programação- Exerc. Java Estruturado.pdf,7,1101,275,ok,conhecimento/DSM2/TPI/aula-01-2-tecnicas-de-programacao-exerc-java-estruturado.md
+DSM2/TPI,DSM2,TPI,pdf,DSM2/TPI/aula 02- Técnica de Programação I - Orient.Objetos Netbeans.pdf,48,10128,2532,ok,conhecimento/DSM2/TPI/aula-02-tecnica-de-programacao-i-orient-objetos-netbeans.md
+DSM2/TPI,DSM2,TPI,pdf,DSM2/TPI/aula 02.1- Técnica de Programação I - Exercicios 1.pdf,7,2307,576,ok,conhecimento/DSM2/TPI/aula-02-1-tecnica-de-programacao-i-exercicios-1.md
+DSM2/TPI,DSM2,TPI,pdf,DSM2/TPI/aula 02.2- Técnica de Programação I - Exercicios 2.pdf,4,1006,251,ok,conhecimento/DSM2/TPI/aula-02-2-tecnica-de-programacao-i-exercicios-2.md
+DSM2/TPI,DSM2,TPI,pdf,DSM2/TPI/aula 02.3- Técnica de Programação I - IF-Case.pdf,12,2070,517,ok,conhecimento/DSM2/TPI/aula-02-3-tecnica-de-programacao-i-if-case.md
+DSM2/TPI,DSM2,TPI,pdf,DSM2/TPI/aula 02.4- Técnica de Programação I - Exercicios 3.pdf,6,7925,1981,ok,conhecimento/DSM2/TPI/aula-02-4-tecnica-de-programacao-i-exercicios-3.md
+DSM2/TPI,DSM2,TPI,pdf,DSM2/TPI/aula 03- Técnica de Programação I - Operadores JOption MENU.pdf,17,2501,625,ok,conhecimento/DSM2/TPI/aula-03-tecnica-de-programacao-i-operadores-joption-menu.md
+DSM2/TPI,DSM2,TPI,pdf,DSM2/TPI/aula 04- Técnica de Programação I - Exercicios JOption MENU.pdf,6,8425,2106,ok,conhecimento/DSM2/TPI/aula-04-tecnica-de-programacao-i-exercicios-joption-menu.md
+DSM2/TPI,DSM2,TPI,pdf,DSM2/TPI/aula 05- Técnica de Programação I- Formulários e Conexao BD.pdf,27,6908,1727,ok,conhecimento/DSM2/TPI/aula-05-tecnica-de-programacao-i-formularios-e-conexao-bd.md
+DSM2/TPI,DSM2,TPI,pdf,DSM2/TPI/aula 08.1- Técnica de Programação I- Exemplo Passa Dados Controller HTML.pdf,18,4966,1241,ok,conhecimento/DSM2/TPI/aula-08-1-tecnica-de-programacao-i-exemplo-passa-dados-controller-html.md
+DSM2/TPI,DSM2,TPI,pdf,DSM2/TPI/aula 08.2- Técnica de Programação I- Exercícios Spring Boot.pdf,5,1030,257,ok,conhecimento/DSM2/TPI/aula-08-2-tecnica-de-programacao-i-exercicios-spring-boot.md
+DSM2/TPI,DSM2,TPI,pdf,DSM2/TPI/aula_07_1_Tecnica_de_Programacao_I_Conexao_BD_Atividade_Menu.pdf,6,1733,433,ok,conhecimento/DSM2/TPI/aula-07-1-tecnica-de-programacao-i-conexao-bd-atividade-menu.md
+DSM2/TPI,DSM2,TPI,pdf,DSM2/TPI/aula_07_Tecnica_de_Programacao_I_Criacao_de_Menu_e_Crud.pdf,13,2037,509,ok,conhecimento/DSM2/TPI/aula-07-tecnica-de-programacao-i-criacao-de-menu-e-crud.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/exemplo1.java,0,359,89,ok,conhecimento/DSM2/TPI/exemplo1.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/exemplo2.java,0,698,174,ok,conhecimento/DSM2/TPI/exemplo2.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/ATV1_HAIMON_CUGLER_VIEIRA/CalculoCustoPiso/src/main/java/com/mycompany/calculocustopiso/CustoPiso.java,0,2207,551,ok,conhecimento/DSM2/TPI/atv1-haimon-cugler-vieira-calculocustopiso-src-main-java-com-mycompany-calculocustopiso-custopiso.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/ATV1_HAIMON_CUGLER_VIEIRA/CalculoCustoPiso/src/main/java/com/mycompany/calculocustopiso/Main.java,0,1254,313,ok,conhecimento/DSM2/TPI/atv1-haimon-cugler-vieira-calculocustopiso-src-main-java-com-mycompany-calculocustopiso-main.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/ATV1_HAIMON_CUGLER_VIEIRA/CalculoEleitores/src/main/java/com/fatecregistro/calculoeleitores/Eleitores.java,0,3411,852,ok,conhecimento/DSM2/TPI/atv1-haimon-cugler-vieira-calculoeleitores-src-main-java-com-fatecregistro-calculoeleitores-eleitores.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/ATV1_HAIMON_CUGLER_VIEIRA/CalculoEleitores/src/main/java/com/fatecregistro/calculoeleitores/Main.java,0,1303,325,ok,conhecimento/DSM2/TPI/atv1-haimon-cugler-vieira-calculoeleitores-src-main-java-com-fatecregistro-calculoeleitores-main.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/ATV1_HAIMON_CUGLER_VIEIRA/Combustivel/src/main/java/com/mycompany/combustivel/Combustivel.java,0,1619,404,ok,conhecimento/DSM2/TPI/atv1-haimon-cugler-vieira-combustivel-src-main-java-com-mycompany-combustivel-combustivel.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/ATV1_HAIMON_CUGLER_VIEIRA/Combustivel/src/main/java/com/mycompany/combustivel/Main.java,0,2143,535,ok,conhecimento/DSM2/TPI/atv1-haimon-cugler-vieira-combustivel-src-main-java-com-mycompany-combustivel-main.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/ATV1_HAIMON_CUGLER_VIEIRA/LitrosVeiculo/src/main/java/com/mycompany/litrosveiculo/LitrosVeiculo.java,0,647,161,ok,conhecimento/DSM2/TPI/atv1-haimon-cugler-vieira-litrosveiculo-src-main-java-com-mycompany-litrosveiculo-litrosveiculo.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/ATV1_HAIMON_CUGLER_VIEIRA/Loja/src/main/java/com/mycompany/loja/Loja.java,0,2426,606,ok,conhecimento/DSM2/TPI/atv1-haimon-cugler-vieira-loja-src-main-java-com-mycompany-loja-loja.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/ATV1_HAIMON_CUGLER_VIEIRA/Loja/src/main/java/com/mycompany/loja/Main.java,0,544,136,ok,conhecimento/DSM2/TPI/atv1-haimon-cugler-vieira-loja-src-main-java-com-mycompany-loja-main.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/ATV1_HAIMON_CUGLER_VIEIRA/Passagem/src/main/java/com/mycompany/passagem/Main.java,0,531,132,ok,conhecimento/DSM2/TPI/atv1-haimon-cugler-vieira-passagem-src-main-java-com-mycompany-passagem-main.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/ATV1_HAIMON_CUGLER_VIEIRA/Passagem/src/main/java/com/mycompany/passagem/Passagem.java,0,2924,731,ok,conhecimento/DSM2/TPI/atv1-haimon-cugler-vieira-passagem-src-main-java-com-mycompany-passagem-passagem.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/ATV1_HAIMON_CUGLER_VIEIRA/Produto/src/main/java/com/mycompany/produto/Main.java,0,449,112,ok,conhecimento/DSM2/TPI/atv1-haimon-cugler-vieira-produto-src-main-java-com-mycompany-produto-main.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/ATV1_HAIMON_CUGLER_VIEIRA/Produto/src/main/java/com/mycompany/produto/Produto.java,0,1406,351,ok,conhecimento/DSM2/TPI/atv1-haimon-cugler-vieira-produto-src-main-java-com-mycompany-produto-produto.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/ATV1_HAIMON_CUGLER_VIEIRA/ProdutoExercicio/src/main/java/com/mycompany/produto/Main.java,0,1930,482,ok,conhecimento/DSM2/TPI/atv1-haimon-cugler-vieira-produtoexercicio-src-main-java-com-mycompany-produto-main.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/ATV1_HAIMON_CUGLER_VIEIRA/ProdutoExercicio/src/main/java/com/mycompany/produto/Produto.java,0,1406,351,ok,conhecimento/DSM2/TPI/atv1-haimon-cugler-vieira-produtoexercicio-src-main-java-com-mycompany-produto-produto.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/ATV1_HAIMON_CUGLER_VIEIRA/Quadrado/src/main/java/com/mycompany/dobro/Main.java,0,421,105,ok,conhecimento/DSM2/TPI/atv1-haimon-cugler-vieira-quadrado-src-main-java-com-mycompany-dobro-main.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/ATV1_HAIMON_CUGLER_VIEIRA/Quadrado/src/main/java/com/mycompany/dobro/Quadrado.java,0,841,210,ok,conhecimento/DSM2/TPI/atv1-haimon-cugler-vieira-quadrado-src-main-java-com-mycompany-dobro-quadrado.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/ATV1_HAIMON_CUGLER_VIEIRA/Temperatura/src/main/java/com/mycompany/temperatura/Main.java,0,1793,448,ok,conhecimento/DSM2/TPI/atv1-haimon-cugler-vieira-temperatura-src-main-java-com-mycompany-temperatura-main.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/ATV1_HAIMON_CUGLER_VIEIRA/Temperatura/src/main/java/com/mycompany/temperatura/Temperatura.java,0,1215,303,ok,conhecimento/DSM2/TPI/atv1-haimon-cugler-vieira-temperatura-src-main-java-com-mycompany-temperatura-temperatura.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/Revisao/RevisaoProva/src/main/java/com/mycompany/revisaoprova/Cliente.java,0,2145,536,ok,conhecimento/DSM2/TPI/revisao-revisaoprova-src-main-java-com-mycompany-revisaoprova-cliente.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/Revisao/RevisaoProva/src/main/java/com/mycompany/revisaoprova/Main.java,0,1402,350,ok,conhecimento/DSM2/TPI/revisao-revisaoprova-src-main-java-com-mycompany-revisaoprova-main.md
+DSM2/TPI,DSM2,TPI,md,DSM2/TPI/Revisao/avaliacaoTP1/HELP.md,0,1547,386,ok,conhecimento/DSM2/TPI/revisao-avaliacaotp1-help.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/Revisao/avaliacaoTP1/src/main/java/br/com/spring/avaliacaoTP1/AvaliacaoTp1Application.java,0,331,82,ok,conhecimento/DSM2/TPI/revisao-avaliacaotp1-src-main-java-br-com-spring-avaliacaotp1-avaliacaotp1application.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/Revisao/avaliacaoTP1/src/main/java/br/com/spring/avaliacaoTP1/controller/BolsaController.java,0,905,226,ok,conhecimento/DSM2/TPI/revisao-avaliacaotp1-src-main-java-br-com-spring-avaliacaotp1-controller-bolsacontroller.md
+DSM2/TPI,DSM2,TPI,html,DSM2/TPI/Revisao/avaliacaoTP1/src/main/resources/templates/cadastro.html,0,1505,376,ok,conhecimento/DSM2/TPI/revisao-avaliacaotp1-src-main-resources-templates-cadastro.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/Revisao/avaliacaoTP1/src/test/java/br/com/spring/avaliacaoTP1/AvaliacaoTp1ApplicationTests.java,0,224,56,ok,conhecimento/DSM2/TPI/revisao-avaliacaotp1-src-test-java-br-com-spring-avaliacaotp1-avaliacaotp1applicationtests.md
+DSM2/TPI,DSM2,TPI,pdf,DSM2/TPI/Spring/aula 12- Técnica de Programação I - Revisão.pdf,44,9225,2306,ok,conhecimento/DSM2/TPI/spring-aula-12-tecnica-de-programacao-i-revisao.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/Spring/Exercicios/cadastroDeEventos/src/main/java/br/com/springboot/cadastroDeEventos/CadastroDeEventosApplication.java,0,350,87,ok,conhecimento/DSM2/TPI/spring-exercicios-cadastrodeeventos-src-main-java-br-com-springboot-cadastrodeeventos-cadastrodeeventosapplication.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/Spring/Exercicios/cadastroDeEventos/src/main/java/br/com/springboot/cadastroDeEventos/controller/EventoController.java,0,1158,289,ok,conhecimento/DSM2/TPI/spring-exercicios-cadastrodeeventos-src-main-java-br-com-springboot-cadastrodeeventos-controller-eventocontroller.md
+DSM2/TPI,DSM2,TPI,html,DSM2/TPI/Spring/Exercicios/cadastroDeEventos/src/main/resources/templates/cadastro.html,0,1476,369,ok,conhecimento/DSM2/TPI/spring-exercicios-cadastrodeeventos-src-main-resources-templates-cadastro.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/Spring/Exercicios/cadastroDeEventos/src/test/java/br/com/springboot/cadastroDeEventos/CadastroDeEventosApplicationTests.java,0,238,59,ok,conhecimento/DSM2/TPI/spring-exercicios-cadastrodeeventos-src-test-java-br-com-springboot-cadastrodeeventos-cadastrodeeventosapplicationtests.md
+DSM2/TPI,DSM2,TPI,md,DSM2/TPI/Spring/Exercicios/catalogoDePecas/HELP.md,0,1547,386,ok,conhecimento/DSM2/TPI/spring-exercicios-catalogodepecas-help.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/Spring/Exercicios/catalogoDePecas/src/main/java/br/com/springboot/catalogoDePecas/CatalogoDePecasApplication.java,0,344,86,ok,conhecimento/DSM2/TPI/spring-exercicios-catalogodepecas-src-main-java-br-com-springboot-catalogodepecas-catalogodepecasapplication.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/Spring/Exercicios/catalogoDePecas/src/main/java/br/com/springboot/catalogoDePecas/controller/CatalogoController.java,0,1210,302,ok,conhecimento/DSM2/TPI/spring-exercicios-catalogodepecas-src-main-java-br-com-springboot-catalogodepecas-controller-catalogocontroller.md
+DSM2/TPI,DSM2,TPI,html,DSM2/TPI/Spring/Exercicios/catalogoDePecas/src/main/resources/templates/cadastro.html,0,1426,356,ok,conhecimento/DSM2/TPI/spring-exercicios-catalogodepecas-src-main-resources-templates-cadastro.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/Spring/Exercicios/catalogoDePecas/src/test/java/br/com/springboot/catalogoDePecas/CatalogoDePecasApplicationTests.java,0,234,58,ok,conhecimento/DSM2/TPI/spring-exercicios-catalogodepecas-src-test-java-br-com-springboot-catalogodepecas-catalogodepecasapplicationtests.md
+DSM2/TPI,DSM2,TPI,md,DSM2/TPI/Spring/Exercicios/dadosImpostoDeRenda/HELP.md,0,1262,315,ok,conhecimento/DSM2/TPI/spring-exercicios-dadosimpostoderenda-help.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/Spring/Exercicios/dadosImpostoDeRenda/src/main/java/br/com/springboot/dadosImpostoDeRenda/DadosImpostoDeRendaApplication.java,0,356,89,ok,conhecimento/DSM2/TPI/spring-exercicios-dadosimpostoderenda-src-main-java-br-com-springboot-dadosimpostoderenda-dadosimpostoderendaapplication.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/Spring/Exercicios/dadosImpostoDeRenda/src/main/java/br/com/springboot/dadosImpostoDeRenda/controller/ImpostoDeRendaController.java,0,601,150,ok,conhecimento/DSM2/TPI/spring-exercicios-dadosimpostoderenda-src-main-java-br-com-springboot-dadosimpostoderenda-controller-impostoderendacontroller.md
+DSM2/TPI,DSM2,TPI,html,DSM2/TPI/Spring/Exercicios/dadosImpostoDeRenda/src/main/resources/templates/imposto.html,0,554,138,ok,conhecimento/DSM2/TPI/spring-exercicios-dadosimpostoderenda-src-main-resources-templates-imposto.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/Spring/Exercicios/dadosImpostoDeRenda/src/test/java/br/com/springboot/dadosImpostoDeRenda/DadosImpostoDeRendaApplicationTests.java,0,242,60,ok,conhecimento/DSM2/TPI/spring-exercicios-dadosimpostoderenda-src-test-java-br-com-springboot-dadosimpostoderenda-dadosimpostoderendaapplicationtests.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/Spring/Exercicios/exercicio01/src/main/java/com/example/exercicio01/Exercicio01Application.java,0,326,81,ok,conhecimento/DSM2/TPI/spring-exercicios-exercicio01-src-main-java-com-example-exercicio01-exercicio01application.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/Spring/Exercicios/exercicio01/src/main/java/com/example/exercicio01/controller/IndexController.java,0,487,121,ok,conhecimento/DSM2/TPI/spring-exercicios-exercicio01-src-main-java-com-example-exercicio01-controller-indexcontroller.md
+DSM2/TPI,DSM2,TPI,html,DSM2/TPI/Spring/Exercicios/exercicio01/src/main/resources/templates/produto.html,0,322,80,ok,conhecimento/DSM2/TPI/spring-exercicios-exercicio01-src-main-resources-templates-produto.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/Spring/Exercicios/exercicio01/src/test/java/com/example/exercicio01/Exercicio01ApplicationTests.java,0,220,55,ok,conhecimento/DSM2/TPI/spring-exercicios-exercicio01-src-test-java-com-example-exercicio01-exercicio01applicationtests.md
+DSM2/TPI,DSM2,TPI,md,DSM2/TPI/Spring/Exercicios/gerenciamentoDeTarefas/HELP.md,0,1547,386,ok,conhecimento/DSM2/TPI/spring-exercicios-gerenciamentodetarefas-help.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/Spring/Exercicios/gerenciamentoDeTarefas/src/main/java/br/com/springboot/gerenciamentoDeTarefas/GerenciamentoDeTarefasApplication.java,0,365,91,ok,conhecimento/DSM2/TPI/spring-exercicios-gerenciamentodetarefas-src-main-java-br-com-springboot-gerenciamentodetarefas-gerenciamentodetarefasapplication.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/Spring/Exercicios/gerenciamentoDeTarefas/src/main/java/br/com/springboot/gerenciamentoDeTarefas/controller/TarefaController.java,0,1142,285,ok,conhecimento/DSM2/TPI/spring-exercicios-gerenciamentodetarefas-src-main-java-br-com-springboot-gerenciamentodetarefas-controller-tarefacontroller.md
+DSM2/TPI,DSM2,TPI,html,DSM2/TPI/Spring/Exercicios/gerenciamentoDeTarefas/src/main/resources/templates/cadastro.html,0,1185,296,ok,conhecimento/DSM2/TPI/spring-exercicios-gerenciamentodetarefas-src-main-resources-templates-cadastro.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/Spring/Exercicios/gerenciamentoDeTarefas/src/test/java/br/com/springboot/gerenciamentoDeTarefas/GerenciamentoDeTarefasApplicationTests.java,0,248,62,ok,conhecimento/DSM2/TPI/spring-exercicios-gerenciamentodetarefas-src-test-java-br-com-springboot-gerenciamentodetarefas-gerenciamentodetarefasapplicationtests.md
+DSM2/TPI,DSM2,TPI,md,DSM2/TPI/Spring/Exercicios/informacoesIptu/HELP.md,0,1262,315,ok,conhecimento/DSM2/TPI/spring-exercicios-informacoesiptu-help.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/Spring/Exercicios/informacoesIptu/src/main/java/br/com/springboot/informacoesIptu/InformacoesIptuApplication.java,0,344,86,ok,conhecimento/DSM2/TPI/spring-exercicios-informacoesiptu-src-main-java-br-com-springboot-informacoesiptu-informacoesiptuapplication.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/Spring/Exercicios/informacoesIptu/src/main/java/br/com/springboot/informacoesIptu/controller/IptuController.java,0,513,128,ok,conhecimento/DSM2/TPI/spring-exercicios-informacoesiptu-src-main-java-br-com-springboot-informacoesiptu-controller-iptucontroller.md
+DSM2/TPI,DSM2,TPI,html,DSM2/TPI/Spring/Exercicios/informacoesIptu/src/main/resources/templates/iptu.html,0,422,105,ok,conhecimento/DSM2/TPI/spring-exercicios-informacoesiptu-src-main-resources-templates-iptu.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/Spring/Exercicios/informacoesIptu/src/test/java/br/com/springboot/informacoesIptu/InformacoesIptuApplicationTests.java,0,234,58,ok,conhecimento/DSM2/TPI/spring-exercicios-informacoesiptu-src-test-java-br-com-springboot-informacoesiptu-informacoesiptuapplicationtests.md
+DSM2/TPI,DSM2,TPI,md,DSM2/TPI/Spring/Exercicios/mostrarDadosProduto/HELP.md,0,1262,315,ok,conhecimento/DSM2/TPI/spring-exercicios-mostrardadosproduto-help.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/Spring/Exercicios/mostrarDadosProduto/src/main/java/br/com/springboot/mostrarDadosProduto/MostrarDadosProdutoApplication.java,0,356,89,ok,conhecimento/DSM2/TPI/spring-exercicios-mostrardadosproduto-src-main-java-br-com-springboot-mostrardadosproduto-mostrardadosprodutoapplication.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/Spring/Exercicios/mostrarDadosProduto/src/main/java/br/com/springboot/mostrarDadosProduto/controller/ProdutoController.java,0,508,127,ok,conhecimento/DSM2/TPI/spring-exercicios-mostrardadosproduto-src-main-java-br-com-springboot-mostrardadosproduto-controller-produtocontroller.md
+DSM2/TPI,DSM2,TPI,html,DSM2/TPI/Spring/Exercicios/mostrarDadosProduto/src/main/resources/templates/produto.html,0,362,90,ok,conhecimento/DSM2/TPI/spring-exercicios-mostrardadosproduto-src-main-resources-templates-produto.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/Spring/Exercicios/mostrarDadosProduto/src/test/java/br/com/springboot/mostrarDadosProduto/MostrarDadosProdutoApplicationTests.java,0,242,60,ok,conhecimento/DSM2/TPI/spring-exercicios-mostrardadosproduto-src-test-java-br-com-springboot-mostrardadosproduto-mostrardadosprodutoapplicationtests.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/Spring/FormularioProduto/src/main/java/br/com/springboot/FormularioProduto/FormularioProdutoApplication.java,0,350,87,ok,conhecimento/DSM2/TPI/spring-formularioproduto-src-main-java-br-com-springboot-formularioproduto-formularioprodutoapplication.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/Spring/FormularioProduto/src/main/java/br/com/springboot/FormularioProduto/controller/IndexController.java,0,995,248,ok,conhecimento/DSM2/TPI/spring-formularioproduto-src-main-java-br-com-springboot-formularioproduto-controller-indexcontroller.md
+DSM2/TPI,DSM2,TPI,html,DSM2/TPI/Spring/FormularioProduto/src/main/resources/templates/cadastro.html,0,1647,411,ok,conhecimento/DSM2/TPI/spring-formularioproduto-src-main-resources-templates-cadastro.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/Spring/cadastroDeContato/src/main/java/br/com/springboot/cadastroDeContato/CadastroDeContatoApplication.java,0,350,87,ok,conhecimento/DSM2/TPI/spring-cadastrodecontato-src-main-java-br-com-springboot-cadastrodecontato-cadastrodecontatoapplication.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/Spring/cadastroDeContato/src/main/java/br/com/springboot/cadastroDeContato/controller/ContatoController.java,0,944,236,ok,conhecimento/DSM2/TPI/spring-cadastrodecontato-src-main-java-br-com-springboot-cadastrodecontato-controller-contatocontroller.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/Spring/cadastroDeContato/src/main/java/br/com/springboot/cadastroDeContato/model/Contato.java,0,886,221,ok,conhecimento/DSM2/TPI/spring-cadastrodecontato-src-main-java-br-com-springboot-cadastrodecontato-model-contato.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/Spring/cadastroDeContato/src/main/java/br/com/springboot/cadastroDeContato/repository/ContatoRepository.java,0,260,65,ok,conhecimento/DSM2/TPI/spring-cadastrodecontato-src-main-java-br-com-springboot-cadastrodecontato-repository-contatorepository.md
+DSM2/TPI,DSM2,TPI,html,DSM2/TPI/Spring/cadastroDeContato/src/main/resources/templates/formulario.html,0,1286,321,ok,conhecimento/DSM2/TPI/spring-cadastrodecontato-src-main-resources-templates-formulario.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/Spring/cadastroDeFornecedores/src/main/java/br/com/springboot/cadastroDeFornecedores/CadastroDeFornecedorApplication.java,0,361,90,ok,conhecimento/DSM2/TPI/spring-cadastrodefornecedores-src-main-java-br-com-springboot-cadastrodefornecedores-cadastrodefornecedorapplication.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/Spring/cadastroDeFornecedores/src/main/java/br/com/springboot/cadastroDeFornecedores/controller/FornecedorController.java,0,1007,251,ok,conhecimento/DSM2/TPI/spring-cadastrodefornecedores-src-main-java-br-com-springboot-cadastrodefornecedores-controller-fornecedorcontroller.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/Spring/cadastroDeFornecedores/src/main/java/br/com/springboot/cadastroDeFornecedores/model/Fornecedor.java,0,957,239,ok,conhecimento/DSM2/TPI/spring-cadastrodefornecedores-src-main-java-br-com-springboot-cadastrodefornecedores-model-fornecedor.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/Spring/cadastroDeFornecedores/src/main/java/br/com/springboot/cadastroDeFornecedores/repository/FornecedorRepository.java,0,279,69,ok,conhecimento/DSM2/TPI/spring-cadastrodefornecedores-src-main-java-br-com-springboot-cadastrodefornecedores-repository-fornecedorrepository.md
+DSM2/TPI,DSM2,TPI,html,DSM2/TPI/Spring/cadastroDeFornecedores/src/main/resources/templates/formulario.html,0,1318,329,ok,conhecimento/DSM2/TPI/spring-cadastrodefornecedores-src-main-resources-templates-formulario.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/Spring/cadastroDePassagemDeOnibus/src/main/java/br/com/springboot/cadastroDePassagemDeOnibus/CadastroDePassagemDeOnibusApplication.java,0,377,94,ok,conhecimento/DSM2/TPI/spring-cadastrodepassagemdeonibus-src-main-java-br-com-springboot-cadastrodepassagemdeonibus-cadastrodepassagemdeonibusapplication.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/Spring/cadastroDePassagemDeOnibus/src/main/java/br/com/springboot/cadastroDePassagemDeOnibus/controller/PassagemController.java,0,987,246,ok,conhecimento/DSM2/TPI/spring-cadastrodepassagemdeonibus-src-main-java-br-com-springboot-cadastrodepassagemdeonibus-controller-passagemcontroller.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/Spring/cadastroDePassagemDeOnibus/src/main/java/br/com/springboot/cadastroDePassagemDeOnibus/model/Passagem.java,0,1466,366,ok,conhecimento/DSM2/TPI/spring-cadastrodepassagemdeonibus-src-main-java-br-com-springboot-cadastrodepassagemdeonibus-model-passagem.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/Spring/cadastroDePassagemDeOnibus/src/main/java/br/com/springboot/cadastroDePassagemDeOnibus/repository/PassagemRepository.java,0,281,70,ok,conhecimento/DSM2/TPI/spring-cadastrodepassagemdeonibus-src-main-java-br-com-springboot-cadastrodepassagemdeonibus-repository-passagemrepository.md
+DSM2/TPI,DSM2,TPI,html,DSM2/TPI/Spring/cadastroDePassagemDeOnibus/src/main/resources/templates/formulario.html,0,1619,404,ok,conhecimento/DSM2/TPI/spring-cadastrodepassagemdeonibus-src-main-resources-templates-formulario.md
+DSM2/TPI,DSM2,TPI,md,DSM2/TPI/Spring/contatosProva/HELP.md,0,1739,434,ok,conhecimento/DSM2/TPI/spring-contatosprova-help.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/Spring/contatosProva/src/main/java/br/com/springboot/contatosProva/ContatosProvaApplication.java,0,338,84,ok,conhecimento/DSM2/TPI/spring-contatosprova-src-main-java-br-com-springboot-contatosprova-contatosprovaapplication.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/Spring/contatosProva/src/main/java/br/com/springboot/contatosProva/controller/ContatoController.java,0,920,230,ok,conhecimento/DSM2/TPI/spring-contatosprova-src-main-java-br-com-springboot-contatosprova-controller-contatocontroller.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/Spring/contatosProva/src/main/java/br/com/springboot/contatosProva/model/Contato.java,0,1037,259,ok,conhecimento/DSM2/TPI/spring-contatosprova-src-main-java-br-com-springboot-contatosprova-model-contato.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/Spring/contatosProva/src/main/java/br/com/springboot/contatosProva/repository/ContatoRepository.java,0,249,62,ok,conhecimento/DSM2/TPI/spring-contatosprova-src-main-java-br-com-springboot-contatosprova-repository-contatorepository.md
+DSM2/TPI,DSM2,TPI,html,DSM2/TPI/Spring/contatosProva/src/main/resources/templates/formulario.html,0,1180,295,ok,conhecimento/DSM2/TPI/spring-contatosprova-src-main-resources-templates-formulario.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/Spring/contatosProva/src/test/java/br/com/springboot/contatosProva/ContatoProvaApplicationTests.java,0,229,57,ok,conhecimento/DSM2/TPI/spring-contatosprova-src-test-java-br-com-springboot-contatosprova-contatoprovaapplicationtests.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/Spring/exemplo2BD/src/main/java/br/com/springboot/exemplo2BD/Exemplo2BdApplication.java,0,329,82,ok,conhecimento/DSM2/TPI/spring-exemplo2bd-src-main-java-br-com-springboot-exemplo2bd-exemplo2bdapplication.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/Spring/exemplo2BD/src/main/java/br/com/springboot/exemplo2BD/controller/ClienteController.java,0,1122,280,ok,conhecimento/DSM2/TPI/spring-exemplo2bd-src-main-java-br-com-springboot-exemplo2bd-controller-clientecontroller.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/Spring/exemplo2BD/src/main/java/br/com/springboot/exemplo2BD/model/Cliente.java,0,864,216,ok,conhecimento/DSM2/TPI/spring-exemplo2bd-src-main-java-br-com-springboot-exemplo2bd-model-cliente.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/Spring/exemplo2BD/src/main/java/br/com/springboot/exemplo2BD/repository/ClienteRepository.java,0,243,60,ok,conhecimento/DSM2/TPI/spring-exemplo2bd-src-main-java-br-com-springboot-exemplo2bd-repository-clienterepository.md
+DSM2/TPI,DSM2,TPI,html,DSM2/TPI/Spring/exemplo2BD/src/main/resources/templates/formulario.html,0,1297,324,ok,conhecimento/DSM2/TPI/spring-exemplo2bd-src-main-resources-templates-formulario.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/Spring/exemplo2BD/src/test/java/br/com/springboot/exemplo2BD/Exemplo2BdApplicationTests.java,0,224,56,ok,conhecimento/DSM2/TPI/spring-exemplo2bd-src-test-java-br-com-springboot-exemplo2bd-exemplo2bdapplicationtests.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/Spring/exemplo2_springboot/src/main/java/br/com/spring_boot/exemplo2_springboot/Exemplo2SpringbootApplication.java,0,355,88,ok,conhecimento/DSM2/TPI/spring-exemplo2-springboot-src-main-java-br-com-spring-boot-exemplo2-springboot-exemplo2springbootapplication.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/Spring/exemplo2_springboot/src/main/java/br/com/spring_boot/exemplo2_springboot/controller/indexController.java,0,434,108,ok,conhecimento/DSM2/TPI/spring-exemplo2-springboot-src-main-java-br-com-spring-boot-exemplo2-springboot-controller-indexcontroller.md
+DSM2/TPI,DSM2,TPI,html,DSM2/TPI/Spring/exemplo2_springboot/src/main/resources/templates/dados.html,0,539,134,ok,conhecimento/DSM2/TPI/spring-exemplo2-springboot-src-main-resources-templates-dados.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/Spring/exemplo2_springboot/src/test/java/br/com/spring_boot/exemplo2_springboot/Exemplo2SpringbootApplicationTests.java,0,242,60,ok,conhecimento/DSM2/TPI/spring-exemplo2-springboot-src-test-java-br-com-spring-boot-exemplo2-springboot-exemplo2springbootapplicationtests.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/Spring/exemplo3_BD/src/main/java/br/com/springboot/exemplo3_BD/Exemplo3BdApplication.java,0,330,82,ok,conhecimento/DSM2/TPI/spring-exemplo3-bd-src-main-java-br-com-springboot-exemplo3-bd-exemplo3bdapplication.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/Spring/exemplo3_BD/src/main/java/br/com/springboot/exemplo3_BD/controller/FuncionarioController.java,0,1059,264,ok,conhecimento/DSM2/TPI/spring-exemplo3-bd-src-main-java-br-com-springboot-exemplo3-bd-controller-funcionariocontroller.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/Spring/exemplo3_BD/src/main/java/br/com/springboot/exemplo3_BD/model/Funcionario.java,0,846,211,ok,conhecimento/DSM2/TPI/spring-exemplo3-bd-src-main-java-br-com-springboot-exemplo3-bd-model-funcionario.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/Spring/exemplo3_BD/src/main/java/br/com/springboot/exemplo3_BD/repository/FuncionarioRepository.java,0,257,64,ok,conhecimento/DSM2/TPI/spring-exemplo3-bd-src-main-java-br-com-springboot-exemplo3-bd-repository-funcionariorepository.md
+DSM2/TPI,DSM2,TPI,html,DSM2/TPI/Spring/exemplo3_BD/src/main/resources/templates/formulario.html,0,1348,337,ok,conhecimento/DSM2/TPI/spring-exemplo3-bd-src-main-resources-templates-formulario.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/Spring/exemplo3_BD/src/test/java/br/com/springboot/exemplo3_BD/Exemplo3BdApplicationTests.java,0,225,56,ok,conhecimento/DSM2/TPI/spring-exemplo3-bd-src-test-java-br-com-springboot-exemplo3-bd-exemplo3bdapplicationtests.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/Spring/exemploFormBD/src/main/java/br/com/springboot/exemploFormBD/ExemploFormBdApplication.java,0,338,84,ok,conhecimento/DSM2/TPI/spring-exemploformbd-src-main-java-br-com-springboot-exemploformbd-exemploformbdapplication.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/Spring/exemploFormBD/src/main/java/br/com/springboot/exemploFormBD/controller/ProdutoController.java,0,935,233,ok,conhecimento/DSM2/TPI/spring-exemploformbd-src-main-java-br-com-springboot-exemploformbd-controller-produtocontroller.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/Spring/exemploFormBD/src/main/java/br/com/springboot/exemploFormBD/model/Produto.java,0,853,213,ok,conhecimento/DSM2/TPI/spring-exemploformbd-src-main-java-br-com-springboot-exemploformbd-model-produto.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/Spring/exemploFormBD/src/main/java/br/com/springboot/exemploFormBD/repository/ProdutoRepository.java,0,252,63,ok,conhecimento/DSM2/TPI/spring-exemploformbd-src-main-java-br-com-springboot-exemploformbd-repository-produtorepository.md
+DSM2/TPI,DSM2,TPI,html,DSM2/TPI/Spring/exemploFormBD/src/main/resources/templates/formulario.html,0,1320,330,ok,conhecimento/DSM2/TPI/spring-exemploformbd-src-main-resources-templates-formulario.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/Spring/exemploFormBD/src/test/java/br/com/springboot/exemploFormBD/ExemploFormBdApplicationTests.java,0,230,57,ok,conhecimento/DSM2/TPI/spring-exemploformbd-src-test-java-br-com-springboot-exemploformbd-exemploformbdapplicationtests.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/Spring/revisaoSpring/src/main/java/br/com/springboot/revisaoSpring/RevisaoSpringApplication.java,0,338,84,ok,conhecimento/DSM2/TPI/spring-revisaospring-src-main-java-br-com-springboot-revisaospring-revisaospringapplication.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/Spring/revisaoSpring/src/main/java/br/com/springboot/revisaoSpring/controller/IndexController.java,0,1179,294,ok,conhecimento/DSM2/TPI/spring-revisaospring-src-main-java-br-com-springboot-revisaospring-controller-indexcontroller.md
+DSM2/TPI,DSM2,TPI,html,DSM2/TPI/Spring/revisaoSpring/src/main/resources/templates/formUsuario.html,0,1724,431,ok,conhecimento/DSM2/TPI/spring-revisaospring-src-main-resources-templates-formusuario.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/Spring/revisaoSpring/src/test/java/br/com/springboot/revisaoSpring/RevisaoSpringApplicationTests.java,0,230,57,ok,conhecimento/DSM2/TPI/spring-revisaospring-src-test-java-br-com-springboot-revisaospring-revisaospringapplicationtests.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/exercicios/idade.java,0,311,77,ok,conhecimento/DSM2/TPI/exercicios-idade.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/exercicios/media.java,0,1053,263,ok,conhecimento/DSM2/TPI/exercicios-media.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/exercicios/Calculadora/src/main/java/com/mycompany/calculadora/Calculadora.java,0,1257,314,ok,conhecimento/DSM2/TPI/exercicios-calculadora-src-main-java-com-mycompany-calculadora-calculadora.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/exercicios/Calculadora/src/main/java/com/mycompany/calculadora/Main.java,0,280,70,ok,conhecimento/DSM2/TPI/exercicios-calculadora-src-main-java-com-mycompany-calculadora-main.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/exercicios/Categoria/src/main/java/com/mycompany/categoria/Categoria.java,0,1893,473,ok,conhecimento/DSM2/TPI/exercicios-categoria-src-main-java-com-mycompany-categoria-categoria.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/exercicios/Categoria/src/main/java/com/mycompany/categoria/Main.java,0,1340,335,ok,conhecimento/DSM2/TPI/exercicios-categoria-src-main-java-com-mycompany-categoria-main.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/exercicios/Circunferencia/src/main/java/com/mycompany/circunferencia/Circunferencia.java,0,615,153,ok,conhecimento/DSM2/TPI/exercicios-circunferencia-src-main-java-com-mycompany-circunferencia-circunferencia.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/exercicios/Clientes/src/main/java/com/mycompany/clientes/Cliente.java,0,1421,355,ok,conhecimento/DSM2/TPI/exercicios-clientes-src-main-java-com-mycompany-clientes-cliente.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/exercicios/Clientes/src/main/java/com/mycompany/clientes/Main.java,0,393,98,ok,conhecimento/DSM2/TPI/exercicios-clientes-src-main-java-com-mycompany-clientes-main.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/exercicios/Contatos/src/main/java/com/mycompany/contatos/Contatos.java,0,1824,456,ok,conhecimento/DSM2/TPI/exercicios-contatos-src-main-java-com-mycompany-contatos-contatos.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/exercicios/Contatos/src/main/java/com/mycompany/contatos/Main.java,0,386,96,ok,conhecimento/DSM2/TPI/exercicios-contatos-src-main-java-com-mycompany-contatos-main.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/exercicios/Dobro/src/main/java/com/mycompany/dobro/Dobro.java,0,740,185,ok,conhecimento/DSM2/TPI/exercicios-dobro-src-main-java-com-mycompany-dobro-dobro.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/exercicios/Dobro/src/main/java/com/mycompany/dobro/Main.java,0,416,104,ok,conhecimento/DSM2/TPI/exercicios-dobro-src-main-java-com-mycompany-dobro-main.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/exercicios/ExemploIfCase/src/main/java/com/mycompany/exemploifcase/Main.java,0,1504,376,ok,conhecimento/DSM2/TPI/exercicios-exemploifcase-src-main-java-com-mycompany-exemploifcase-main.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/exercicios/ExemploIfCase/src/main/java/com/mycompany/exemploifcase/Media.java,0,1988,497,ok,conhecimento/DSM2/TPI/exercicios-exemploifcase-src-main-java-com-mycompany-exemploifcase-media.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/exercicios/ExemploMedia/src/main/java/com/mycompany/exemplomedia/ExemploMedia.java,0,1582,395,ok,conhecimento/DSM2/TPI/exercicios-exemplomedia-src-main-java-com-mycompany-exemplomedia-exemplomedia.md
+DSM2/TPI,DSM2,TPI,sql,DSM2/TPI/exercicios/Forms/consultausuario.sql,0,247,61,ok,conhecimento/DSM2/TPI/exercicios-forms-consultausuario.md
+DSM2/TPI,DSM2,TPI,sql,DSM2/TPI/exercicios/Forms/script pdf 7.1.sql,0,642,160,ok,conhecimento/DSM2/TPI/exercicios-forms-script-pdf-7-1.md
+DSM2/TPI,DSM2,TPI,sql,DSM2/TPI/exercicios/Forms/scripts.sql,0,1260,315,ok,conhecimento/DSM2/TPI/exercicios-forms-scripts.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/exercicios/Forms/EmpresaTela/src/controller/Conexao.java,0,2811,702,ok,conhecimento/DSM2/TPI/exercicios-forms-empresatela-src-controller-conexao.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/exercicios/Forms/EmpresaTela/src/model/Empresa.java,0,2158,539,ok,conhecimento/DSM2/TPI/exercicios-forms-empresatela-src-model-empresa.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/exercicios/Forms/EmpresaTela/src/view/FrmEmpresa.java,0,17738,4434,ok,conhecimento/DSM2/TPI/exercicios-forms-empresatela-src-view-frmempresa.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/exercicios/Forms/FilmeTela/src/controller/Conexao.java,0,2809,702,ok,conhecimento/DSM2/TPI/exercicios-forms-filmetela-src-controller-conexao.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/exercicios/Forms/FilmeTela/src/model/Filme.java,0,2674,668,ok,conhecimento/DSM2/TPI/exercicios-forms-filmetela-src-model-filme.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/exercicios/Forms/FilmeTela/src/view/FrmCadFilmes.java,0,21551,5387,ok,conhecimento/DSM2/TPI/exercicios-forms-filmetela-src-view-frmcadfilmes.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/exercicios/Forms/Menu/ProjetoClinica/src/Controller/Conexao.java,0,2827,706,ok,conhecimento/DSM2/TPI/exercicios-forms-menu-projetoclinica-src-controller-conexao.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/exercicios/Forms/Menu/ProjetoClinica/src/Model/Paciente.java,0,3208,802,ok,conhecimento/DSM2/TPI/exercicios-forms-menu-projetoclinica-src-model-paciente.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/exercicios/Forms/Menu/ProjetoClinica/src/View/FrmMenu.java,0,6461,1615,ok,conhecimento/DSM2/TPI/exercicios-forms-menu-projetoclinica-src-view-frmmenu.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/exercicios/Forms/Menu/ProjetoClinica/src/View/FrmPaciente.java,0,23775,5943,ok,conhecimento/DSM2/TPI/exercicios-forms-menu-projetoclinica-src-view-frmpaciente.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/exercicios/Forms/Menu/ProjetoPassagem/src/Controller/Conexao.java,0,2827,706,ok,conhecimento/DSM2/TPI/exercicios-forms-menu-projetopassagem-src-controller-conexao.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/exercicios/Forms/Menu/ProjetoPassagem/src/Model/Passagem.java,0,3502,875,ok,conhecimento/DSM2/TPI/exercicios-forms-menu-projetopassagem-src-model-passagem.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/exercicios/Forms/Menu/ProjetoPassagem/src/View/FrmMenu.java,0,6568,1642,ok,conhecimento/DSM2/TPI/exercicios-forms-menu-projetopassagem-src-view-frmmenu.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/exercicios/Forms/Menu/ProjetoPassagem/src/View/FrmPassagem.java,0,25613,6403,ok,conhecimento/DSM2/TPI/exercicios-forms-menu-projetopassagem-src-view-frmpassagem.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/exercicios/Forms/Menu/ProjetoVeiculo/src/Controller/Conexao.java,0,2827,706,ok,conhecimento/DSM2/TPI/exercicios-forms-menu-projetoveiculo-src-controller-conexao.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/exercicios/Forms/Menu/ProjetoVeiculo/src/Model/Veiculo.java,0,2998,749,ok,conhecimento/DSM2/TPI/exercicios-forms-menu-projetoveiculo-src-model-veiculo.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/exercicios/Forms/Menu/ProjetoVeiculo/src/Utils/Validador.java,0,786,196,ok,conhecimento/DSM2/TPI/exercicios-forms-menu-projetoveiculo-src-utils-validador.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/exercicios/Forms/Menu/ProjetoVeiculo/src/View/FrmMenu.java,0,6548,1637,ok,conhecimento/DSM2/TPI/exercicios-forms-menu-projetoveiculo-src-view-frmmenu.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/exercicios/Forms/Menu/ProjetoVeiculo/src/View/FrmVeiculo.java,0,23821,5955,ok,conhecimento/DSM2/TPI/exercicios-forms-menu-projetoveiculo-src-view-frmveiculo.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/exercicios/Forms/PizzaOnline/src/view/FrmCliente.java,0,12655,3163,ok,conhecimento/DSM2/TPI/exercicios-forms-pizzaonline-src-view-frmcliente.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/exercicios/Forms/PizzaOnline/src/view/FrmPedido.java,0,17009,4252,ok,conhecimento/DSM2/TPI/exercicios-forms-pizzaonline-src-view-frmpedido.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/exercicios/Forms/PizzaOnline/src/view/FrmPizza.java,0,12277,3069,ok,conhecimento/DSM2/TPI/exercicios-forms-pizzaonline-src-view-frmpizza.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/exercicios/Forms/PrefeituraTela/src/controller/Conexao.java,0,2814,703,ok,conhecimento/DSM2/TPI/exercicios-forms-prefeituratela-src-controller-conexao.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/exercicios/Forms/PrefeituraTela/src/model/Prefeitura.java,0,2219,554,ok,conhecimento/DSM2/TPI/exercicios-forms-prefeituratela-src-model-prefeitura.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/exercicios/Forms/PrefeituraTela/src/view/FrmPrefeitura.java,0,17785,4446,ok,conhecimento/DSM2/TPI/exercicios-forms-prefeituratela-src-view-frmprefeitura.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/exercicios/Forms/ProdutoTela/src/controller/Conexao.java,0,2811,702,ok,conhecimento/DSM2/TPI/exercicios-forms-produtotela-src-controller-conexao.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/exercicios/Forms/ProdutoTela/src/model/Produto.java,0,2169,542,ok,conhecimento/DSM2/TPI/exercicios-forms-produtotela-src-model-produto.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/exercicios/Forms/ProdutoTela/src/view/FrmProduto.java,0,17972,4493,ok,conhecimento/DSM2/TPI/exercicios-forms-produtotela-src-view-frmproduto.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/exercicios/Forms/ProjetoCRUD/src/Controller/Conexao.java,0,2854,713,ok,conhecimento/DSM2/TPI/exercicios-forms-projetocrud-src-controller-conexao.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/exercicios/Forms/ProjetoCRUD/src/Model/Usuario.java,0,2285,571,ok,conhecimento/DSM2/TPI/exercicios-forms-projetocrud-src-model-usuario.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/exercicios/Forms/ProjetoCRUD/src/View/FrmMenu.java,0,6311,1577,ok,conhecimento/DSM2/TPI/exercicios-forms-projetocrud-src-view-frmmenu.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/exercicios/Forms/ProjetoCRUD/src/View/FrmUsuario.java,0,18270,4567,ok,conhecimento/DSM2/TPI/exercicios-forms-projetocrud-src-view-frmusuario.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/exercicios/Forms/ProjetoFormsO_OBD/src/Controller/Conexao.java,0,2716,679,ok,conhecimento/DSM2/TPI/exercicios-forms-projetoformso-obd-src-controller-conexao.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/exercicios/Forms/ProjetoFormsO_OBD/src/Model/Cliente.java,0,1749,437,ok,conhecimento/DSM2/TPI/exercicios-forms-projetoformso-obd-src-model-cliente.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/exercicios/Forms/ProjetoFormsO_OBD/src/View/FrmCliente.java,0,15870,3967,ok,conhecimento/DSM2/TPI/exercicios-forms-projetoformso-obd-src-view-frmcliente.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/exercicios/Forms/ProjetoFormsO_OBD/src/projetoformso_obd/ProjetoFormsO_OBD.java,0,458,114,ok,conhecimento/DSM2/TPI/exercicios-forms-projetoformso-obd-src-projetoformso-obd-projetoformso-obd.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/exercicios/Forms/UsuarioTela/src/controller/Conexao.java,0,2811,702,ok,conhecimento/DSM2/TPI/exercicios-forms-usuariotela-src-controller-conexao.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/exercicios/Forms/UsuarioTela/src/model/Usuario.java,0,2292,573,ok,conhecimento/DSM2/TPI/exercicios-forms-usuariotela-src-model-usuario.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/exercicios/Forms/UsuarioTela/src/view/FrmCadUsuario.java,0,18882,4720,ok,conhecimento/DSM2/TPI/exercicios-forms-usuariotela-src-view-frmcadusuario.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/exercicios/Forms/VendaTela/src/controller/Conexao.java,0,2809,702,ok,conhecimento/DSM2/TPI/exercicios-forms-vendatela-src-controller-conexao.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/exercicios/Forms/VendaTela/src/model/Venda.java,0,2215,553,ok,conhecimento/DSM2/TPI/exercicios-forms-vendatela-src-model-venda.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/exercicios/Forms/VendaTela/src/view/FrmVenda.java,0,17633,4408,ok,conhecimento/DSM2/TPI/exercicios-forms-vendatela-src-view-frmvenda.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/exercicios/Fornecedor/src/main/java/com/mycompany/fornecedor/Fornecedor.java,0,1575,393,ok,conhecimento/DSM2/TPI/exercicios-fornecedor-src-main-java-com-mycompany-fornecedor-fornecedor.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/exercicios/Fornecedor/src/main/java/com/mycompany/fornecedor/Main.java,0,432,108,ok,conhecimento/DSM2/TPI/exercicios-fornecedor-src-main-java-com-mycompany-fornecedor-main.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/exercicios/Multiplicacao/src/main/java/com/mycompany/multiplicacao/Multiplicacao.java,0,308,77,ok,conhecimento/DSM2/TPI/exercicios-multiplicacao-src-main-java-com-mycompany-multiplicacao-multiplicacao.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/exercicios/OlimpiadaMatematica/src/main/java/com/mycompany/olimpiadamatematica/Main.java,0,1278,319,ok,conhecimento/DSM2/TPI/exercicios-olimpiadamatematica-src-main-java-com-mycompany-olimpiadamatematica-main.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/exercicios/OlimpiadaMatematica/src/main/java/com/mycompany/olimpiadamatematica/OlimpiadaMatematica.java,0,2351,587,ok,conhecimento/DSM2/TPI/exercicios-olimpiadamatematica-src-main-java-com-mycompany-olimpiadamatematica-olimpiadamatematica.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/exercicios/ProjetoOO/src/main/java/com/mycompany/projetooo/Principal.java,0,1311,327,ok,conhecimento/DSM2/TPI/exercicios-projetooo-src-main-java-com-mycompany-projetooo-principal.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/exercicios/ProjetoOO/src/main/java/com/mycompany/projetooo/Usuario.java,0,1329,332,ok,conhecimento/DSM2/TPI/exercicios-projetooo-src-main-java-com-mycompany-projetooo-usuario.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/exercicios/Prova/src/main/java/com/mycompany/prova/Main.java,0,1230,307,ok,conhecimento/DSM2/TPI/exercicios-prova-src-main-java-com-mycompany-prova-main.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/exercicios/Prova/src/main/java/com/mycompany/prova/Prova.java,0,1592,398,ok,conhecimento/DSM2/TPI/exercicios-prova-src-main-java-com-mycompany-prova-prova.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/exercicios/Retangulo/src/main/java/com/mycompany/retangulo/Retangulo.java,0,866,216,ok,conhecimento/DSM2/TPI/exercicios-retangulo-src-main-java-com-mycompany-retangulo-retangulo.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/exercicios/SalarioMensal/src/main/java/com/mycompany/salariomensal/SalarioMensal.java,0,914,228,ok,conhecimento/DSM2/TPI/exercicios-salariomensal-src-main-java-com-mycompany-salariomensal-salariomensal.md
+DSM2/TPI,DSM2,TPI,java,DSM2/TPI/exercicios/Venda/src/main/java/com/mycompany/venda/Venda.java,0,791,197,ok,conhecimento/DSM2/TPI/exercicios-venda-src-main-java-com-mycompany-venda-venda.md
+DSM3/AL,DSM3,AL,py,DSM3/AL/autovetores.py,0,305,76,ok,conhecimento/DSM3/AL/autovetores.md
+DSM3/AL,DSM3,AL,py,DSM3/AL/ex03.py,0,278,69,ok,conhecimento/DSM3/AL/ex03.md
+DSM3/AL,DSM3,AL,py,DSM3/AL/ex04.py,0,276,69,ok,conhecimento/DSM3/AL/ex04.md
+DSM3/AL,DSM3,AL,py,DSM3/AL/ex05.py,0,191,47,ok,conhecimento/DSM3/AL/ex05.md
+DSM3/AL,DSM3,AL,py,DSM3/AL/ex06.py,0,152,38,ok,conhecimento/DSM3/AL/ex06.md
+DSM3/AL,DSM3,AL,py,DSM3/AL/ex07.py,0,328,82,ok,conhecimento/DSM3/AL/ex07.md
+DSM3/AL,DSM3,AL,py,DSM3/AL/ex08.py,0,179,44,ok,conhecimento/DSM3/AL/ex08.md
+DSM3/AL,DSM3,AL,py,DSM3/AL/ex09.py,0,377,94,ok,conhecimento/DSM3/AL/ex09.md
+DSM3/AL,DSM3,AL,py,DSM3/AL/exMatPlot_Triangulo.py,0,762,190,ok,conhecimento/DSM3/AL/exmatplot-triangulo.md
+DSM3/AL,DSM3,AL,py,DSM3/AL/exMatPlot_vetor.py,0,649,162,ok,conhecimento/DSM3/AL/exmatplot-vetor.md
+DSM3/AL,DSM3,AL,txt,DSM3/AL/linear.txt,0,1171,292,ok,conhecimento/DSM3/AL/linear.md
+DSM3/AL,DSM3,AL,txt,DSM3/AL/notebook-sources/AL-exercicios-python.txt,0,3469,867,ok,conhecimento/DSM3/AL/notebook-sources-al-exercicios-python.md
+DSM3/AL,DSM3,AL,txt,DSM3/AL/notebook-sources/AL-linear.txt,0,1205,301,ok,conhecimento/DSM3/AL/notebook-sources-al-linear.md
+DSM3/BDNR,DSM3,BDNR,docx,DSM3/BDNR/Aula_01.docx,0,20548,5137,ok,conhecimento/DSM3/BDNR/aula-01.md
+DSM3/BDNR,DSM3,BDNR,docx,DSM3/BDNR/Aula_02.docx,0,16707,4176,ok,conhecimento/DSM3/BDNR/aula-02.md
+DSM3/BDNR,DSM3,BDNR,docx,DSM3/BDNR/Aula_03.docx,0,14736,3684,ok,conhecimento/DSM3/BDNR/aula-03.md
+DSM3/BDNR,DSM3,BDNR,docx,DSM3/BDNR/Aula_04.docx,0,11222,2805,ok,conhecimento/DSM3/BDNR/aula-04.md
+DSM3/BDNR,DSM3,BDNR,docx,DSM3/BDNR/Aula_05.docx,0,10170,2542,ok,conhecimento/DSM3/BDNR/aula-05.md
+DSM3/BDNR,DSM3,BDNR,docx,DSM3/BDNR/Aula_06.docx,0,12689,3172,ok,conhecimento/DSM3/BDNR/aula-06.md
+DSM3/BDNR,DSM3,BDNR,docx,DSM3/BDNR/Aula_07.docx,0,10377,2594,ok,conhecimento/DSM3/BDNR/aula-07.md
+DSM3/BDNR,DSM3,BDNR,docx,DSM3/BDNR/Aula_08.docx,0,8420,2105,ok,conhecimento/DSM3/BDNR/aula-08.md
+DSM3/BDNR,DSM3,BDNR,pdf,DSM3/BDNR/Haimon Cugler Vieira - BDNR.pdf,8,10750,2687,ok,conhecimento/DSM3/BDNR/haimon-cugler-vieira-bdnr.md
+DSM3/BDNR,DSM3,BDNR,pdf,DSM3/BDNR/Simulado_Revisao_BDNR.pdf,9,8057,2014,ok,conhecimento/DSM3/BDNR/simulado-revisao-bdnr.md
+DSM3/BDNR,DSM3,BDNR,txt,DSM3/BDNR/Atividade Avaliativa/ATV1/conectaTech_setup.mongodb.txt,0,7795,1948,ok,conhecimento/DSM3/BDNR/atividade-avaliativa-atv1-conectatech-setup-mongodb.md
+DSM3/BDNR,DSM3,BDNR,txt,DSM3/BDNR/Atividade Avaliativa/ATV1/techmix_as_text.txt,0,3389,847,ok,conhecimento/DSM3/BDNR/atividade-avaliativa-atv1-techmix-as-text.md
+DSM3/BDNR,DSM3,BDNR,docx,DSM3/BDNR/Atividade Avaliativa/ATV2/ATV2-N1.docx,0,6103,1525,ok,conhecimento/DSM3/BDNR/atividade-avaliativa-atv2-atv2-n1.md
+DSM3/BDNR,DSM3,BDNR,md,DSM3/BDNR/Atividade Avaliativa/ATV2/.omp/state/continuity.md,0,390,97,ok,conhecimento/DSM3/BDNR/atividade-avaliativa-atv2-omp-state-continuity.md
+DSM3/BDNR,DSM3,BDNR,txt,DSM3/BDNR/Atividade Avaliativa/ATV2/Lista_Exercicios_MongoDB - Haimon Cugler Vieira/exercicio01.txt,0,4507,1126,ok,conhecimento/DSM3/BDNR/atividade-avaliativa-atv2-lista-exercicios-mongodb-haimon-cugler-vieira-exercicio01.md
+DSM3/BDNR,DSM3,BDNR,txt,DSM3/BDNR/Atividade Avaliativa/ATV2/Lista_Exercicios_MongoDB - Haimon Cugler Vieira/exercicio02.txt,0,5516,1379,ok,conhecimento/DSM3/BDNR/atividade-avaliativa-atv2-lista-exercicios-mongodb-haimon-cugler-vieira-exercicio02.md
+DSM3/BDNR,DSM3,BDNR,txt,DSM3/BDNR/Atividade Avaliativa/ATV2/Lista_Exercicios_MongoDB - Haimon Cugler Vieira/exercicio03.txt,0,2071,517,ok,conhecimento/DSM3/BDNR/atividade-avaliativa-atv2-lista-exercicios-mongodb-haimon-cugler-vieira-exercicio03.md
+DSM3/BDNR,DSM3,BDNR,txt,DSM3/BDNR/Atividade Avaliativa/ATV2/Lista_Exercicios_MongoDB - Haimon Cugler Vieira/exercicio04.txt,0,1726,431,ok,conhecimento/DSM3/BDNR/atividade-avaliativa-atv2-lista-exercicios-mongodb-haimon-cugler-vieira-exercicio04.md
+DSM3/BDNR,DSM3,BDNR,txt,DSM3/BDNR/Atividade Avaliativa/ATV2/Lista_Exercicios_MongoDB - Haimon Cugler Vieira/modelagem.txt,0,1527,381,ok,conhecimento/DSM3/BDNR/atividade-avaliativa-atv2-lista-exercicios-mongodb-haimon-cugler-vieira-modelagem.md
+DSM3/BDNR,DSM3,BDNR,txt,DSM3/BDNR/Atividade Avaliativa/ATV2/Massa_Dados_Exercicios_MongoDB/LEIA-ME.txt,0,1487,371,ok,conhecimento/DSM3/BDNR/atividade-avaliativa-atv2-massa-dados-exercicios-mongodb-leia-me.md
+DSM3/BDNR,DSM3,BDNR,js,DSM3/BDNR/Atividade Avaliativa/ATV2/Massa_Dados_Exercicios_MongoDB/carga_mongodb.js,0,21028,5257,ok,conhecimento/DSM3/BDNR/atividade-avaliativa-atv2-massa-dados-exercicios-mongodb-carga-mongodb.md
+DSM3/DW3,DSM3,DW3,pdf,DSM3/DW3/DW3-Aula_01.1-Introdução a disciplina.pdf,12,5794,1448,ok,conhecimento/DSM3/DW3/dw3-aula-01-1-introducao-a-disciplina.md
+DSM3/DW3,DSM3,DW3,pdf,DSM3/DW3/DW3-Aula_01.2-Desenvolvendo API Rest com Node.pdf,27,17072,4268,ok,conhecimento/DSM3/DW3/dw3-aula-01-2-desenvolvendo-api-rest-com-node.md
+DSM3/DW3,DSM3,DW3,pdf,DSM3/DW3/DW3-Aula_02-Desenvolvendo o CRUD da API.pdf,21,13939,3484,ok,conhecimento/DSM3/DW3/dw3-aula-02-desenvolvendo-o-crud-da-api.md
+DSM3/DW3,DSM3,DW3,pdf,DSM3/DW3/DW3-Aula_03.1-Avançando com o MongoDB.pdf,22,10317,2579,ok,conhecimento/DSM3/DW3/dw3-aula-03-1-avancando-com-o-mongodb.md
+DSM3/DW3,DSM3,DW3,pdf,DSM3/DW3/DW3-Aula_04-Autenticação na API com JWT.pdf,24,11904,2976,ok,conhecimento/DSM3/DW3/dw3-aula-04-autenticacao-na-api-com-jwt.md
+DSM3/DW3,DSM3,DW3,pdf,DSM3/DW3/DW3-Aula_05-Atividade-02-Desenvolvendo uma API Rest.pdf,2,1598,399,ok,conhecimento/DSM3/DW3/dw3-aula-05-atividade-02-desenvolvendo-uma-api-rest.md
+DSM3/DW3,DSM3,DW3,md,DSM3/DW3/ATV 02/Arquivo Criminal Brasileiro/AGENTS.md,0,18082,4520,ok,conhecimento/DSM3/DW3/atv-02-arquivo-criminal-brasileiro-agents.md
+DSM3/DW3,DSM3,DW3,md,DSM3/DW3/ATV 02/Arquivo Criminal Brasileiro/README.md,0,5744,1436,ok,conhecimento/DSM3/DW3/atv-02-arquivo-criminal-brasileiro-readme.md
+DSM3/DW3,DSM3,DW3,md,DSM3/DW3/ATV 02/Arquivo Criminal Brasileiro/.omp/state/continuity.md,0,366,91,ok,conhecimento/DSM3/DW3/atv-02-arquivo-criminal-brasileiro-omp-state-continuity.md
+DSM3/DW3,DSM3,DW3,md,DSM3/DW3/ATV 02/Arquivo Criminal Brasileiro/docs/architecture.md,0,2943,735,ok,conhecimento/DSM3/DW3/atv-02-arquivo-criminal-brasileiro-docs-architecture.md
+DSM3/DW3,DSM3,DW3,md,DSM3/DW3/ATV 02/Arquivo Criminal Brasileiro/docs/domain.md,0,2450,612,ok,conhecimento/DSM3/DW3/atv-02-arquivo-criminal-brasileiro-docs-domain.md
+DSM3/DW3,DSM3,DW3,md,DSM3/DW3/ATV 02/Arquivo Criminal Brasileiro/docs/operations.md,0,3804,951,ok,conhecimento/DSM3/DW3/atv-02-arquivo-criminal-brasileiro-docs-operations.md
+DSM3/DW3,DSM3,DW3,md,DSM3/DW3/ATV 02/Arquivo Criminal Brasileiro/docs/decisions/001-argon2-substitui-bcrypt.md,0,803,200,ok,conhecimento/DSM3/DW3/atv-02-arquivo-criminal-brasileiro-docs-decisions-001-argon2-substitui-bcrypt.md
+DSM3/DW3,DSM3,DW3,md,DSM3/DW3/ATV 02/Arquivo Criminal Brasileiro/docs/decisions/002-jwt-48h-bearer.md,0,786,196,ok,conhecimento/DSM3/DW3/atv-02-arquivo-criminal-brasileiro-docs-decisions-002-jwt-48h-bearer.md
+DSM3/DW3,DSM3,DW3,md,DSM3/DW3/ATV 02/Arquivo Criminal Brasileiro/docs/decisions/003-documentos-aninhados-sem-ref-populate.md,0,884,221,ok,conhecimento/DSM3/DW3/atv-02-arquivo-criminal-brasileiro-docs-decisions-003-documentos-aninhados-sem-ref-populate.md
+DSM3/DW3,DSM3,DW3,md,DSM3/DW3/ATV 02/Arquivo Criminal Brasileiro/docs/decisions/004-tmdb-como-extensao-de-busca.md,0,908,227,ok,conhecimento/DSM3/DW3/atv-02-arquivo-criminal-brasileiro-docs-decisions-004-tmdb-como-extensao-de-busca.md
+DSM3/DW3,DSM3,DW3,md,DSM3/DW3/ATV 02/Arquivo Criminal Brasileiro/docs/decisions/005-escopo-travado-2-entidades.md,0,1022,255,ok,conhecimento/DSM3/DW3/atv-02-arquivo-criminal-brasileiro-docs-decisions-005-escopo-travado-2-entidades.md
+DSM3/DW3,DSM3,DW3,md,DSM3/DW3/dw3-api-express-mongodb/aula-06-introducao-ao-react-e-nextjs/README.md,0,1899,474,ok,conhecimento/DSM3/DW3/dw3-api-express-mongodb-aula-06-introducao-ao-react-e-nextjs-readme.md
+DSM3/DW3,DSM3,DW3,html,DSM3/DW3/dw3-api-express-mongodb/aula-06-introducao-ao-react-e-nextjs/src/pages/api/index.html,0,266,66,ok,conhecimento/DSM3/DW3/dw3-api-express-mongodb-aula-06-introducao-ao-react-e-nextjs-src-pages-api-index.md
+DSM3/DW3,DSM3,DW3,css,DSM3/DW3/dw3-api-express-mongodb/aula-06-introducao-ao-react-e-nextjs/src/styles/Home.module.css,0,2606,651,ok,conhecimento/DSM3/DW3/dw3-api-express-mongodb-aula-06-introducao-ao-react-e-nextjs-src-styles-home-module.md
+DSM3/DW3,DSM3,DW3,css,DSM3/DW3/dw3-api-express-mongodb/aula-06-introducao-ao-react-e-nextjs/src/styles/globals.css,0,608,152,ok,conhecimento/DSM3/DW3/dw3-api-express-mongodb-aula-06-introducao-ao-react-e-nextjs-src-styles-globals.md
+DSM3/DW3,DSM3,DW3,md,DSM3/DW3/dw3-api-express-mongodb/aula-07-css-modules-e-global/README.md,0,1899,474,ok,conhecimento/DSM3/DW3/dw3-api-express-mongodb-aula-07-css-modules-e-global-readme.md
+DSM3/DW3,DSM3,DW3,css,DSM3/DW3/dw3-api-express-mongodb/aula-07-css-modules-e-global/src/components/Semaforo/Semaforo.module.css,0,368,92,ok,conhecimento/DSM3/DW3/dw3-api-express-mongodb-aula-07-css-modules-e-global-src-components-semaforo-semaforo-module.md
+DSM3/DW3,DSM3,DW3,html,DSM3/DW3/dw3-api-express-mongodb/aula-07-css-modules-e-global/src/pages/api/index.html,0,266,66,ok,conhecimento/DSM3/DW3/dw3-api-express-mongodb-aula-07-css-modules-e-global-src-pages-api-index.md
+DSM3/DW3,DSM3,DW3,css,DSM3/DW3/dw3-api-express-mongodb/aula-07-css-modules-e-global/src/styles/globals.css,0,771,192,ok,conhecimento/DSM3/DW3/dw3-api-express-mongodb-aula-07-css-modules-e-global-src-styles-globals.md
+DSM3/DW3,DSM3,DW3,md,DSM3/DW3/dw3-api-express-mongodb/aula-07.2-formularios-no-react/README.md,0,1899,474,ok,conhecimento/DSM3/DW3/dw3-api-express-mongodb-aula-07-2-formularios-no-react-readme.md
+DSM3/DW3,DSM3,DW3,css,DSM3/DW3/dw3-api-express-mongodb/aula-07.2-formularios-no-react/src/components/Formulario/Formulario.module.css,0,0,0,vazio,conhecimento/DSM3/DW3/dw3-api-express-mongodb-aula-07-2-formularios-no-react-src-components-formulario-formulario-module.md
+DSM3/DW3,DSM3,DW3,css,DSM3/DW3/dw3-api-express-mongodb/aula-07.2-formularios-no-react/src/components/Semaforo/Semaforo.module.css,0,368,92,ok,conhecimento/DSM3/DW3/dw3-api-express-mongodb-aula-07-2-formularios-no-react-src-components-semaforo-semaforo-module.md
+DSM3/DW3,DSM3,DW3,html,DSM3/DW3/dw3-api-express-mongodb/aula-07.2-formularios-no-react/src/pages/api/index.html,0,266,66,ok,conhecimento/DSM3/DW3/dw3-api-express-mongodb-aula-07-2-formularios-no-react-src-pages-api-index.md
+DSM3/DW3,DSM3,DW3,css,DSM3/DW3/dw3-api-express-mongodb/aula-07.2-formularios-no-react/src/styles/globals.css,0,771,192,ok,conhecimento/DSM3/DW3/dw3-api-express-mongodb-aula-07-2-formularios-no-react-src-styles-globals.md
+DSM3/DW3,DSM3,DW3,md,DSM3/DW3/dw3-api-express-mongodb/aula-08-consumo-de-api-com-react/front-end-react/README.md,0,639,159,ok,conhecimento/DSM3/DW3/dw3-api-express-mongodb-aula-08-consumo-de-api-com-react-front-end-react-readme.md
+DSM3/DW3,DSM3,DW3,css,DSM3/DW3/dw3-api-express-mongodb/aula-08-consumo-de-api-com-react/front-end-react/src/components/Container/Container.module.css,0,490,122,ok,conhecimento/DSM3/DW3/dw3-api-express-mongodb-aula-08-consumo-de-api-com-react-front-end-react-src-components-container-container-module.md
+DSM3/DW3,DSM3,DW3,css,DSM3/DW3/dw3-api-express-mongodb/aula-08-consumo-de-api-com-react/front-end-react/src/components/CreateContent/CreateContent.module.css,0,522,130,ok,conhecimento/DSM3/DW3/dw3-api-express-mongodb-aula-08-consumo-de-api-com-react-front-end-react-src-components-createcontent-createcontent-module.md
+DSM3/DW3,DSM3,DW3,css,DSM3/DW3/dw3-api-express-mongodb/aula-08-consumo-de-api-com-react/front-end-react/src/components/Footer/Footer.module.css,0,1089,272,ok,conhecimento/DSM3/DW3/dw3-api-express-mongodb-aula-08-consumo-de-api-com-react-front-end-react-src-components-footer-footer-module.md
+DSM3/DW3,DSM3,DW3,css,DSM3/DW3/dw3-api-express-mongodb/aula-08-consumo-de-api-com-react/front-end-react/src/components/HomeContent/HomeContent.module.css,0,4053,1013,ok,conhecimento/DSM3/DW3/dw3-api-express-mongodb-aula-08-consumo-de-api-com-react-front-end-react-src-components-homecontent-homecontent-module.md
+DSM3/DW3,DSM3,DW3,css,DSM3/DW3/dw3-api-express-mongodb/aula-08-consumo-de-api-com-react/front-end-react/src/components/Loading/Loading.module.css,0,335,83,ok,conhecimento/DSM3/DW3/dw3-api-express-mongodb-aula-08-consumo-de-api-com-react-front-end-react-src-components-loading-loading-module.md
+DSM3/DW3,DSM3,DW3,css,DSM3/DW3/dw3-api-express-mongodb/aula-08-consumo-de-api-com-react/front-end-react/src/components/LoginContent/LoginContent.module.css,0,1736,434,ok,conhecimento/DSM3/DW3/dw3-api-express-mongodb-aula-08-consumo-de-api-com-react-front-end-react-src-components-logincontent-logincontent-module.md
+DSM3/DW3,DSM3,DW3,css,DSM3/DW3/dw3-api-express-mongodb/aula-08-consumo-de-api-com-react/front-end-react/src/components/Menu/Menu.module.css,0,1536,384,ok,conhecimento/DSM3/DW3/dw3-api-express-mongodb-aula-08-consumo-de-api-com-react-front-end-react-src-components-menu-menu-module.md
+DSM3/DW3,DSM3,DW3,css,DSM3/DW3/dw3-api-express-mongodb/aula-08-consumo-de-api-com-react/front-end-react/src/styles/globals.css,0,1569,392,ok,conhecimento/DSM3/DW3/dw3-api-express-mongodb-aula-08-consumo-de-api-com-react-front-end-react-src-styles-globals.md
+DSM3/GAPS,DSM3,GAPS,md,DSM3/GAPS/hub-solidario-api/README.md,0,42,10,vazio,conhecimento/DSM3/GAPS/hub-solidario-api-readme.md
+DSM3/GAPS,DSM3,GAPS,md,DSM3/GAPS/hub-solidario-web/README.md,0,42,10,vazio,conhecimento/DSM3/GAPS/hub-solidario-web-readme.md
+DSM3/GAPS,DSM3,GAPS,html,DSM3/GAPS/hub-solidario-web/index.html,0,218,54,ok,conhecimento/DSM3/GAPS/hub-solidario-web-index.md
+DSM3/GAPS,DSM3,GAPS,txt,DSM3/GAPS/notebook-sources/GAPS-Modulo 01 - Introducao.txt,0,17168,4292,ok,conhecimento/DSM3/GAPS/notebook-sources-gaps-modulo-01-introducao.md
+DSM3/GAPS,DSM3,GAPS,txt,DSM3/GAPS/notebook-sources/GAPS-Modulo 02 - Manifesto Agil.txt,0,19739,4934,ok,conhecimento/DSM3/GAPS/notebook-sources-gaps-modulo-02-manifesto-agil.md
+DSM3/GAPS,DSM3,GAPS,txt,DSM3/GAPS/notebook-sources/GAPS-Modulo 03 - Scrum vs Kanban.txt,0,20047,5011,ok,conhecimento/DSM3/GAPS/notebook-sources-gaps-modulo-03-scrum-vs-kanban.md
+DSM3/GAPS,DSM3,GAPS,txt,DSM3/GAPS/notebook-sources/GAPS-Modulo 04 - Timeboxing e Planejamento.txt,0,36835,9208,ok,conhecimento/DSM3/GAPS/notebook-sources-gaps-modulo-04-timeboxing-e-planejamento.md
+DSM3/GAPS,DSM3,GAPS,txt,DSM3/GAPS/notebook-sources/GAPS-Modulo 05 - Atividades e Cronogramas.txt,0,36785,9196,ok,conhecimento/DSM3/GAPS/notebook-sources-gaps-modulo-05-atividades-e-cronogramas.md
+DSM3/GAPS,DSM3,GAPS,txt,DSM3/GAPS/notebook-sources/GAPS-Modulo 06 - AT1 Planejamento e Gestao Agil.txt,0,10313,2578,ok,conhecimento/DSM3/GAPS/notebook-sources-gaps-modulo-06-at1-planejamento-e-gestao-agil.md
+DSM3/GAPS,DSM3,GAPS,txt,DSM3/GAPS/notebook-sources/GAPS-Modulo 07 - Custos e Orcamentos.txt,0,55441,13860,ok,conhecimento/DSM3/GAPS/notebook-sources-gaps-modulo-07-custos-e-orcamentos.md
+DSM3/GAPS,DSM3,GAPS,txt,DSM3/GAPS/notebook-sources/GAPS-Modulo 08 - Gestao de Qualidade.txt,0,34594,8648,ok,conhecimento/DSM3/GAPS/notebook-sources-gaps-modulo-08-gestao-de-qualidade.md
+DSM3/GAPS,DSM3,GAPS,md,DSM3/GAPS/notebook-sources/GAPS-README.md,0,85,21,ok,conhecimento/DSM3/GAPS/notebook-sources-gaps-readme.md
+DSM3/GAPS,DSM3,GAPS,txt,DSM3/GAPS/notebook-sources/GAPS-index-html.txt,0,260,65,ok,conhecimento/DSM3/GAPS/notebook-sources-gaps-index-html.md
+DSM3/GAPS,DSM3,GAPS,txt,DSM3/GAPS/notebook-sources/GAPS-init-py.txt,0,128,32,ok,conhecimento/DSM3/GAPS/notebook-sources-gaps-init-py.md
+DSM3/GAPS,DSM3,GAPS,txt,DSM3/GAPS/notebook-sources/GAPS-pyproject-toml.txt,0,431,107,ok,conhecimento/DSM3/GAPS/notebook-sources-gaps-pyproject-toml.md
+DSM3/GAPS,DSM3,GAPS,txt,DSM3/GAPS/notebook-sources/GAPS-python-version.txt,0,52,13,ok,conhecimento/DSM3/GAPS/notebook-sources-gaps-python-version.md
+DSM3/IHC,DSM3,IHC,pdf,DSM3/IHC/IHC-Aula_01-Introdução à IHC.pdf,25,8920,2230,ok,conhecimento/DSM3/IHC/ihc-aula-01-introducao-a-ihc.md
+DSM3/IHC,DSM3,IHC,pdf,DSM3/IHC/IHC-Aula_02-Conceitos Fundamentais em IHC - Affordances.pdf,17,6804,1701,ok,conhecimento/DSM3/IHC/ihc-aula-02-conceitos-fundamentais-em-ihc-affordances.md
+DSM3/IHC,DSM3,IHC,pdf,"DSM3/IHC/IHC-Aula_03-Conceitos fundamentais IHC - Interação, Interface e Usabilidade.pdf",32,12028,3007,ok,conhecimento/DSM3/IHC/ihc-aula-03-conceitos-fundamentais-ihc-interacao-interface-e-usabilidade.md
+DSM3/IHC,DSM3,IHC,pdf,DSM3/IHC/IHC-Aula_04-Estudo e Pesquisa de Usuário - Criação de Personas.pdf,18,8021,2005,ok,conhecimento/DSM3/IHC/ihc-aula-04-estudo-e-pesquisa-de-usuario-criacao-de-personas.md
+DSM3/ING1,DSM3,ING1,txt,DSM3/ING1/Technology Using a Computer - Haimon Cugler Vieira.txt,0,1211,302,ok,conhecimento/DSM3/ING1/technology-using-a-computer-haimon-cugler-vieira.md
+DSM3/ING1,DSM3,ING1,pdf,DSM3/ING1/Atividade Avaliativa/AT1 - Reading & Grammar Activity - Haimon Cugler Vieira.pdf,1,1173,293,ok,conhecimento/DSM3/ING1/atividade-avaliativa-at1-reading-grammar-activity-haimon-cugler-vieira.md
+DSM3/TP2,DSM3,TP2,py,DSM3/TP2/Atividade Avaliativa/ATV1/Aula 01/exercicio6.py,0,388,97,ok,conhecimento/DSM3/TP2/atividade-avaliativa-atv1-aula-01-exercicio6.md
+DSM3/TP2,DSM3,TP2,py,DSM3/TP2/Atividade Avaliativa/ATV1/Aula 01/exericio2.py,0,202,50,ok,conhecimento/DSM3/TP2/atividade-avaliativa-atv1-aula-01-exericio2.md
+DSM3/TP2,DSM3,TP2,py,DSM3/TP2/Atividade Avaliativa/ATV1/Aula 01/exericio9.py,0,429,107,ok,conhecimento/DSM3/TP2/atividade-avaliativa-atv1-aula-01-exericio9.md
+DSM3/TP2,DSM3,TP2,py,DSM3/TP2/Atividade Avaliativa/ATV1/Aula 02/exercicio4.py,0,223,55,ok,conhecimento/DSM3/TP2/atividade-avaliativa-atv1-aula-02-exercicio4.md
+DSM3/TP2,DSM3,TP2,py,DSM3/TP2/Atividade Avaliativa/ATV1/Aula 02/exercicio5.py,0,885,221,ok,conhecimento/DSM3/TP2/atividade-avaliativa-atv1-aula-02-exercicio5.md
+DSM3/TP2,DSM3,TP2,py,DSM3/TP2/Atividade Avaliativa/ATV1/Aula 02/exercicio6.py,0,726,181,ok,conhecimento/DSM3/TP2/atividade-avaliativa-atv1-aula-02-exercicio6.md
+DSM3/TP2,DSM3,TP2,py,DSM3/TP2/Atividade Avaliativa/ATV1/Aula 02-1/exercicio3.py,0,834,208,ok,conhecimento/DSM3/TP2/atividade-avaliativa-atv1-aula-02-1-exercicio3.md
+DSM3/TP2,DSM3,TP2,py,DSM3/TP2/Atividade Avaliativa/ATV1/Aula 02-1/exercicio6.py,0,660,165,ok,conhecimento/DSM3/TP2/atividade-avaliativa-atv1-aula-02-1-exercicio6.md
+DSM3/TP2,DSM3,TP2,py,DSM3/TP2/Atividade Avaliativa/ATV1/Aula 03/exemplo4forRange.py,0,215,53,ok,conhecimento/DSM3/TP2/atividade-avaliativa-atv1-aula-03-exemplo4forrange.md
+DSM3/TP2,DSM3,TP2,py,DSM3/TP2/Atividade Avaliativa/ATV1/Aula 03/exemplo8for-split.py,0,238,59,ok,conhecimento/DSM3/TP2/atividade-avaliativa-atv1-aula-03-exemplo8for-split.md
+DSM3/TP2,DSM3,TP2,py,DSM3/TP2/Atividade Avaliativa/ATV2/Cliente.py,0,1552,388,ok,conhecimento/DSM3/TP2/atividade-avaliativa-atv2-cliente.md
+DSM3/TP2,DSM3,TP2,py,DSM3/TP2/Atividade Avaliativa/ATV2/Principal.py,0,1768,442,ok,conhecimento/DSM3/TP2/atividade-avaliativa-atv2-principal.md
+DSM3/TP2,DSM3,TP2,py,DSM3/TP2/Atividade Avaliativa/ATV2/Produto.py,0,1525,381,ok,conhecimento/DSM3/TP2/atividade-avaliativa-atv2-produto.md
+DSM3/TP2,DSM3,TP2,py,DSM3/TP2/TP2 - Reposicao/Principal.py,0,262,65,ok,conhecimento/DSM3/TP2/tp2-reposicao-principal.md
+DSM3/TP2,DSM3,TP2,py,DSM3/TP2/TP2 - Reposicao/Produto.py,0,7425,1856,ok,conhecimento/DSM3/TP2/tp2-reposicao-produto.md
+DSM3/TP2,DSM3,TP2,py,DSM3/TP2/aula-01/exemplo1.py,0,117,29,ok,conhecimento/DSM3/TP2/aula-01-exemplo1.md
+DSM3/TP2,DSM3,TP2,py,DSM3/TP2/aula-01/exemplo2.py,0,219,54,ok,conhecimento/DSM3/TP2/aula-01-exemplo2.md
+DSM3/TP2,DSM3,TP2,py,DSM3/TP2/aula-01/exemplo3.py,0,242,60,ok,conhecimento/DSM3/TP2/aula-01-exemplo3.md
+DSM3/TP2,DSM3,TP2,py,DSM3/TP2/aula-01/exemplo4.py,0,160,40,ok,conhecimento/DSM3/TP2/aula-01-exemplo4.md
+DSM3/TP2,DSM3,TP2,py,DSM3/TP2/aula-01/exercicios/exercicio1.py,0,143,35,ok,conhecimento/DSM3/TP2/aula-01-exercicios-exercicio1.md
+DSM3/TP2,DSM3,TP2,py,DSM3/TP2/aula-01/exercicios/exercicio2.1.py,0,252,63,ok,conhecimento/DSM3/TP2/aula-01-exercicios-exercicio2-1.md
+DSM3/TP2,DSM3,TP2,py,DSM3/TP2/aula-01/exercicios/exercicio2.2.py,0,399,99,ok,conhecimento/DSM3/TP2/aula-01-exercicios-exercicio2-2.md
+DSM3/TP2,DSM3,TP2,py,DSM3/TP2/aula-01/exercicios/exercicio2.3.py,0,136,34,ok,conhecimento/DSM3/TP2/aula-01-exercicios-exercicio2-3.md
+DSM3/TP2,DSM3,TP2,py,DSM3/TP2/aula-01/exercicios/exercicio2.4.py,0,216,54,ok,conhecimento/DSM3/TP2/aula-01-exercicios-exercicio2-4.md
+DSM3/TP2,DSM3,TP2,py,DSM3/TP2/aula-01/exercicios/exercicio2.5.py,0,372,93,ok,conhecimento/DSM3/TP2/aula-01-exercicios-exercicio2-5.md
+DSM3/TP2,DSM3,TP2,py,DSM3/TP2/aula-01/exercicios/exercicio3.py,0,145,36,ok,conhecimento/DSM3/TP2/aula-01-exercicios-exercicio3.md
+DSM3/TP2,DSM3,TP2,py,DSM3/TP2/aula-01/exercicios/exercicio4.py,0,155,38,ok,conhecimento/DSM3/TP2/aula-01-exercicios-exercicio4.md
+DSM3/TP2,DSM3,TP2,py,DSM3/TP2/aula-01/exercicios/exercicio5.py,0,323,80,ok,conhecimento/DSM3/TP2/aula-01-exercicios-exercicio5.md
+DSM3/TP2,DSM3,TP2,py,DSM3/TP2/aula-01/exercicios/exercicio6.py,0,388,97,ok,conhecimento/DSM3/TP2/aula-01-exercicios-exercicio6.md
+DSM3/TP2,DSM3,TP2,py,DSM3/TP2/aula-01/exercicios/exercicio7.py,0,145,36,ok,conhecimento/DSM3/TP2/aula-01-exercicios-exercicio7.md
+DSM3/TP2,DSM3,TP2,py,DSM3/TP2/aula-01/exercicios/exercicio8.py,0,257,64,ok,conhecimento/DSM3/TP2/aula-01-exercicios-exercicio8.md
+DSM3/TP2,DSM3,TP2,py,DSM3/TP2/aula-01/exercicios/exericio2.py,0,202,50,ok,conhecimento/DSM3/TP2/aula-01-exercicios-exericio2.md
+DSM3/TP2,DSM3,TP2,py,DSM3/TP2/aula-01/exercicios/exericio9.py,0,429,107,ok,conhecimento/DSM3/TP2/aula-01-exercicios-exericio9.md
+DSM3/TP2,DSM3,TP2,py,DSM3/TP2/aula-02-1-case/exemplo1case.py,0,241,60,ok,conhecimento/DSM3/TP2/aula-02-1-case-exemplo1case.md
+DSM3/TP2,DSM3,TP2,py,DSM3/TP2/aula-02-1-case/exemplo2case.py,0,205,51,ok,conhecimento/DSM3/TP2/aula-02-1-case-exemplo2case.md
+DSM3/TP2,DSM3,TP2,py,DSM3/TP2/aula-02-1-case/exemplo3case.py,0,303,75,ok,conhecimento/DSM3/TP2/aula-02-1-case-exemplo3case.md
+DSM3/TP2,DSM3,TP2,py,DSM3/TP2/aula-02-1-case/exercicios/exercicio1.py,0,168,42,ok,conhecimento/DSM3/TP2/aula-02-1-case-exercicios-exercicio1.md
+DSM3/TP2,DSM3,TP2,py,DSM3/TP2/aula-02-1-case/exercicios/exercicio2.py,0,325,81,ok,conhecimento/DSM3/TP2/aula-02-1-case-exercicios-exercicio2.md
+DSM3/TP2,DSM3,TP2,py,DSM3/TP2/aula-02-1-case/exercicios/exercicio3.py,0,834,208,ok,conhecimento/DSM3/TP2/aula-02-1-case-exercicios-exercicio3.md
+DSM3/TP2,DSM3,TP2,py,DSM3/TP2/aula-02-1-case/exercicios/exercicio4.py,0,566,141,ok,conhecimento/DSM3/TP2/aula-02-1-case-exercicios-exercicio4.md
+DSM3/TP2,DSM3,TP2,py,DSM3/TP2/aula-02-1-case/exercicios/exercicio5.py,0,453,113,ok,conhecimento/DSM3/TP2/aula-02-1-case-exercicios-exercicio5.md
+DSM3/TP2,DSM3,TP2,py,DSM3/TP2/aula-02-1-case/exercicios/exercicio6.py,0,660,165,ok,conhecimento/DSM3/TP2/aula-02-1-case-exercicios-exercicio6.md
+DSM3/TP2,DSM3,TP2,py,DSM3/TP2/aula-02-if/exemplo1if.py,0,275,68,ok,conhecimento/DSM3/TP2/aula-02-if-exemplo1if.md
+DSM3/TP2,DSM3,TP2,py,DSM3/TP2/aula-02-if/exemplo2if.py,0,357,89,ok,conhecimento/DSM3/TP2/aula-02-if-exemplo2if.md
+DSM3/TP2,DSM3,TP2,py,DSM3/TP2/aula-02-if/exemplo3if.py,0,452,113,ok,conhecimento/DSM3/TP2/aula-02-if-exemplo3if.md
+DSM3/TP2,DSM3,TP2,py,DSM3/TP2/aula-02-if/exercicios/exercicio1.py,0,262,65,ok,conhecimento/DSM3/TP2/aula-02-if-exercicios-exercicio1.md
+DSM3/TP2,DSM3,TP2,py,DSM3/TP2/aula-02-if/exercicios/exercicio2.py,0,395,98,ok,conhecimento/DSM3/TP2/aula-02-if-exercicios-exercicio2.md
+DSM3/TP2,DSM3,TP2,py,DSM3/TP2/aula-02-if/exercicios/exercicio3.py,0,330,82,ok,conhecimento/DSM3/TP2/aula-02-if-exercicios-exercicio3.md
+DSM3/TP2,DSM3,TP2,py,DSM3/TP2/aula-02-if/exercicios/exercicio4.py,0,223,55,ok,conhecimento/DSM3/TP2/aula-02-if-exercicios-exercicio4.md
+DSM3/TP2,DSM3,TP2,py,DSM3/TP2/aula-02-if/exercicios/exercicio5.py,0,885,221,ok,conhecimento/DSM3/TP2/aula-02-if-exercicios-exercicio5.md
+DSM3/TP2,DSM3,TP2,py,DSM3/TP2/aula-02-if/exercicios/exercicio6.py,0,726,181,ok,conhecimento/DSM3/TP2/aula-02-if-exercicios-exercicio6.md
+DSM3/TP2,DSM3,TP2,py,DSM3/TP2/aula-02-if/exercicios/exercicio7.py,0,510,127,ok,conhecimento/DSM3/TP2/aula-02-if-exercicios-exercicio7.md
+DSM3/TP2,DSM3,TP2,py,DSM3/TP2/aula-03-while-for/exemplo1while.py,0,171,42,ok,conhecimento/DSM3/TP2/aula-03-while-for-exemplo1while.md
+DSM3/TP2,DSM3,TP2,py,DSM3/TP2/aula-03-while-for/exemplo2for.py,0,306,76,ok,conhecimento/DSM3/TP2/aula-03-while-for-exemplo2for.md
+DSM3/TP2,DSM3,TP2,py,DSM3/TP2/aula-03-while-for/exemplo3for.py,0,295,73,ok,conhecimento/DSM3/TP2/aula-03-while-for-exemplo3for.md
+DSM3/TP2,DSM3,TP2,py,DSM3/TP2/aula-03-while-for/exemplo4forRange.py,0,215,53,ok,conhecimento/DSM3/TP2/aula-03-while-for-exemplo4forrange.md
+DSM3/TP2,DSM3,TP2,py,DSM3/TP2/aula-03-while-for/exemplo5forRange.py,0,121,30,ok,conhecimento/DSM3/TP2/aula-03-while-for-exemplo5forrange.md
+DSM3/TP2,DSM3,TP2,py,DSM3/TP2/aula-03-while-for/exemplo6for-vetor.py,0,345,86,ok,conhecimento/DSM3/TP2/aula-03-while-for-exemplo6for-vetor.md
+DSM3/TP2,DSM3,TP2,py,DSM3/TP2/aula-03-while-for/exemplo7for-par.py,0,129,32,ok,conhecimento/DSM3/TP2/aula-03-while-for-exemplo7for-par.md
+DSM3/TP2,DSM3,TP2,py,DSM3/TP2/aula-03-while-for/exemplo8for-split.py,0,238,59,ok,conhecimento/DSM3/TP2/aula-03-while-for-exemplo8for-split.md
+DSM3/TP2,DSM3,TP2,py,DSM3/TP2/aula-03-while-for/exercicios/exercicio1.py,0,77,19,ok,conhecimento/DSM3/TP2/aula-03-while-for-exercicios-exercicio1.md
+DSM3/TP2,DSM3,TP2,py,DSM3/TP2/aula-03-while-for/exercicios/exercicio10.py,0,70,17,ok,conhecimento/DSM3/TP2/aula-03-while-for-exercicios-exercicio10.md
+DSM3/TP2,DSM3,TP2,py,DSM3/TP2/aula-03-while-for/exercicios/exercicio11.py,0,0,0,vazio,conhecimento/DSM3/TP2/aula-03-while-for-exercicios-exercicio11.md
+DSM3/TP2,DSM3,TP2,py,DSM3/TP2/aula-03-while-for/exercicios/exercicio2.py,0,126,31,ok,conhecimento/DSM3/TP2/aula-03-while-for-exercicios-exercicio2.md
+DSM3/TP2,DSM3,TP2,py,DSM3/TP2/aula-03-while-for/exercicios/exercicio3.py,0,148,37,ok,conhecimento/DSM3/TP2/aula-03-while-for-exercicios-exercicio3.md
+DSM3/TP2,DSM3,TP2,py,DSM3/TP2/aula-03-while-for/exercicios/exercicio4.py,0,336,84,ok,conhecimento/DSM3/TP2/aula-03-while-for-exercicios-exercicio4.md
+DSM3/TP2,DSM3,TP2,py,DSM3/TP2/aula-03-while-for/exercicios/exercicio5.py,0,250,62,ok,conhecimento/DSM3/TP2/aula-03-while-for-exercicios-exercicio5.md
+DSM3/TP2,DSM3,TP2,py,DSM3/TP2/aula-03-while-for/exercicios/exercicio6.py,0,50,12,ok,conhecimento/DSM3/TP2/aula-03-while-for-exercicios-exercicio6.md
+DSM3/TP2,DSM3,TP2,py,DSM3/TP2/aula-03-while-for/exercicios/exercicio7.py,0,217,54,ok,conhecimento/DSM3/TP2/aula-03-while-for-exercicios-exercicio7.md
+DSM3/TP2,DSM3,TP2,py,DSM3/TP2/aula-03-while-for/exercicios/exercicio8.py,0,271,67,ok,conhecimento/DSM3/TP2/aula-03-while-for-exercicios-exercicio8.md
+DSM3/TP2,DSM3,TP2,py,DSM3/TP2/aula-03-while-for/exercicios/exercicio9.py,0,53,13,ok,conhecimento/DSM3/TP2/aula-03-while-for-exercicios-exercicio9.md
+DSM3/TP2,DSM3,TP2,py,DSM3/TP2/aula01-1/exemploMedia.py,0,272,68,ok,conhecimento/DSM3/TP2/aula01-1-exemplomedia.md
+DSM3/TP2,DSM3,TP2,py,DSM3/TP2/aula04_OO/Exemplo1O_O.py,0,473,118,ok,conhecimento/DSM3/TP2/aula04-oo-exemplo1o-o.md
+DSM3/TP2,DSM3,TP2,py,DSM3/TP2/aula04_OO/Exemplo2O_O/Principal.py,0,532,133,ok,conhecimento/DSM3/TP2/aula04-oo-exemplo2o-o-principal.md
+DSM3/TP2,DSM3,TP2,py,DSM3/TP2/aula04_OO/Exemplo2O_O/Produtos.py,0,1546,386,ok,conhecimento/DSM3/TP2/aula04-oo-exemplo2o-o-produtos.md
+DSM3/TP2,DSM3,TP2,py,DSM3/TP2/aula04_OO/exercicios/Contato/Contato.py,0,1209,302,ok,conhecimento/DSM3/TP2/aula04-oo-exercicios-contato-contato.md
+DSM3/TP2,DSM3,TP2,py,DSM3/TP2/aula04_OO/exercicios/Contato/Principal.py,0,222,55,ok,conhecimento/DSM3/TP2/aula04-oo-exercicios-contato-principal.md
+DSM3/TP2,DSM3,TP2,py,DSM3/TP2/aula04_OO/exercicios/Fornecedor/Fornecedor.py,0,1155,288,ok,conhecimento/DSM3/TP2/aula04-oo-exercicios-fornecedor-fornecedor.md
+DSM3/TP2,DSM3,TP2,py,DSM3/TP2/aula04_OO/exercicios/Fornecedor/Principal.py,0,246,61,ok,conhecimento/DSM3/TP2/aula04-oo-exercicios-fornecedor-principal.md
+DSM3/TP2,DSM3,TP2,py,DSM3/TP2/aula04_OO/exercicios/Loja/Loja.py,0,1944,486,ok,conhecimento/DSM3/TP2/aula04-oo-exercicios-loja-loja.md
+DSM3/TP2,DSM3,TP2,py,DSM3/TP2/aula04_OO/exercicios/Loja/Principal.py,0,241,60,ok,conhecimento/DSM3/TP2/aula04-oo-exercicios-loja-principal.md
+DSM3/TP2,DSM3,TP2,py,DSM3/TP2/aula04_OO/exercicios/Matematica/Matematica.py,0,1189,297,ok,conhecimento/DSM3/TP2/aula04-oo-exercicios-matematica-matematica.md
+DSM3/TP2,DSM3,TP2,py,DSM3/TP2/aula04_OO/exercicios/Matematica/Principal.py,0,276,69,ok,conhecimento/DSM3/TP2/aula04-oo-exercicios-matematica-principal.md
+DSM3/TP2,DSM3,TP2,py,DSM3/TP2/aula04_OO/exercicios/Passagem/Passagem.py,0,2381,595,ok,conhecimento/DSM3/TP2/aula04-oo-exercicios-passagem-passagem.md
+DSM3/TP2,DSM3,TP2,py,DSM3/TP2/aula04_OO/exercicios/Passagem/Principal.py,0,337,84,ok,conhecimento/DSM3/TP2/aula04-oo-exercicios-passagem-principal.md
+DSM3/TP2,DSM3,TP2,py,DSM3/TP2/aula05-tkinter-interface-grafica/exemplo1_telasSimples.py,0,1076,269,ok,conhecimento/DSM3/TP2/aula05-tkinter-interface-grafica-exemplo1-telassimples.md
+DSM3/TP2,DSM3,TP2,py,DSM3/TP2/aula05-tkinter-interface-grafica/exemplo_calculo_OO/Calculo.py,0,2392,598,ok,conhecimento/DSM3/TP2/aula05-tkinter-interface-grafica-exemplo-calculo-oo-calculo.md
+DSM3/TP2,DSM3,TP2,py,DSM3/TP2/aula05-tkinter-interface-grafica/exemplo_calculo_OO/Principal.py,0,188,47,ok,conhecimento/DSM3/TP2/aula05-tkinter-interface-grafica-exemplo-calculo-oo-principal.md
+DSM3/TP2,DSM3,TP2,txt,DSM3/TP2/notebook-sources/TP2-ATV1.txt,0,5554,1388,ok,conhecimento/DSM3/TP2/notebook-sources-tp2-atv1.md
+DSM3/TP2,DSM3,TP2,txt,DSM3/TP2/notebook-sources/TP2-ATV2.txt,0,5035,1258,ok,conhecimento/DSM3/TP2/notebook-sources-tp2-atv2.md
+DSM3/TP2,DSM3,TP2,txt,DSM3/TP2/notebook-sources/TP2-Aula-01.txt,0,5317,1329,ok,conhecimento/DSM3/TP2/notebook-sources-tp2-aula-01.md
+DSM3/TP2,DSM3,TP2,txt,DSM3/TP2/notebook-sources/TP2-Aula-02-1-case.txt,0,4321,1080,ok,conhecimento/DSM3/TP2/notebook-sources-tp2-aula-02-1-case.md
+DSM3/TP2,DSM3,TP2,txt,DSM3/TP2/notebook-sources/TP2-Aula-02-if.txt,0,5001,1250,ok,conhecimento/DSM3/TP2/notebook-sources-tp2-aula-02-if.md
+DSM3/TP2,DSM3,TP2,txt,DSM3/TP2/notebook-sources/TP2-Aula-03-while-for.txt,0,4678,1169,ok,conhecimento/DSM3/TP2/notebook-sources-tp2-aula-03-while-for.md
+DSM3/TP2,DSM3,TP2,txt,DSM3/TP2/notebook-sources/TP2-Aula01-1.txt,0,322,80,ok,conhecimento/DSM3/TP2/notebook-sources-tp2-aula01-1.md
+DSM3/TP2,DSM3,TP2,txt,DSM3/TP2/notebook-sources/TP2-Aula04_OO.txt,0,12604,3151,ok,conhecimento/DSM3/TP2/notebook-sources-tp2-aula04-oo.md
+DSM3/TP2,DSM3,TP2,txt,DSM3/TP2/notebook-sources/TP2-Aula05-tkinter-interface-grafica.txt,0,3919,979,ok,conhecimento/DSM3/TP2/notebook-sources-tp2-aula05-tkinter-interface-grafica.md

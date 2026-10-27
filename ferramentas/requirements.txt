@@ -1,0 +1,8 @@
+# O pipeline usa apenas a biblioteca padrão do Python 3.10+.
+# Opcional (melhora a extração de HTML):
+# beautifulsoup4>=4.12
+#
+# Requisitos de sistema:
+#   poppler-utils  -> pdftotext, pdfinfo
+#
+# Nada aqui é obrigatório para o piloto BD2.

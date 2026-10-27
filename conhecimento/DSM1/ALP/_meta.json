@@ -1,0 +1,172 @@
+{
+  "schema": 1,
+  "disciplina": "DSM1/ALP",
+  "sigla": "ALP",
+  "semestre": "DSM1",
+  "nome": "Algoritmos e Lógica de Programação",
+  "skill": "dsm-alp",
+  "tier": 3,
+  "dialeto": "Portugol/VisuAlg 3.0.7 e C",
+  "atualizado_em": "2026-10-24",
+  "corpus": {
+    "arquivos_md": 28,
+    "tokens_aproximados": 34991,
+    "pdfs": 3,
+    "paginas_pdf": 7,
+    "fontes_com_gabarito": [],
+    "fontes_sem_gabarito": [
+      "listas-de-exercicios-lista-01-pseudocodigo-docx.md (10 exercícios, sem gabarito)",
+      "slides-aula-01 (práticas objetivas 22-30, sem gabarito)",
+      "slides-aula-02 (práticas 38-42, sem gabarito)",
+      "slides-aula-04 (prática das latas de tinta 35-36, sem gabarito)"
+    ]
+  },
+  "topicos": [
+    "Lógica, coerência e validade dos argumentos",
+    "Raciocínio como processo lógico",
+    "Lógica de programação",
+    "Etapas: problema, solução, algoritmo, programa e resultado",
+    "Definição de algoritmo",
+    "Propriedades: completo, sem redundância, determinístico e finito",
+    "Entrada, processamento e saída",
+    "Descrição narrativa, fluxograma e Portugol",
+    "Algoritmo versus programa",
+    "Linguagem de programação e ambiente",
+    "Programa fonte, compilação, código objeto e linkedição",
+    "Linguagem C: histórico e características",
+    "Estrutura de um programa em C (#include, main, return)",
+    "Tipos int, float, double e char",
+    "Operadores aritméticos, relacionais e lógicos em C",
+    "scanf e printf",
+    "VisuAlg: formato básico, tipos e declaração de variáveis",
+    "Vetores e matrizes no VisuAlg",
+    "Constantes, atribuição com <- e operadores do Portugol",
+    "Saída com escreva/escreval e entrada com leia",
+    "Condicional se/senao e seleção escolha/caso/outrocaso",
+    "Repetição para/ enquanto/repita e interrompa",
+    "Procedimentos, funções, parâmetros por valor e referência",
+    "Recursão no VisuAlg",
+    "Funções embutidas numéricas, trigonométricas e de string",
+    "Comandos de apoio: aleatorio, arquivo, timer, pausa, debug, eco, cronometro, limpatela",
+    "Lista 01: estrutura sequencial em pseudocódigo e C"
+  ],
+  "topicos_ausentes_no_corpus": [
+    "Aulas 5 a 20 do plano de ensino sem slides",
+    "Estrutura condicional em slides (só sintaxe no Help)",
+    "Estruturas de repetição em slides (só sintaxe no Help)",
+    "Vetores e matrizes em slides (só declaração no Help)",
+    "Teste de mesa e testes unitários",
+    "Git e GitHub",
+    "Memória e endereçamento",
+    "Sistemas de numeração e conversão de bases",
+    "Análise léxica, sintática e semântica",
+    "Estilo de codificação",
+    "Ponteiros, struct e alocação dinâmica em C",
+    "Leitura e escrita de arquivos em C",
+    "Gabarito oficial de qualquer exercício"
+  ],
+  "fontes_principais": [
+    {
+      "arquivo": "conhecimento/DSM1/ALP/plano-de-ensino-plano-de-ensino-alp.md",
+      "original": "DSM1/ALP/PLANO DE ENSINO/PLANO DE ENSINO - ALP.PDF",
+      "paginas": 3,
+      "papel": "Ementa, avaliação, 20 aulas e bibliografia"
+    },
+    {
+      "arquivo": "conhecimento/DSM1/ALP/slides-aula-01-etapas-para-a-resolucao-de-problemas-1.md",
+      "original": "DSM1/ALP/SLIDES/AULA 01 - ETAPAS PARA A RESOLUÇAO DE PROBLEMAS (1).pptx",
+      "paginas": 0,
+      "papel": "Lógica, raciocínio e etapas de resolução"
+    },
+    {
+      "arquivo": "conhecimento/DSM1/ALP/slides-aula-02-introducao-aos-algoritmos-e-suas-formas-de-representacao.md",
+      "original": "DSM1/ALP/SLIDES/AULA 02 - INTRODUÇÃO AOS ALGORITMOS E SUAS FORMAS DE REPRESENTAÇÃO.pptx",
+      "paginas": 0,
+      "papel": "Definição, propriedades e três formas de representação"
+    },
+    {
+      "arquivo": "conhecimento/DSM1/ALP/slides-aula-03-introducao-as-linguagens-de-programacao.md",
+      "original": "DSM1/ALP/SLIDES/AULA 03 - INTRODUÇÃO AS LINGUAGENS DE PROGRAMAÇÃO.pptx",
+      "paginas": 0,
+      "papel": "Algoritmo versus programa, linguagem e ambiente"
+    },
+    {
+      "arquivo": "conhecimento/DSM1/ALP/slides-aula-04-tipos-de-dados-variaveis-e-operadores.md",
+      "original": "DSM1/ALP/SLIDES/AULA 04 - TIPOS DE DADOS, VARIÁVEIS E OPERADORES.pptx",
+      "paginas": 0,
+      "papel": "Compilação, linguagem C, tipos, operadores, scanf e printf"
+    },
+    {
+      "arquivo": "conhecimento/DSM1/ALP/listas-de-exercicios-lista-01-pseudocodigo-docx.md",
+      "original": "DSM1/ALP/LISTAS DE EXERCÍCIOS/Lista 01 - Pseudocódigo.docx.pdf",
+      "paginas": 2,
+      "papel": "10 exercícios de estrutura sequencial, sem gabarito"
+    },
+    {
+      "arquivo": "conhecimento/DSM1/ALP/programas-visualg3-0-7-visualg3-0-7-help-linguagem.md",
+      "original": "DSM1/ALP/PROGRAMAS/visualg3.0.7/visualg3.0.7/help/linguagem.htm",
+      "paginas": 0,
+      "papel": "Formato básico, tipos, variáveis, vetores e atribuição"
+    },
+    {
+      "arquivo": "conhecimento/DSM1/ALP/programas-visualg3-0-7-visualg3-0-7-help-linguagem2.md",
+      "original": "DSM1/ALP/PROGRAMAS/visualg3.0.7/visualg3.0.7/help/linguagem2.htm",
+      "paginas": 0,
+      "papel": "Operadores, saída, entrada, se e escolha"
+    },
+    {
+      "arquivo": "conhecimento/DSM1/ALP/programas-visualg3-0-7-visualg3-0-7-help-linguagem3.md",
+      "original": "DSM1/ALP/PROGRAMAS/visualg3.0.7/visualg3.0.7/help/linguagem3.htm",
+      "paginas": 0,
+      "papel": "para, enquanto, repita e interrompa"
+    },
+    {
+      "arquivo": "conhecimento/DSM1/ALP/programas-visualg3-0-7-visualg3-0-7-help-linguagem4.md",
+      "original": "DSM1/ALP/PROGRAMAS/visualg3.0.7/visualg3.0.7/help/linguagem4.htm",
+      "paginas": 0,
+      "papel": "Procedimentos, funções, referência e recursão"
+    },
+    {
+      "arquivo": "conhecimento/DSM1/ALP/programas-visualg3-0-7-visualg3-0-7-help-linguagem5.md",
+      "original": "DSM1/ALP/PROGRAMAS/visualg3.0.7/visualg3.0.7/help/linguagem5.htm",
+      "paginas": 0,
+      "papel": "Comandos de apoio (aleatorio, timer, pausa, debug, eco)"
+    },
+    {
+      "arquivo": "conhecimento/DSM1/ALP/programas-visualg3-0-7-visualg3-0-7-help-funcoes.md",
+      "original": "DSM1/ALP/PROGRAMAS/visualg3.0.7/visualg3.0.7/help/funcoes.htm",
+      "paginas": 0,
+      "papel": "Funções numéricas, trigonométricas e de string"
+    },
+    {
+      "arquivo": "conhecimento/DSM1/ALP/programas-visualg3-0-7-visualg3-0-7-relacao-dos-comandos-do-visualg-3-0.md",
+      "original": "DSM1/ALP/PROGRAMAS/visualg3.0.7/visualg3.0.7/RELAÇÃO DOS COMANDOS DO VISUALG 3.0.txt",
+      "paginas": 0,
+      "papel": "Lista de comandos e abreviações aceitas"
+    }
+  ],
+  "avisos_de_fidelidade": [
+    "Os 4 PPTX não têm paginação; citar 'p. N' para eles é invenção. Cite o slide.",
+    "Os 23 arquivos do pacote VisuAlg não são material da Fatec: são a documentação do programa. Cite por seção.",
+    "O Help do VisuAlg perdeu acentos na extração ('variveis', 'funo', 'lgico'); é artefato do arquivo, não erro de conteúdo. Buscar sem acento.",
+    "help-linguagem4 enuncia 4 + 9 = 13, mas o código usa 'm <- -9': o resultado real é -5.",
+    "slides-aula-04, slide 7, escreve 'Likeeditor' em vez de 'linkeditor'.",
+    "Lista 01, exercício 2: pede conversão para m/h mas usa V * 0,62, que dá milhas/h.",
+    "Lista 01, exercício 4: pede F -> C mas entrega a fórmula inversa (F = C * 1,8 + 32).",
+    "A Lista 01 não tem gabarito; os itens 9 e 10 pedem C, apesar do título 'Pseudocódigo'.",
+    "Vários slides só têm imagem (aula 02: 24, 25, 28, 31, 34, 35; aula 04: 5, 8, 16, 17, 21, 23, 25, 28, 29, 31, 33, 37); o texto não descreve o conteúdo.",
+    "As respostas das práticas objetivas (Paciência 24, setembro, alternativa E, alternativa A=8) são derivadas, não gabarito.",
+    "help-autocomp e help-refer são páginas de índice/atalho; help-menu, help-objetivos e menu-do-visualg não são conteúdo didático.",
+    "leia-me, leiame e readme são o mesmo texto sobre instalação.",
+    "listas.txt e help/listas.txt são massa de dados interna (meses, dias, estados), não material de aula."
+  ],
+  "avaliacao": {
+    "evals": "evals/dsm-alp/evals.json",
+    "perguntas": 10,
+    "metrica": "recall@5 da fonte mínima"
+  },
+  "atualizacao": {
+    "comando": "python3 ferramentas/extrair.py --disciplina DSM1/ALP && python3 ferramentas/indexar.py",
+    "observacao": "Nunca editar os arquivos de DSM1/ALP; a fonte da verdade continua sendo o original."
+  }
+}

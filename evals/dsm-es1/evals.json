@@ -1,0 +1,72 @@
+{
+  "skill": "dsm-es1",
+  "disciplina": "DSM1/ES1",
+  "descricao": "Perguntas de recuperação para Engenharia de Software I. Cada item exige que a fonte mínima apareça no top-5 da busca.",
+  "perguntas": [
+    {
+      "id": "es1-01",
+      "prompt": "Quais são as quatro atividades fundamentais da engenharia de software?",
+      "fonte_minima": [
+        "conhecimento/DSM1/ES1/materiais-aula-01-2025.md",
+        "conhecimento/DSM1/ES1/materiais-aula-02-2025.md"
+      ],
+      "resposta_esperada": "Especificação, desenvolvimento, validação e evolução do software."
+    },
+    {
+      "id": "es1-02",
+      "prompt": "Qual a diferença entre produto genérico e software personalizado?",
+      "fonte_minima": [
+        "conhecimento/DSM1/ES1/materiais-aula-01-2025.md"
+      ],
+      "resposta_esperada": "Genérico é vendido no mercado para qualquer cliente; personalizado é feito sob medida para um cliente."
+    },
+    {
+      "id": "es1-03",
+      "prompt": "Quais são as fases do modelo em cascata?",
+      "fonte_minima": [
+        "conhecimento/DSM1/ES1/materiais-aula-03-2025.md"
+      ],
+      "resposta_esperada": "Requisitos, projeto, implementação e teste de unidade, integração e teste de sistema, operação e manutenção."
+    },
+    {
+      "id": "es1-04",
+      "prompt": "Quais são as vantagens do desenvolvimento incremental em relação ao cascata?",
+      "fonte_minima": [
+        "conhecimento/DSM1/ES1/materiais-aula-03-2025.md"
+      ],
+      "resposta_esperada": "Menor custo de mudança, feedback mais fácil do cliente e entrega antecipada de software útil."
+    },
+    {
+      "id": "es1-05",
+      "prompt": "Quais são os nove blocos do Canvas e as quatro perguntas que os agrupam?",
+      "fonte_minima": [
+        "conhecimento/DSM1/ES1/materiais-aula-04-2025-canvas.md"
+      ],
+      "resposta_esperada": "Proposta de valor; segmento, canais e relacionamento; recursos, atividades e parcerias; receitas e custos."
+    },
+    {
+      "id": "es1-06",
+      "prompt": "Quais atributos definem um bom software?",
+      "fonte_minima": [
+        "conhecimento/DSM1/ES1/materiais-aula-01-2025.md"
+      ],
+      "resposta_esperada": "Aceitabilidade, dependabilidade e segurança, eficiência e manutenibilidade."
+    },
+    {
+      "id": "es1-07",
+      "prompt": "O que é o modelo de processo de software ou SDLC?",
+      "fonte_minima": [
+        "conhecimento/DSM1/ES1/materiais-aula-03-2025.md"
+      ],
+      "resposta_esperada": "É uma representação simplificada do processo de software, que mostra o processo de uma perspectiva e fornece informação parcial."
+    },
+    {
+      "id": "es1-08",
+      "prompt": "Quais são as etapas do processo de software baseado em reuso?",
+      "fonte_minima": [
+        "conhecimento/DSM1/ES1/materiais-aula-03-2025.md"
+      ],
+      "resposta_esperada": "Especificação, descoberta e avaliação, refinamento dos requisitos, configuração da aplicação e adaptação/integração dos componentes."
+    }
+  ]
+}

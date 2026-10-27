@@ -1,0 +1,30 @@
+---
+disciplina: DSM2/TPI
+titulo: IndexController
+fonte: DSM2/TPI/Spring/Exercicios/exercicio01/src/main/java/com/example/exercicio01/controller/IndexController.java
+tipo: java
+paginas: 0
+extraido_em: 2026-10-24
+---
+
+```java
+package com.example.exercicio01.controller;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+
+@Controller
+public class IndexController {
+
+    @GetMapping("/produto")
+    public String home(Model model){
+        model.addAttribute("nomeProduto", "Coca-cola");
+        model.addAttribute("preco", 2.98);
+        model.addAttribute("descricao", "Bebida");
+
+        return "produto";
+    }
+
+}
+```

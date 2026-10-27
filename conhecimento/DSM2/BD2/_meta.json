@@ -1,0 +1,117 @@
+{
+  "schema": 1,
+  "disciplina": "DSM2/BD2",
+  "sigla": "BD2",
+  "semestre": "DSM2",
+  "nome": "Banco de Dados II",
+  "skill": "dsm-bd2",
+  "tier": 1,
+  "dialeto": "MySQL",
+  "atualizado_em": "2026-10-24",
+  "corpus": {
+    "arquivos_md": 16,
+    "tokens_aproximados": 22781,
+    "pdfs": 3,
+    "paginas_pdf": 23,
+    "fontes_com_gabarito": [
+      "script-rh.md",
+      "exercicio-atividade-1-n1-haimon-cugler-vieira.md",
+      "script-escola.md",
+      "script-agroverde.md",
+      "script-join.md",
+      "script-restricoes.md",
+      "script-procedure.md"
+    ],
+    "fontes_sem_gabarito": [
+      "aula02-consultas-basicas-sql.md",
+      "aula06-lista-de-exercicios-functions.md",
+      "atividade-mysql.md"
+    ]
+  },
+  "topicos": [
+    "DDL: CREATE DATABASE, CREATE TABLE, ALTER TABLE",
+    "Tipos de dados: INT, VARCHAR, DECIMAL, DATE, BOOLEAN, ENUM",
+    "Constraints: PRIMARY KEY, FOREIGN KEY, UNIQUE, CHECK, NOT NULL, DEFAULT, AUTO_INCREMENT, ON DELETE CASCADE",
+    "DML: INSERT (um e vários registros), UPDATE",
+    "SELECT: colunas, alias, SELECT *",
+    "WHERE: =, !=, <>, >, <, >=, <=, AND, OR, NOT, IN, BETWEEN, LIKE, IS NULL, IS NOT NULL",
+    "ORDER BY (ASC/DESC) e LIMIT",
+    "JOIN: INNER, LEFT, RIGHT, equi join, join implícito por vírgula, auto-relacionamento",
+    "Funções de agregação: COUNT, SUM, AVG (com GROUP BY/HAVING)",
+    "GROUP BY, HAVING e ordem das cláusulas",
+    "Funções nativas de texto: UPPER, LOWER, CONCAT, LENGTH, LEFT, SUBSTRING, LOCATE, RPAD, REPLACE, FORMAT",
+    "Funções nativas numéricas: ROUND, FLOOR, CEIL, MOD",
+    "Funções nativas de data: CURDATE, DATE_FORMAT, TIMESTAMPDIFF, DATEDIFF, DATE_ADD, YEAR, MONTH",
+    "Condicionais: IF, IFNULL, COALESCE, NULLIF, CASE",
+    "Stored functions: CREATE FUNCTION, DELIMITER, DETERMINISTIC, DECLARE, RETURN",
+    "Stored procedures: CREATE PROCEDURE, parâmetros IN, CALL",
+    "Triggers: CREATE TRIGGER, AFTER INSERT, FOR EACH ROW, NEW",
+    "Views: CREATE VIEW com JOIN",
+    "Gerenciamento: SHOW FUNCTION STATUS, SHOW CREATE FUNCTION, DROP FUNCTION IF EXISTS"
+  ],
+  "topicos_ausentes_no_corpus": [
+    "Normalização (1FN, 2FN, 3FN)",
+    "Subconsultas (subqueries)",
+    "Window functions",
+    "Transações (COMMIT, ROLLBACK) e controle de concorrência",
+    "Índices (CREATE INDEX) e otimização com EXPLAIN",
+    "DELETE (aparece apenas como próximo passo sugerido, sem exemplos)",
+    "UPDATE (aparece em procedure, sem aula dedicada)",
+    "UNION, DISTINCT e HAVING sem alias",
+    "Modelagem conceitual (MER) — pertence a MBD/DSM1"
+  ],
+  "fontes_principais": [
+    {
+      "arquivo": "conhecimento/DSM2/BD2/aula02-consultas-basicas-sql.md",
+      "original": "DSM2/BD2/Aula02_Consultas_Básicas_SQL.pdf",
+      "paginas": 7,
+      "papel": "Aula base de CREATE, INSERT, SELECT e WHERE"
+    },
+    {
+      "arquivo": "conhecimento/DSM2/BD2/script-rh.md",
+      "original": "DSM2/BD2/script RH.sql",
+      "paginas": null,
+      "papel": "Funções nativas, stored functions e gabarito da lista AULA06"
+    },
+    {
+      "arquivo": "conhecimento/DSM2/BD2/script-procedure.md",
+      "original": "DSM2/BD2/script PROCEDURE.sql",
+      "paginas": null,
+      "papel": "Functions, procedures, trigger e view em um único banco"
+    },
+    {
+      "arquivo": "conhecimento/DSM2/BD2/script-join.md",
+      "original": "DSM2/BD2/script JOIN.sql",
+      "paginas": null,
+      "papel": "INNER, LEFT e RIGHT JOIN com auto-relacionamento"
+    },
+    {
+      "arquivo": "conhecimento/DSM2/BD2/exercicio-atividade-1-n1-haimon-cugler-vieira.md",
+      "original": "DSM2/BD2/exercicio/Atividade 1 - N1 - HAIMON CUGLER VIEIRA.pdf",
+      "paginas": 12,
+      "papel": "Prova N1 AgroVerde: DDL, consultas, GROUP BY/HAVING"
+    },
+    {
+      "arquivo": "conhecimento/DSM2/BD2/atividade-mysql.md",
+      "original": "DSM2/BD2/atividade_mysql.pdf",
+      "paginas": 4,
+      "papel": "Atividade FastRibeira com 15 questões, sem gabarito"
+    }
+  ],
+  "avisos_de_fidelidade": [
+    "As respostas da N1 são do aluno, não um gabarito oficial; contêm erros pontuais (aspas não fechadas, coluna ausente, SUM sem GROUP BY).",
+    "A Questão 3 da N1 não tem respostas no arquivo, apenas enunciados.",
+    "A lista AULA06 não tem gabarito próprio; as respostas estão no script RH e algumas têm lógica discutível (B4 e A5).",
+    "A atividade FastRibeira depende do arquivo fastribeira_banco.sql, que não está no corpus.",
+    "GROUP BY/HAVING não aparecem na aula 02; aparecem na N1 e na atividade, como conteúdo já cobrado em avaliação."
+  ],
+  "avaliacao": {
+    "evals": "evals/dsm-bd2/evals.json",
+    "perguntas": 10,
+    "metrica": "recall@5 da fonte mínima"
+  },
+  "atualizacao": {
+    "comando": "python3 ferramentas/extrair.py --disciplina DSM2/BD2 && python3 ferramentas/indexar.py",
+    "observacao": "Nunca editar os arquivos de DSM2/BD2; a fonte da verdade continua sendo o material original."
+  }
+}

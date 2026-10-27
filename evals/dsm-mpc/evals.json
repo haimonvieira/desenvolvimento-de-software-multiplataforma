@@ -1,0 +1,73 @@
+{
+  "skill": "dsm-mpc",
+  "disciplina": "DSM2/MPC",
+  "descricao": "Perguntas de recuperação para Matemática para Computação. Cada item exige que a fonte mínima apareça no top-5 da busca.",
+  "perguntas": [
+    {
+      "id": "mpc-01",
+      "prompt": "O que é uma proposição e qual a diferença entre simples e composta?",
+      "fonte_minima": [
+        "conhecimento/DSM2/MPC/aula-01-logica-matematica.md"
+      ],
+      "resposta_esperada": "Afirmação com valor V ou F; simples tem uma sentença, composta combina duas ou mais."
+    },
+    {
+      "id": "mpc-02",
+      "prompt": "Quando uma condicional p -> q é falsa?",
+      "fonte_minima": [
+        "conhecimento/DSM2/MPC/aula-01-logica-matematica.md",
+        "conhecimento/DSM2/MPC/matematica-para-computacao.md"
+      ],
+      "resposta_esperada": "Somente quando p é verdadeiro e q é falso."
+    },
+    {
+      "id": "mpc-03",
+      "prompt": "Qual é a ordem de precedência dos conectivos lógicos?",
+      "fonte_minima": [
+        "conhecimento/DSM2/MPC/aula-01-logica-matematica.md",
+        "conhecimento/DSM2/MPC/matematica-para-computacao.md"
+      ],
+      "resposta_esperada": "Parênteses, negação, conjunção/disjunção, condicional e bicondicional."
+    },
+    {
+      "id": "mpc-04",
+      "prompt": "O que é tautologia e o que é contradição?",
+      "fonte_minima": [
+        "conhecimento/DSM2/MPC/aula-01-logica-matematica.md"
+      ],
+      "resposta_esperada": "Tautologia é sempre verdadeira; contradição é sempre falsa."
+    },
+    {
+      "id": "mpc-05",
+      "prompt": "Qual a diferença entre relação de pertinência e relação de inclusão?",
+      "fonte_minima": [
+        "conhecimento/DSM2/MPC/aula-02-conjuntos.md"
+      ],
+      "resposta_esperada": "Pertinência liga elemento a conjunto; inclusão liga conjunto a conjunto."
+    },
+    {
+      "id": "mpc-06",
+      "prompt": "Como calcular a união, a interseção e a diferença entre dois conjuntos?",
+      "fonte_minima": [
+        "conhecimento/DSM2/MPC/aula-02-conjuntos.md"
+      ],
+      "resposta_esperada": "União junta todos; interseção pega os comuns; diferença pega os que estão em um e não no outro."
+    },
+    {
+      "id": "mpc-07",
+      "prompt": "O que é produto cartesiano e o que é uma relação binária?",
+      "fonte_minima": [
+        "conhecimento/DSM2/MPC/matematica-para-computacao.md"
+      ],
+      "resposta_esperada": "Produto cartesiano é o conjunto de todos os pares ordenados; relação binária é um subconjunto de A x B."
+    },
+    {
+      "id": "mpc-08",
+      "prompt": "O que diferencia um silogismo válido de uma falácia?",
+      "fonte_minima": [
+        "conhecimento/DSM2/MPC/aula-01-logica-matematica.md"
+      ],
+      "resposta_esperada": "No silogismo a conclusão decorre obrigatoriamente das premissas; na falácia as premissas não garantem a conclusão."
+    }
+  ]
+}

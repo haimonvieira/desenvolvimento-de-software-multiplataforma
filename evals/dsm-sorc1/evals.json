@@ -1,0 +1,87 @@
+{
+  "skill": "dsm-sorc1",
+  "disciplina": "DSM1/SORC1",
+  "descricao": "Perguntas de recuperação para Sistemas Operacionais e Redes de Computadores. Cada item exige que a fonte mínima apareça no top-5 da busca.",
+  "perguntas": [
+    {
+      "id": "sorc1-01",
+      "prompt": "Qual a diferença entre LAN, MAN, WAN e PAN?",
+      "fonte_minima": [
+        "conhecimento/DSM1/SORC1/materiais-01-tipos-de-redes-de-computadores-pptx.md"
+      ],
+      "resposta_esperada": "LAN cobre o mesmo espaço físico (empresa, escola, casa); MAN conecta redes locais em dezenas de quilômetros; WAN cobre área geográfica de grande escala; PAN tem distância bastante limitada, com Bluetooth e UWB como exemplos — materiais-01, p. 9–15."
+    },
+    {
+      "id": "sorc1-02",
+      "prompt": "Quais são as topologias de rede e qual oferece maior redundância?",
+      "fonte_minima": [
+        "conhecimento/DSM1/SORC1/materiais-02-topologia-de-rede-modelo-osi-e-host-pptx.md"
+      ],
+      "resposta_esperada": "Malha, barramento, anel e estrela. A malha tem múltiplos caminhos redundantes e por isso é a mais tolerante a falhas; o barramento compartilha um único cabo, normalmente coaxial com terminadores nas pontas — materiais-02, p. 5–9."
+    },
+    {
+      "id": "sorc1-03",
+      "prompt": "Quais são as sete camadas do modelo OSI e o que cada uma faz?",
+      "fonte_minima": [
+        "conhecimento/DSM1/SORC1/materiais-02-topologia-de-rede-modelo-osi-e-host-pptx.md"
+      ],
+      "resposta_esperada": "Física, enlace de dados, rede, transporte, sessão, apresentação e aplicação. O modelo é conceitual e define funções, não serviços e protocolos exatos; os nomes aparecem no diagrama da p. 13 e as descrições nas p. 14–20."
+    },
+    {
+      "id": "sorc1-04",
+      "prompt": "Como identificar a classe de um endereço IP e separar a parte de rede da parte de host?",
+      "fonte_minima": [
+        "conhecimento/DSM1/SORC1/materiais-03-protocolo-tcp-ip-mascara-de-subrede-e-broadcast-pptx.md"
+      ],
+      "resposta_esperada": "A classe vem do primeiro octeto: A 1–126, B 128–191, C 192–223, D 224–239 e E 240–255; 0 e 127 não são usados. A classe A usa 1 octeto de rede, a B usa 2 e a C usa 3 — materiais-03, p. 6 e 9."
+    },
+    {
+      "id": "sorc1-05",
+      "prompt": "Quantos hosts utilizáveis têm as máscaras /8, /16 e /24?",
+      "fonte_minima": [
+        "conhecimento/DSM1/SORC1/materiais-03-protocolo-tcp-ip-mascara-de-subrede-e-broadcast-pptx.md"
+      ],
+      "resposta_esperada": "/8 = 16.777.214; /16 = 65.534; /24 = 254. O total é 2 elevado ao número de bits de host, menos 2 (endereço de rede e broadcast) — materiais-03, p. 13–15."
+    },
+    {
+      "id": "sorc1-06",
+      "prompt": "O que é broadcast e qual é o endereço de broadcast de uma sub-rede?",
+      "fonte_minima": [
+        "conhecimento/DSM1/SORC1/materiais-03-protocolo-tcp-ip-mascara-de-subrede-e-broadcast-pptx.md"
+      ],
+      "resposta_esperada": "Broadcast transmite áudio, vídeo e dados para múltiplos destinatários ao mesmo tempo (materiais-03, p. 17). O endereço de broadcast da sub-rede — o último endereço da faixa, como 192.168.0.255 em /24 — é derivação, não está ensinado literalmente no slide."
+    },
+    {
+      "id": "sorc1-07",
+      "prompt": "Quais são as categorias de cabo de par trançado e suas frequências e velocidades?",
+      "fonte_minima": [
+        "conhecimento/DSM1/SORC1/materiais-04-tipos-de-cabos-conectores-e-ferramentas-para-crimpagem.md"
+      ],
+      "resposta_esperada": "Cat5e 100 MHz/100 Mbps; Cat6 250 MHz/1 Gbps; Cat6a 500 MHz/10 Gbps; Cat7 600 MHz/10–40 Gbps; Cat8 2000 MHz/40 Gbps, todas com 100 m no material — materiais-04, p. 8–12. Ressalva: na prática Cat8 é limitado a ~30 m."
+    },
+    {
+      "id": "sorc1-08",
+      "prompt": "Qual é a ordem dos fios nos padrões 568A e 568B e como se faz um cabo crossover?",
+      "fonte_minima": [
+        "conhecimento/DSM1/SORC1/materiais-04-tipos-de-cabos-conectores-e-ferramentas-para-crimpagem.md"
+      ],
+      "resposta_esperada": "568A: branco/verde, verde, branco/laranja, azul, branco/azul, laranja, branco/marrom, marrom. 568B: branco/laranja, laranja, branco/verde, azul, branco/azul, verde, branco/marrom, marrom. Crossover usa 568A em uma ponta e 568B na outra — materiais-04, p. 17–19."
+    },
+    {
+      "id": "sorc1-09",
+      "prompt": "Qual a diferença entre transmissão simplex, half-duplex e full-duplex?",
+      "fonte_minima": [
+        "conhecimento/DSM1/SORC1/materiais-06-classificacao-de-fluxo-de-transmissao-pptx.md"
+      ],
+      "resposta_esperada": "Simplex transmite em um só sentido (rádio e TV); half-duplex alterna os dois sentidos; full-duplex transmite e recebe ao mesmo tempo e exige pelo menos dois canais, um por sentido — materiais-06, p. 3–6."
+    },
+    {
+      "id": "sorc1-10",
+      "prompt": "Como funcionam as permissões rwx no Linux e como conectar por SSH?",
+      "fonte_minima": [
+        "conhecimento/DSM1/SORC1/materiais-curso-de-linux-utfpr-2023.md"
+      ],
+      "resposta_esperada": "Permissões r (leitura), w (escrita, alteração e deleção) e x (execução) aplicadas a user, group e others; chmod usa a notação textual [ugoa][+-=][rwx]. SSH é um protocolo criptografado da camada de aplicação, usa chave pública e conecta na porta 22 com ssh usuario@endereco — curso de Linux, p. 136–138 e 169–171."
+    }
+  ]
+}

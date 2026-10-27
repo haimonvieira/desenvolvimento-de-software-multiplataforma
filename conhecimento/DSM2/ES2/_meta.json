@@ -1,0 +1,87 @@
+{
+  "schema": 1,
+  "disciplina": "DSM2/ES2",
+  "sigla": "ES2",
+  "semestre": "DSM2",
+  "nome": "Engenharia de Software II",
+  "skill": "dsm-es2",
+  "tier": 2,
+  "dialeto": null,
+  "atualizado_em": "2026-10-24",
+  "corpus": {
+    "arquivos_md": 3,
+    "tokens_aproximados": 6190,
+    "pdfs": 2,
+    "paginas_pdf": 57,
+    "fontes_com_gabarito": [],
+    "fontes_sem_gabarito": [
+      "documentos-aula-01-2026-estudo-de-viabilidade.md",
+      "documentos-aula-03-2026-introducao-diagrama-de-classes.md"
+    ]
+  },
+  "topicos": [
+    "Estudo de viabilidade: decisão e alternativas de solução",
+    "Viabilidade operacional",
+    "Viabilidade técnica",
+    "Viabilidade de cronograma",
+    "Viabilidade econômica e análise de custo-benefício",
+    "Custos de desenvolvimento (ocorrem uma vez)",
+    "Custos de operação (contínuos): fixos e variáveis",
+    "Métricas de software",
+    "Pontos de função: tamanho funcional, esforço e preço",
+    "Diagrama de classes UML: importância e funções",
+    "Conceitos de OO: classificação, abstração e instanciação",
+    "Classe, atributos e métodos",
+    "Visibilidade: pública (+), privada (-) e protegida (#)",
+    "Associação binária e multiplicidade",
+    "Agregação e composição",
+    "Herança e polimorfismo",
+    "Classes associativas",
+    "Notas UML",
+    "Exercícios de modelagem de classes"
+  ],
+  "topicos_ausentes_no_corpus": [
+    "Modelo espiral e prototipagem (citados na ementa, não desenvolvidos)",
+    "Arquitetura de software e padrões de projeto",
+    "Diagramas UML além do diagrama de classes (caso de uso, sequência, atividade)",
+    "Engenharia de requisitos",
+    "Testes de software",
+    "Documentação e manutenção em profundidade"
+  ],
+  "fontes_principais": [
+    {
+      "arquivo": "conhecimento/DSM2/ES2/documentos-aula-01-2026-estudo-de-viabilidade.md",
+      "original": "DSM2/ES2/Documentos/aula 01 - 2026 - Estudo de Viabilidade.pdf",
+      "paginas": 23,
+      "papel": "Estudo de viabilidade, tipos, custos, métricas e pontos de função"
+    },
+    {
+      "arquivo": "conhecimento/DSM2/ES2/documentos-aula-03-2026-introducao-diagrama-de-classes.md",
+      "original": "DSM2/ES2/Documentos/Aula 03 2026 - Introdução Diagrama de Classes.pdf",
+      "paginas": 34,
+      "papel": "Diagrama de classes UML, OO, relacionamentos e exercícios"
+    },
+    {
+      "arquivo": "conhecimento/DSM2/ES2/engenharia-de-software-2.md",
+      "original": "DSM2/ES2/Engenharia de Software 2.md",
+      "paginas": null,
+      "papel": "Arquivo vazio; não usar como fonte"
+    }
+  ],
+  "avisos_de_fidelidade": [
+    "`Engenharia de Software 2.md` está vazio (0 tokens); não há conteúdo nele.",
+    "O cabeçalho da aula 01 diz 'Engenharia de Software I', mas o conteúdo é de ES2; é um resquício do modelo de slides.",
+    "O exemplo de pontos de função do material tem conta dimensionalmente confusa: 130/6 = 21,66 é tratado como horas e depois dividido por 8 e por 6 para dar 0,45 dias. Reproduza o exemplo citando a fonte, mas não o apresente como fórmula correta.",
+    "As imagens dos diagramas UML não foram preservadas; o texto descreve os símbolos, mas não os mostra.",
+    "Não há gabarito para os exercícios da aula 03."
+  ],
+  "avaliacao": {
+    "evals": "evals/dsm-es2/evals.json",
+    "perguntas": 8,
+    "metrica": "recall@5 da fonte mínima"
+  },
+  "atualizacao": {
+    "comando": "python3 ferramentas/extrair.py --disciplina DSM2/ES2 && python3 ferramentas/indexar.py",
+    "observacao": "Nunca editar os arquivos de DSM2/ES2; a fonte da verdade continua sendo o material original."
+  }
+}

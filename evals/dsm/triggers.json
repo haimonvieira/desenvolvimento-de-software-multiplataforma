@@ -1,0 +1,161 @@
+{
+  "descricao": "Queries para validar o roteamento da skill dsm. Cada item deve levar à skill de disciplina esperada.",
+  "observacao": "As skills de disciplina são ocultas (opencode/autoinvoke: false); o roteamento é feito pela skill dsm.",
+  "queries": [
+    {
+      "id": "tr-01",
+      "prompt": "Como faço um SELECT com JOIN entre duas tabelas no MySQL?",
+      "skill_esperada": "dsm-bd2"
+    },
+    {
+      "id": "tr-02",
+      "prompt": "Explique a diferença entre chave primária e chave estrangeira.",
+      "skill_esperada": "dsm-mbd"
+    },
+    {
+      "id": "tr-03",
+      "prompt": "Como declarar uma variável e usar um laço enquanto no VisuAlg?",
+      "skill_esperada": "dsm-alp"
+    },
+    {
+      "id": "tr-04",
+      "prompt": "Como centralizar uma div com CSS Grid?",
+      "skill_esperada": "dsm-dw1"
+    },
+    {
+      "id": "tr-05",
+      "prompt": "Como criar uma rota POST no Express que recebe JSON?",
+      "skill_esperada": "dsm-dw2"
+    },
+    {
+      "id": "tr-06",
+      "prompt": "Como funciona o algoritmo bubble sort e qual sua complexidade?",
+      "skill_esperada": "dsm-ed1"
+    },
+    {
+      "id": "tr-07",
+      "prompt": "O que é um estudo de viabilidade em Engenharia de Software?",
+      "skill_esperada": "dsm-es2"
+    },
+    {
+      "id": "tr-08",
+      "prompt": "Como montar uma tabela-verdade para a proposição P e Q?",
+      "skill_esperada": "dsm-mpc"
+    },
+    {
+      "id": "tr-09",
+      "prompt": "Como usar herança e polimorfismo em Java?",
+      "skill_esperada": "dsm-tpi"
+    },
+    {
+      "id": "tr-10",
+      "prompt": "O que é um autovetor e como calcular autovalores de uma matriz?",
+      "skill_esperada": "dsm-al"
+    },
+    {
+      "id": "tr-11",
+      "prompt": "Como fazer um aggregate no MongoDB para agrupar documentos?",
+      "skill_esperada": "dsm-bdnr"
+    },
+    {
+      "id": "tr-12",
+      "prompt": "Como criar um componente React com useState?",
+      "skill_esperada": "dsm-dw3"
+    },
+    {
+      "id": "tr-13",
+      "prompt": "Qual a diferença entre Scrum e Kanban?",
+      "skill_esperada": "dsm-gaps"
+    },
+    {
+      "id": "tr-14",
+      "prompt": "O que é affordance e usabilidade em IHC?",
+      "skill_esperada": "dsm-ihc"
+    },
+    {
+      "id": "tr-15",
+      "prompt": "Como interpretar um texto em inglês sobre tecnologia?",
+      "skill_esperada": "dsm-ing1"
+    },
+    {
+      "id": "tr-16",
+      "prompt": "Como usar coleções e tratar exceções em Java?",
+      "skill_esperada": "dsm-tp2"
+    },
+    {
+      "id": "tr-17",
+      "prompt": "Quais são os princípios do design e a teoria das cores?",
+      "skill_esperada": "dsm-dd"
+    },
+    {
+      "id": "tr-18",
+      "prompt": "Como configurar uma máscara de sub-rede e calcular broadcast?",
+      "skill_esperada": "dsm-sorc1"
+    },
+    {
+      "id": "tr-19",
+      "prompt": "Como estruturar um artigo científico do projeto integrador?",
+      "skill_esperada": "dsm-pi"
+    },
+    {
+      "id": "tr-20",
+      "prompt": "O que é o modelo de processo cascata e o ciclo de vida de software?",
+      "skill_esperada": "dsm-es1"
+    },
+    {
+      "id": "tr-21",
+      "prompt": "Qual é a diferença entre o modelo conceitual e o modelo lógico no projeto de banco de dados?",
+      "skill_esperada": "dsm-mbd"
+    },
+    {
+      "id": "tr-22",
+      "prompt": "O que é um diagrama de classes UML e como representar associações?",
+      "skill_esperada": "dsm-es2"
+    },
+    {
+      "id": "tr-23",
+      "prompt": "Como provar que a união de dois conjuntos é associativa?",
+      "skill_esperada": "dsm-mpc"
+    },
+    {
+      "id": "tr-24",
+      "prompt": "Como calcular autovetores de uma matriz 2x2 com numpy?",
+      "skill_esperada": "dsm-al"
+    },
+    {
+      "id": "tr-25",
+      "prompt": "O que são personas e pesquisa de usuário em Interação Humano-Computador?",
+      "skill_esperada": "dsm-ihc"
+    },
+    {
+      "id": "tr-26",
+      "prompt": "Como responder questões de reading e grammar em inglês?",
+      "skill_esperada": "dsm-ing1"
+    },
+    {
+      "id": "tr-27",
+      "prompt": "Como escolher entre RGB, CMYK e Pantone em um projeto de identidade visual?",
+      "skill_esperada": "dsm-dd"
+    },
+    {
+      "id": "tr-28",
+      "prompt": "Como crimpar um cabo de rede no padrão 568B e montar um crossover?",
+      "skill_esperada": "dsm-sorc1"
+    },
+    {
+      "id": "tr-29",
+      "prompt": "Quais são as etapas do processo de software e o que é o modelo cascata?",
+      "skill_esperada": "dsm-es1"
+    },
+    {
+      "id": "tr-30",
+      "prompt": "Como declarar um vetor no VisuAlg e fazer um laço para de 10 até 1 com passo -1?",
+      "skill_esperada": "dsm-alp"
+    },
+    {
+      "id": "tr-31",
+      "prompt": "Como atualizar documentos no MongoDB com updateOne e $set e criar um índice?",
+      "skill_esperada": "dsm-bdnr"
+    }
+  ]
+}

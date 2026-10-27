@@ -1,0 +1,71 @@
+{
+  "skill": "dsm-ihc",
+  "disciplina": "DSM3/IHC",
+  "descricao": "Perguntas de recuperação para Interação Humano-Computador. Cada item exige que a fonte mínima apareça no top-5 da busca.",
+  "perguntas": [
+    {
+      "id": "ihc-01",
+      "prompt": "O que é IHC e por que ela é considerada interdisciplinar?",
+      "fonte_minima": [
+        "conhecimento/DSM3/IHC/ihc-aula-01-introducao-a-ihc.md"
+      ],
+      "resposta_esperada": "É o estudo da interação entre pessoas e computadores; relaciona computação, artes, design, ergonomia, psicologia, sociologia, semiótica, linguística e áreas afins (aula 01, p. 9)."
+    },
+    {
+      "id": "ihc-02",
+      "prompt": "Quais são as três ondas da IHC e o foco de cada uma?",
+      "fonte_minima": [
+        "conhecimento/DSM3/IHC/ihc-aula-01-introducao-a-ihc.md"
+      ],
+      "resposta_esperada": "Primeira (70/80): indivíduo e fatores humanos; segunda (1990+): grupos, abordagens qualitativas e design contextual; terceira (2000+): cultura, estética e emoção (aula 01, p. 17–20)."
+    },
+    {
+      "id": "ihc-03",
+      "prompt": "Quais são os cinco tipos de affordance e como cada um funciona?",
+      "fonte_minima": [
+        "conhecimento/DSM3/IHC/ihc-aula-02-conceitos-fundamentais-em-ihc-affordances.md"
+      ],
+      "resposta_esperada": "Explícita (ação óbvia), padrão (convenção conhecida, ex. link azul), escondida (aparece após ação, ex. dropdown), metafórica (objeto do mundo real) e falsa (parece agir, mas não age) — aula 02, p. 6–12."
+    },
+    {
+      "id": "ihc-04",
+      "prompt": "Quem propôs o conceito de affordance e em que ano?",
+      "fonte_minima": [
+        "conhecimento/DSM3/IHC/ihc-aula-02-conceitos-fundamentais-em-ihc-affordances.md"
+      ],
+      "resposta_esperada": "O psicólogo James Gibson, em 1977 (aula 02, p. 3)."
+    },
+    {
+      "id": "ihc-05",
+      "prompt": "Qual é a diferença entre usabilidade e experiência do usuário (UX)?",
+      "fonte_minima": [
+        "conhecimento/DSM3/IHC/ihc-aula-03-conceitos-fundamentais-ihc-interacao-interface-e-usabilidade.md"
+      ],
+      "resposta_esperada": "Usabilidade é característica intrínseca do produto, embutida pelo designer; UX é a perspectiva individual, afetada pela usabilidade e também por expectativas, vivências e contexto (aula 03, p. 24–25)."
+    },
+    {
+      "id": "ihc-06",
+      "prompt": "Quais são os pontos de contato e os momentos que compõem a UX?",
+      "fonte_minima": [
+        "conhecimento/DSM3/IHC/ihc-aula-03-conceitos-fundamentais-ihc-interacao-interface-e-usabilidade.md"
+      ],
+      "resposta_esperada": "Pontos de contato: marketing, loja, manual, instalação, interface, suporte e descarte; momentos: antecipação, primeiro uso, uso esporádico e uso continuado (aula 03, p. 26)."
+    },
+    {
+      "id": "ihc-07",
+      "prompt": "No caso do Fernando, qual alternativa está correta e por quê?",
+      "fonte_minima": [
+        "conhecimento/DSM3/IHC/ihc-aula-03-conceitos-fundamentais-ihc-interacao-interface-e-usabilidade.md"
+      ],
+      "resposta_esperada": "Alternativa D: o uso rotineiro e satisfatório é UX positiva no uso continuado; a confusão de botões e opções é falha de usabilidade da interface (aula 03, p. 29–30)."
+    },
+    {
+      "id": "ihc-08",
+      "prompt": "O que é uma persona, quais são seus componentes e por que usá-la?",
+      "fonte_minima": [
+        "conhecimento/DSM3/IHC/ihc-aula-04-estudo-e-pesquisa-de-usuario-criacao-de-personas.md"
+      ],
+      "resposta_esperada": "Representação fictícia do usuário ideal baseada em dados reais; inclui nome/foto, perfil demográfico, objetivos, dores, comportamentos e citações; guia decisões de design, facilita comunicação e priorização e evita suposições (aula 04, p. 8–10)."
+    }
+  ]
+}

@@ -1,0 +1,128 @@
+{
+  "schema": 1,
+  "disciplina": "DSM1/DD",
+  "sigla": "DD",
+  "semestre": "DSM1",
+  "nome": "Design Digital",
+  "skill": "dsm-dd",
+  "tier": 2,
+  "dialeto": null,
+  "atualizado_em": "2026-10-24",
+  "corpus": {
+    "arquivos_md": 9,
+    "tokens_aproximados": 16750,
+    "pdfs": 9,
+    "paginas_pdf": 303,
+    "fontes_com_gabarito": [],
+    "fontes_sem_gabarito": [
+      "materiais-dd-aula-01-principios-do-design.md (exercício prático e formulário)",
+      "materiais-dd-aula-02-1-teoria-das-cores.md (exercícios práticos)",
+      "materiais-dd-aula-02-2-psicologia-das-cores.md (formulário)",
+      "materiais-dd-aula-03-padroes-de-cores.md (formulário)",
+      "materiais-dd-aula-04-imagem-digital-e-formatos-e-resolucoes-de-imagens.md (questionário)",
+      "materiais-dd-aula-06-identidade-visual.md (trabalho em grupo)"
+    ]
+  },
+  "topicos": [
+    "Definição de design digital e papel do designer",
+    "UI versus UX",
+    "Proximidade, espaço em branco, alinhamento, contraste, hierarquia e repetição",
+    "Teoria das cores e círculo cromático de 12 cores",
+    "Cores primárias, secundárias e terciárias",
+    "Matiz, saturação e brilho",
+    "Harmonias: monocromática, análoga, complementar, complementar dividida, triádica e tetrádica",
+    "Regra 60-30-10",
+    "Espectro eletromagnético e visão das cores",
+    "Psicologia das cores",
+    "Padrões RGB, HEX, HSL, CMYK e Pantone",
+    "Canal alpha",
+    "Imagem bitmap e vetorial",
+    "PPI, DPI e interpolação",
+    "Compressão e formatos de imagem",
+    "Tamanho de tela, resolução e aspect ratio",
+    "Tipografia: famílias, categorias, leading, tracking e kerning",
+    "Identidade visual: componentes e etapas",
+    "Prototipação Lo-Fi, média e Hi-Fi",
+    "MVP",
+    "Figma: grid, estilos, componentes e plugins"
+  ],
+  "topicos_ausentes_no_corpus": [
+    "Direitos autorais e uso de elementos visuais",
+    "Acessibilidade visual em profundidade",
+    "Gestalt e teoria avançada da percepção",
+    "Motion design e animação",
+    "Design systems e tokens",
+    "Testes com usuários e métricas de UX",
+    "Softwares além do Figma",
+    "Gabarito dos exercícios e formulários"
+  ],
+  "fontes_principais": [
+    {
+      "arquivo": "conhecimento/DSM1/DD/materiais-dd-aula-01-principios-do-design.md",
+      "original": "DSM1/DD/Materiais/DD - Aula 01 - Princípios do design.pdf",
+      "paginas": 43,
+      "papel": "Design digital, UI/UX e seis princípios"
+    },
+    {
+      "arquivo": "conhecimento/DSM1/DD/materiais-dd-aula-02-1-teoria-das-cores.md",
+      "original": "DSM1/DD/Materiais/DD - Aula 02.1 - Teoria das cores.pdf",
+      "paginas": 35,
+      "papel": "Círculo cromático, HSL, harmonias e 60-30-10"
+    },
+    {
+      "arquivo": "conhecimento/DSM1/DD/materiais-dd-aula-02-2-psicologia-das-cores.md",
+      "original": "DSM1/DD/Materiais/DD - Aula 02.2 - Psicologia das cores.pdf",
+      "paginas": 53,
+      "papel": "Espectro, visão e significado das cores"
+    },
+    {
+      "arquivo": "conhecimento/DSM1/DD/materiais-dd-aula-03-padroes-de-cores.md",
+      "original": "DSM1/DD/Materiais/DD - Aula 03 - Padrões de cores.pdf",
+      "paginas": 35,
+      "papel": "RGB, alpha, HEX, HSL, CMYK e Pantone"
+    },
+    {
+      "arquivo": "conhecimento/DSM1/DD/materiais-dd-aula-04-imagem-digital-e-formatos-e-resolucoes-de-imagens.md",
+      "original": "DSM1/DD/Materiais/DD - Aula 04 - Imagem digital e formatos e resoluções de imagens.pdf",
+      "paginas": 53,
+      "papel": "Bitmap, vetor, PPI/DPI, formatos e resoluções"
+    },
+    {
+      "arquivo": "conhecimento/DSM1/DD/materiais-dd-aula-05-tipografia.md",
+      "original": "DSM1/DD/Materiais/DD - Aula 05 - Tipografia.pdf",
+      "paginas": 22,
+      "papel": "Famílias, categorias e métricas tipográficas"
+    },
+    {
+      "arquivo": "conhecimento/DSM1/DD/materiais-dd-aula-06-identidade-visual.md",
+      "original": "DSM1/DD/Materiais/DD - Aula 06 - Identidade visual.pdf",
+      "paginas": 14,
+      "papel": "Identidade visual, componentes e etapas"
+    },
+    {
+      "arquivo": "conhecimento/DSM1/DD/materiais-dd-aula-07-prototipacao-de-softwares.md",
+      "original": "DSM1/DD/Materiais/DD - Aula 07 - Prototipação de softwares.pdf",
+      "paginas": 35,
+      "papel": "Protótipos, MVP e Figma"
+    }
+  ],
+  "avisos_de_fidelidade": [
+    "O corpus é composto por slides em PDF; muitas páginas são apenas imagens e não são descritas pelo texto extraído.",
+    "A aula 04, p. 40, inverte as definições de tamanho e resolução de tela; a definição correta é: tamanho em polegadas (diagonal) e resolução em pixels.",
+    "A aula 03, p. 35, traz rodapé 'Aula - 04' por engano.",
+    "A aula 00, p. 2, tem rodapé residual de Qualidade e Teste de Software.",
+    "A aula 02.1, p. 23, escreve 'complementares dividas' (divididas).",
+    "A aula 04, p. 29, diz 'alta taxa de conversão' quando o sentido é compressão.",
+    "Os percentuais da regra 60-30-10 são descritos como 'de certa forma imaginários' (aula 02.1, p. 27).",
+    "Não há gabarito de exercícios; os formulários são links externos do Microsoft Forms."
+  ],
+  "avaliacao": {
+    "evals": "evals/dsm-dd/evals.json",
+    "perguntas": 10,
+    "metrica": "recall@5 da fonte mínima"
+  },
+  "atualizacao": {
+    "comando": "python3 ferramentas/extrair.py --disciplina DSM1/DD && python3 ferramentas/indexar.py",
+    "observacao": "Nunca editar os arquivos de DSM1/DD; a fonte da verdade continua sendo o PDF original."
+  }
+}

@@ -1,0 +1,107 @@
+{
+  "schema": 1,
+  "disciplina": "DSM3/AL",
+  "sigla": "AL",
+  "semestre": "DSM3",
+  "nome": "Álgebra Linear",
+  "skill": "dsm-al",
+  "tier": 2,
+  "dialeto": null,
+  "atualizado_em": "2026-10-24",
+  "corpus": {
+    "arquivos_md": 13,
+    "tokens_aproximados": 2300,
+    "pdfs": 0,
+    "paginas_pdf": 0,
+    "fontes_com_gabarito": [
+      "ex03.py a ex09.py (a própria execução verifica o resultado)",
+      "autovetores.py (saída do numpy)"
+    ],
+    "fontes_sem_gabarito": [
+      "linear.txt (anotações com contas parcialmente erradas)",
+      "exMatPlot_vetor.py",
+      "exMatPlot_Triangulo.py"
+    ]
+  },
+  "topicos": [
+    "Vetor no plano e par ordenado",
+    "Soma de vetores e multiplicação por escalar",
+    "Transformação T: R² → R²",
+    "Axioma da aditividade: T(u+v)=T(u)+T(v)",
+    "Axioma da homogeneidade: T(a·u)=a·T(u)",
+    "Teste do vetor nulo: T(0,0)=(0,0)",
+    "Matriz de transformação 2x2 e produto A @ P",
+    "Transformação de escala",
+    "Transformação de reflexão",
+    "Aplicação de transformação a pontos e triângulos",
+    "Autovalores e autovetores com numpy.linalg.eig",
+    "Visualização de vetores com matplotlib.quiver",
+    "Visualização de triângulos com matplotlib.plot",
+    "Funções não lineares e contraexemplos"
+  ],
+  "topicos_ausentes_no_corpus": [
+    "Definição formal de espaço vetorial, subespaço, base e dimensão",
+    "Determinante, posto, inversa e sistemas lineares",
+    "Produto interno, norma, ortogonalidade e projeções",
+    "Rotação, cisalhamento e mudança de base",
+    "Diagonalização, teorema espectral e SVD",
+    "Demonstração geral de linearidade de uma matriz",
+    "Interpretação geométrica formal de autovalores"
+  ],
+  "fontes_principais": [
+    {
+      "arquivo": "conhecimento/DSM3/AL/linear.md",
+      "original": "DSM3/AL/linear.txt",
+      "paginas": null,
+      "papel": "Anotações de axiomas, exemplos e contraexemplos; contém erros de conta"
+    },
+    {
+      "arquivo": "conhecimento/DSM3/AL/ex03.md",
+      "original": "DSM3/AL/ex03.py",
+      "paginas": null,
+      "papel": "Teste numérico da condição A(αu+βv)=αAu+βAv"
+    },
+    {
+      "arquivo": "conhecimento/DSM3/AL/ex04.md",
+      "original": "DSM3/AL/ex04.py",
+      "paginas": null,
+      "papel": "Teste do vetor nulo para detectar não linearidade"
+    },
+    {
+      "arquivo": "conhecimento/DSM3/AL/autovetores.md",
+      "original": "DSM3/AL/autovetores.py",
+      "paginas": null,
+      "papel": "Cálculo de autovalores e autovetores com numpy"
+    },
+    {
+      "arquivo": "conhecimento/DSM3/AL/exmatplot-vetor.md",
+      "original": "DSM3/AL/exMatPlot_vetor.py",
+      "paginas": null,
+      "papel": "Desenho de vetores no plano com quiver"
+    },
+    {
+      "arquivo": "conhecimento/DSM3/AL/exmatplot-triangulo.md",
+      "original": "DSM3/AL/exMatPlot_Triangulo.py",
+      "paginas": null,
+      "papel": "Desenho de triângulo e eixos cartesianos"
+    }
+  ],
+  "avisos_de_fidelidade": [
+    "O corpus é composto por scripts Python e anotações, não por slides ou livro-texto.",
+    "linear.md contém contas e notação inconsistentes em alguns trechos; as conclusões (linear/não linear) estão corretas, mas os passos intermediários não devem ser reproduzidos sem conferência.",
+    "ex07 usa a convenção de vetores-linha (pontos @ A), diferente dos demais exercícios (A @ P).",
+    "autovetores.py imprime 'Autovlores' (sic).",
+    "O numpy devolve autovetores normalizados; (1,1) e (0,707;0,707) representam a mesma direção.",
+    "A matriz [[-1,0],[0,1]] reflete no eixo y, embora o comentário diga apenas 'reflexão'.",
+    "Definições formais de espaço vetorial, determinante e diagonalização não estão no corpus."
+  ],
+  "avaliacao": {
+    "evals": "evals/dsm-al/evals.json",
+    "perguntas": 8,
+    "metrica": "recall@5 da fonte mínima"
+  },
+  "atualizacao": {
+    "comando": "python3 ferramentas/extrair.py --disciplina DSM3/AL && python3 ferramentas/indexar.py",
+    "observacao": "Nunca editar os arquivos de DSM3/AL; a fonte da verdade continua sendo o material original."
+  }
+}

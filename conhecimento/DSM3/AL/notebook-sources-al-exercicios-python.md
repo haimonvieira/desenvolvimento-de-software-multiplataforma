@@ -1,0 +1,207 @@
+---
+disciplina: DSM3/AL
+titulo: AL exercicios python
+fonte: DSM3/AL/notebook-sources/AL-exercicios-python.txt
+tipo: txt
+paginas: 0
+extraido_em: 2026-10-24
+---
+
+# ===== AL\ex03.py =====
+
+import numpy as np
+
+A = np.array([
+    [2, 1],
+    [1, -3]
+])
+
+u = np.array([2, 1])
+v = np.array([1, 1])
+
+alfa = 5
+beta = 4
+
+lado_esquerdo = A @(alfa * u + beta * v)
+lado_direito = alfa * (A @ u) + beta * (A @ v)
+
+print("É linear? ", np.array_equal(lado_esquerdo, lado_direito))
+
+# ===== AL\ex04.py =====
+
+import numpy as np
+
+# Transformacao linear modelada
+def T(v):
+    return np.array([
+        v[0] + 2,
+        v[1]
+    ])
+
+zero = np.array([0, 0])
+
+result = T(zero)
+print("T(0) = ", result)
+print("É igual a (0,0): ", "Linear" if np.array_equal(result, zero) else "Não linear")
+
+# ===== AL\ex05.py =====
+
+import numpy as np
+
+# T(3x, 2y) P = (3, 4)
+# T(3x, 2y) -> T(3x +0y, 0x + 2y)
+A = np.array([
+    [3, 0],
+    [0, 2]
+])
+
+P = np.array([3, 4])
+
+novoPonto = A @ P
+print(f"novoPonto: {novoPonto}")
+
+# ===== AL\ex06.py =====
+
+import numpy as np
+
+A = np.array([
+    [-1, 0],
+    [0, 1]
+])
+
+P = np.array([5, -2])
+
+novoPonto = A @ P
+print(f"novoPonto após a reflexão: {novoPonto}")
+
+# ===== AL\ex07.py =====
+
+# P1(1, 2)   P2(4, 1)    P(2, 5)
+# T(x, y) = (2x, 2y)
+# T(x, y) = (2x + 0y, 0x + 2y)
+# P1(1, 2) -> (2, 4)
+# P2(4, 1) -> (8, 2)
+# P3(2, 5) -> (4, 10)
+import numpy as np
+
+A = np.array([
+    [2, 0],
+    [0, 2]
+])
+
+pontos = np.array([
+    [1, 2],
+    [4, 1],
+    [2, 5]
+])
+
+resultado = pontos @ A
+print("Novos pontos: ", resultado)
+
+# ===== AL\ex08.py =====
+
+import numpy as np
+
+A = np.array([
+    [1, 2],
+    [3, 1]
+])
+
+P = np.array([2, 3])
+
+resultado = A @ P # multiplicacao matricial
+print("Ponto apos transformação: P' = ", resultado)
+
+# ===== AL\ex09.py =====
+
+import numpy as np
+
+# Matriz
+A = np.array([
+    [1, -1],
+    [2, 1]
+])
+
+u = np.array([3, 1])
+v = np.array([2, -2])
+
+# Lado esquerdo: T(u + v)
+lado_esquerdo = A @ (u + v)
+# T(u) + T(v)
+lado_direito = (A @ u) + (A @ v)
+
+print("T(u+v) = T(u) + T(v)")
+print(f"{lado_esquerdo} = {lado_direito}\nÉ linear? ", "Linear" if np.array_equal(lado_direito, lado_esquerdo) else "Não linear")
+
+# ===== AL\exMatPlot_Triangulo.py =====
+
+import matplotlib.pyplot as plt
+
+P1 = (1, 2)
+P2 = (4, 1)
+P3 = (2, 5)
+
+# Passando as coordenadas para montar o desenho nos pontos 'x' e 'y'
+x = [P1[0], P2[0], P3[0], P1[0]]
+y = [P1[1], P2[1], P3[1], P1[1]]
+
+plt.plot(x, y, marker="o") # Montar o triangulo e colocando ponto na coordenada "o"
+
+# Colocando as coordenadas nos pontos "o"
+plt.text(P1[0], P1[1], f"({P1[0]}, {P1[1]})")
+plt.text(P2[0], P2[1], f"({P2[0]}, {P2[1]})")
+plt.text(P3[0], P3[1], f"({P3[0]}, {P3[1]})")
+
+
+plt.axhline(0) # Destacar linha horizontal
+plt.axvline(0) # Destacar linha vertical
+
+plt.grid(True) # Colocar grid
+
+plt.axis("equal") # Colocar proporcao igual para o desenho
+
+# Colocando nome nos eixos
+plt.xlabel("x")
+plt.ylabel("y")
+plt.title("Triângulo no plano cartesiano")
+
+plt.show()
+
+# ===== AL\exMatPlot_vetor.py =====
+
+import matplotlib.pyplot as plt
+
+# vetor u = (3, 8)
+plt.quiver(
+    0, 0,
+    3, 8, # vetor u
+    angles="xy", # Definindo as coordenadas 'x' e 'y'
+    scale_units="xy",
+    scale=1
+)
+
+# vetor v = (1, 4)
+plt.quiver(
+    0, 0,
+    1, 4, # vetor u
+    angles="xy", # Definindo as coordenadas 'x' e 'y'
+    scale_units="xy",
+    scale=1
+)
+
+plt.axhline(0) # Destacar linha horizontal
+plt.axvline(0) # Destacar linha vertical
+
+plt.grid(True) # Colocar grid
+
+plt.axis("equal") # Colocar proporcao igual para o desenho
+
+plt.xlim(-2, 10)
+plt.ylim(-2, 10)
+
+# Colocando nome nos eixos
+plt.xlabel("x")
+plt.ylabel("y")
+plt.title("Vetores no plano")
+
+plt.show()

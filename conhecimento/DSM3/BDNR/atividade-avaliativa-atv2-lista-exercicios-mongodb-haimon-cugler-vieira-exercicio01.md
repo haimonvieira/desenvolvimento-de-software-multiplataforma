@@ -1,0 +1,149 @@
+---
+disciplina: DSM3/BDNR
+titulo: exercicio01
+fonte: DSM3/BDNR/Atividade Avaliativa/ATV2/Lista_Exercicios_MongoDB - Haimon Cugler Vieira/exercicio01.txt
+tipo: txt
+paginas: 0
+extraido_em: 2026-10-24
+---
+
+EXERCÍCIO 1 – Catálogo de Produtos: documentos, consultas e atualização
+Uma pequena loja de tecnologia decidiu utilizar o MongoDB para organizar seu catálogo de produtos. O objetivo é criar uma coleção com produtos de diferentes categorias e praticar a criação de documentos, consultas, projeção, ordenação e atualização.
+
+//1.1 - Crie um banco de dados chamado lojaTech e uma coleção chamada produtos.
+
+use lojaTech
+db.createCollection("produtos")
+
+//1.2 - Cadastre no mínimo 8 produtos. Cada documento deve possuir os campos codigo, nome, categoria, descricao, preco, estoque e tags. O campo tags deve armazenar uma lista de valores.
+
+db.produtos.insertMany([
+  {
+    codigo: "PRD001",
+    nome: "Notebook Lenovo IdeaPad 3",
+    categoria: "informatica",
+    descricao: "Notebook para estudos e atividades de escritorio, com SSD e tela de 15,6 polegadas.",
+    preco: 3299.90,
+    estoque: 18,
+    tags: ["notebook", "estudo", "ssd", "informatica"]
+  },
+  {
+    codigo: "PRD002",
+    nome: "Mouse Logitech M170",
+    categoria: "perifericos",
+    descricao: "Mouse sem fio compacto para uso cotidiano em computadores e notebooks.",
+    preco: 79.90,
+    estoque: 65,
+    tags: ["mouse", "sem fio", "periferico"]
+  },
+  {
+    codigo: "PRD003",
+    nome: "Teclado Redragon Kumara",
+    categoria: "perifericos",
+    descricao: "Teclado mecanico compacto voltado para produtividade e jogos.",
+    preco: 249.90,
+    estoque: 34,
+    tags: ["teclado", "mecanico", "periferico", "gamer"]
+  },
+  {
+    codigo: "PRD004",
+    nome: "Monitor LG 24MP400",
+    categoria: "monitores",
+    descricao: "Monitor de 24 polegadas Full HD indicado para trabalho, estudo e entretenimento.",
+    preco: 749.90,
+    estoque: 22,
+    tags: ["monitor", "full hd", "24 polegadas"]
+  },
+  {
+    codigo: "PRD005",
+    nome: "SSD Kingston NV2 1TB",
+    categoria: "armazenamento",
+    descricao: "Unidade SSD NVMe de alto desempenho para computadores e notebooks compativeis.",
+    preco: 429.90,
+    estoque: 41,
+    tags: ["ssd", "nvme", "1tb", "armazenamento"]
+  },
+  {
+    codigo: "PRD006",
+    nome: "HD Externo Seagate 2TB",
+    categoria: "armazenamento",
+    descricao: "Disco externo USB para backup e transporte de arquivos.",
+    preco: 489.90,
+    estoque: 28,
+    tags: ["hd externo", "backup", "2tb", "armazenamento"]
+  },
+  {
+    codigo: "PRD007",
+    nome: "Webcam Logitech C920",
+    categoria: "acessorios",
+    descricao: "Webcam Full HD para reunioes, aulas remotas e transmissao de video.",
+    preco: 459.90,
+    estoque: 19,
+    tags: ["webcam", "video", "full hd", "acessorio"]
+  },
+  {
+    codigo: "PRD008",
+    nome: "Headset HyperX Cloud Stinger 2",
+    categoria: "audio",
+    descricao: "Headset com microfone ajustavel para comunicacao, estudo e jogos.",
+    preco: 319.90,
+    estoque: 31,
+    tags: ["headset", "audio", "microfone", "gamer"]
+  }
+])
+
+demais produtos: produtos.json (PRD009 a PRD020, 20 no total)
+
+
+//1.3 - Para demonstrar a flexibilidade do MongoDB, faça com que pelo menos 2 produtos possuam um campo específico que não exista nos demais (voltagem, memoria, tamanho ou cor).
+
+db.produtos.updateOne(
+  { codigo: "PRD001" },
+  { $set: { memoria: "8GB", armazenamento: "256GB SSD" } }
+)
+
+db.produtos.updateOne(
+  { codigo: "PRD018" },
+  { $set: { voltagem: "bivolt" } }
+)
+
+db.produtos.find(
+  { $or: [{ armazenamento: { $exists: true } }, { voltagem: { $exists: true } }] },
+  { _id: 0, codigo: 1, nome: 1, armazenamento: 1, voltagem: 1 }
+)
+
+//1.4 - Escreva uma consulta que mostre somente os campos codigo, nome e preco, sem exibir o campo _id.
+
+db.produtos.find({}, { _id: 0, codigo: 1, nome: 1, preco: 1 })
+
+//1.5 - Escreva uma consulta que localize produtos de uma categoria escolhida e cujo preço esteja dentro de uma faixa de valores definida por você.
+
+db.produtos.find(
+  { categoria: "perifericos", preco: { $gte: 100, $lte: 300 } },
+  { _id: 0, codigo: 1, nome: 1, categoria: 1, preco: 1 }
+)
+
+//1.6 - Liste os 3 produtos mais caros da coleção.
+
+db.produtos.find({}, { _id: 0, codigo: 1, nome: 1, preco: 1 })
+  .sort({ preco: -1 })
+  .limit(3)
+
+//1.7 - Atualize o preço de um produto utilizando updateOne e $set.
+
+db.produtos.updateOne(
+  { codigo: "PRD002" },
+  { $set: { preco: 89.90 } }
+)
+
+//1.8 - Aumente o estoque de um produto utilizando $inc e adicione uma nova tag sem repetir valores já existentes.
+
+db.produtos.updateOne(
+  { codigo: "PRD002" },
+  { $inc: { estoque: 10 } }
+)
+
+db.produtos.updateOne(
+  { codigo: "PRD002" },
+  { $addToSet: { tags: "ergonomico" } }
+)

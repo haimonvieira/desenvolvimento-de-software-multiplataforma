@@ -1,0 +1,159 @@
+{
+  "schema": 1,
+  "disciplina": "DSM3/BDNR",
+  "sigla": "BDNR",
+  "semestre": "DSM3",
+  "nome": "Banco de Dados Não Relacional",
+  "skill": "dsm-bdnr",
+  "tier": 3,
+  "dialeto": null,
+  "atualizado_em": "2026-10-24",
+  "corpus": {
+    "arquivos_md": 21,
+    "tokens_aproximados": 44795,
+    "pdfs": 2,
+    "paginas_pdf": 17,
+    "fontes_com_gabarito": [
+      "atividade-avaliativa-atv1-conectatech-setup-mongodb.md (desafios resolvidos no próprio script)"
+    ],
+    "fontes_sem_gabarito": [
+      "aula-01 a aula-08 (exercícios ao fim de cada aula, sem gabarito)",
+      "simulado-revisao-bdnr.md (10 questões sem gabarito; Q10 sem comando)",
+      "atividade-avaliativa-atv2-atv2-n1.md (enunciado sem gabarito)",
+      "exercicio01 a exercicio04 (respostas de aluno, não gabarito)",
+      "haimon-cugler-vieira-bdnr.md (saídas reais, sem gabarito formal)"
+    ]
+  },
+  "topicos": [
+    "Limitações do modelo relacional",
+    "NoSQL como Not Only SQL",
+    "Bigtable (2006), Dynamo (2007) e o termo em 2009",
+    "Dados estruturados, semiestruturados e não estruturados",
+    "Quatro categorias NoSQL: chave-valor, documentos, colunas e grafos",
+    "Nó, cluster e partição de rede",
+    "Teorema CAP (Brewer, 2000)",
+    "ACID versus BASE",
+    "Replicação",
+    "Sharding e chave quente",
+    "Documento, coleção e campo",
+    "MongoDB Atlas e camada M0",
+    "mongosh e Compass",
+    "insertOne e insertMany",
+    "find, findOne e countDocuments",
+    "Operadores de comparação",
+    "Operadores lógicos",
+    "Projeção, sort, skip e limit",
+    "updateOne, updateMany, $set, $inc, $unset e $rename",
+    "deleteOne e deleteMany",
+    "Arrays com $push, $pull e $addToSet",
+    "Embedding versus referencing",
+    "Limite de 16 MB por documento",
+    "Padrões Bucket, Computed, Subset e Extended Reference",
+    "Validação com $jsonSchema",
+    "Pipeline de agregação",
+    "$match, $project, $group, $sort e $limit",
+    "Acumuladores $sum, $avg, $min, $max e $push",
+    "$unwind e $lookup",
+    "Índices simples, compostos, únicos, de texto e TTL",
+    "explain('executionStats')"
+  ],
+  "topicos_ausentes_no_corpus": [
+    "Comandos de Redis, Cassandra e Neo4j",
+    "Transações multi-documento",
+    "Backup e restauração (mongodump/mongorestore)",
+    "Usuários, roles e autenticação além do Atlas",
+    "Drivers de aplicação e ODM (Mongoose)",
+    "Aggregation avançada ($facet, $bucket, $out, $merge)",
+    "Operadores $regex, $exists, $elemMatch, $size e $all",
+    "upsert e arrayFilters",
+    "Índices geoespaciais, wildcard, parciais e esparsos",
+    "GridFS, change streams e time series",
+    "Migração estruturada de SQL para MongoDB",
+    "Gabarito oficial dos exercícios"
+  ],
+  "fontes_principais": [
+    {
+      "arquivo": "conhecimento/DSM3/BDNR/aula-01.md",
+      "original": "DSM3/BDNR/Aula 01 (DOCX)",
+      "paginas": 0,
+      "papel": "Modelo relacional, limitações e origem do NoSQL"
+    },
+    {
+      "arquivo": "conhecimento/DSM3/BDNR/aula-02.md",
+      "original": "DSM3/BDNR/Aula 02 (DOCX)",
+      "paginas": 0,
+      "papel": "CAP, ACID × BASE, replicação e sharding"
+    },
+    {
+      "arquivo": "conhecimento/DSM3/BDNR/aula-03.md",
+      "original": "DSM3/BDNR/Aula 03 (DOCX)",
+      "paginas": 0,
+      "papel": "MongoDB, Atlas, mongosh e Compass"
+    },
+    {
+      "arquivo": "conhecimento/DSM3/BDNR/aula-04.md",
+      "original": "DSM3/BDNR/Aula 04 (DOCX)",
+      "paginas": 0,
+      "papel": "Inserção, consulta e operadores"
+    },
+    {
+      "arquivo": "conhecimento/DSM3/BDNR/aula-05.md",
+      "original": "DSM3/BDNR/Aula 05 (DOCX)",
+      "paginas": 0,
+      "papel": "Projeção, sort, paginação, update, delete e arrays"
+    },
+    {
+      "arquivo": "conhecimento/DSM3/BDNR/aula-06.md",
+      "original": "DSM3/BDNR/Aula 06 (DOCX)",
+      "paginas": 0,
+      "papel": "Embedding, referencing, padrões e validação"
+    },
+    {
+      "arquivo": "conhecimento/DSM3/BDNR/aula-07.md",
+      "original": "DSM3/BDNR/Aula 07 (DOCX)",
+      "paginas": 0,
+      "papel": "Pipeline de agregação"
+    },
+    {
+      "arquivo": "conhecimento/DSM3/BDNR/aula-08.md",
+      "original": "DSM3/BDNR/Aula 08 (DOCX)",
+      "paginas": 0,
+      "papel": "Índices e explain"
+    },
+    {
+      "arquivo": "conhecimento/DSM3/BDNR/simulado-revisao-bdnr.md",
+      "original": "DSM3/BDNR/Simulado (PDF)",
+      "paginas": 9,
+      "papel": "10 questões sobre oficinaDB, sem gabarito"
+    },
+    {
+      "arquivo": "conhecimento/DSM3/BDNR/haimon-cugler-vieira-bdnr.md",
+      "original": "DSM3/BDNR/Relatório (PDF)",
+      "paginas": 8,
+      "papel": "Prática loja_escolar com comandos e saídas"
+    }
+  ],
+  "avisos_de_fidelidade": [
+    "As aulas são DOCX sem paginação; citar 'p. N' para elas é invenção. Cite a seção.",
+    "Não há gabarito oficial nas aulas, no simulado ou na ATV2; as resoluções exercicio01-04 são respostas de aluno.",
+    "No simulado, Q6-Q9 têm respostas derivadas (A, D, A, C) e Q10 é irrespondível porque o comando não foi extraído.",
+    "O simulado tem tabelas quebradas (ordens_servi co, Ativ o, _id dividido) na p. 1.",
+    "aula-05 mostra $rename com valor sem aspas; o correto é string.",
+    "aula-04 usa .pretty(), que é do shell legado mongo, não do mongosh.",
+    "aula-08 simplifica o comportamento do índice de texto com acentos.",
+    "No exercicio02, os arrays itens foram reduzidos mas o total veio do dataset completo; os totais não fecham.",
+    "O exercicio03 só reproduz o top-3 com os 20 pedidos completos.",
+    "A carga de dados não é idempotente: rodar duas vezes duplica documentos.",
+    "O script conectatech tem projeção com 'item' em vez de 'itens' e comentários errados.",
+    "A massa techmix tem dados inconsistentes em P005 e P006."
+  ],
+  "avaliacao": {
+    "evals": "evals/dsm-bdnr/evals.json",
+    "perguntas": 10,
+    "metrica": "recall@5 da fonte mínima"
+  },
+  "atualizacao": {
+    "comando": "python3 ferramentas/extrair.py --disciplina DSM3/BDNR && python3 ferramentas/indexar.py",
+    "observacao": "Nunca editar os arquivos de DSM3/BDNR; a fonte da verdade continua sendo o original."
+  }
+}

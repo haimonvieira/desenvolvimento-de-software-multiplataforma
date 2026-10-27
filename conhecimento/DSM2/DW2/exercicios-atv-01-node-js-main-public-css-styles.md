@@ -1,0 +1,104 @@
+---
+disciplina: DSM2/DW2
+titulo: styles
+fonte: DSM2/DW2/exercicios/ATV-01-Node.js-main/public/css/styles.css
+tipo: css
+paginas: 0
+extraido_em: 2026-10-24
+---
+
+@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Space+Grotesk:wght@300..700&display=swap");
+
+:root {
+  --body-font: "Inter", sans-serif;
+  --label-font: "Inter", sans-serif;
+  --headline-font: "Space Grotesk", sans-serif;
+  --primary-color: #00e5ff;
+  --secondary-color: #1a237e;
+  --tertiary-color: #263238;
+  --neutral-color: #121212;
+}
+
+h1{
+  font-size: 1rem !important;
+}
+
+.space-grotesk {
+  font-family: var(--headline-font) !important;
+}
+
+.azul {
+  color: var(--primary-color);
+}
+
+.line {
+  height: 1px;
+  width: 50px;
+  background: #fff;
+}
+
+.banner {
+  background: #000;
+background: linear-gradient(90deg, rgba(0, 0, 0, 1) 50%, rgba(1, 41, 48, 1) 100%);
+}
+
+.nav-link {
+  color: #fff !important;
+}
+
+.navbar-brand {
+  color: #fff !important;
+}
+
+p,
+a,
+h1,
+h2 {
+  color: #fff;
+}
+
+h1, h2{
+  font-weight: bold !important;
+}
+
+p, a{
+  color: #BBC8D0;
+}
+
+ul{
+  list-style-type: none;
+  list-style: none;
+}
+
+a {
+  text-decoration: none !important;
+  color: #fff !important;
+}
+
+p {
+  margin: 0 !important;
+}
+
+h1 {
+  font-size: 5rem !important;
+  font-family: var(--headline-font);
+  font-weight: bold;
+}
+
+body {
+  font-family: var(--body-font) !important;
+  background: #000 !important;
+  color: #fff !important;
+}
+
+nav {
+  font-family: var(--headline-font);
+}
+
+.btn{
+  border-radius: unset !important;
+}
+
+.card-title{
+  margin: 0 !important;
+}

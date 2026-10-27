@@ -1,0 +1,653 @@
+---
+disciplina: DSM3/GAPS
+titulo: GAPS Modulo 04   Timeboxing e Planejamento
+fonte: DSM3/GAPS/notebook-sources/GAPS-Modulo 04 - Timeboxing e Planejamento.txt
+tipo: txt
+paginas: 0
+extraido_em: 2026-10-24
+---
+
+# Modulo 04 - Timeboxing e Planejamento
+Fonte: https://i-davies.github.io/conteudo-fatec-2026-2/GAPS/04_Timeboxing_e_Planejamento/
+
+
+## Pagina: Timeboxing e Planejamento Adaptativo
+(04_Timeboxing_e_Planejamento/01_Timeboxing_e_Planejamento_Adaptativo)
+
+Timeboxing e Planejamento Adaptativo
+
+ Conceito de caixas de tempo fixas, flexibilidade de escopo, cadência e planejamento iterativo no desenvolvimento de software.
+
+ O Conceito de Timeboxing
+ No gerenciamento ágil de projetos, Timeboxing (ou "caixa de tempo") é a prática de definir um período fixo e inegociável para a execução de uma atividade ou ciclo de trabalho. Quando o tempo estipulado se esgota, a atividade é encerrada e o resultado alcançado é avaliado, independentemente de todo o escopo previsto ter sido finalizado.
+ A principal mudança de mentalidade trazida pelo timeboxing está no chamado Triângulo de Ferro da gestão de projetos:
+ `graph TD
+ subgraph MT["Modelo Tradicional"]
+ T1["Escopo Fixo"] --> V1["Tempo Variável (Atrasos)"]
+ T1 --> V2["Custo Variável (Sobrecarga)"]
+ end
+
+ subgraph MA["Modelo Ágil"]
+ A1["Tempo Fixo (Timebox)"] --> S1["Escopo Flexível (Priorizado)"]
+ A2["Recursos Fixos (Squad)"] --> S1
+ end
+
+ Modelo Tradicional (Preditivo): O escopo é travado no início. Quando surgem imprevistos, o prazo final é adiado e o orçamento aumenta.
+ Modelo Ágil (Adaptativo): O tempo (Sprint) e os recursos (tamanho da Squad) são constantes. Diante de imprevistos, o time ajusta o escopo, entregando primeiro os itens de maior valor de negócio definidos pelo Product Owner (PO).
+
+ Fenômenos Combatidos pelo Timeboxing
+ Trabalhar com prazos longos ou indefinidos gera distorções comportamentais clássicas no desenvolvimento de software. O timeboxing atua como um mecanismo psicológico e operacional para combater três problemas recorrentes:
+ Lei de Parkinson
+
+ "O trabalho se expande de modo a preencher o tempo disponível para a sua realização."
+
+ Se um desenvolvedor tiver 30 dias para criar uma tela de cadastro, o design e o código levarão 30 dias para ficarem prontos, muitas vezes acumulando complexidade desnecessária ( overengineering ). Com uma janela de tempo menor e focada, a equipe é incentivada a construir a versão mais simples e funcional do requisito.
+ Síndrome do Estudante
+ A tendência natural de adiar o início efetivo do esforço até o último momento possível antes do prazo final. Em ciclos curtos de desenvolvimento, a proximidade da entrega mantém o foco contínuo e evita o acúmulo de trabalho nas vésperas das entregas.
+ Paralisação por Análise ( Analysis Paralysis )
+ A tentativa de planejar e antecipar todos os detalhes técnicos e telas antes de iniciar a programação. O timebox força o encerramento da fase de discussão e impõe a transição para a ação prática e construção de código real.
+
+ Planejamento Adaptativo vs Planejamento Preditivo
+ O planejamento ágil não significa a ausência de planejamento; significa planejar continuamente . Em vez de gastar meses elaborando um cronograma detalhado de um ano que se tornará obsoleto na primeira mudança de mercado, a equipe planeja detalhadamente apenas o ciclo imediato.
+
+ Aspecto
+ Planejamento Preditivo
+ Planejamento Adaptativo
+
+ Premissa
+ O futuro é previsível e os requisitos são estáveis.
+ O software é complexo e mudanças são inevitáveis.
+
+ Frequência de Ajuste
+ Apenas em revisões formais de contrato e mudanças de escopo.
+ Constante, a cada fim de ciclo ou nova descoberta.
+
+ Medição de Progresso
+ Porcentagem de tarefas iniciadas ou documentos preenchidos.
+ Incrementos de software funcional e testado em produção.
+
+ Tratamento de Mudanças
+ Visto como desvio, custo extra ou falha de especificação.
+ Visto como oportunidade de aprendizado e refinamento do produto.
+
+ A Sprint como Unidade de Timebox
+ No Scrum e no Scrumban, a Sprint é a caixa de tempo principal do desenvolvimento. As Sprints possuem duração constante ao longo do projeto (frequentemente de 1 a 4 semanas, sendo comum a cadência de 15 dias em projetos acadêmicos e laboratoriais).
+ A Meta da Sprint ( Sprint Goal )
+ Cada Sprint precisa de um objetivo claro e unificador compartilhado por toda a squad, e não apenas de uma lista solta de tarefas técnicas.
+
+ Meta Ruim: "Fazer as tarefas #10, #11 e #12 do GitHub".
+ Meta Clara: "Permitir que o cliente consulte suas guias tributárias pendentes e visualize o comprovante".
+
+ A Meta da Sprint serve de guia para tomadas de decisão: se o time encontrar bloqueios técnicos durante a iteração, tarefas secundárias podem ser descartadas ou adiadas, desde que a Meta principal seja preservada.
+ Capacidade da Squad e Ritmo Sustentável
+ O timebox estabelece uma cadência regular de entrega. Com o passar dos ciclos, a squad aprende quantos itens de trabalho (Issues ou Story Points) consegue concluir por iteração. Isso gera previsibilidade real de entrega baseada em dados históricos, evitando horas extras excessivas e sobrecarga.
+
+ Critérios de Qualidade: DoR e DoD
+ Para que o timebox funcione sem comprometer a qualidade do software, a equipe adota dois acordos de trabalho formais:
+ `graph LR
+ Backlog["Product Backlog"] -->|Atende ao DoR| Planning["Sprint Planning"]
+ Planning --> Dev["Desenvolvimento no Timebox"]
+ Dev -->|Atende ao DoD| Incremento["Incremento de Software Pronto"]
+
+ Definition of Ready (DoR - Definição de Preparado)
+ Critérios mínimos que uma Issue deve cumprir antes de ser puxada para dentro da Sprint:
+
+ História de Usuário clara com o valor de negócio explicitado.
+ Critérios de aceitação objetivos e testáveis definidos.
+ Estimativa de esforço relativo atribuída.
+ Ausência de bloqueios externos imediatos (exemplo: protótipo de tela desenhado ou regra fiscal esclarecida).
+
+ Definition of Done (DoD - Definição de Pronto)
+ Critérios inegociáveis que uma entrega deve cumprir para ser considerada concluída e pronta para a branch principal:
+
+ Código-fonte limpo, tipado e padronizado pelo linter da equipe.
+ Testes automatizados ou manuais de validação executados com sucesso.
+ Revisão por pares ( Code Review ) aprovada via Pull Request.
+ Branch integrada com a branch principal sem conflitos de mesclagem.
+ Documentação atualizada (se houver alteração de contrato de API ou rota).
+
+ Timeboxing nos Rituais e na Coordenação de Múltiplas Squads
+ O princípio do timebox se aplica rigorosamente a todas as cerimônias de gestão ágil:
+
+ Sprint Planning: Reunião inicial com duração delimitada para definir a Meta da Sprint e selecionar os itens do Sprint Backlog.
+ Daily Meeting (Reunião Diária): Sincronização rápida de 15 minutos com o time em pé (ou gravação de vídeo objetivo de 2 a 5 minutos entre lideranças/PMs) focada exclusivamente em alinhamento de progresso e bloqueios.
+ Sprint Review: Sessão focada em demonstrar o software em funcionamento para partes interessadas ( stakeholders ).
+ Sprint Retrospective: Reunião focada em melhorias internas no processo de trabalho do time.
+
+ Governança em Projetos com Múltiplas Squads
+ Em ecossistemas com dezenas de desenvolvedores divididos em squads especializadas (como frentes de Front-end, UX, Dados, Core e Atendimento), o timeboxing compartilhado garante que todas as frentes sincronizem suas entregas na mesma data limite.
+ Isso viabiliza integrações modulares entre serviços, contratos de API consistentes e alinhamentos eficientes entre Product Managers (PMs) e Product Owners (POs).
+
+ Próximo Passo
+ Agora que você compreende a importância das caixas de tempo e do planejamento adaptativo, avance para a prática da primeira Sprint Planning e aprenda as regras obrigatórias de versionamento com Pull Requests:
+ Ir para o Laboratório: Sprint Planning e Workflow Git
+
+
+## Pagina: Laboratório: Sprint Planning e Workflow com Pull Requests
+(04_Timeboxing_e_Planejamento/02_Sprint_Planning_e_Workflow_Git)
+
+Laboratório: Sprint Planning e Workflow com Pull Requests
+
+ Guia prático para a condução da primeira Sprint Planning, estimativa de capacidade e adoção do fluxo obrigatório de Pull Requests no GitHub.
+
+ A Primeira Sprint Planning
+ A Sprint Planning marca o início oficial do ciclo de desenvolvimento. O objetivo principal desta cerimônia é responder a duas perguntas fundamentais:
+
+ O que pode ser entregue neste ciclo? (Definição do Sprint Backlog e da Meta da Sprint).
+ Como o trabalho escolhido será realizado? (Fatiamento técnico em tarefas e distribuição entre os desenvolvedores).
+
+ `graph LR
+ PB["Product Backlog (Priorizado)"] --> Planning["Sprint Planning"]
+ Cap["Capacidade da Squad"] --> Planning
+ Planning --> SG["Meta da Sprint (Sprint Goal)"]
+ Planning --> SB["Sprint Backlog (Issues da Sprint 1)"]
+
+ Passo a Passo da Sprint Planning
+ 1. Definição da Meta da Sprint ( Sprint Goal )
+ Reúna a squad (PO, Scrum Master e desenvolvedores) e estabeleça um objetivo de valor tangível para o ciclo de 15 dias.
+
+ Exemplo para Squad Core: "Entregar o fluxo completo de cadastro e login de usuários com persistência em banco e validação de sessão".
+ Exemplo para Squad Front / Header: "Construir a estrutura base responsiva com o cabeçalho e o carrossel de serviços contábeis integrado ao Design System".
+
+ 2. Seleção e Dimensionamento do Sprint Backlog
+ Com base na priorização realizada anteriormente (método MoSCoW e tamanhos de camiseta `S , `M , `L ), selecione as Issues do Product Backlog que atendem à Meta da Sprint:
+
+ No GitHub Projects , acerte o campo `Sprint (ou `Iteration ) das Issues escolhidas para `Sprint 1 .
+ Garanta que todas as Issues selecionadas cumpram a Definição de Preparado (DoR) :
+ História de Usuário clara (Como / Desejo / Para).
+ Checklist de critérios de aceitação.
+ Atribuição de responsável ( Assignee ).
+ Etiquetas ( Labels ) de classificação (`backend , `frontend , `design , etc.).
+
+ 3. Mapeamento de Dependências e Arquitetura Matricial
+ Em projetos com múltiplas frentes de desenvolvimento (como squads dedicadas a Front, Backend, Dados ou Design):
+
+ Contratos de Dados Primeiro: Se a equipe de Front depende da API para listar dados, a squad de Backend deve definir a estrutura JSON da resposta antes de codificar, ou o time de Front deve utilizar dados simulados ( mocks ) para não ficar bloqueado.
+ Divisão por Fatias Verticais: Sempre que viável, divida tarefas de modo que uma mesma dupla ou desenvolvedor implemente uma entrega funcional ponta a ponta (banco, rota e interface).
+
+ A Regra de Ouro do Versionamento
+ A partir do início da Sprint 1, uma regra de governança técnica passa a ser mandatória em todos os repositórios da organização:
+
+ Código nunca é enviado diretamente para a branch principal (`main ).
+Toda e qualquer alteração entra na branch principal exclusivamente por meio de Pull Requests (PRs) revisados e aprovados.
+
+ `gitGraph
+ commit id: "Initial commit"
+ branch feature/login-jwt
+ checkout feature/login-jwt
+ commit id: "feat: rota POST /login"
+ commit id: "test: validacao de token"
+ checkout main
+ merge feature/login-jwt id: "PR #12 Merged"
+ branch feature/header-home
+ checkout feature/header-home
+ commit id: "feat: componente carrossel"
+ checkout main
+ merge feature/header-home id: "PR #13 Merged"
+
+ O Ciclo de Vida do Git Feature Branch
+ 1. Atualizar a Branch Principal Local
+ Antes de criar qualquer nova funcionalidade, garanta que sua cópia local da branch `main está em sincronia com o GitHub:
+ Git Bash / Terminal
+
+ ` git checkout main
+ git pull origin main
+
+ 2. Criar a Branch Temática ( Feature Branch )
+ Crie uma branch com nome semântico, indicando o tipo de trabalho e o contexto da Issue:
+
+ Novas Funcionalidades: `feature/nome-da-funcionalidade
+ Correção de Bugs: `fix/descricao-do-problema
+ Documentação: `docs/atualizacao-readme
+
+ Exemplo: Criando branch de funcionalidade
+
+ ` git checkout -b feature/login-autenticacao-jwt
+
+ 3. Desenvolver e Realizar Commits Semânticos
+ Trabalhe no escopo específico da Issue. Realize commits atômicos e com mensagens claras seguindo o padrão de commits convencionais:
+ Exemplo de Commits
+
+ ` git add src/controllers/AuthController.ts src/routes/authRoutes.ts
+ git commit -m "feat(auth): adiciona controller de login com geracao de token JWT"
+
+ git add src/tests/auth.test.ts
+ git commit -m "test(auth): implementa testes de credenciais invalidas"
+
+ 4. Publicar a Branch e Abrir o Pull Request (PR)
+ Envie a branch para o repositório remoto no GitHub:
+ Comando de Envio
+
+ ` git push -u origin feature/login-autenticacao-jwt
+
+ Após o push, acesse o repositório no GitHub e clique em Compare & pull request .
+
+ Estrutura Padrão de um Pull Request
+ Um bom Pull Request deve ser autoexplicativo, permitindo que qualquer colega de equipe compreenda o que mudou e como testar.
+ Vinculação Automática com a Issue (Closing Keywords)
+ O GitHub possui um mecanismo inteligente que permite associar Pull Requests a Issues e encerrá-las automaticamente no momento em que o código é integrado à branch principal.
+ Para acionar esse comportamento, basta incluir uma palavra-chave reservada seguida do número da Issue no corpo da descrição do PR ou na mensagem de commit.
+ Diferenças Semânticas entre as Palavras-Chave
+ Embora o GitHub execute a mesma ação técnica de fechamento para todas elas, adota-se uma convenção semântica clara na engenharia de software para expressar o propósito da entrega:
+
+ Palavra-Chave
+ Variações Suportadas
+ Uso Recomendado e Significado
+ Exemplo de Aplicação
+
+ `Closes
+ `close , `closes , `closed
+ Novas Funcionalidades e Tarefas Gerais: Usado para entregas normais de escopo, desenvolvimento de novas rotas, componentes visuais ou tarefas planejadas na Sprint.
+ `Closes #15
+
+ `Fixes
+ `fix , `fixes , `fixed
+ Correção de Bugs e Falhas: Usado exclusivamente quando a entrega corrige um erro funcional, defeito de validação, quebra de layout ou exceção no sistema.
+ `Fixes #28
+
+ `Resolves
+ `resolve , `resolves , `resolved
+ Resolução de Débitos Técnicos e Demandas Complexas: Usado para refatorações, melhorias de desempenho, resolução de impedimentos técnicos, configurações de ambiente ou dúvidas arquiteturais.
+ `Resolves #42
+
+ Como o GitHub Processa a Automação nos Bastidores
+ `graph TD
+ A["Desenvolvedor abre o PR com 'Closes #15'"] --> B["GitHub detecta e exibe em 'Linked issues'"]
+ B --> C["Issue permanece ABERTA durante o Code Review"]
+ C --> D{"PR aprovado e mesclado (Merge) na branch main?"}
+ D -- Sim --> E["GitHub fecha automaticamente a Issue #15"]
+ E --> F["Issue é movida para a coluna 'Done' no GitHub Projects"]
+ D -- Não (PR fechado sem merge) --> G["Issue permanece aberta sem alterações"]
+
+ Vínculo Imediato ( Linked Issues ): Assim que o Pull Request é aberto contendo a palavra-chave, o GitHub adiciona a Issue na seção Linked issues na barra lateral direita do PR. Na visualização da Issue, surge uma referência indicando que há um PR em andamento para atendê-la.
+ Ciclo de Revisão Protegido: Enquanto o PR estiver em análise ou aguardando revisões, a Issue continua aberta , garantindo que tarefas em andamento não sejam consideradas prontas prematuramente.
+ Fechamento no Merge: No instante exato em que o revisor clica em Merge pull request e confirma a mesclagem para a branch padrão (`main ), o evento de fechamento é disparado:
+ O status da Issue muda para Closed .
+ Uma mensagem automática é inserida no histórico da Issue: "Closed by #PR_NUMBER" .
+ Se a Issue fizer parte de um GitHub Projects , o card é movido automaticamente para a coluna Done (Concluído).
+
+ Vinculação entre Repositórios Diferentes da Mesma Organização
+ Se a Issue estiver cadastrada no repositório de API (ex: `hub-solidario-api ) e a alteração for realizada em um repositório Web (ex: `hub-solidario-web ), informe o caminho completo do repositório:
+
+ `Closes organizacao/hub-solidario-api#15
+ `Fixes organizacao/hub-solidario-web#28
+
+ Template Recomendado para Descrição de PR
+ ` ## Descrição das Alterações
+ Implementação da rota de autenticação de usuários com emissão de token JWT e validação de senhas com hash criptográfico.
+
+ Closes #15
+
+ ## Tipo de Mudança
+ - [x] Nova funcionalidade (feature)
+ - [ ] Correção de bug (fix)
+ - [ ] Refatoração / Melhoria de código
+ - [ ] Atualização de documentação
+
+ ## Checklist de Validação (DoD)
+ - [x] O código segue os padrões de formatação e lint do projeto
+ - [x] Testado localmente com sucesso (Thunder Client / REST Client / Navegador)
+ - [x] Não foram introduzidos warnings ou erros no build
+ - [x] Documentação de rotas ou variáveis de ambiente atualizada no .env.example
+
+ ## Evidências de Teste
+ (Inserir print do teste na ferramenta de API ou captura da tela funcionando)
+
+ Code Review e Governança de Código
+ O Code Review (Revisão por Pares) é a prática em que outros membros da equipe inspecionam o código proposto antes de integrá-lo à branch principal (`main ). Essa etapa garante a qualidade técnica, previne defeitos funcionais e promove o compartilhamento de conhecimento na squad.
+
+ Pré-requisitos e Permissões para Revisores
+ Para que um desenvolvedor possa ser solicitado como revisor ( Reviewer ) e aprovar formalmente um Pull Request no GitHub, algumas condições de permissão devem ser atendidas:
+
+ Acesso ao Repositório: O usuário deve ser membro da Organização no GitHub com acesso ao repositório ou ter sido adicionado individualmente como Collaborator no repositório.
+ Nível de Permissão Adequado:
+ `Write (Escrita) ou `Triage : Necessário para poder ser atribuído formalmente no campo Reviewers e para que sua aprovação tenha peso de liberação em branches protegidas.
+ `Read (Leitura): Permite apenas visualizar o código e deixar comentários públicos, mas não habilita o poder de aprovação formal de bloqueio em fluxos governados.
+
+ Como Solicitar Revisores no Pull Request
+ Assim que o Pull Request for aberto:
+
+ Na coluna lateral direita da página do PR, localize o bloco Reviewers .
+ Clique no ícone de engrenagem ao lado de Reviewers .
+ Digite o nome de usuário do colega de squad ou do Tech Lead e selecione-o na lista.
+ O GitHub enviará uma notificação automática convidando o usuário para a revisão.
+
+ Configuração Obrigatória: Proteção de Branch ( Branch Protection Rules )
+ Por padrão, o GitHub permite que qualquer colaborador com acesso de escrita envie código diretamente para a `main ou mescle PRs sem aprovação. Para forçar a governança ágil e impedir merges acidentais, deve-se ativar uma Branch Protection Rule :
+
+ No repositório, acesse a aba Settings .
+ No menu lateral esquerdo, clique em Branches (ou Rules -> Rulesets ).
+ Ao lado de Branch protection rules , clique em Add rule (ou New branch ruleset ).
+ Em Branch name pattern , digite `main .
+ Marque as seguintes opções essenciais:
+ Require a pull request before merging: Impede push direto na `main .
+ Require approvals: Exige que pelo menos `1 membro aprove o PR antes da liberação do botão de merge.
+ Dismiss stale pull request approvals when new commits are pushed: (Recomendado) Invalida aprovações anteriores caso novos commits sejam enviados para a branch do PR, exigindo nova inspeção.
+
+ Clique em Create ou Save changes .
+
+ `graph TD
+ PR["Pull Request Aberto"] --> CheckAuth{"Permissão de Escrita no Repositório?"}
+ CheckAuth -- Não --> CommentOnly["Apenas visualiza e comenta (Read)"]
+ CheckAuth -- Sim --> ReqRev["Selecionado em 'Reviewers'"]
+ ReqRev --> RuleCheck{"Branch Protection Ativa?"}
+ RuleCheck -- Sim --> Block["Merge Bloqueado até Aprovação"]
+ RuleCheck -- Não --> UnsafeMerge["Merge Livre (Risco de Quebra)"]
+ Block --> FormalReview["Revisão: Approve / Request Changes"]
+ FormalReview --> Unblock["Merge Liberado após Aprovação"]
+
+ Como Conduzir a Revisão Humana
+ Ao ser notificado para revisar um PR:
+
+ Acesse a aba Files changed no topo do Pull Request para analisar a diferença ( diff ) entre o código antigo e o novo.
+ Deixar Comentários Pontuais: Passe o cursor sobre o número de qualquer linha de código modificada, clique no ícone `+ azul e digite seu apontamento.
+ Sugerir Correções Diretas: Utilize o bloco de sugestão de código do GitHub (`suggestion ) para que o autor possa aceitar a melhoria com apenas um clique:
+ ` ```suggestion
+ const port = Number(process.env.PORT) || 3000;
+ ```
+
+ Finalizar a Revisão: Clique no botão verde Review changes no canto superior direito e selecione um dos três pareceres:
+ Comment: Envia observações gerais sem aprovar nem bloquear.
+ Approve: Aprova formalmente a integração das alterações.
+ Request changes: Bloqueia o merge até que o autor faça os ajustes solicitados.
+
+ Recursos Nativos do GitHub para Automação de Code Review
+ O próprio GitHub disponibiliza mecanismos nativos integrados à plataforma para automatizar revisões e governança:
+ 1. GitHub Copilot Code Review e PR Summaries (IA Nativa)
+ Organizações e contas com o GitHub Copilot habilitado possuem recursos integrados diretamente na interface de Pull Requests:
+
+ Geração Automática de Resumo ( Copilot PR Summary ): Ao abrir um PR, clique no ícone do Copilot no campo de descrição para gerar automaticamente um resumo estruturado em tópicos das alterações contidas no diff.
+ Solicitação de Revisão por IA ( Copilot as a Reviewer ): No bloco lateral Reviewers , é possível selecionar o Copilot como um dos revisores. Ele analisará as alterações e deixará comentários linha a linha com sugestões técnicas.
+ Instruções Customizadas do Repositório: Crie o arquivo `.github/copilot-instructions.md na raiz do projeto para orientar o Copilot sobre convenções de código, frameworks utilizados e regras de arquitetura da equipe.
+
+ 2. Atribuição Automática de Revisores com `CODEOWNERS
+ O GitHub possui um recurso nativo que elimina a necessidade de selecionar manualmente os revisores em cada PR. Através de um arquivo chamado `CODEOWNERS (localizado em `.github/CODEOWNERS ou na raiz do repositório), o GitHub identifica os arquivos alterados e solicita automaticamente a revisão dos responsáveis definidos:
+ ` # .github/CODEOWNERS
+
+ # Qualquer alteração no repositório exige revisão dos Tech Leads
+ * @minha-organizacao/tech-leads
+
+ # Alterações no backend notificam a squad de backend
+ /src/controllers/ @minha-organizacao/squad-backend
+ /src/models/ @minha-organizacao/squad-backend
+
+ # Alterações no frontend notificam a squad de frontend
+ /src/components/ @minha-organizacao/squad-frontend
+ /src/pages/ @minha-organizacao/squad-frontend
+
+ # Alterações em configurações de ambiente ou CI
+ /.github/workflows/ @icaro-professor
+ /.env.example @minha-organizacao/tech-leads
+
+ Benefício do CODEOWNERS
+ Combinado com as Branch Protection Rules , o `CODEOWNERS permite ativar a opção Require review from Code Owners , garantindo que apenas a aprovação dos proprietários técnicos de cada módulo libere o merge.
+
+ 3. Análise Estática Nativa com GitHub CodeQL e Actions
+ Para análise estática automatizada de vulnerabilidades, o GitHub oferece o CodeQL (gratuito para repositórios públicos e integrado via GitHub Actions na aba Security > Code scanning ). Ele verifica injeções de SQL, vazamento de credenciais e más práticas antes mesmo do revisor humano iniciar a leitura.
+
+ Code Review com Aplicativos de IA (CodeRabbit AI)
+ Quando a equipe busca um assistente de IA focado em análise contínua de PRs com plano gratuito acessível para organizações acadêmicas e open source, aplicativos de terceiros como o CodeRabbit AI podem ser plugados diretamente ao GitHub em poucos cliques via GitHub Marketplace.
+ Passo a Passo de Integração do CodeRabbit
+
+ Instalação via GitHub Marketplace:
+
+ Acesse CodeRabbit no GitHub Marketplace ou o portal `coderabbit.ai .
+ Clique em Install e autorize o aplicativo na Organização ou repositórios específicos (ex: `hub-solidario-api e `hub-solidario-web ).
+
+ Funcionamento Automático:
+
+ A cada abertura de PR ou novo commit enviado, o bot do CodeRabbit inspeciona o diff e publica:
+ Resumo de alto nível ( Walkthrough ) das modificações.
+ Diagrama de sequência ou fluxo quando há mudanças arquiteturais.
+ Comentários linha a linha sugerindo refatorações, correções de tipagem e validações ausentes.
+
+ Arquivo de Configuração Opcional (`.coderabbit.yaml ):
+ Para padronizar o idioma e as regras de avaliação, adicione o arquivo `.coderabbit.yaml na raiz do projeto:
+
+ ` # yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
+ language : "pt-BR"
+ tone_instructions : "Seja didático, objetivo e técnico. Foque em segurança, clareza de código e boas práticas de TypeScript e Python."
+ reviews :
+ profile : "chill"
+ request_changes_workflow : false
+ high_level_summary : true
+ poem : false
+ auto_review :
+ enabled : true
+ drafts : false
+ base_branches :
+ - "main"
+ chat :
+ auto_reply : true
+
+ O Papel da IA no Fluxo de Desenvolvimento
+ Tanto o GitHub Copilot quanto o CodeRabbit atuam como filtros iniciais para identificar erros sintáticos, falta de tratamento de exceções e inconsistências de tipagem. A validação das regras de negócio e da experiência do usuário continua sendo responsabilidade da squad.
+
+ Exemplos de Issues e Pull Requests em Projetos de Laboratório
+ Veja como estruturar o planejamento e o fluxo de trabalho em diferentes contextos de projeto:
+ Portal Contábil: Squad Busca Simples e Avançada Portal Contábil: Squad Header e Carrossel Hub Solidário: Squad Vagas e Geolocalização
+
+ Issue Relacionada: `#22 - Endpoint e filtros para busca de obrigações por CNPJ
+ Branch: `feature/busca-obrigacoes-cnpj
+ Descrição do PR:
+ ` ## Descrição
+ Adiciona rota GET /obrigacoes com suporte a filtros query params por CNPJ da empresa e status da guia (pendente/pago).
+
+ Closes #22
+
+ ## Critérios Testados
+ - [x] Validação de formato de CNPJ com 14 dígitos
+ - [x] Retorno paginado e ordenado por data de vencimento
+ - [x] Tratamento de erro 404 para empresas sem obrigações cadastradas
+
+ Issue Relacionada: `#08 - Componente responsivo de cabeçalho e carrossel de serviços
+ Branch: `feature/header-carrossel-responsivo
+ Descrição do PR:
+ ` ## Descrição
+ Construção dos componentes Header e ServiceCarousel utilizando React, Tailwind CSS e tipagem TypeScript.
+
+ Closes #08
+
+ ## Critérios Testados
+ - [x] Responsividade validada em resoluções mobile (375px) e desktop (1440px)
+ - [x] Navegação de links principais (Serviços, Blog, Contato, Login)
+ - [x] Transição automática e controles manuais do carrossel
+
+ Issue Relacionada: `#14 - Listagem de vagas de voluntariado com filtro por cidade
+ Branch: `feature/filtro-vagas-cidade
+ Descrição do PR:
+ ` ## Descrição
+ Criação do componente de busca e listagem de oportunidades solidárias com filtro dinâmico por cidade e categoria de atuação.
+
+ Closes #14
+
+ ## Critérios Testados
+ - [x] Consumo da API de vagas com tratamento de estado de carregamento (loading)
+ - [x] Renderização de cards com detalhes da ONG e botão de candidatura
+ - [x] Mensagem de feedback amigável quando nenhuma vaga for encontrada
+
+ Exercícios Práticos de Laboratório: O Fluxo no Hub Solidário
+ Para consolidar o fluxo completo de Feature Branches , Pull Requests , Code Review e Automação de Fechamento de Issues , as squads executarão o roteiro prático abaixo utilizando o projeto Hub Solidário (ou os repositórios oficiais criados pela equipe).
+
+ Atividade Prática 1: Implementando uma Feature com Fechamento Automático (`Closes )
+
+ Identificar a Issue: No GitHub Projects da sua squad, localize a Issue oficial de cadastro ou autenticação (exemplo: `Issue #10 - Implementar rota de login com JWT no repositório `hub-solidario-api ).
+ Mover para Em Progresso: Mova o card da Issue no quadro Kanban para a coluna `In Progress e certifique-se de que ela está atribuída a você ( Assignee ).
+ Criar a Branch: No seu terminal local, atualize a branch `main e crie a branch de trabalho:
+ ` git checkout main
+ git pull origin main
+ git checkout -b feature/login-jwt
+
+ Criar o Commit: Adicione as alterações e crie um commit semântico:
+ ` git add .
+ git commit -m "feat(auth): implementa rota de login e geracao de token JWT"
+
+ Enviar a Branch e Abrir o Pull Request:
+ ` git push -u origin feature/login-jwt
+
+ Acesse o repositório no GitHub e abra o Pull Request apontando para a branch `main .
+ No título, coloque: `feat: autenticação de usuários com JWT .
+ No corpo da descrição, inclua a instrução: `Closes #10 e marque os itens do checklist do DoD.
+ Verifique se a Issue `#10 aparece listada na seção lateral Linked issues .
+
+ Atividade Prática 2: Corrigindo um Bug com Fechamento Específico (`Fixes )
+
+ Criar a Issue de Bug: Crie uma Issue no repositório `hub-solidario-api com o título: `bug: erro 400 ao validar CNPJ com pontuação .
+ Atribua a etiqueta `bug e defina a prioridade como `High . Anote o número gerado (exemplo: `#11 ).
+
+ Criar a Branch de Correção:
+ ` git checkout main
+ git pull origin main
+ git checkout -b fix/validacao-cnpj-formatado
+
+ Commitar e Abrir o PR:
+ ` git add .
+ git commit -m "fix(validator): remove caracteres especiais antes de validar CNPJ"
+ git push -u origin fix/validacao-cnpj-formatado
+
+ Abra o Pull Request com a mensagem: `Fixes #11 .
+
+ Atividade Prática 3: Resolvendo Débito Técnico ou Documentação (`Resolves )
+
+ Identificar ou Criar a Tarefa: Localize uma Issue de melhoria técnica (exemplo: `#12 - Padronizar tratamento de erros globais da API ou `#13 - Documentar rotas no README ).
+ Criar a Branch:
+ ` git checkout -b refactor/tratamento-erros-global
+
+ Commitar e Abrir o PR:
+ ` git add .
+ git commit -m "refactor(errors): cria middleware global para captura de excecoes"
+ git push -u origin refactor/tratamento-erros-global
+
+ Abra o Pull Request com a mensagem: `Resolves #12 .
+
+ Atividade Prática 4: Conduzindo o Code Review e o Merge em Duplas
+
+ Solicitação de Revisores: No Pull Request recém-aberto, acesse a barra lateral direita, clique na engrenagem ao lado de Reviewers e selecione o colega de squad responsável pela revisão.
+ Inspeção de Código: O revisor acessa a notificação, entra na aba Files changed do PR, seleciona uma linha de código alterada e adiciona um comentário técnico construtivo ou uma sugestão de código via bloco `suggestion .
+ Aprovação Formal: Após analisar o código e os critérios do DoD, o revisor clica no botão verde Review changes , seleciona Approve e envia o parecer.
+ Merge e Verificação:
+ Com a aprovação registrada, o autor ou o mantenedor clica em Merge pull request e confirma a mesclagem.
+ Clica em Delete branch para manter o repositório organizado.
+ A squad acessa o quadro GitHub Projects e confirma que as Issues `#10 , `#11 e `#12 foram movidas automaticamente para a coluna `Done com o status fechado.
+
+ Exercícios de Fixação
+
+ Responda às questões abaixo para verificar a fixação dos tópicos de versionamento, fluxo de trabalho e automação com Pull Requests.
+
+Qual é o nível de permissão mínimo necessário no repositório para que um usuário da organização possa ser atribuído formalmente como Reviewer e ter sua aprovação computada na liberação de branches protegidas?
+* [ ] Permissão apenas de Leitura (`Read`).
+* [x] Permissão de Escrita (`Write`) ou `Triage` (ou colaborador com acesso de escrita).
+* [ ] Permissão exclusiva de Proprietário da Organização (`Owner`).
+* [ ] Não é necessária nenhuma permissão no GitHub.
+
+-->
+
+ #
+ Questão 1
+
+ Qual é o nível de permissão mínimo necessário no repositório para que um usuário da organização possa ser atribuído formalmente como Reviewer e ter sua aprovação computada na liberação de branches protegidas?
+
+ Permissão apenas de Leitura (`Read ). Permissão de Escrita (`Write ) ou `Triage (ou colaborador com acesso de escrita). Permissão exclusiva de Proprietário da Organização (`Owner ). Não é necessária nenhuma permissão no GitHub.
+
+Qual configuração do GitHub garante que nenhum membro da equipe consiga enviar código diretamente para a branch principal (`main`) sem antes passar por um Pull Request com aprovação formal de outro desenvolvedor?
+* [ ] GitHub Issues Labels.
+* [ ] GitHub Milestones.
+* [x] Branch Protection Rules (ou Rulesets) com a opção 'Require approvals' ativada.
+* [ ] GitHub Projects Workflows.
+
+-->
+
+ #
+ Questão 2
+
+ Qual configuração do GitHub garante que nenhum membro da equipe consiga enviar código diretamente para a branch principal (`main ) sem antes passar por um Pull Request com aprovação formal de outro desenvolvedor?
+
+ GitHub Issues Labels. GitHub Milestones. Branch Protection Rules (ou Rulesets) com a opção 'Require approvals' ativada. GitHub Projects Workflows.
+
+Qual é a convenção semântica recomendada para a palavra-chave de fechamento automático quando um Pull Request tem como único objetivo consertar uma falha de validação ou erro de execução no sistema?
+* [ ] `Closes #30`
+* [x] `Fixes #30`
+* [ ] `Resolves #30`
+* [ ] `Deletes #30`
+
+-->
+
+ #
+ Questão 3
+
+ Qual é a convenção semântica recomendada para a palavra-chave de fechamento automático quando um Pull Request tem como único objetivo consertar uma falha de validação ou erro de execução no sistema?
+
+ `Closes #30 `Fixes #30 `Resolves #30 `Deletes #30
+
+Em que momento o GitHub encerra oficialmente uma Issue vinculada por uma palavra-chave (como `Closes #15`) e a move para a coluna de concluído no quadro de projetos?
+* [ ] No momento exato em que o comando `git push` é executado no terminal do desenvolvedor.
+* [ ] No instante em que o Pull Request é aberto e recebe o primeiro comentário.
+* [ ] Quando o revisor clica em 'Approve' na aba de revisão de código.
+* [x] Apenas quando o Pull Request é aprovado e mesclado (Merge) na branch principal (main).
+
+-->
+
+ #
+ Questão 4
+
+ Em que momento o GitHub encerra oficialmente uma Issue vinculada por uma palavra-chave (como `Closes #15 ) e a move para a coluna de concluído no quadro de projetos?
+
+ No momento exato em que o comando `git push é executado no terminal do desenvolvedor. No instante em que o Pull Request é aberto e recebe o primeiro comentário. Quando o revisor clica em 'Approve' na aba de revisão de código. Apenas quando o Pull Request é aprovado e mesclado (Merge) na branch principal (main).
+
+Qual comando Git cria uma nova branch de funcionalidade e imediatamente alterna o ambiente de trabalho para ela?
+* [ ] `git branch feature/nova-tela`
+* [ ] `git push origin feature/nova-tela`
+* [x] `git checkout -b feature/nova-tela`
+* [ ] `git merge feature/nova-tela`
+
+-->
+
+ #
+ Questão 5
+
+ Qual comando Git cria uma nova branch de funcionalidade e imediatamente alterna o ambiente de trabalho para ela?
+
+ `git branch feature/nova-tela `git push origin feature/nova-tela `git checkout -b feature/nova-tela `git merge feature/nova-tela
+
+Por que uma equipe ágil adota a regra mandatória de que nenhum código entra diretamente na branch principal (main), exigindo sempre branches temáticas e Pull Requests?
+* [ ] Porque o GitHub bloqueia qualquer tentativa de escrita no disco local do desenvolvedor sem permissão de administrador.
+* [x] Para assegurar a estabilidade do código em produção, viabilizar a revisão por pares (Code Review) e garantir que os critérios de Definição de Pronto (DoD) sejam validados antes da integração.
+* [ ] Porque criar Pull Requests é uma exigência exclusiva para projetos que não utilizam bancos de dados relacionais.
+* [ ] Para evitar que a squad saiba quem foi o autor de cada linha de código no repositório.
+
+-->
+
+ #
+ Questão 6
+
+ Por que uma equipe ágil adota a regra mandatória de que nenhum código entra diretamente na branch principal (main), exigindo sempre branches temáticas e Pull Requests?
+
+ Porque o GitHub bloqueia qualquer tentativa de escrita no disco local do desenvolvedor sem permissão de administrador. Para assegurar a estabilidade do código em produção, viabilizar a revisão por pares (Code Review) e garantir que os critérios de Definição de Pronto (DoD) sejam validados antes da integração. Porque criar Pull Requests é uma exigência exclusiva para projetos que não utilizam bancos de dados relacionais. Para evitar que a squad saiba quem foi o autor de cada linha de código no repositório.
+
+Se a Issue #40 estiver registrada no repositório `empresa-api` e o desenvolvedor abrir um Pull Request no repositório `empresa-web` que resolve essa demanda, qual sintaxe deve ser usada no corpo do PR para fechar a Issue corretamente após o merge?
+* [ ] `Closes #40`
+* [x] `Closes empresa-api#40` (ou `Closes organizacao/empresa-api#40`)
+* [ ] `Link #40 to web`
+* [ ] `Import Issue #40 from api`
+
+-->
+
+ #
+ Questão 7
+
+ Se a Issue #40 estiver registrada no repositório `empresa-api e o desenvolvedor abrir um Pull Request no repositório `empresa-web que resolve essa demanda, qual sintaxe deve ser usada no corpo do PR para fechar a Issue corretamente após o merge?
+
+ `Closes #40 `Closes empresa-api#40 (ou `Closes organizacao/empresa-api#40 ) `Link #40 to web `Import Issue #40 from api
+
+ Progresso do quiz
+
+ 0 / 0 questões respondidas
+ ( 0% )
+
+ 0 correto
+
+ Quiz completo!
+
+ 0%
+
+ Reiniciar quiz

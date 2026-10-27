@@ -1,0 +1,87 @@
+{
+  "skill": "dsm-alp",
+  "disciplina": "DSM1/ALP",
+  "descricao": "Perguntas de recuperação para Algoritmos e Lógica de Programação. Cada item exige que a fonte mínima apareça no top-5 da busca.",
+  "perguntas": [
+    {
+      "id": "alp-01",
+      "prompt": "Quais são as três formas de representar um algoritmo e qual a desvantagem de cada uma?",
+      "fonte_minima": [
+        "conhecimento/DSM1/ALP/slides-aula-02-introducao-aos-algoritmos-e-suas-formas-de-representacao.md"
+      ],
+      "resposta_esperada": "Descrição narrativa (ambígua), fluxograma (exige simbologia e complica em algoritmos extensos) e Portugol/pseudocódigo (sem padronização na literatura) — slides-aula-02, slides 20–36."
+    },
+    {
+      "id": "alp-02",
+      "prompt": "Quais são as quatro propriedades essenciais de um algoritmo?",
+      "fonte_minima": [
+        "conhecimento/DSM1/ALP/slides-aula-02-introducao-aos-algoritmos-e-suas-formas-de-representacao.md"
+      ],
+      "resposta_esperada": "Completo, sem redundância, determinístico e finito — slides-aula-02, slide 13."
+    },
+    {
+      "id": "alp-03",
+      "prompt": "Quais linguagens de programação são aceitas na disciplina e o que é um programa fonte?",
+      "fonte_minima": [
+        "conhecimento/DSM1/ALP/slides-aula-03-introducao-as-linguagens-de-programacao.md"
+      ],
+      "resposta_esperada": "C, Java, Python, JavaScript e PHP; programa fonte é o programa escrito em linguagem de programação — slides-aula-03, slides 12 e 19 (o termo 'programa fonte' também aparece em slides-aula-01, slide 19)."
+    },
+    {
+      "id": "alp-04",
+      "prompt": "Como declarar um vetor de 10 elementos do tipo real no VisuAlg?",
+      "fonte_minima": [
+        "conhecimento/DSM1/ALP/programas-visualg3-0-7-visualg3-0-7-help-linguagem.md"
+      ],
+      "resposta_esperada": "vet: vetor [1..10] de real — índices de 1 a 10, dez elementos; o nome pode ter até 30 caracteres e cada elemento conta no limite de 500 variáveis — help-linguagem, §Nomes de Variáveis."
+    },
+    {
+      "id": "alp-05",
+      "prompt": "Como fazer um laço para de 10 até 1 com passo -1 no VisuAlg?",
+      "fonte_minima": [
+        "conhecimento/DSM1/ALP/programas-visualg3-0-7-visualg3-0-7-help-linguagem3.md"
+      ],
+      "resposta_esperada": "para j de 10 ate 1 passo -1 faca ... fimpara; sem o passo negativo o laço não executa, porque início maior que o limite — help-linguagem3, §Para ... faça."
+    },
+    {
+      "id": "alp-06",
+      "prompt": "Qual a diferença entre o laço enquanto e o repita até no VisuAlg?",
+      "fonte_minima": [
+        "conhecimento/DSM1/ALP/programas-visualg3-0-7-visualg3-0-7-help-linguagem3.md"
+      ],
+      "resposta_esperada": "enquanto testa antes e pode executar zero vezes; repita testa depois e executa ao menos uma vez — help-linguagem3, §Enquanto ... faça e §Repita ... até."
+    },
+    {
+      "id": "alp-07",
+      "prompt": "Como declarar um procedimento e uma função no VisuAlg e o que significa var no parâmetro?",
+      "fonte_minima": [
+        "conhecimento/DSM1/ALP/programas-visualg3-0-7-visualg3-0-7-help-linguagem4.md"
+      ],
+      "resposta_esperada": "procedimento não retorna valor; função retorna com retorne. O var antes do parâmetro indica passagem por referência; sem var, por valor — help-linguagem4, §Funções e §Passagem de Parâmetros por Referência."
+    },
+    {
+      "id": "alp-08",
+      "prompt": "Como ler dados do teclado com scanf e mostrar com printf na linguagem C?",
+      "fonte_minima": [
+        "conhecimento/DSM1/ALP/slides-aula-04-tipos-de-dados-variaveis-e-operadores.md"
+      ],
+      "resposta_esperada": "scanf() lê e armazena a entrada; printf() apresenta texto ou o conteúdo de variáveis — slides-aula-04, slides 30 e 32."
+    },
+    {
+      "id": "alp-09",
+      "prompt": "Como converter uma temperatura de Fahrenheit para Celsius na lista 01?",
+      "fonte_minima": [
+        "conhecimento/DSM1/ALP/listas-de-exercicios-lista-01-pseudocodigo-docx.md"
+      ],
+      "resposta_esperada": "O enunciado entrega a fórmula inversa, F = (C * 1,8) + 32; para F → C é preciso inverter: C = (F - 32) / 1,8 — lista 01, p. 1 (sem gabarito oficial)."
+    },
+    {
+      "id": "alp-10",
+      "prompt": "Como funciona o comando escolha caso outrocaso no VisuAlg?",
+      "fonte_minima": [
+        "conhecimento/DSM1/ALP/programas-visualg3-0-7-visualg3-0-7-help-linguagem2.md"
+      ],
+      "resposta_esperada": "escolha avalia uma expressão e executa o caso correspondente; caso liste valores e outrocaso trata o que não casou; encerra com fimescolha — help-linguagem2, §Comando de Seleção Múltipla."
+    }
+  ]
+}

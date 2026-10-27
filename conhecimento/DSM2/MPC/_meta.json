@@ -1,0 +1,93 @@
+{
+  "schema": 1,
+  "disciplina": "DSM2/MPC",
+  "sigla": "MPC",
+  "semestre": "DSM2",
+  "nome": "Matemática para Computação",
+  "skill": "dsm-mpc",
+  "tier": 2,
+  "dialeto": null,
+  "atualizado_em": "2026-10-24",
+  "corpus": {
+    "arquivos_md": 4,
+    "tokens_aproximados": 10068,
+    "pdfs": 1,
+    "paginas_pdf": 1,
+    "fontes_com_gabarito": [
+      "matematica-para-computacao.md (parcial: definições e exemplos resolvidos)"
+    ],
+    "fontes_sem_gabarito": [
+      "aula-01-logica-matematica.md",
+      "aula-02-conjuntos.md",
+      "lista-matematica-1-bimestre.md"
+    ]
+  },
+  "topicos": [
+    "Argumento lógico: premissas e conclusão",
+    "Silogismo (argumento válido) e falácia (argumento inválido)",
+    "Definição de lógica matemática e relación com programação",
+    "Proposição simples e composta; princípio da não contradição e do terceiro excluído",
+    "Conectivos: NOT, AND, OR, XOR, condicional e bicondicional",
+    "Tabelas-verdade de cada operação",
+    "Ordem de precedência dos conectivos",
+    "Tautologia, contradição e contingência",
+    "Conjuntos: notação e formas de representação (Venn, descrição, enumeração)",
+    "Relação de pertinência e igualdade de conjuntos",
+    "Relação de inclusão",
+    "União, interseção e diferença",
+    "Par ordenado e produto cartesiano",
+    "Relação binária como subconjunto de A × B",
+    "Propriedades de relações: reflexiva, simétrica, antissimétrica e transitiva"
+  ],
+  "topicos_ausentes_no_corpus": [
+    "Quantificadores lógicos (∀, ∃)",
+    "Leis de De Morgan e álgebra de conjuntos",
+    "Relação de equivalência e relação de ordem (nomes formais)",
+    "Funções e aplicações entre conjuntos",
+    "Combinatória e probabilidade (o mapa da disciplina cita combinatória, mas o corpus não a desenvolve)",
+    "Resolução completa da lista do 1º bimestre"
+  ],
+  "fontes_principais": [
+    {
+      "arquivo": "conhecimento/DSM2/MPC/aula-01-logica-matematica.md",
+      "original": "DSM2/MPC/AULA 01 - LÓGICA MATEMÁTICA.pptx",
+      "paginas": null,
+      "papel": "Argumento, proposição, conectivos, tabela-verdade, precedência, tautologia e práticas"
+    },
+    {
+      "arquivo": "conhecimento/DSM2/MPC/aula-02-conjuntos.md",
+      "original": "DSM2/MPC/AULA 02 - CONJUNTOS.pptx",
+      "paginas": null,
+      "papel": "Notação, representação, pertinência, inclusão, união, interseção e diferença"
+    },
+    {
+      "arquivo": "conhecimento/DSM2/MPC/matematica-para-computacao.md",
+      "original": "DSM2/MPC/Matemática para Computação.md",
+      "paginas": null,
+      "papel": "Resumo pessoal com tabelas-verdade, silogismo, falácia, conjuntos, produto cartesiano e relações"
+    },
+    {
+      "arquivo": "conhecimento/DSM2/MPC/lista-matematica-1-bimestre.md",
+      "original": "DSM2/MPC/Lista - Matematica - 1 Bimestre.pdf",
+      "paginas": 1,
+      "papel": "Lista de exercícios do 1º bimestre, sem gabarito"
+    }
+  ],
+  "avisos_de_fidelidade": [
+    "As aulas são PPTX convertidos em Markdown; os slides são numerados, mas não têm página de PDF. Cite pelo arquivo e pelo número do slide quando útil.",
+    "Símbolos matemáticos foram simplificados na extração: 'v' aparece como OR, '^' como AND, '~' como negação.",
+    "O resumo pessoal grafa 'Diagrama de Jemm' (sic) em vez de 'Venn'.",
+    "A lista não tem gabarito; as respostas existem apenas se o aluno as produziu.",
+    "A lista Q3-C usa uma relação 'x é ímpar' que depende apenas de x, uma definição atípica; trate com cautela.",
+    "A lista Q4 pede propriedades de relações, mas o corpus só define produto cartesiano e relação binária; as propriedades não estão explicadas em detalhe."
+  ],
+  "avaliacao": {
+    "evals": "evals/dsm-mpc/evals.json",
+    "perguntas": 8,
+    "metrica": "recall@5 da fonte mínima"
+  },
+  "atualizacao": {
+    "comando": "python3 ferramentas/extrair.py --disciplina DSM2/MPC && python3 ferramentas/indexar.py",
+    "observacao": "Nunca editar os arquivos de DSM2/MPC; a fonte da verdade continua sendo o material original."
+  }
+}

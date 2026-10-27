@@ -1,0 +1,91 @@
+{
+  "schema": 1,
+  "disciplina": "DSM1/ES1",
+  "sigla": "ES1",
+  "semestre": "DSM1",
+  "nome": "Engenharia de Software I",
+  "skill": "dsm-es1",
+  "tier": 2,
+  "dialeto": null,
+  "atualizado_em": "2026-10-24",
+  "corpus": {
+    "arquivos_md": 4,
+    "tokens_aproximados": 9195,
+    "pdfs": 4,
+    "paginas_pdf": 101,
+    "fontes_com_gabarito": [],
+    "fontes_sem_gabarito": [
+      "materiais-aula-01-2025.md",
+      "materiais-aula-02-2025.md",
+      "materiais-aula-03-2025.md",
+      "materiais-aula-04-2025-canvas.md"
+    ]
+  },
+  "topicos": [
+    "O que é Engenharia de Software e por que ela existe",
+    "Software como programas de computador mais documentação associada",
+    "História: conceito proposto em 1968",
+    "As 4 atividades fundamentais: especificação, desenvolvimento, validação e evolução",
+    "Produtos genéricos e software personalizado (sob medida)",
+    "Atributos de bom software: aceitabilidade, dependabilidade e segurança, eficiência e manutenibilidade",
+    "Diversidade de sistemas: interativos, embarcados, batch, entretenimento, modelagem/simulação, coleta e análise, sistemas de sistemas",
+    "Fundamentos gerais a todos os softwares",
+    "Modelo de processo de software (SDLC) e modelos genéricos",
+    "Modelo em cascata: fases, documentos, adequação e limitações",
+    "Desenvolvimento incremental: ideia, vantagens e problemas",
+    "Integração e configuração: reuso de sistemas, componentes e web services",
+    "Processo de software baseado em reuso em 5 etapas",
+    "Canvas: modelo de negócios, plano de negócios e os 9 blocos"
+  ],
+  "topicos_ausentes_no_corpus": [
+    "Engenharia de requisitos detalhada (elicitação, histórias de usuário, rastreabilidade)",
+    "UML e diagramas — pertencem a ES2/DSM2",
+    "Modelo espiral e prototipagem desenvolvidos (aparecem só na ementa)",
+    "Scrum, Kanban e métodos ágeis formais",
+    "Testes de software em profundidade",
+    "Métricas de processo e produto",
+    "Gestão de risco e estimativas"
+  ],
+  "fontes_principais": [
+    {
+      "arquivo": "conhecimento/DSM1/ES1/materiais-aula-01-2025.md",
+      "original": "DSM1/ES1/Materiais/aula 01 - 2025.pdf",
+      "paginas": 20,
+      "papel": "Definição de engenharia de software, história, tipos de produto e atributos de bom software"
+    },
+    {
+      "arquivo": "conhecimento/DSM1/ES1/materiais-aula-02-2025.md",
+      "original": "DSM1/ES1/Materiais/aula 02 2025.pdf",
+      "paginas": 15,
+      "papel": "4 atividades fundamentais, diversidade de sistemas e fundamentos gerais"
+    },
+    {
+      "arquivo": "conhecimento/DSM1/ES1/materiais-aula-03-2025.md",
+      "original": "DSM1/ES1/Materiais/aula 03 2025.pdf",
+      "paginas": 30,
+      "papel": "Modelos de processo: cascata, incremental e integração/configuração"
+    },
+    {
+      "arquivo": "conhecimento/DSM1/ES1/materiais-aula-04-2025-canvas.md",
+      "original": "DSM1/ES1/Materiais/aula 04 2025 Canvas.pdf",
+      "paginas": 36,
+      "papel": "Canvas, modelo de negócios e os 9 blocos"
+    }
+  ],
+  "avisos_de_fidelidade": [
+    "São slides de aula; a extração preserva texto, mas perde diagramas e figuras.",
+    "Na aula 02, o item 3 dos fundamentos gerais aparece repetido nas páginas 14 e 15; o corpus não mostra um quarto fundamento distinto.",
+    "A ementa cita modelo espiral e prototipagem, mas o corpus não os desenvolve.",
+    "O Canvas é apresentado como ferramenta de modelagem de negócio, com vocabulário de empreendedorismo; não é UML nem modelagem de software.",
+    "Não há exercícios com gabarito no corpus."
+  ],
+  "avaliacao": {
+    "evals": "evals/dsm-es1/evals.json",
+    "perguntas": 8,
+    "metrica": "recall@5 da fonte mínima"
+  },
+  "atualizacao": {
+    "comando": "python3 ferramentas/extrair.py --disciplina DSM1/ES1 && python3 ferramentas/indexar.py",
+    "observacao": "Nunca editar os arquivos de DSM1/ES1; a fonte da verdade continua sendo o material original."
+  }
+}

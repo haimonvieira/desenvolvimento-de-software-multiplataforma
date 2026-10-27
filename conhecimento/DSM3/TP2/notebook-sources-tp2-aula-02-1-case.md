@@ -1,0 +1,187 @@
+---
+disciplina: DSM3/TP2
+titulo: TP2 Aula 02 1 case
+fonte: DSM3/TP2/notebook-sources/TP2-Aula-02-1-case.txt
+tipo: txt
+paginas: 0
+extraido_em: 2026-10-24
+---
+
+# ===== TP2: TP2\aula-02-1-case\exemplo1case.py =====
+
+op = int(input("""
+1 - Sacar
+2 - Extrato
+0 - Sair
+"""))
+
+match op:
+    case 1:
+        print("Voce escolheu sacar")
+    case 2:
+        print("Voce escolheu ver o extrato")
+    case 0:
+        exit
+    case _:
+        print("Opção invalida")
+
+# ===== TP2: TP2\aula-02-1-case\exemplo2case.py =====
+
+op = int(input("Digite os numeros de 1 a 6: "))
+
+match op:
+    case 1|2|3:
+        print("Digitou 1, 2 ou 3")
+    case 4|5|6:
+        print("Digitou 4, 5 ou 6")
+    case _:
+        print("Opção incorreta")
+
+# ===== TP2: TP2\aula-02-1-case\exemplo3case.py =====
+
+cla = input("Digite a classificação A, B ou C: ")
+
+match cla.lower():
+    case "A":
+        print("A classificação está no nível 1")
+    case "B":
+        print("A classificação está no nível 2")
+    case "C":
+        print("A classificação está no nível 3")
+    case _:
+        print("Opção incorreta")
+
+# ===== TP2: TP2\aula-02-1-case\exercicios\exercicio1.py =====
+
+is_vogal = input("Insira uma vogal ou consoante: ")
+
+match is_vogal.lower():
+    case "a"|"e"|"i"|"o"|"u":
+        print("Vogal")
+    case _:
+        print("Consoante")
+
+# ===== TP2: TP2\aula-02-1-case\exercicios\exercicio2.py =====
+
+indice_poluicao = int(input("Insira o indice de poluicao: "))
+
+match indice_poluicao:
+    case 0|1|2:
+        print("Aceitável")
+    case 3|4|5:
+        print("Suspender atividades do grupo 1")
+    case 6|7:
+        print("Suspender atividades do grupo 2")
+    case _:
+        print("Suspender atividades de todos os grupos")
+
+# ===== TP2: TP2\aula-02-1-case\exercicios\exercicio3.py =====
+
+op = int(input("""
+CÁLCULO DE GRANDEZAS ELETRICAS
+
+1 - Tensão
+2 - Resistência
+3 - Corrente
+0 - SAIR
+"""))
+
+match op:
+    case 1:
+        resistencia = float(input("Insira o valor da resistencia: "))
+        corrente = float(input("Insira o valor da corrente: "))
+        tensao = resistencia * corrente
+        print(f"Tensão: {tensao} V")
+    case 2:
+        tensao = float(input("Insira o valor da tensao: "))
+        corrente = float(input("Insira o valor da corrente: "))
+        resistencia = tensao / corrente
+        print(f"Resistencia: {resistencia} Ohm")
+
+    case 3:
+        tensao = float(input("Insira o valor da tensao: "))
+        resistencia = float(input("Insira o valor da resistencia: "))
+        corrente = tensao / resistencia
+        print(f"Corrente: {corrente} A")
+
+    case _:
+        print("Opcao invalida")
+
+
+# ===== TP2: TP2\aula-02-1-case\exercicios\exercicio4.py =====
+
+valor_compra = float(input("Insira o valor total da compra: R$ "))
+
+op = int(input("""
+1 - À vista (em espécie) -- 15% desconto
+2 - Cartão de débito -- 10% desconto
+3 - Cartão de crédito -- 5% desconto
+
+0 - SAIR
+"""))
+match op:
+    case 1:
+        valor_final = valor_compra - (valor_compra *.15)
+    case 2:
+        valor_final = valor_compra - (valor_compra *.10)
+    case 3:
+        valor_final = valor_compra - (valor_compra *.05)
+    case _:
+        print("Opção inválida")
+print(f"""
+Valor da compra: R$ {valor_compra}
+Valor com desconto: R$ {valor_final}
+""")
+
+# ===== TP2: TP2\aula-02-1-case\exercicios\exercicio5.py =====
+
+categoria = input("Insira sua categoria(A, B ou C): ")
+salario = float(input("Insira seu salário: R$ "))
+
+match categoria.lower():
+    case 'a':
+        salario_final = salario + salario * .1
+    case 'b':
+        salario_final = salario + salario * .15
+    case 'c':
+        salario_final = salario + salario * .25
+    case _:
+        print("Opção inválida")
+
+print(f"""
+Salário atual: R$ {salario:.2f}
+Salário com aumento: R$ {salario_final:.2f}
+""")
+
+# ===== TP2: TP2\aula-02-1-case\exercicios\exercicio6.py =====
+
+peso = float(input("Insira seu peso: "))
+planeta = int(input("""
+Escolha um planeta:
+1 - Mercúrio
+2 - Vênus
+3 - Marte
+4 - Júpiter
+5 - Saturno
+
+0 - SAIR
+"""))
+
+match planeta:
+    case 1:
+        peso = peso * .37
+        print(f"Seu peso em Mercúrio é de {peso}")
+    case 2:
+        peso = peso * .88
+        print(f"Seu peso em Vênus é de {peso}")
+    case 3:
+        peso = peso * .38
+        print(f"Seu peso em Marte é de {peso}")
+    case 4:
+        peso = peso * 2.64
+        print(f"Seu peso em Júpiter é de {peso}")
+    case 5:
+        peso = peso * 1.15
+        print(f"Seu peso em Saturno é de {peso}")
+    case _:
+        print("Opção inválida")

@@ -43,3 +43,9 @@ node_modules
 
 # Maestri harness scaffolding: role files, briefs and inter-agent reports.
 /.maestri/
+
+# Camada de conhecimento gerada (o markdown é versionado; o índice não).
+/conhecimento/_indice/*.db
+/conhecimento/_indice/*.log
+/evals/**/resultados/
+/ferramentas/__pycache__/

@@ -1,0 +1,96 @@
+{
+  "schema": 1,
+  "disciplina": "DSM3/IHC",
+  "sigla": "IHC",
+  "semestre": "DSM3",
+  "nome": "Interação Humano-Computador",
+  "skill": "dsm-ihc",
+  "tier": 2,
+  "dialeto": null,
+  "atualizado_em": "2026-10-24",
+  "corpus": {
+    "arquivos_md": 4,
+    "tokens_aproximados": 6300,
+    "pdfs": 4,
+    "paginas_pdf": 92,
+    "fontes_com_gabarito": [
+      "ihc-aula-03-conceitos-fundamentais-ihc-interacao-interface-e-usabilidade.md (questão do Fernando, p. 29–30, alternativa D)"
+    ],
+    "fontes_sem_gabarito": [
+      "ihc-aula-01-introducao-a-ihc.md (exercício em formulário externo)",
+      "ihc-aula-02-conceitos-fundamentais-em-ihc-affordances.md (atividade de pesquisa e Figma)",
+      "ihc-aula-04-estudo-e-pesquisa-de-usuario-criacao-de-personas.md (criação de personas)"
+    ]
+  },
+  "topicos": [
+    "Definição de IHC e caráter interdisciplinar",
+    "TICs e comunicação",
+    "Histórico: Donald Norman e usabilidade nos anos 70/80",
+    "Três ondas da IHC (Bødker, 2006): indivíduo, grupos, cultura",
+    "Evolução da qualidade da interação por década",
+    "Interação como diálogo e linguagem artificial",
+    "Interface e interface de usuário (UI)",
+    "Affordances: origem em James Gibson (1977)",
+    "Cinco tipos de affordance: explícita, padrão, escondida, metafórica e falsa",
+    "Usabilidade versus experiência do usuário (UX)",
+    "Pontos de contato e momentos da UX",
+    "Pesquisa e estudo de usuário",
+    "Personas: definição, componentes e utilidade",
+    "Exemplos de persona do Trailer Box (Marcos e Amanda)"
+  ],
+  "topicos_ausentes_no_corpus": [
+    "Heurísticas de Nielsen e avaliação heurística",
+    "Testes de usabilidade e métodos formais de avaliação",
+    "Acessibilidade em profundidade",
+    "Engenharia semiótica",
+    "Design centrado no humano e requisitos de IHC",
+    "Prototipação e wireframes",
+    "Mapa de empatia",
+    "Gabarito dos formulários externos"
+  ],
+  "fontes_principais": [
+    {
+      "arquivo": "conhecimento/DSM3/IHC/ihc-aula-01-introducao-a-ihc.md",
+      "original": "DSM3/IHC/IHC-Aula_01-Introdução à IHC.pdf",
+      "paginas": 25,
+      "papel": "Definição, interdisciplinaridade, histórico e três ondas"
+    },
+    {
+      "arquivo": "conhecimento/DSM3/IHC/ihc-aula-02-conceitos-fundamentais-em-ihc-affordances.md",
+      "original": "DSM3/IHC/IHC-Aula_02-Conceitos Fundamentais em IHC - Affordances.pdf",
+      "paginas": 17,
+      "papel": "Affordances e seus cinco tipos"
+    },
+    {
+      "arquivo": "conhecimento/DSM3/IHC/ihc-aula-03-conceitos-fundamentais-ihc-interacao-interface-e-usabilidade.md",
+      "original": "DSM3/IHC/IHC-Aula_03-Conceitos fundamentais IHC - Interação, Interface e Usabilidade.pdf",
+      "paginas": 32,
+      "papel": "Interação, interface, usabilidade x UX e caso Fernando"
+    },
+    {
+      "arquivo": "conhecimento/DSM3/IHC/ihc-aula-04-estudo-e-pesquisa-de-usuario-criacao-de-personas.md",
+      "original": "DSM3/IHC/IHC-Aula_04-Estudo e Pesquisa de Usuário - Criação de Personas.pdf",
+      "paginas": 18,
+      "papel": "Pesquisa de usuário e personas"
+    }
+  ],
+  "avisos_de_fidelidade": [
+    "Os slides foram convertidos de PDF para Markdown; figuras e diagramas não são descritos pelo texto.",
+    "Vários slides são apenas imagens (por exemplo, aula 01, p. 12–14, e aula 02, p. 11).",
+    "O original escreve 'Ferrnando' (aula 03, p. 27) e 'Affordance explícito' (aula 02, p. 6).",
+    "A aula 03, p. 14, tem rodapé residual de outra disciplina ('Qualidade e Teste de Software').",
+    "A ementa cita temas (Nielsen, acessibilidade, engenharia semiótica, prototipação) que as quatro aulas não desenvolvem.",
+    "Os formulários do Microsoft Forms não têm enunciado nem gabarito no corpus.",
+    "As personas Marcos e Amanda são exemplos de formato, não gabarito.",
+    "A periodização das três ondas (aula 01) é diferente da linha do tempo da qualidade da interação (aula 03)."
+  ],
+  "avaliacao": {
+    "evals": "evals/dsm-ihc/evals.json",
+    "perguntas": 8,
+    "metrica": "recall@5 da fonte mínima"
+  },
+  "atualizacao": {
+    "comando": "python3 ferramentas/extrair.py --disciplina DSM3/IHC && python3 ferramentas/indexar.py",
+    "observacao": "Nunca editar os arquivos de DSM3/IHC; a fonte da verdade continua sendo o PDF original."
+  }
+}

@@ -1,0 +1,144 @@
+{
+  "schema": 1,
+  "disciplina": "DSM1/SORC1",
+  "sigla": "SORC1",
+  "semestre": "DSM1",
+  "nome": "Sistemas Operacionais e Redes de Computadores",
+  "skill": "dsm-sorc1",
+  "tier": 2,
+  "dialeto": null,
+  "atualizado_em": "2026-10-24",
+  "corpus": {
+    "arquivos_md": 7,
+    "tokens_aproximados": 18474,
+    "pdfs": 7,
+    "paginas_pdf": 301,
+    "fontes_com_gabarito": [
+      "materiais-03 (contagem de hosts e exemplo de rede/host são resolvidos no próprio slide)"
+    ],
+    "fontes_sem_gabarito": [
+      "materiais-01 (pesquisa aberta sobre usos de cada tipo de rede)",
+      "materiais-02 (5 questões de múltipla escolha sem gabarito oficial)",
+      "materiais-04 (prática de crimpagem, sem exercício escrito)",
+      "materiais-curso-de-linux-utfpr-2023 (exercícios práticos e 'exercício surpresa' sem gabarito)"
+    ]
+  },
+  "topicos": [
+    "Definição de rede de computadores",
+    "LAN, MAN, WMAN, WAN, WLAN, SAN e PAN",
+    "Definição de topologia e fatores afetados",
+    "Topologias malha, barramento, anel e estrela",
+    "Modelo OSI: conceito, limite e sete camadas",
+    "Host: definição e função",
+    "TCP/IP como conjunto de regras",
+    "Octetos e faixa 0–255",
+    "Classes de IP A, B, C, D e E",
+    "Separação rede/host por classe",
+    "Máscara de sub-rede /8, /16 e /24",
+    "Contagem de hosts utilizáveis (2^n − 2)",
+    "Broadcast: definição e derivação do endereço",
+    "Cabo coaxial e conector BNC",
+    "Fibra óptica",
+    "Par trançado: composição, limite de 100 m e imunidade",
+    "Categorias Cat5e, Cat6, Cat6a, Cat7 e Cat8",
+    "Conectores, ferramentas de crimpagem e RJ45",
+    "Padrões 568A e 568B",
+    "Cabo crossover",
+    "Patch cord",
+    "Rack, porcas gaiolas, patch panel, voice panel e nobreak",
+    "Hub versus switch",
+    "PABX",
+    "Simplex, half-duplex e full-duplex",
+    "Sistema operacional e kernel",
+    "História do Unix, GNU, Minix e Linux",
+    "Free Software e GPL",
+    "Distribuições Debian, Fedora e Arch",
+    "Sistema de arquivos e diretórios do Linux",
+    "GUI, window manager e desktop environment",
+    "CLI, terminal, shell e caminhos",
+    "Comandos básicos de navegação e arquivos",
+    "Streams, redirecionamento, pipes e coringas",
+    "Usuários, grupos, root, sudo e permissões rwx",
+    "chmod em notação textual",
+    "SSH, SCP, mount/umount e sshfs"
+  ],
+  "topicos_ausentes_no_corpus": [
+    "IPv6",
+    "VLSM e CIDR variável",
+    "Cálculo binário detalhado de sub-redes",
+    "VLANs",
+    "Protocolos de roteamento (OSPF, BGP, RIP)",
+    "NAT, firewall e proxy em profundidade",
+    "DHCP, DNS, GPO, Server 2025 e Packet Tracer (apenas citados no sumário)",
+    "Padrões Wi-Fi 802.11",
+    "Normas de cabeamento estruturado",
+    "Administração avançada de Linux (systemd, journalctl, serviços)",
+    "Scripts de shell completos",
+    "Gabarito oficial das questões e exercícios"
+  ],
+  "fontes_principais": [
+    {
+      "arquivo": "conhecimento/DSM1/SORC1/materiais-01-tipos-de-redes-de-computadores-pptx.md",
+      "original": "DSM1/SORC1/Materiais/01 - Tipos de redes de computadores.pptx.pdf",
+      "paginas": 16,
+      "papel": "Sumário da disciplina, definição de rede e tipos de rede"
+    },
+    {
+      "arquivo": "conhecimento/DSM1/SORC1/materiais-02-topologia-de-rede-modelo-osi-e-host-pptx.md",
+      "original": "DSM1/SORC1/Materiais/02 - Topologia de rede, Modelo OSI e HOST.pptx.pdf",
+      "paginas": 27,
+      "papel": "Topologias, modelo OSI, host e questões de fixação"
+    },
+    {
+      "arquivo": "conhecimento/DSM1/SORC1/materiais-03-protocolo-tcp-ip-mascara-de-subrede-e-broadcast-pptx.md",
+      "original": "DSM1/SORC1/Materiais/03 - Protocolo TCP-IP, Mascara de SubRede e Broadcast.pptx.pdf",
+      "paginas": 18,
+      "papel": "TCP/IP, octetos, classes, máscara, hosts e broadcast"
+    },
+    {
+      "arquivo": "conhecimento/DSM1/SORC1/materiais-04-tipos-de-cabos-conectores-e-ferramentas-para-crimpagem.md",
+      "original": "DSM1/SORC1/Materiais/04 - Tipos de Cabos, conectores e ferramentas para crimpagem.pdf",
+      "paginas": 22,
+      "papel": "Cabos, categorias, conectores, 568A/568B, crossover e patch cord"
+    },
+    {
+      "arquivo": "conhecimento/DSM1/SORC1/materiais-05-rack-e-dispositvos-de-rede-pptx.md",
+      "original": "DSM1/SORC1/Materiais/05 - Rack e Dispositvos de Rede.pptx.pdf",
+      "paginas": 19,
+      "papel": "Rack, patch panel, voice panel, nobreak, PABX, hub e switch"
+    },
+    {
+      "arquivo": "conhecimento/DSM1/SORC1/materiais-06-classificacao-de-fluxo-de-transmissao-pptx.md",
+      "original": "DSM1/SORC1/Materiais/06 - CLASSIFICAÇÃO DE FLUXO DE  TRANSMISSÃO.pptx.pdf",
+      "paginas": 15,
+      "papel": "Simplex, half-duplex e full-duplex"
+    },
+    {
+      "arquivo": "conhecimento/DSM1/SORC1/materiais-curso-de-linux-utfpr-2023.md",
+      "original": "DSM1/SORC1/Materiais/curso_de_linux_utfpr_2023.pdf",
+      "paginas": 184,
+      "papel": "Curso introdutório de Linux da UFPR/PET: SO, história, distribuições, shell, comandos, permissões e SSH"
+    }
+  ],
+  "avisos_de_fidelidade": [
+    "O corpus tem 301 páginas, não 352: 117 páginas nos seis decks do professor e 184 no curso de Linux.",
+    "materiais-03, p. 12, escreve 'Rede: 191.171.0' no exemplo de 192.168.0.50; o correto é 192.168.0.",
+    "Os nomes das camadas OSI não estão no texto: vêm do diagrama da p. 13 de materiais-02 e da ordem das descrições das p. 14–20.",
+    "As 5 questões de materiais-02, p. 23–27, não têm gabarito oficial; as respostas derivadas são b, c, b, c, b.",
+    "materiais-04, p. 5, diz '7 categorias', mas só detalha cinco (Cat5e, Cat6, Cat6a, Cat7 e Cat8).",
+    "materiais-04, p. 11–12, informa 100 m para Cat7 e Cat8; na prática Cat8 é limitado a cerca de 30 m.",
+    "materiais-05 tem várias páginas apenas com imagens (rack, patch panel, voice panel); o texto não descreve os equipamentos.",
+    "O curso de Linux é da UFPR/PET, não da Fatec, e usa servidores macalan, orval, cpu1 e cpu2 que não existem na instituição.",
+    "O broadcast de sub-rede (último endereço da faixa) é derivação; o slide p. 17 define broadcast apenas em termos genéricos.",
+    "Os exercícios do curso de Linux não têm gabarito formal no corpus."
+  ],
+  "avaliacao": {
+    "evals": "evals/dsm-sorc1/evals.json",
+    "perguntas": 10,
+    "metrica": "recall@5 da fonte mínima"
+  },
+  "atualizacao": {
+    "comando": "python3 ferramentas/extrair.py --disciplina DSM1/SORC1 && python3 ferramentas/indexar.py",
+    "observacao": "Nunca editar os arquivos de DSM1/SORC1; a fonte da verdade continua sendo o PDF original."
+  }
+}

@@ -1,0 +1,111 @@
+{
+  "skill": "dsm-bd2",
+  "disciplina": "DSM2/BD2",
+  "descricao": "Perguntas de recuperação para o piloto de Banco de Dados II. Cada item exige que a fonte mínima apareça no top-5 da busca.",
+  "perguntas": [
+    {
+      "id": "bd2-01",
+      "prompt": "Como filtrar alunos de São Paulo com idade maior que 19 usando WHERE e AND?",
+      "fonte_minima": [
+        "conhecimento/DSM2/BD2/aula02-consultas-basicas-sql.md",
+        "conhecimento/DSM2/BD2/script-escola.md"
+      ],
+      "resposta_esperada": "SELECT nome, cidade, idade FROM alunos WHERE cidade = 'São Paulo' AND idade > 19;"
+    },
+    {
+      "id": "bd2-02",
+      "prompt": "Qual a diferença entre INNER JOIN e LEFT JOIN no MySQL?",
+      "fonte_minima": [
+        "conhecimento/DSM2/BD2/script-join.md"
+      ],
+      "resposta_esperada": "INNER só traz correspondências; LEFT preserva todas as linhas da tabela da esquerda."
+    },
+    {
+      "id": "bd2-03",
+      "prompt": "Como usar LIKE para listar nomes que começam com a letra A?",
+      "fonte_minima": [
+        "conhecimento/DSM2/BD2/aula02-consultas-basicas-sql.md",
+        "conhecimento/DSM2/BD2/script-escola.md"
+      ],
+      "resposta_esperada": "SELECT * FROM alunos WHERE nome LIKE 'A%';"
+    },
+    {
+      "id": "bd2-04",
+      "prompt": "Como verificar se o campo email está NULL em uma consulta SQL?",
+      "fonte_minima": [
+        "conhecimento/DSM2/BD2/aula02-consultas-basicas-sql.md",
+        "conhecimento/DSM2/BD2/script-escola.md"
+      ],
+      "resposta_esperada": "Usar IS NULL; nunca = NULL."
+    },
+    {
+      "id": "bd2-05",
+      "prompt": "Como criar uma function no MySQL com DELIMITER, RETURNS e DETERMINISTIC?",
+      "fonte_minima": [
+        "conhecimento/DSM2/BD2/script-rh.md",
+        "conhecimento/DSM2/BD2/script-procedure.md"
+      ],
+      "resposta_esperada": "DELIMITER $$; CREATE FUNCTION ... RETURNS tipo DETERMINISTIC BEGIN ... RETURN ...; END$$; DELIMITER ;"
+    },
+    {
+      "id": "bd2-06",
+      "prompt": "Como criar um trigger AFTER INSERT para baixar o estoque de um livro?",
+      "fonte_minima": [
+        "conhecimento/DSM2/BD2/script-procedure.md"
+      ],
+      "resposta_esperada": "CREATE TRIGGER ... AFTER INSERT ON vendas FOR EACH ROW CALL saidaEstoque(NEW.livroId, NEW.quantidade);"
+    },
+    {
+      "id": "bd2-07",
+      "prompt": "Como usar GROUP BY com HAVING para mostrar apenas grupos com mais de dois registros?",
+      "fonte_minima": [
+        "conhecimento/DSM2/BD2/exercicio-atividade-1-n1-haimon-cugler-vieira.md",
+        "conhecimento/DSM2/BD2/atividade-mysql.md"
+      ],
+      "resposta_esperada": "SELECT status, COUNT(*) AS total FROM culturas GROUP BY status HAVING total > 2;"
+    },
+    {
+      "id": "bd2-08",
+      "prompt": "Como calcular o tempo de empresa em anos com TIMESTAMPDIFF e CURDATE?",
+      "fonte_minima": [
+        "conhecimento/DSM2/BD2/script-rh.md",
+        "conhecimento/DSM2/BD2/script-livraria.md"
+      ],
+      "resposta_esperada": "TIMESTAMPDIFF(YEAR, data_admissao, CURDATE())"
+    },
+    {
+      "id": "bd2-09",
+      "prompt": "Quais constraints existem no MySQL e para que servem UNIQUE, CHECK e DEFAULT?",
+      "fonte_minima": [
+        "conhecimento/DSM2/BD2/script-restricoes.md",
+        "conhecimento/DSM2/BD2/banco-de-dados-2.md"
+      ],
+      "resposta_esperada": "UNIQUE evita repetição; CHECK valida domínio; DEFAULT define valor padrão."
+    },
+    {
+      "id": "bd2-10",
+      "prompt": "Como criar uma view que junta as tabelas vendas e livros com JOIN?",
+      "fonte_minima": [
+        "conhecimento/DSM2/BD2/script-procedure.md"
+      ],
+      "resposta_esperada": "CREATE VIEW listarVendas AS SELECT ... FROM vendas JOIN livros ON ...;"
+    },
+    {
+      "id": "bd2-11",
+      "prompt": "Como usar CASE para classificar salários em faixas?",
+      "fonte_minima": [
+        "conhecimento/DSM2/BD2/script-rh.md"
+      ],
+      "resposta_esperada": "CASE WHEN salario < 6000 THEN ... WHEN salario BETWEEN ... THEN ... END"
+    },
+    {
+      "id": "bd2-12",
+      "prompt": "Como criar uma tabela com chave estrangeira e ON DELETE CASCADE?",
+      "fonte_minima": [
+        "conhecimento/DSM2/BD2/script-restricoes.md",
+        "conhecimento/DSM2/BD2/script-join.md"
+      ],
+      "resposta_esperada": "FOREIGN KEY (id_aluno) REFERENCES alunos(id_aluno) ON DELETE CASCADE"
+    }
+  ]
+}

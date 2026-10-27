@@ -1,0 +1,72 @@
+{
+  "schema": 1,
+  "disciplina": "DSM3/ING1",
+  "sigla": "ING1",
+  "semestre": "DSM3",
+  "nome": "Inglês I",
+  "skill": "dsm-ing1",
+  "tier": 2,
+  "dialeto": null,
+  "atualizado_em": "2026-10-24",
+  "corpus": {
+    "arquivos_md": 2,
+    "tokens_aproximados": 630,
+    "pdfs": 1,
+    "paginas_pdf": 1,
+    "fontes_com_gabarito": [],
+    "fontes_sem_gabarito": [
+      "atividade-avaliativa-at1-reading-grammar-activity-haimon-cugler-vieira.md (resposta do aluno)",
+      "technology-using-a-computer-haimon-cugler-vieira.md (resposta do aluno)"
+    ]
+  },
+  "topicos": [
+    "Leitura de texto técnico em inglês",
+    "Simple Present para instruções",
+    "Imperativo em manuais",
+    "Identificação de preposições",
+    "Vocabulário de informática",
+    "Compreensão de vídeo sobre uso de computador",
+    "Estruturas de pergunta com who, why, what e does",
+    "Diferença entre program e file"
+  ],
+  "topicos_ausentes_no_corpus": [
+    "Explicação formal de tempos verbais",
+    "Lista de preposições com regência",
+    "Pronúncia e listening",
+    "Produção escrita e speaking",
+    "Tradução oficial do texto",
+    "Gabarito do professor",
+    "Transcrição do vídeo"
+  ],
+  "fontes_principais": [
+    {
+      "arquivo": "conhecimento/DSM3/ING1/atividade-avaliativa-at1-reading-grammar-activity-haimon-cugler-vieira.md",
+      "original": "DSM3/ING1/Atividade Avaliativa/AT1 - Reading & Grammar Activity - Haimon Cugler Vieira.pdf",
+      "paginas": 1,
+      "papel": "Texto Technical Game Safety Guide e questões de Simple Present e preposições"
+    },
+    {
+      "arquivo": "conhecimento/DSM3/ING1/technology-using-a-computer-haimon-cugler-vieira.md",
+      "original": "DSM3/ING1/Technology Using a Computer - Haimon Cugler Vieira.txt",
+      "paginas": null,
+      "papel": "Questionário de compreensão e vocabulário de informática"
+    }
+  ],
+  "avisos_de_fidelidade": [
+    "O corpus tem apenas duas atividades respondidas por aluno; não há material didático nem gabarito oficial.",
+    "A resposta de preposições do arquivo está incompleta: faltam through e during.",
+    "Erros preservados: 'in him life' (questão 2) e 'Move cursos' (questão 5).",
+    "A questão 10 do questionário é opinativa e não tem resposta certa.",
+    "A AT1 usa Simple Present e imperativo para instruções; 'is learning' aparece apenas no enunciado, não no texto.",
+    "O texto-base do vídeo não está no corpus; só as perguntas e respostas."
+  ],
+  "avaliacao": {
+    "evals": "evals/dsm-ing1/evals.json",
+    "perguntas": 8,
+    "metrica": "recall@5 da fonte mínima"
+  },
+  "atualizacao": {
+    "comando": "python3 ferramentas/extrair.py --disciplina DSM3/ING1 && python3 ferramentas/indexar.py",
+    "observacao": "Nunca editar os arquivos de DSM3/ING1; a fonte da verdade continua sendo o original."
+  }
+}

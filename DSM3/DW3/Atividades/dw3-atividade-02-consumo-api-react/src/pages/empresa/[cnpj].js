@@ -1,11 +1,12 @@
 import Head from "next/head";
+import Container from "@/components/Container";
 import DetailsContent from "@/components/DetailsContent";
 
 export default function Empresa() {
   return (
     <>
       <Head>
-        <title>Detalhes da Empresa</title>
+        <title>Certidão de Registro</title>
         <meta
           name="description"
           content="Consulta dos dados completos de uma empresa pelo CNPJ"
@@ -14,7 +15,9 @@ export default function Empresa() {
       </Head>
 
       <main>
-        <DetailsContent />
+        <Container>
+          <DetailsContent />
+        </Container>
       </main>
     </>
   );

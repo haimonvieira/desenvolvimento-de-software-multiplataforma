@@ -27,7 +27,7 @@ Acesse `http://localhost:3000`.
 
 ## Rotas
 
-- `/` – catálogo de corretoras em cards, com busca por nome ou CNPJ.
+- `/` – catálogo de corretoras em cards, com busca por nome ou CNPJ. Ao digitar um CNPJ completo (com ou sem pontuação) aparece um atalho para consultar qualquer empresa na base da Receita, mesmo fora do catálogo.
 - `/empresa/[cnpj]` – dados completos da empresa, buscados na API pelo CNPJ recebido na rota.
 
 ## Funcionamento

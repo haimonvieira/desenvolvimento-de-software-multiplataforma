@@ -38,6 +38,7 @@ O conteúdo está organizado por semestre e disciplina.
 - Backend com Node.js e Express
 
 ## DSM3 - 3o semestre
+Consulte o [índice detalhado do DSM3](DSM3/README.md) para localizar materiais por disciplina e usar o link externo de revisão de GAPS.
 
 - [BDNR](DSM3/BDNR/) - Banco de Dados Não Relacional e MongoDB
 - [DW3](DSM3/DW3/) - Desenvolvimento Web III e API com Express/MongoDB

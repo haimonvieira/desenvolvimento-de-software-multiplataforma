@@ -61,6 +61,58 @@ describe("catalog builder", () => {
     ]);
   });
 
+  it("treats only a folder with course material as a discipline", async () => {
+    const root = await fixture({
+      "DSM3/README.md": "semester readme",
+      "DSM3/ONLYMETA/README.md": "only plumbing here",
+      "DSM3/ONLYMETA/.gitignore": "node_modules",
+      "DSM3/DW3/aula.md": "lesson",
+      "DSM3/DW3/README.md": "project readme",
+    });
+    const sha = commitFixture(root);
+
+    const catalog = await buildCatalog(root, sha);
+
+    expect(catalog.materials.map(({ ref }) => ref.path)).toEqual(["DSM3/DW3/aula.md"]);
+    expect(catalog.disciplines.map(({ code }) => code)).toEqual(["DW3"]);
+  });
+
+  it("keeps readmes, manifests, tool configs, and dotfiles out of course material", async () => {
+    const root = await fixture({
+      "DSM1/ALP/aula.md": "keep",
+      "DSM1/ALP/exercicio.md": "keep too",
+      "DSM1/ALP/README.md": "no",
+      "DSM1/ALP/LEIA-ME.txt": "no",
+      "DSM1/ALP/anotacoes-README.md": "no",
+      "DSM1/ALP/AGENTS.md": "no",
+      "DSM1/ALP/CLAUDE.md": "no",
+      "DSM1/ALP/LICENSE.md": "no",
+      "DSM1/ALP/package.json": "{}",
+      "DSM1/ALP/package-lock.json": "{}",
+      "DSM1/ALP/pnpm-lock.yaml": "",
+      "DSM1/ALP/tsconfig.json": "{}",
+      "DSM1/ALP/tsconfig.app.json": "{}",
+      "DSM1/ALP/next.config.ts": "export {}",
+      "DSM1/ALP/vite.config.mjs": "export {}",
+      "DSM1/ALP/postcss.config.mjs": "export {}",
+      "DSM1/ALP/wrangler.jsonc": "{}",
+      "DSM1/ALP/worker-configuration.d.ts": "",
+      "DSM1/ALP/components.json": "{}",
+      "DSM1/ALP/.gitignore": "node_modules",
+      "DSM1/ALP/.dev.vars": "TOKEN=1",
+      "DSM1/ALP/.vscode/settings.json": "{}",
+    });
+    const sha = commitFixture(root);
+
+    const catalog = await buildCatalog(root, sha);
+
+    expect(catalog.materials.map(({ ref }) => ref.path)).toEqual([
+      "DSM1/ALP/aula.md",
+      "DSM1/ALP/exercicio.md",
+    ]);
+    expect(catalog.disciplines.map(({ code }) => code)).toEqual(["ALP"]);
+  });
+
   it("orders accented paths by code unit so the catalog bytes never depend on the host locale", async () => {
     const root = await fixture({
       "DSM1/ALP/zeta.md": "z",
@@ -158,8 +210,8 @@ describe("catalog builder", () => {
       "DSM1/ALP/zeta.odd": "odd",
       "DSM1/ALP/alpha.md": "alpha",
     });
-    const first = join(root, "first.json");
-    const second = join(root, "second.json");
+    const first = join(root, "generated", "first.json");
+    const second = join(root, "generated", "second.json");
     const sha = commitFixture(root);
     await writeCatalog(root, first, sha);
     await writeCatalog(root, second, sha);
@@ -264,6 +316,19 @@ describe("catalog builder", () => {
     expect(catalog.materials.some(({ ref }) =>
       /(^|\/)\.idea(\/|$)|\.(?:bat|cmd)$/i.test(ref.path),
     )).toBe(false);
+    // The real repository used to expose READMEs and project manifests as
+    // study material, and DSM3/README.md even as a discipline called README.md.
+    expect(catalog.materials.some(({ ref }) =>
+      /(^|\/)(?:\.gitignore|readme(?:\.[^/]*)?|agents?\.md|package(?:-lock)?\.json|tsconfig(?:\.[^/]*)?\.json)$/i.test(ref.path),
+    )).toBe(false);
+    expect(catalog.disciplines.some(({ code }) => /\./.test(code))).toBe(false);
+    // A discipline without an entry in DISCIPLINE_NAMES falls back to its own
+    // code as the name, which rendered "AL AL" and "IHC IHC".
+    expect(catalog.disciplines.filter(({ code, name }) => name === code)).toEqual([]);
+    expect(catalog.disciplines.find(({ semesterCode, code }) => semesterCode === "DSM3" && code === "AL")?.name)
+      .toBe("Álgebra Linear");
+    expect(catalog.disciplines.find(({ semesterCode, code }) => semesterCode === "DSM3" && code === "IHC")?.name)
+      .toBe("Interação Humano-Computador");
   });
 });
 describe("CatalogQuery", () => {

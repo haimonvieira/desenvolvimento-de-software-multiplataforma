@@ -162,8 +162,9 @@ async function readBlobs(repositoryRoot: string, oids: readonly string[]): Promi
 export async function buildContentIndex(repositoryRoot: string, commitSha: string): Promise<ContentIndexBuild> {
   const entries = listGitTree(repositoryRoot, commitSha).sort((left, right) => compareCodeUnits(left.path, right.path));
   const candidates = entries.filter((entry) => {
-    const semesterCode = entry.path.split("/")[0];
-    return /^DSM[1-6]$/.test(semesterCode)
+    const segments = entry.path.split("/");
+    // Same rule as the catalog: study material lives inside a discipline folder.
+    return /^DSM[1-6]$/.test(segments[0]) && segments.length >= 3
       && entry.type === "blob"
       && entry.size !== null
       && !isExcludedPath(entry.path, entry.mode)

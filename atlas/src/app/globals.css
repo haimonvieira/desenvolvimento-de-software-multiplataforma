@@ -291,22 +291,25 @@ main {
   position: relative;
   min-width: 0;
   min-height: 35rem;
-  overflow: hidden;
   border-right: var(--border-hairline);
   background: rgba(245, 241, 229, 0.58);
 }
 
+/* The map's chrome sits in flow. It used to be an absolute card over the
+   first discipline, which hid that row's label and stations. */
+.atlas-map { display: flex; flex-direction: column; overflow: visible; }
+.atlas-map-header { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: 0.5rem 1.5rem; padding: 1rem 1.5rem 0; }
+.atlas-field { position: relative; flex: 1; min-height: 0; }
+
 .legend {
-  position: absolute;
-  z-index: 8;
-  top: 1.15rem;
-  left: 1.6rem;
-  display: grid;
-  gap: 0.3rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem 1.25rem;
   margin: 0;
-  padding: 0.55rem 0.7rem;
-  background: var(--color-paper-raised);
-  border: var(--border-hairline);
+  padding: 0;
+  border: 0;
+  background: transparent;
   font-family: var(--font-data);
   font-size: 0.625rem;
   font-weight: 600;
@@ -315,28 +318,52 @@ main {
 }
 
 /* Symbol right after its label, same row: the pairing is the whole point. */
-.legend div { display: flex; gap: 0.45rem; align-items: center; justify-content: space-between; min-width: 13.5rem; }
+.legend div { display: flex; gap: 0.45rem; align-items: center; }
 .legend dd { display: flex; align-items: center; }
 .legend dt, .legend dd { margin: 0; }
 .legend-route { display: inline-block; width: 1.75rem; height: 0.3rem; border-radius: var(--radius-station); background: var(--color-route); }
-.legend-route--recent { background: var(--color-recent); }
-.legend-route--crossing { background: var(--color-crossing); }
 .legend-node { display: inline-block; width: 0.65rem; height: 0.65rem; border: 2px solid var(--color-ink); border-radius: var(--radius-station); background: var(--color-paper); }
 .legend-node--current { background: var(--color-progress); }
-.illustrative-note { position: absolute; z-index: 8; right: 1.5rem; top: 1.15rem; max-width: 17rem; margin: 0; padding: 0.5rem 0.65rem; border: var(--border-hairline); background: var(--color-paper-raised); font-size: 0.65rem; }
-.atlas-geometry { position: absolute; inset: 6.5rem 1rem 1rem; width: calc(100% - 2rem); height: calc(100% - 7.5rem); }
+.legend-cluster { display: inline-block; width: 1.4rem; height: 0.65rem; border: 1px dashed var(--color-ink); border-radius: var(--radius-station); background: var(--color-paper-raised); }
+.atlas-geometry { position: absolute; inset: calc(0.75rem + 1.35rem) 1rem 0.75rem; width: calc(100% - 2rem); height: calc(100% - 2.85rem); }
 .atlas-route { fill: none; stroke: var(--color-route); stroke-width: 3; stroke-linecap: round; stroke-dasharray: 1; animation: atlas-route-draw var(--duration-route) var(--ease-out) both; }
 .atlas-route--progress { stroke: var(--color-progress); }.atlas-route--recent { stroke: var(--color-recent); }.atlas-route--crossing { stroke: var(--color-crossing); }.atlas-route--language { stroke: var(--color-language); }
-.atlas-disciplines { position: absolute; inset: 6.5rem 1.5rem 1rem; display: grid; grid-template-rows: repeat(var(--discipline-count), minmax(0, 1fr)); margin: 0; padding: 0; list-style: none; }
+.atlas-disciplines { position: absolute; inset: 0.75rem 1.5rem; display: grid; grid-template-rows: repeat(var(--discipline-count), minmax(0, 1fr)); margin: 0; padding: 0; list-style: none; }
 .atlas-discipline { position: relative; display: flex; align-items: center; min-height: 0; padding: 0 6%; }
 .discipline-link { position: relative; z-index: 2; display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: var(--space-3); width: 100%; padding: 0.45rem 0.7rem; border: var(--border-hairline); background: var(--color-paper-raised); text-decoration: none; }
-.atlas-material-routes { position: absolute; inset: 6.5rem 1.5rem 1rem; display: grid; grid-template-rows: repeat(var(--discipline-count), minmax(0, 1fr)); pointer-events: none; }
-.atlas-materials { position: relative; z-index: 3; height: 100%; margin: 0 6%; padding: 0; list-style: none; pointer-events: none; }
-.atlas-materials li { position: absolute; top: calc(50% + 1.35rem); translate: -50% -50%; pointer-events: auto; }
-.atlas-station { position: relative; display: block; width: 0.8rem; height: 0.8rem; overflow: hidden; border: 3px solid var(--color-ink); border-radius: var(--radius-station); background: var(--color-paper); color: transparent; font-size: 0; transition: scale var(--duration-fast) var(--ease-out), background-color var(--duration-fast) var(--ease-out); }
-.atlas-station::after { content: ""; position: absolute; inset: -0.55rem; border-radius: var(--radius-station); }
-/* ponytail: hit-area 1.9rem abaixo dos 24px WCAG 2.5.8; subir inset p/ -0.7rem se audit apontar */
-.atlas-station:hover, .atlas-station:focus-visible { scale: 1.3; background: var(--color-paper-raised); }
+.atlas-material-routes { position: absolute; inset: 0.75rem 1.5rem; display: grid; grid-template-rows: repeat(var(--discipline-count), minmax(0, 1fr)); pointer-events: none; }
+/* Flex slots, not absolute percentages: a station can never be painted on
+   top of its neighbour, whatever the material count. */
+.atlas-materials { position: relative; z-index: 3; display: flex; align-items: center; justify-content: space-between; gap: 1rem; height: 100%; margin: 0 6%; padding: 0; list-style: none; pointer-events: none; translate: 0 1.35rem; }
+.atlas-materials li { position: relative; display: flex; flex: 0 0 auto; align-items: center; justify-content: center; pointer-events: auto; }
+/* An open index is a popover above every later line, not a panel painted
+   underneath the next rows. */
+.atlas-materials:has(.atlas-index[open]) { z-index: 16; }
+.atlas-station { position: relative; display: grid; place-items: center; width: 1.9rem; height: 1.9rem; color: var(--color-ink); text-decoration: none; }
+.atlas-station-dot { display: block; width: 0.8rem; height: 0.8rem; border: 3px solid var(--color-ink); border-radius: var(--radius-station); background: var(--color-paper); transition: scale var(--duration-fast) var(--ease-out), background-color var(--duration-fast) var(--ease-out); }
+.atlas-station:hover .atlas-station-dot, .atlas-station:focus-visible .atlas-station-dot { scale: 1.3; background: var(--color-paper-raised); }
+.atlas-station--current .atlas-station-dot { background: var(--color-progress); }
+/* The station's readable name lives in the header readout, where a long
+   filename has room and cannot cover another line. The in-link copy remains
+   for the name and for the text parity between map and list. */
+.atlas-station-label { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+.atlas-readout { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.25rem 0.5rem; max-width: 36rem; min-height: 1.1rem; margin: 0; }
+.atlas-readout-kicker { flex: none; color: var(--color-ink-soft); font: 600 0.58rem var(--font-data); letter-spacing: 0.06em; text-transform: uppercase; }
+.atlas-readout-name { color: var(--color-ink); font: 600 0.7rem/1.35 var(--font-body); overflow-wrap: anywhere; }
+.atlas-index-slot { flex: 0 0 auto; }
+.atlas-index { position: relative; }
+.atlas-index summary { display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.35rem 0.5rem; border: 1px dashed var(--color-ink); background: var(--color-paper-raised); color: var(--color-ink); font: 600 0.62rem var(--font-data); list-style: none; cursor: pointer; }
+.atlas-index summary::-webkit-details-marker { display: none; }
+.atlas-index summary:hover, .atlas-index summary:focus-visible { background: var(--color-ink); color: var(--color-paper); }
+.atlas-index-mark { position: relative; flex: none; width: 0.7rem; height: 0.7rem; }
+.atlas-index-mark::before, .atlas-index-mark::after { content: ""; position: absolute; inset: 50% 0 auto; height: 2px; background: currentColor; }
+.atlas-index-mark::after { rotate: 90deg; }
+.atlas-index-panel { position: absolute; z-index: 20; top: calc(100% + 0.5rem); right: 0; width: min(34rem, calc(100vw - 3rem)); max-height: 18rem; overflow: auto; padding: 0.85rem 1rem; border: var(--border-strong); background: var(--color-paper-raised); }
+.atlas-index-title { display: flex; justify-content: space-between; gap: 1rem; margin: 0 0 0.55rem; padding-bottom: 0.45rem; border-bottom: var(--border-hairline); font: 600 0.58rem var(--font-data); letter-spacing: 0.06em; text-transform: uppercase; }
+.atlas-index-panel ul { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 13rem), 1fr)); gap: 0 1rem; margin: 0; padding: 0; list-style: none; }
+.atlas-index-panel li { display: flex; flex: initial; flex-wrap: wrap; align-items: center; justify-content: flex-start; gap: 0.3rem; padding: 0.35rem 0; border-top: 1px solid var(--color-line); }
+.atlas-index-panel a { min-width: 0; overflow-wrap: anywhere; font-size: 0.72rem; text-underline-offset: 0.18rem; }
+.atlas-index-panel .current-marker { padding: 0.15rem 0.35rem; font-size: 0.5rem; }
 .discipline-code, .discipline-count { font-family: var(--font-data); font-size: 0.62rem; font-weight: 600; text-transform: uppercase; }.discipline-name { font-size: 0.76rem; font-weight: 600; }.discipline-count { color: var(--color-ink-soft); white-space: nowrap; }
 .catalog-list { padding: 1.5rem; overflow: visible; }
 .catalog-list-header { display: flex; justify-content: space-between; align-items: baseline; gap: var(--space-4); padding-bottom: var(--space-4); border-bottom: var(--border-strong); }
@@ -452,8 +479,7 @@ details.material-group[open] > summary::after { rotate: 225deg; }
 .study-saved button { min-height: 0; padding: 0; border: 0; background: transparent; text-decoration: underline; }
 .study-material-link { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); }
 .current-marker { display: inline-block; }
-.atlas-station--current { background: var(--color-progress); }
-.current-marker--map { position: absolute; z-index: 4; top: 1.4rem; left: 50%; translate: -50% 0; }
+.atlas-readout .current-marker { flex: none; font-size: 0.55rem; }
 .catalog-materials li { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); }
 .study-load-error { margin: 0; padding: var(--space-3); border: var(--border-hairline); background: var(--color-selection); font-weight: 600; }
 .study-load-error button, .study-error button { margin-left: var(--space-2); border: 0; background: transparent; font-weight: 600; text-decoration: underline; cursor: pointer; }
@@ -563,11 +589,12 @@ details.material-group[open] > summary::after { rotate: 225deg; }
   .page-heading h1 { font-size: clamp(2rem, 9.4vw, 2.35rem); }
   .view-toggle a { padding: 0.55rem 0.6rem; font-size: 0.625rem; }
   .atlas-map { min-height: max(34rem, calc(var(--discipline-count, 5) * 5.25rem + 10rem)); }
-  .legend { left: 1rem; right: auto; top: 1rem; max-width: calc(100% - 2rem); flex-wrap: wrap; gap: 0.45rem; padding: 0.5rem; font-size: 0.625rem; }
-  .illustrative-note { top: 4.5rem; right: 1rem; left: 1rem; max-width: none; }
-  .atlas-geometry, .atlas-disciplines, .atlas-material-routes { top: 8rem; }
-  .atlas-geometry { height: calc(100% - 9rem); }
-  .atlas-disciplines, .atlas-material-routes { inset-inline: 0.5rem; }
+  .atlas-map-header { padding: 0.85rem 1rem 0; }
+  .legend { gap: 0.35rem 0.9rem; font-size: 0.6rem; }
+  .atlas-disciplines, .atlas-material-routes { inset: 0.5rem; }
+  .atlas-geometry { inset: calc(0.5rem + 1.35rem) 0.5rem 0.5rem; width: calc(100% - 1rem); height: calc(100% - 2.35rem); }
+  .atlas-materials { gap: 0.35rem; margin: 0 2%; }
+  .atlas-index-panel { width: calc(100vw - 2rem); }
   .atlas-discipline { padding-inline: 2%; }
   .discipline-link { gap: var(--space-2); }
   .discipline-name { font-size: 0.68rem; }

@@ -2,7 +2,7 @@ import type { Discipline, Material, MaterialRef } from "./model";
 
 export type CatalogDiscipline = Discipline & Readonly<{ materialCount: number }>;
 
-function materialHref(material: Material): string {
+export function materialHref(material: Material): string {
   const path = material.ref.path.split("/").map(encodeURIComponent).join("/");
   return `/materiais/${path}?semester=${encodeURIComponent(material.semesterCode)}`;
 }

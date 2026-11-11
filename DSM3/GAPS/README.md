@@ -2,9 +2,10 @@
 
 GAPS significa Gestão Ágil de Projetos de Software. Este índice distingue a revisão externa dos textos locais de apoio e dos projetos práticos.
 
-## Revisão do semestre — questões objetivas
+## Revisão do semestre
 
-[Abrir o material online da revisão do semestre](https://i-davies.github.io/conteudo-fatec-2026-2/GAPS/12_Revisao_Semestre/01_Objetiva/)
+- [Questões objetivas](https://i-davies.github.io/conteudo-fatec-2026-2/GAPS/12_Revisao_Semestre/01_Objetiva/)
+- [Questões dissertativas](https://i-davies.github.io/conteudo-fatec-2026-2/GAPS/12_Revisao_Semestre/02_Dissertativa/)
 
 A fonte foi fornecida pelo estudante e é externa a este repositório. Não há, neste diretório, uma cópia local confirmada dessa página. Se o link estiver indisponível, sinalize essa limitação; não trate as extrações locais como reprodução integral da revisão.
 

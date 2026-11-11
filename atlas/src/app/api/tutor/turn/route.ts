@@ -91,8 +91,11 @@ function sseEvent(name: string, data: unknown): Uint8Array {
 
 /** The failure vocabulary the JSON path already uses, applied to a mid-stream error. */
 function streamFailure(failure: unknown): { code: string; message: string } {
-  if (failure instanceof TutorProviderError && failure.failure.kind === "rate_limited") {
-    return { code: "PROVIDER_QUOTA", message: failure.message };
+  if (failure instanceof TutorProviderError) {
+    return {
+      code: failure.failure.kind === "rate_limited" ? "PROVIDER_QUOTA" : "TUTOR_TURN_FAILED",
+      message: failure.message,
+    };
   }
   return { code: "TUTOR_TURN_FAILED", message: "Não foi possível responder agora." };
 }
@@ -199,7 +202,13 @@ export function createTutorTurnHandler(dependencies: TutorTurnDependencies) {
           { status: 429, headers: failure.failure.retryAfterSeconds !== null ? { "retry-after": String(failure.failure.retryAfterSeconds) } : {} },
         );
       }
-      return error("TUTOR_TURN_FAILED", "Não foi possível responder agora.", 502);
+      // `TutorProviderError.message` is a fixed pt-BR sentence per failure kind,
+      // so it carries no provider text and no key. Anything else is ours.
+      return error(
+        "TUTOR_TURN_FAILED",
+        failure instanceof TutorProviderError ? failure.message : "Não foi possível responder agora.",
+        502,
+      );
     }
   };
 }
@@ -217,14 +226,18 @@ const MINIMUM_SECRET_BYTES = 32;
  * Sponsored mode needs the ledger, the subject secret and the Groq key. BYOK
  * needs nothing from env: the visitor's key arrives per request in the
  * `Authorization` header and is bound to a Groq adapter for that request only.
+ *
+ * The index base is absolutised against the incoming request because the Workers
+ * `fetch()` refuses a relative URL — a relative base made every retrieval throw
+ * `TypeError: Invalid URL` before the provider was ever called.
  */
-function handler(): ((request: Request) => Promise<Response>) | null {
+function handler(requestUrl: string): ((request: Request) => Promise<Response>) | null {
   const { DATABASE_URL: databaseUrl, TUTOR_SUBJECT_SECRET: secret, GROQ_API_KEY: groqKey } = env as TutorTurnEnv;
   if (!databaseUrl || !secret || new TextEncoder().encode(secret).byteLength < MINIMUM_SECRET_BYTES) return null;
   if (!groqKey) return null;
   const sponsoredAi = createGroqPublicTutorAi({ apiKey: groqKey });
   return createTutorTurnHandler({
-    retriever: createContentRetriever(),
+    retriever: createContentRetriever({ basePath: new URL("/_index", requestUrl).toString() }),
     ledger: createUsageLedger({ query: createSqlExecutor(databaseUrl).query }),
     subjectKey: (request) =>
       deriveSubjectKey(secret, {
@@ -238,7 +251,7 @@ function handler(): ((request: Request) => Promise<Response>) | null {
 }
 
 export async function POST(request: Request): Promise<Response> {
-  const post = handler();
+  const post = handler(request.url);
   return post ? post(request) : error("UNCONFIGURED", "Tutor indisponível.", 503);
 }
 

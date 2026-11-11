@@ -27,6 +27,7 @@ const SEMESTER_NAMES: Readonly<Record<string, string>> = {
   DSM6: "6º semestre",
 };
 const DISCIPLINE_NAMES: Readonly<Record<string, string>> = {
+  AL: "Álgebra Linear",
   ALP: "Algoritmos e Lógica de Programação",
   DD: "Design Digital",
   DW1: "Desenvolvimento Web I",
@@ -43,6 +44,7 @@ const DISCIPLINE_NAMES: Readonly<Record<string, string>> = {
   BDNR: "Banco de Dados Não Relacional",
   DW3: "Desenvolvimento Web III",
   GAPS: "Gestão Ágil de Projetos de Software",
+  IHC: "Interação Humano-Computador",
   ING1: "Inglês I",
   TP2: "Técnica de Programação II",
 };
@@ -83,6 +85,13 @@ const CODE_EXTENSIONS = new Set([
 const DOCUMENT_EXTENSIONS = new Set([".csv", ".doc", ".docx", ".md", ".odt", ".pdf", ".ppt", ".pptx", ".txt", ".xls", ".xlsx"]);
 const IMAGE_EXTENSIONS = new Set([".gif", ".jpeg", ".jpg", ".png", ".svg", ".webp"]);
 const ARCHIVE_EXTENSIONS = new Set([".7z", ".gz", ".rar", ".tar", ".zip"]);
+/**
+ * Repository plumbing that has no place in a study catalog: readmes, agent
+ * instructions, package manifests and tool configs. Hidden files and folders
+ * (`.gitignore`, `.env`, `.vscode`, …) are caught separately by their name.
+ * A subject folder that keeps only these files is not a discipline.
+ */
+const INTERNAL_FILE = /^(?:(?:.*[-_.])?readme(?:[-_.][^/]*)?|(?:.*[-_.])?leia-me(?:[-_.][^/]*)?|agents?\.md|claude\.md|contributing(?:\..*)?|license(?:\..*)?|changelog(?:\..*)?|code_of_conduct(?:\..*)?|package(?:-lock)?\.json|pnpm-lock\.yaml|pnpm-workspace\.yaml|yarn\.lock|bun\.lockb?|components\.json|tsconfig(?:\..*)?\.json|jsconfig(?:\..*)?\.json|next-env\.d\.ts|vite-env\.d\.ts|worker-configuration\.d\.ts|(?:next|vite|vitest|playwright|drizzle|eslint|postcss|tailwind|wrangler)\.config\.[cm]?[jt]s|wrangler\.(?:jsonc?|toml))$/i;
 const PREVIEW_LIMIT = 200_000;
 /**
  * The only gate between a repository file and a generated text preview, and
@@ -117,9 +126,8 @@ export function isExcludedPath(path: string, mode: string): boolean {
   const segments = path.split("/");
   const name = segments.at(-1) ?? "";
   return mode !== "100644"
-    || segments.some((segment) => EXCLUDED_DIRECTORIES.has(segment))
-    || name === ".env"
-    || name.startsWith(".env.")
+    || segments.some((segment) => EXCLUDED_DIRECTORIES.has(segment) || segment.startsWith("."))
+    || INTERNAL_FILE.test(name)
     || EXCLUDED_EXTENSIONS.has(extname(name).toLowerCase());
 }
 
@@ -230,15 +238,17 @@ async function writeTextPreviews(repositoryRoot: string, outputRoot: string, cat
 export async function buildCatalog(repositoryRoot: string, commitSha: string): Promise<CatalogData> {
   const entries = listGitTree(repositoryRoot, commitSha).sort((left, right) => compareCodeUnits(left.path, right.path));
   const roots = new Set<string>();
-  const disciplineKeys = new Set<string>();
   const materials: Material[] = [];
 
   for (const entry of entries) {
-    const [semesterCode, disciplineCode] = entry.path.split("/");
+    const segments = entry.path.split("/");
+    const [semesterCode, disciplineCode] = segments;
     if (!/^DSM[1-6]$/.test(semesterCode)) continue;
     roots.add(semesterCode);
-    if (!disciplineCode || EXCLUDED_DIRECTORIES.has(disciplineCode)) continue;
-    disciplineKeys.add(`${semesterCode}/${disciplineCode}`);
+    // A discipline is a folder and a material lives inside it: a README at the
+    // semester root is not a subject, and neither is a folder that only holds
+    // project plumbing.
+    if (segments.length < 3 || !disciplineCode || EXCLUDED_DIRECTORIES.has(disciplineCode)) continue;
     if (entry.type !== "blob" || entry.size === null || isExcludedPath(entry.path, entry.mode)) continue;
     const extension = extname(entry.path).toLowerCase();
     const classification = classify(extension);
@@ -256,6 +266,7 @@ export async function buildCatalog(repositoryRoot: string, commitSha: string): P
   }
 
   const semesters: Semester[] = [...roots].sort().map((code) => ({ code, name: SEMESTER_NAMES[code] }));
+  const disciplineKeys = new Set(materials.map(({ semesterCode, disciplineCode }) => `${semesterCode}/${disciplineCode}`));
   const disciplines: Discipline[] = [...disciplineKeys].sort().map((key) => {
     const [semesterCode, code] = key.split("/");
     return { code, name: DISCIPLINE_NAMES[code] ?? code, semesterCode };

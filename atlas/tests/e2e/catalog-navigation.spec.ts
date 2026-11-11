@@ -53,7 +53,11 @@ for (const viewport of viewports) {
     const list = page.locator('[data-representation="list"]');
     await expect(list).toBeVisible();
     expect(await disciplineLinks(page, "list")).toEqual(mapLinks);
-    expect(await materialLinks(page, "list")).toEqual(mapMaterials);
+    // The map now shows a bounded set of named stops per line and keeps the
+    // rest in that line's index. Coverage is still the whole catalog, but the
+    // map orders visible stops first, so compare the two views as sets.
+    const byHref = (left: { href: string | null }, right: { href: string | null }) => (left.href ?? "").localeCompare(right.href ?? "");
+    expect([...await materialLinks(page, "list")].sort(byHref)).toEqual([...mapMaterials].sort(byHref));
 
     await page.goBack();
     await expect(page).toHaveURL(/\?semester=DSM3&view=map$/);
